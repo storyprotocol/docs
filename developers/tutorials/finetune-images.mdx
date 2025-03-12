@@ -9,7 +9,6 @@ description: Learn how to use the FLUX Finetuning API to finetune images and the
     href="https://github.com/jacob-tucker/finetune-story-flux"
     icon="thumbs-up"
     iconType="solid"
-    target="_blank"
   >
     View the completed code for this tutorial.
   </Card>
@@ -21,6 +20,7 @@ In this tutorial, you will use the FLUX Finetuning API to take a bunch of images
 **This Tutorial is in TypeScript**
 
 Steps 1-3 of this tutorial are based on the [FLUX Finetuning Beta Guide](https://docs.bfl.ml/finetuning/), which contains examples for calling their API in Python, however I have rewritten them in TypeScript.
+
 </Note>
 
 ## The Explanation
@@ -54,6 +54,7 @@ PINATA_JWT=
 In order to generate an image, you'll need BFL credits. If you just created an account, you will need to purchase credits [here](https://api.us1.bfl.ai/auth/profile).
 
 You can also see the pricing for each of the API endpoints [here](https://docs.bfl.ml/pricing/).
+
 </Warning>
 
 ```yaml .env
@@ -76,8 +77,8 @@ npm install @story-protocol/core-sdk axios pinata-web3 viem
 
 In order to create a finetune, we'll need the input training data!
 
-1. Create a folder in your project called `images`. In that folder, add a bunch of images that you want your finetune to train on. *Supported formats: JPG, JPEG, PNG, and WebP. Also recommended to use more than 5 images.*
-2. Add Text Descriptions (Optional): In the same folder, create text files with descriptions for your images. Text files should share the same name as their corresponding images. *Example: if your image is "sample.jpg", create "sample.txt"*
+1. Create a folder in your project called `images`. In that folder, add a bunch of images that you want your finetune to train on. _Supported formats: JPG, JPEG, PNG, and WebP. Also recommended to use more than 5 images._
+2. Add Text Descriptions (Optional): In the same folder, create text files with descriptions for your images. Text files should share the same name as their corresponding images. _Example: if your image is "sample.jpg", create "sample.txt"_
 3. Compress your folder into a ZIP file. It should be named `images.zip`
 
 ## 2. Create a Finetune
@@ -90,6 +91,7 @@ Let's make a function that calls FLUX's `/v1/finetune` API route. Create a `flux
 **Official Docs**
 
 In order to learn what each of the parameters in the payload are, see the official `/v1/finetune` API docs [here](https://api.us1.bfl.ai/scalar#tag/tasks/POST/v1/finetune).
+
 </Note>
 
 ```typescript flux/requestFinetuning.ts
@@ -167,6 +169,7 @@ Next, create a file named `train.ts` and call the `requestFinetuning` function w
 **Warning: This is expensive!**
 
 Creating a new finetune is expensive, ranging from $2-$6 at the time of me writing this tutorial. Please review the "FLUX PRO FINETUNE: TRAINING" section on the [pricing page](https://docs.bfl.ml/pricing/).
+
 </Warning>
 
 ```typescript train.ts
@@ -183,8 +186,8 @@ main();
 This will log something that looks like:
 
 ```json
-{ 
-  finetune_id: '6fc5e628-6f56-48ec-93cb-c6a6b22bf5a' 
+{
+  "finetune_id": "6fc5e628-6f56-48ec-93cb-c6a6b22bf5a"
 }
 ```
 
@@ -200,6 +203,7 @@ In our `flux` folder, create a file named `finetune-progress.ts` and add the fol
 **Official Docs**
 
 In order to learn what each of the parameters in the payload are, see the official `/v1/get_result` API docs [here](https://api.us1.bfl.ai/scalar#tag/utility/GET/v1/get_result).
+
 </Note>
 
 ```typescript flux/finetuneProgress.ts
@@ -229,7 +233,7 @@ Next, create a file named `finetune-progress.ts` and call the `finetuneProgress`
 import { finetuneProgress } from "./flux/finetuneProgress";
 
 // input your finetune_id here
-const FINETUNE_ID = '';
+const FINETUNE_ID = "";
 
 async function main() {
   const progress = await finetuneProgress(FINETUNE_ID);
@@ -243,10 +247,10 @@ This will log something that looks like:
 
 ```json
 {
-  id: '023a1507-369e-46e0-bd6d-1f3446d7d5f2',
-  status: 'Pending',
-  result: null,
-  progress: null
+  "id": "023a1507-369e-46e0-bd6d-1f3446d7d5f2",
+  "status": "Pending",
+  "result": null,
+  "progress": null
 }
 ```
 
@@ -258,6 +262,7 @@ As you can see, the status is still pending. We must wait until the training is 
 **Warning: This costs money.**
 
 Although very cheap, running an inference does cost money, ranging from $0.06-0.07 at the time of me writing this tutorial. Please review the "FLUX PRO FINETUNE: INFERENCE" section on the [pricing page](https://docs.bfl.ml/pricing/).
+
 </Warning>
 
 Now that we have trained a finetune, we will use the model to create images. "Running an inference" simply means using our new model (identified by its `finetune_id`), which is trained on our images, to create new images.
@@ -270,6 +275,7 @@ In our `flux` folder, create a `finetuneInference.ts` file and add the following
 **Official Docs**
 
 In order to learn what each of the parameters in the payload are, see the official `/v1/flux-pro-1.1-ultra-finetuned` API docs [here](https://api.us1.bfl.ai/scalar#tag/tasks/POST/v1/flux-pro-1.1-ultra-finetuned).
+
 </Note>
 
 ```typescript flux/finetineInference.ts
@@ -307,16 +313,16 @@ export async function finetuneInference(
 Next, create a file named `inference.ts` and call the `finetuneInference` function we just made. The first parameter should be the `finetune_id` we got from running the script above, and the second parameter is a prompt to generate a new image.
 
 ```typescript inference.ts
-import { finetuneInference } from './flux/finetuneInference'
+import { finetuneInference } from "./flux/finetuneInference";
 
 // input your finetune_id here
-const FINETUNE_ID = '';
+const FINETUNE_ID = "";
 // add your prompt here
-const PROMPT = "A picture of Ippy being really happy."
+const PROMPT = "A picture of Ippy being really happy.";
 
 async function main() {
   const inference = await finetuneInference(FINETUNE_ID, PROMPT);
-  console.log(inference)
+  console.log(inference);
 }
 
 main();
@@ -326,10 +332,10 @@ This will log something that looks like:
 
 ```json
 {
-  id: '023a1507-369e-46e0-bd6d-1f3446d7d5f2',
-  status: 'Pending',
-  result: null,
-  progress: null
+  "id": "023a1507-369e-46e0-bd6d-1f3446d7d5f2",
+  "status": "Pending",
+  "result": null,
+  "progress": null
 }
 ```
 
@@ -341,6 +347,7 @@ In our `flux` folder, create a file named `getInference.ts` and add the followin
 **Official Docs**
 
 In order to learn what each of the parameters in the payload are, see the official `/v1/get_result` API docs [here](https://api.us1.bfl.ai/scalar#tag/utility/GET/v1/get_result).
+
 </Note>
 
 ```typescript flux/getInference.ts
@@ -365,17 +372,17 @@ export async function getInference(id: string) {
 Back in our `inference.ts` file, lets add a loop that continuously fetches the inference until it's ready. When it's ready, we will view the new image.
 
 ```typescript inference.ts
-import { finetuneInference } from './flux/finetuneInference'
-import { getInference } from './flux/getInference'
+import { finetuneInference } from "./flux/finetuneInference";
+import { getInference } from "./flux/getInference";
 
 // input your finetune_id here
-const FINETUNE_ID = '';
+const FINETUNE_ID = "";
 // add your prompt here
-const PROMPT = "A picture of Ippy being really happy."
+const PROMPT = "A picture of Ippy being really happy.";
 
 async function main() {
   const inference = await finetuneInference(FINETUNE_ID, PROMPT);
-  
+
   let inferenceData = await getInference(inference.id);
   while (inferenceData.status != "Ready") {
     console.log("Waiting for inference to complete...");
@@ -395,13 +402,13 @@ Once the loop completed, the final log will look like:
 
 ```json
 {
-  id: '023a1507-369e-46e0-bd6d-1f3446d7d5f2',
-  status: 'Ready',
-  result: {
-    sample: 'https://delivery-us1.bfl.ai/results/746585f8d1b341f3a8735ababa563ac1/sample.jpeg?se=2025-01-16T19%3A50%3A11Z&sp=r&sv=2024-11-04&sr=b&rsct=image/jpeg&sig=pPtWnntLqc49hfNnGPgTf4BzS6MZcBgHayrYkKe%2BZIc%3D',
-    prompt: 'A picture of Ippy being really happy.'
+  "id": "023a1507-369e-46e0-bd6d-1f3446d7d5f2",
+  "status": "Ready",
+  "result": {
+    "sample": "https://delivery-us1.bfl.ai/results/746585f8d1b341f3a8735ababa563ac1/sample.jpeg?se=2025-01-16T19%3A50%3A11Z&sp=r&sv=2024-11-04&sr=b&rsct=image/jpeg&sig=pPtWnntLqc49hfNnGPgTf4BzS6MZcBgHayrYkKe%2BZIc%3D",
+    "prompt": "A picture of Ippy being really happy."
   },
-  progress: null
+  "progress": null
 }
 ```
 
@@ -411,7 +418,7 @@ You can paste the `sample` into your browser and see the final result! Make sure
 
 Next we will register this image on Story as an [IP Asset](/developers/ip-asset) in order to monetize and license the IP. Create a `story` folder and add a `utils.ts` file. In there, add the following code to set up your Story Config:
 
-* Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/typescript-sdk-setup)
+- Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/typescript-sdk-setup)
 
 ```typescript story/utils.ts
 import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
@@ -486,18 +493,19 @@ In your `story` folder, create a `registerIp.ts` file.
 View the [IPA Metadata Standard](/developers/ipa-metadata-standard) and construct the metadata for your IP as shown below:
 
 ```typescript story/registerIp.ts
-import { client, account } from './utils'
+import { client, account } from "./utils";
 import { uploadImageAndGetDetails } from "../pinata/uploadToIpfs";
 
 export async function registerIp(inference) {
   const { ipfsCid, contentType, contentHash } = await uploadImageAndGetDetails(
     inference.result.sample
   );
-  
+
   // Docs: https://docs.story.foundation/docs/ipa-metadata-standard
   const ipMetadata = {
     title: "Happy Ippy",
-    description: "An image of Ippy being really happy, generated by FLUX's 1.1 [pro] ultra Finetune",
+    description:
+      "An image of Ippy being really happy, generated by FLUX's 1.1 [pro] ultra Finetune",
     image: `https://ipfs.io/ipfs/${ipfsCid}`,
     imageHash: contentHash,
     mediaUrl: `https://ipfs.io/ipfs/${ipfsCid}`,
@@ -519,7 +527,7 @@ export async function registerIp(inference) {
 In the `registerIp.ts` file, configure your NFT Metadata, which follows the [OpenSea ERC-721 Standard](https://docs.opensea.io/docs/metadata-standards).
 
 ```typescript story/registerIp.ts
-import { client, account } from './utils'
+import { client, account } from "./utils";
 import { uploadImageAndGetDetails } from "../pinata/uploadToIpfs";
 
 export async function registerIp(inference) {
@@ -528,7 +536,8 @@ export async function registerIp(inference) {
   // Docs: https://docs.opensea.io/docs/metadata-standards
   const nftMetadata = {
     name: "Ippy Ownership NFT",
-    description: "This NFT represents ownership of the Happy Ippy image generated by FLUX's 1.1 [pro] ultra Finetune",
+    description:
+      "This NFT represents ownership of the Happy Ippy image generated by FLUX's 1.1 [pro] ultra Finetune",
     image: `https://ipfs.io/ipfs/${ipfsCid}`,
     attributes: [
       {
@@ -560,8 +569,11 @@ export async function uploadJSONToIPFS(jsonMetadata: any): Promise<string> {
 You can then use that function to upload your metadata, as shown below:
 
 ```typescript story/registerIp.ts
-import { client, account } from './utils'
-import { uploadImageAndGetDetails, uploadJSONToIPFS } from "../pinata/uploadToIpfs";
+import { client, account } from "./utils";
+import {
+  uploadImageAndGetDetails,
+  uploadJSONToIPFS,
+} from "../pinata/uploadToIpfs";
 import { createHash } from "crypto";
 
 export async function registerIp(inference) {
@@ -589,38 +601,43 @@ This function needs an SPG NFT Contract to mint from. For simplicity, you can us
 <Accordion title="Creating your own custom ERC-721 collection" icon="info-circle">
   Using the public collection we provide for you is fine, but when you do this for real, you should make your own NFT Collection for your IPs. You can do this in 2 ways:
 
-  1. Deploy a contract that implements the [ISPGNFT](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/interfaces/ISPGNFT.sol) interface, or use the SDK's [createNFTCollection](https://docs.story.foundation/docs/sdk-nftclient#createnftcollection) function (shown below) to do it for you. This will give you your own SPG NFT Collection that only you can mint from.
+1. Deploy a contract that implements the [ISPGNFT](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/interfaces/ISPGNFT.sol) interface, or use the SDK's [createNFTCollection](https://docs.story.foundation/docs/sdk-nftclient#createnftcollection) function (shown below) to do it for you. This will give you your own SPG NFT Collection that only you can mint from.
 
-  ```typescript createSpgNftCollection.ts
-  import { zeroAddress } from 'viem'
-  import { client } from './utils'
+```typescript createSpgNftCollection.ts
+import { zeroAddress } from "viem";
+import { client } from "./utils";
 
-  async function createSpgNftCollection() {
-    const newCollection = await client.nftClient.createNFTCollection({
-      name: 'Test NFTs',
-      symbol: 'TEST',
-      isPublicMinting: false,
-      mintOpen: true,
-      mintFeeRecipient: zeroAddress,
-      contractURI: '',
-      txOptions: { waitForTransaction: true },
-    })
+async function createSpgNftCollection() {
+  const newCollection = await client.nftClient.createNFTCollection({
+    name: "Test NFTs",
+    symbol: "TEST",
+    isPublicMinting: false,
+    mintOpen: true,
+    mintFeeRecipient: zeroAddress,
+    contractURI: "",
+    txOptions: { waitForTransaction: true },
+  });
 
-    console.log(`New SPG NFT collection created at transaction hash ${newCollection.txHash}`)
-    console.log(`NFT contract address: ${newCollection.spgNftContract}`)
-  }
+  console.log(
+    `New SPG NFT collection created at transaction hash ${newCollection.txHash}`
+  );
+  console.log(`NFT contract address: ${newCollection.spgNftContract}`);
+}
 
-  createSpgNftCollection();
-  ```
+createSpgNftCollection();
+```
 
-  2. Create a custom ERC-721 NFT collection on your own and use the [register](https://docs.story.foundation/docs/sdk-ipasset#register) function - providing an `nftContract` and `tokenId` - *instead of* using the `mintAndRegisterIp` function. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/simpleMintAndRegister.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
-</Accordion>
+2. Create a custom ERC-721 NFT collection on your own and use the [register](https://docs.story.foundation/docs/sdk-ipasset#register) function - providing an `nftContract` and `tokenId` - _instead of_ using the `mintAndRegisterIp` function. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/simpleMintAndRegister.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
+   </Accordion>
 
 > Associated Docs: [ipAsset.mintAndRegisterIp](https://docs.story.foundation/docs/sdk-ipasset#mintandregisterip)
 
 ```typescript story/registerIp.ts
-import { client, account } from './utils'
-import { uploadImageAndGetDetails, uploadJSONToIPFS } from "../pinata/uploadToIpfs";
+import { client, account } from "./utils";
+import {
+  uploadImageAndGetDetails,
+  uploadJSONToIPFS,
+} from "../pinata/uploadToIpfs";
 import { createHash } from "crypto";
 import { Address } from "viem";
 
@@ -628,7 +645,7 @@ export async function registerIp(inference) {
   // previous code here ...
 
   const response = await client.ipAsset.mintAndRegisterIp({
-    spgNftContract: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc',
+    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
     ipMetadata: {
       ipMetadataURI: `https://ipfs.io/ipfs/${ipIpfsHash}`,
       ipMetadataHash: `0x${ipHash}`,
@@ -638,8 +655,12 @@ export async function registerIp(inference) {
     txOptions: { waitForTransaction: true },
   });
 
-  console.log(`Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`);
-  console.log(`View on the explorer: https://aeneid.explorer.story.foundation/ipa/${response.ipId}`); 
+  console.log(
+    `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  console.log(
+    `View on the explorer: https://aeneid.explorer.story.foundation/ipa/${response.ipId}`
+  );
 }
 ```
 
@@ -648,16 +669,16 @@ export async function registerIp(inference) {
 Now that we have completed our `registerIp` function, let's add it to our `inference.ts` file:
 
 ```typescript inference.ts
-import { finetuneInference } from './flux/finetuneInference'
-import { getInference } from './flux/getInference'
-import { registerIp } from './story/registerIp'
+import { finetuneInference } from "./flux/finetuneInference";
+import { getInference } from "./flux/getInference";
+import { registerIp } from "./story/registerIp";
 
-const FINETUNE_ID = '';
-const PROMPT = "A picture of Ippy being really happy."
+const FINETUNE_ID = "";
+const PROMPT = "A picture of Ippy being really happy.";
 
 async function main() {
   const inference = await finetuneInference(FINETUNE_ID, PROMPT);
-  
+
   let inferenceData = await getInference(inference.id);
   while (inferenceData.status != "Ready") {
     console.log("Waiting for inference to complete...");
@@ -666,7 +687,7 @@ async function main() {
   }
   // now the inference data is ready
   console.log(inferenceData);
-  
+
   // add the function here
   await registerIp(inferenceData);
 }
@@ -682,7 +703,6 @@ main();
     href="https://github.com/jacob-tucker/finetune-story-flux"
     icon="thumbs-up"
     iconType="solid"
-    target="_blank"
   >
     View the completed code for this tutorial.
   </Card>

@@ -3,8 +3,8 @@ title: How to Tip an IP
 description: Learn how to tip an IP Asset using the SDK and Smart Contracts.
 ---
 
-* [Use the SDK](#using-the-sdk)
-* [Use a Smart Contract](#using-a-smart-contract)
+- [Use the SDK](#using-the-sdk)
+- [Use a Smart Contract](#using-a-smart-contract)
 
 # Using the SDK
 
@@ -14,9 +14,9 @@ description: Learn how to tip an IP Asset using the SDK and Smart Contracts.
     href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercial.ts"
     icon="thumbs-up"
     iconType="solid"
-    target="_blank"
   >
-    See a completed, working example of setting up a simple derivative chain and then tipping the child IP Asset.
+    See a completed, working example of setting up a simple derivative chain and
+    then tipping the child IP Asset.
   </Card>
 </CardGroup>
 
@@ -28,8 +28,8 @@ In this scenario, let's say there is a parent IP Asset that represents Mickey Mo
 
 For the purposes of this example, we will assume the child is already registered as a derivative IP Asset. If you want help learning this, check out [Register a Derivative](/developers/typescript-sdk/register-a-derivative).
 
-* Parent IP ID: `0x42595dA29B541770D9F9f298a014bF912655E183`
-* Child IP ID: `0xeaa4Eed346373805B377F5a4fe1daeFeFB3D182a`
+- Parent IP ID: `0x42595dA29B541770D9F9f298a014bF912655E183`
+- Child IP ID: `0xeaa4Eed346373805B377F5a4fe1daeFeFB3D182a`
 
 ## 0. Before you Start
 
@@ -58,22 +58,22 @@ npm install @story-protocol/core-sdk viem
 
 In a `utils.ts` file, add the following code to set up your Story Config:
 
-* Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/typescript-sdk-setup)
+- Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/typescript-sdk-setup)
 
 ```typescript utils.ts
-import { StoryClient, StoryConfig } from '@story-protocol/core-sdk'
-import { http } from 'viem'
-import { privateKeyToAccount, Address, Account } from 'viem/accounts'
+import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
+import { http } from "viem";
+import { privateKeyToAccount, Address, Account } from "viem/accounts";
 
-const privateKey: Address = `0x${process.env.WALLET_PRIVATE_KEY}`
-export const account: Account = privateKeyToAccount(privateKey)
+const privateKey: Address = `0x${process.env.WALLET_PRIVATE_KEY}`;
+export const account: Account = privateKeyToAccount(privateKey);
 
-const config: StoryConfig = {  
-  account: account,  
-  transport: http(process.env.RPC_PROVIDER_URL),  
-  chainId: 'aeneid',  
-}  
-export const client = StoryClient.newClient(config)
+const config: StoryConfig = {
+  account: account,
+  transport: http(process.env.RPC_PROVIDER_URL),
+  chainId: "aeneid",
+};
+export const client = StoryClient.newClient(config);
 ```
 
 ## 2. Tipping the Derivative IP Asset
@@ -86,6 +86,7 @@ You will be paying the IP Asset with [$WIP](https://aeneid.storyscan.xyz/address
 **Whitelisted Revenue Tokens**
 
 Only tokens that are whitelisted by our protocol can be used as payment ("revenue") tokens. $WIP is one of those tokens. To see that list, go [here](/developers/deployed-smart-contracts).
+
 </Note>
 
 Now we can call the `payRoyaltyOnBehalf` function. In this case:
@@ -96,19 +97,19 @@ Now we can call the `payRoyaltyOnBehalf` function. In this case:
 4. `amount` is 2, since the person tipping wants to send 2 $WIP
 
 ```typescript main.ts
-import { client } from './utils'
-import { zeroAddress } from 'viem'
-import { WIP_TOKEN_ADDRESS } from '@story-protocol/core-sdk'
+import { client } from "./utils";
+import { zeroAddress } from "viem";
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
 
 async function main() {
-   const response = await client.royalty.payRoyaltyOnBehalf({
-    receiverIpId: '0xeaa4Eed346373805B377F5a4fe1daeFeFB3D182a',
+  const response = await client.royalty.payRoyaltyOnBehalf({
+    receiverIpId: "0xeaa4Eed346373805B377F5a4fe1daeFeFB3D182a",
     payerIpId: zeroAddress,
     token: WIP_TOKEN_ADDRESS,
     amount: 2,
     txOptions: { waitForTransaction: true },
-  })
-  console.log(`Paid royalty at transaction hash ${response.txHash}`) 
+  });
+  console.log(`Paid royalty at transaction hash ${response.txHash}`);
 }
 
 main();
@@ -122,24 +123,24 @@ The child has been paid 2 $WIP. But remember, it shares 50% of its revenue with 
 
 The child IP can claim its 1 $WIP by calling the `claimAllRevenue` function:
 
-* `ancestorIpId` is the `ipId` of the IP Asset thats associated with the royalty vault that has the funds in it (more simply, this is just the child's `ipId`)
-* `currencyTokens` is an array that contains the address of $WIP, which can be found [here](/developers/ip-royalty-vault#whitelisted-revenue-tokens)
-* `claimer` is the address that holds the royalty tokens associated with the child's [IP Royalty Vault](/developers/ip-royalty-vault). By default, they are in the IP Account, which is just the `ipId` of the child asset
+- `ancestorIpId` is the `ipId` of the IP Asset thats associated with the royalty vault that has the funds in it (more simply, this is just the child's `ipId`)
+- `currencyTokens` is an array that contains the address of $WIP, which can be found [here](/developers/ip-royalty-vault#whitelisted-revenue-tokens)
+- `claimer` is the address that holds the royalty tokens associated with the child's [IP Royalty Vault](/developers/ip-royalty-vault). By default, they are in the IP Account, which is just the `ipId` of the child asset
 
 ```typescript main.ts
-import { client } from './utils'
-import { zeroAddress } from 'viem'
-import { WIP_TOKEN_ADDRESS } from '@story-protocol/core-sdk'
+import { client } from "./utils";
+import { zeroAddress } from "viem";
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
 
 async function main() {
   // previous code here ...
   const response = await client.royalty.claimAllRevenue({
-    ancestorIpId: '0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2',
-    claimer: '0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2',
+    ancestorIpId: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
+    claimer: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
     currencyTokens: [WIP_TOKEN_ADDRESS],
     childIpIds: [],
-    royaltyPolicies: []
-  })
+    royaltyPolicies: [],
+  });
 
   console.log(`Claimed revenue: ${response.claimedTokens}`);
 }
@@ -160,21 +161,21 @@ We will use the `claimAllRevenue` function to claim the due revenue tokens.
 5. `currencyTokens` is an array that contains the address of $WIP, which can be found [here](/developers/ip-royalty-vault#whitelisted-revenue-tokens)
 
 ```typescript main.ts
-import { client } from './utils'
-import { zeroAddress } from 'viem'
-import { WIP_TOKEN_ADDRESS } from '@story-protocol/core-sdk'
+import { client } from "./utils";
+import { zeroAddress } from "viem";
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
 
 async function main() {
   // previous code here ...
 
   const response = await client.royalty.claimAllRevenue({
-    ancestorIpId: '0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384',
-    claimer: '0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384',
+    ancestorIpId: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    claimer: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
     currencyTokens: [WIP_TOKEN_ADDRESS],
-    childIpIds: ['0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2'],
-    royaltyPolicies: ['0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E']
-  })
-  
+    childIpIds: ["0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2"],
+    royaltyPolicies: ["0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E"],
+  });
+
   console.log(`Claimed revenue: ${response.claimedTokens}`);
 }
 
@@ -189,9 +190,9 @@ main();
     href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercial.ts"
     icon="thumbs-up"
     iconType="solid"
-    target="_blank"
   >
-    See a completed, working example of setting up a simple derivative chain and then tipping the child IP Asset.
+    See a completed, working example of setting up a simple derivative chain and
+    then tipping the child IP Asset.
   </Card>
 </CardGroup>
 

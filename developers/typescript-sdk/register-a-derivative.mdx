@@ -9,7 +9,6 @@ description: Learn how to register a derivative/remix IP Asset as a child of ano
     href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercialSpg.ts"
     icon="thumbs-up"
     iconType="solid"
-    target="_blank"
   >
     All of this page is covered in this working code example.
   </Card>
@@ -31,27 +30,28 @@ There are a lot of ways to register an IP Asset as a derivative of another. Belo
 **Have no idea?**
 
 It is best to figure out which SDK function to use based on what is easiest for you. But if you have no idea, simply continue to the next section.
+
 </Note>
 
 Do you already have a [License Token](/developers/license-token) you can use?
 
-* ✅ Yes: Is the derivative IP Asset already registered?
-  * ✅ Yes: Use [registerDerivativeWithLicenseTokens](https://docs.story.foundation/docs/sdk-ipasset#registerderivativewithlicensetokens)
-  * ❌ No: Do you have your own NFT contract, or an already minted NFT?
-    * ✅ Yes: Use [registerIpAndMakeDerivativeWithLicenseTokens](https://docs.story.foundation/docs/sdk-ipasset#registeripandmakederivativewithlicensetokens)
-    * ❌ No: Use [mintAndRegisterIpAndMakeDerivativeWithLicenseTokens](https://docs.story.foundation/docs/sdk-ipasset#mintandregisteripandmakederivativewithlicensetokens)
-* ❌ No: Is the derivative IP Asset already registered?
-  * ✅ Yes: Use [registerDerivative](https://docs.story.foundation/docs/sdk-ipasset#registerderivative)
-  * ❌ No: Do you have your own NFT contract, or an already minted NFT?
-    * ✅ Yes: Use [registerDerivativeIp](https://docs.story.foundation/docs/sdk-ipasset#registerderivativeip)
-    * ❌ No: Use [mintAndRegisterIpAndMakeDerivative](https://docs.story.foundation/docs/sdk-ipasset#mintandregisteripandmakederivative)
+- ✅ Yes: Is the derivative IP Asset already registered?
+  - ✅ Yes: Use [registerDerivativeWithLicenseTokens](https://docs.story.foundation/docs/sdk-ipasset#registerderivativewithlicensetokens)
+  - ❌ No: Do you have your own NFT contract, or an already minted NFT?
+    - ✅ Yes: Use [registerIpAndMakeDerivativeWithLicenseTokens](https://docs.story.foundation/docs/sdk-ipasset#registeripandmakederivativewithlicensetokens)
+    - ❌ No: Use [mintAndRegisterIpAndMakeDerivativeWithLicenseTokens](https://docs.story.foundation/docs/sdk-ipasset#mintandregisteripandmakederivativewithlicensetokens)
+- ❌ No: Is the derivative IP Asset already registered?
+  - ✅ Yes: Use [registerDerivative](https://docs.story.foundation/docs/sdk-ipasset#registerderivative)
+  - ❌ No: Do you have your own NFT contract, or an already minted NFT?
+    - ✅ Yes: Use [registerDerivativeIp](https://docs.story.foundation/docs/sdk-ipasset#registerderivativeip)
+    - ❌ No: Use [mintAndRegisterIpAndMakeDerivative](https://docs.story.foundation/docs/sdk-ipasset#mintandregisteripandmakederivative)
 
 ### 1a. Why would I ever use a License Token if it's not needed?
 
 There are a few times when **you would need** a License Token to register a derivative:
 
-* The License Token contains private license terms, so you would only be able to register as a derivative if you had the License Token that was manually minted by the owner. More on that [here](https://docs.story.foundation/docs/license-token#private-licenses).
-* The License Token (which is an NFT) costs a `mintingFee` to mint, and you were able to buy it on a marketplace for a cheaper price. Then it makes more sense to simply register with the License Token then have to pay the more expensive `defaultMintingFee`.
+- The License Token contains private license terms, so you would only be able to register as a derivative if you had the License Token that was manually minted by the owner. More on that [here](https://docs.story.foundation/docs/license-token#private-licenses).
+- The License Token (which is an NFT) costs a `mintingFee` to mint, and you were able to buy it on a marketplace for a cheaper price. Then it makes more sense to simply register with the License Token then have to pay the more expensive `defaultMintingFee`.
 
 ## 2. Register Derivative
 
@@ -59,6 +59,7 @@ There are a few times when **you would need** a License Token to register a deri
 **This is just an example**
 
 You are encouraged to figure out the best derivative function to use based on the survey above. However, if you don't know and want to be walked through one solution, this next part is for you.
+
 </Note>
 
 We're going to assume you have ❌ no license tokens, ❌ the derivative IP is not yet registered, and ❌ you don't have your own NFT contract or an already minted NFT.
@@ -77,20 +78,20 @@ Now we can call the function like so:
 > Associated Docs: [ipAsset.mintAndRegisterIpAndMakeDerivative](https://docs.story.foundation/docs/sdk-ipasset#mintandregisteripandmakederivative)
 
 ```typescript main.ts
-import { IpMetadata, DerivativeData } from '@story-protocol/core-sdk'
-import { client } from './utils'
-import { uploadJSONToIPFS } from './uploadToIpfs'
-import { createHash } from 'crypto'
-import { Address } from 'viem'
+import { IpMetadata, DerivativeData } from "@story-protocol/core-sdk";
+import { client } from "./utils";
+import { uploadJSONToIPFS } from "./uploadToIpfs";
+import { createHash } from "crypto";
+import { Address } from "viem";
 
 async function main() {
   // previous code here ...
-  
+
   const derivData: DerivativeData = {
     // TODO: insert the parent's ipId
     parentIpIds: [PARENT_IP_ID],
     // TODO: insert the licenseTermsId attached to parent IpId
-    licenseTermsIds: [LICENSE_TERMS_ID]
+    licenseTermsIds: [LICENSE_TERMS_ID],
   };
 
   const response = await client.ipAsset.mintAndRegisterIpAndMakeDerivative({
@@ -103,10 +104,12 @@ async function main() {
       nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsHash}`,
       nftMetadataHash: `0x${nftHash}`,
     },
-    txOptions: { waitForTransaction: true }
+    txOptions: { waitForTransaction: true },
   });
 
-  console.log(`Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}, Token ID: ${response.tokenId}`);
+  console.log(
+    `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}, Token ID: ${response.tokenId}`
+  );
 }
 ```
 
@@ -120,7 +123,6 @@ Congratulations, you registered a derivative IP Asset!
     href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercialSpg.ts"
     icon="thumbs-up"
     iconType="solid"
-    target="_blank"
   >
     All of this page is covered in this working code example.
   </Card>

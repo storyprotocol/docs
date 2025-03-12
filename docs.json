@@ -31,6 +31,69 @@
             ]
           },
           {
+            "group": "Story Network",
+            "pages": [
+              "network/overview",
+              {
+                "group": "Node Architecture",
+                "icon": "excavator",
+                "pages": [
+                  "network/node-architecture/overview",
+                  "network/node-architecture/engine-api",
+                  {
+                    "group": "Cosmos Modules",
+                    "pages": [
+                      "network/node-architecture/cosmos-modules/cosmos-module-overview",
+                      "network/node-architecture/cosmos-modules/evmengine-module",
+                      "network/node-architecture/cosmos-modules/evmstaking-module",
+                      "network/node-architecture/cosmos-modules/mint-module",
+                      "network/node-architecture/cosmos-modules/staking-module"
+                    ]
+                  },
+                  "network/node-architecture/precompile"
+                ]
+              },
+              {
+                "group": "Network Information",
+                "icon": "globe",
+                "pages": [
+                  "network/network-info/overview",
+                  "network/network-info/mainnet",
+                  "network/network-info/aeneid",
+                  "network/network-info/localnet"
+                ]
+              },
+              {
+                "group": "Operating a Node",
+                "icon": "computer",
+                "pages": [
+                  "network/operating-a-node/node-setup-mainnet",
+                  "network/operating-a-node/operate-your-node",
+                  "network/operating-a-node/node-upgrade",
+                  "network/operating-a-node/release-notes"
+                ]
+              },
+              "network/become-a-validator",
+              "network/tokenomics-staking",
+              "network/infrastructure-partners",
+              {
+                "group": "Additional Resources",
+                "icon": "book",
+                "pages": [
+                  "network/more/additional-resources",
+                  "network/more/network-faq",
+                  {
+                    "group": "Oracles",
+                    "pages": [
+                      "network/more/oracle/gelato",
+                      "network/more/oracle/pyth"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "group": "Protocol Concepts",
             "pages": [
               "concepts/overview",
@@ -151,11 +214,11 @@
               "developers/tutorials/finetune-images",
               "developers/tutorials/protect-dalle-ai-generated-images",
               "developers/tutorials/register-stability-images",
-              "developers/tutorials/training-data",
               "developers/tutorials/how-to-register-ip-on-story",
               "developers/tutorials/how-to-register-music-on-story",
               "developers/tutorials/how-to-tip-an-ip",
-              "developers/tutorials/case-study-register-derivative-ippy"
+              "developers/tutorials/case-study-register-derivative-ippy",
+              "developers/tutorials/privy-tutorial"
             ]
           },
           {

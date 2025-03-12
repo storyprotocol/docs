@@ -8,7 +8,6 @@ description: Learn how to pay an IP Asset and claim revenue in Solidity.
   href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/5_Royalty.t.sol"
   icon="thumbs-up"
   iconType="solid"
-  target="_blank"
 >
   Follow the completed code all the way through.
 </Card>
@@ -54,6 +53,7 @@ This will send 10 $MERC20 to the `childIpId`'s [IP Royalty Vault](/concepts/roya
 **Important: Approving the Royalty Module**
 
 Before you call `payRoyaltyOnBehalf`, you have to approve the royalty module to spend the tokens for you. In the section below, you will see that we call `MERC20.approve(address(ROYALTY_MODULE), 10);` or else it will not work.
+
 </Warning>
 
 ## Claim Revenue
@@ -68,6 +68,7 @@ Let's create a test file under `test/5_Royalty.t.sol` to see it work and verify 
 **Contract Addresses**
 
 We have filled in the addresses from the Story contracts for you. However you can also find the addresses for them here: [Deployed Smart Contracts](/developers/deployed-smart-contracts)
+
 </Note>
 
 ```solidity
@@ -234,13 +235,10 @@ Congratulations, you claimed revenue using the [Royalty Module](/concepts/royalt
   href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/5_Royalty.t.sol"
   icon="thumbs-up"
   iconType="solid"
-  target="_blank"
 >
   Follow the completed code all the way through.
 </Card>
 
 Now what happens if an IP Asset doesn't pay their due share? We can dispute the IP on-chain, which we will cover on the next page.
 
-<Warning>
-Coming soon!
-</Warning>
+<Warning>Coming soon!</Warning>

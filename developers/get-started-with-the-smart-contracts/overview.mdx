@@ -13,9 +13,10 @@ In this section, we will briefly go over the protocol contracts and then guide y
   href="https://github.com/storyprotocol/story-protocol-boilerplate"
   icon="thumbs-up"
   iconType="solid"
-  target="_blank"
 >
-  Skip the tutorial and view the completed code. Follow the README instructions to run the tests, or go to the `/test` folder to view all of the example contracts.
+  Skip the tutorial and view the completed code. Follow the README instructions
+  to run the tests, or go to the `/test` folder to view all of the example
+  contracts.
 </Card>
 
 **If you want to set things up from scratch**, then continue with the following tutorials, starting with the [Setup Your Own Project](/developers/get-started-with-the-smart-contracts/sc-setup) step.
@@ -24,13 +25,14 @@ In this section, we will briefly go over the protocol contracts and then guide y
 
 As of the current version, our Proof-of-Creativity Protocol is compatible with all EVM chains and is written as a set of Smart Contracts in Solidity. There are two repositories that you may interact with as a developer:
 
-* [Story Protocol Core](https://github.com/storyprotocol/protocol-core-v1) - This repository contains the core protocol logic, consisting of a thin IP registry (the [IP Asset Registry](/concepts/registry/ip-asset-registry)), a set of [Modules](/concepts/modules/overview) defining logic around [Licensing](/concepts/licensing-module/overview), [Royalty](/concepts/royalty-module/overview), [Dispute](/concepts/dispute-module/overview), metadata, and a module manager for administering module and user access control.
-* [Story Protocol Periphery](https://github.com/storyprotocol/protocol-periphery-v1)- Whereas the core contracts deal with the underlying protocol logic, the periphery contracts deal with protocol extensions that greatly increase UX and simplify IPA management. This is mostly handled through the [SPG](/concepts/spg/overview).
+- [Story Protocol Core](https://github.com/storyprotocol/protocol-core-v1) - This repository contains the core protocol logic, consisting of a thin IP registry (the [IP Asset Registry](/concepts/registry/ip-asset-registry)), a set of [Modules](/concepts/modules/overview) defining logic around [Licensing](/concepts/licensing-module/overview), [Royalty](/concepts/royalty-module/overview), [Dispute](/concepts/dispute-module/overview), metadata, and a module manager for administering module and user access control.
+- [Story Protocol Periphery](https://github.com/storyprotocol/protocol-periphery-v1)- Whereas the core contracts deal with the underlying protocol logic, the periphery contracts deal with protocol extensions that greatly increase UX and simplify IPA management. This is mostly handled through the [SPG](/concepts/spg/overview).
 
 ## Deploy & Verify Contracts on Story
 
 <Note>
-The approach to deploy & verify contracts comes from the [Blockscout official documentation](https://docs.blockscout.com/developer-support/verifying-a-smart-contract/foundry-verification).
+  The approach to deploy & verify contracts comes from the [Blockscout official
+  documentation](https://docs.blockscout.com/developer-support/verifying-a-smart-contract/foundry-verification).
 </Note>
 
 Verify a contract with Blockscout right after deployment (make sure you add "/api/" to the end of the Blockscout homepage explorer URL):

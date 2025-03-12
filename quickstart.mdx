@@ -37,7 +37,6 @@ Enable Story's mainnet or testnet for your wallet.
     title="Add Story Mainnet"
     icon="globe"
     href="https://chainid.network/chain/1514/"
-    target="_blank"
   >
     Connect your wallet to Story's mainnet.
   </Card>
@@ -45,7 +44,6 @@ Enable Story's mainnet or testnet for your wallet.
     title="Add Story 'Aeneid' Testnet"
     icon="globe"
     href="https://chainid.network/chain/1315/"
-    target="_blank"
   >
     Connect your wallet to Story's 'Aeneid' testnet.
   </Card>
@@ -53,21 +51,27 @@ Enable Story's mainnet or testnet for your wallet.
 
 ## Skip everything. Go to the code.
 
-<CardGroup cols={2}>
+<CardGroup cols={3}>
   <Card
     title="TypeScript Code Example"
-    icon="user"
+    icon="screwdriver-wrench"
     href="https://github.com/storyprotocol/typescript-tutorial/tree/main"
-    target="_blank"
+  >
+    This is a clone-able quickstart for you to check out. You can clone it
+    directly and follow the associated README.
+  </Card>
+  <Card
+    title="React Code Example"
+    icon="react"
+    href="https://github.com/jacob-tucker/story-developer-sandbox"
   >
     This is a clone-able quickstart for you to check out. You can clone it
     directly and follow the associated README.
   </Card>
   <Card
     title="Smart Contract Code Example"
-    icon="user"
+    icon="scroll"
     href="https://github.com/storyprotocol/story-protocol-boilerplate"
-    target="_blank"
   >
     This is a boilerplate for you to check out. You can clone it directly, study
     the example smart contracts, and follow the associated README for running
@@ -77,24 +81,24 @@ Enable Story's mainnet or testnet for your wallet.
 
 ## Story Network Infra
 
-See [Network Info](doc:network-info) for all RPC, explorer, and faucet info.
+See [Network Info](/network/network-info/overview) for all RPC, explorer, and faucet info.
 
 ## Use our SDKs
 
-Check out the entire [SDK Reference](doc:sdk-overview) to see an explanation + example for every function in our 🛠️ **TypeScript SDK** (can use this in React as well) and 🐍 **Python SDK**.
+Check out the entire [SDK Reference](/sdk-reference) to see an explanation + example for every function in our :hammer_and_wrench: **TypeScript SDK** (can use this in React as well) and :snake: **Python SDK**.
 
-We have also built a [🛠️ TypeScript SDK Guide](doc:typescript-sdk), which is more of a step-by-step walkthrough, with its own in-depth tutorials for popular functions and use cases.
+We have also built a [🛠️ TypeScript SDK Guide](/developers/typescript-sdk), which is more of a step-by-step walkthrough, with its own in-depth tutorials for popular functions and use cases.
 
 ## Deployed Smart Contracts
 
-Check out the addresses for the deployed smart contracts [here](doc:deployed-smart-contracts). Note that there are two different kinds of contracts:
+Check out the addresses for the deployed smart contracts [here](/developers/deployed-smart-contracts). Note that there are two different kinds of contracts:
 
-- [Story Protocol Core](https://github.com/storyprotocol/protocol-core-v1) - This repository contains the core protocol logic, consisting of a thin IP registry (the [IP Asset Registry](doc:ip-asset-registry)), a set of [🧱 Modules](doc:story-modules) defining logic around [📜 Licensing](doc:licensing-module), [💸 Royalty](doc:royalty-module), [❌ Dispute](doc:dispute-module), metadata, and a module manager for administering module and user access control.
-- [Story Protocol Periphery](https://github.com/storyprotocol/protocol-periphery-v1)- Whereas the core contracts deal with the underlying protocol logic, the periphery contracts deal with protocol extensions that greatly increase UX and simplify IPA management. This is mostly handled through the [📦 SPG](doc:spg).
+- [Story Protocol Core](https://github.com/storyprotocol/protocol-core-v1) - This repository contains the core protocol logic, consisting of a thin IP registry (the [IP Asset Registry](/concepts/ip-asset-registry)), a set of [🧱 Modules](/concepts/modules) defining logic around [📜 Licensing](/concepts/licensing-module), [💸 Royalty](/concepts/royalty-module), [❌ Dispute](/concepts/dispute-module), metadata, and a module manager for administering module and user access control.
+- [Story Protocol Periphery](https://github.com/storyprotocol/protocol-periphery-v1)- Whereas the core contracts deal with the underlying protocol logic, the periphery contracts deal with protocol extensions that greatly increase UX and simplify IPA management. This is mostly handled through the [📦 SPG](/concepts/spg).
 
 ## Use our API
 
-Check out the entire [API Reference](https://docs.story.foundation/reference/api-introduction) for learning how to use our API. For common things like fetching gas price, average block time, market cap, token price, and more, check out the [Blockscout API](doc:blockscout-api).
+Check out the entire [API Reference](/api-reference/introduction) for learning how to use our API. For common things like fetching gas price, average block time, market cap, token price, and more, check out the [Blockscout API](doc:blockscout-api).
 
 ## Register IP on Story
 
@@ -102,10 +106,10 @@ Let's start with the most basic question: _"What does it take to register IP on 
 
 To register IP on Story, you'll first need an NFT. If your IP is an ERC-721 NFT (ex. an Azuki or Pudgy Penguin on Story), you're already set. If not, you must mint an NFT to represent your off-chain IP. And don't worry, we'll help you do this in the following tutorials.
 
-Next you'd register that NFT on Story, ultimately creating an [🧩 IP Asset](doc:ip-asset). An "IP Asset" is your IP registered on Story, empowered by:
+Next you'd register that NFT on Story, ultimately creating an [🧩 IP Asset](/concepts/ip-asset). An "IP Asset" is your IP registered on Story, empowered by:
 
-- all of Story's [🧱 Modules](doc:story-modules) like transparent licensing, automatic royalty payments, and disputing of wrongfully registered IP
-- IP protection through the [💊 Programmable IP License (PIL)](doc:programmable-ip-license)
+- all of Story's [🧱 Modules](/concepts/modules) like transparent licensing, automatic royalty payments, and disputing of wrongfully registered IP
+- IP protection through the [💊 Programmable IP License (PIL)](/concepts/programmable-ip-license)
 
 Follow the below tutorials to register IP on Story:
 
@@ -114,7 +118,6 @@ Follow the below tutorials to register IP on Story:
     title="Using the SDK"
     icon="thumbs-up"
     href="https://docs.story.foundation/docs/register-an-ip-asset"
-    target="_blank"
   >
     Learn how to register IP on Story using the TypeScript SDK.
   </Card>
@@ -122,7 +125,6 @@ Follow the below tutorials to register IP on Story:
     title="Using the Smart Contracts"
     icon="thumbs-up"
     href="https://docs.story.foundation/docs/sc-register-an-ip-asset"
-    target="_blank"
   >
     Learn how to register IP on Story using the Smart Contracts.
   </Card>
@@ -138,7 +140,7 @@ To answer that question, please see [NFT vs. IP Metadata](https://docs.story.fou
 
 You may be wondering, _"How do I take advantage of Story's on-chain licensing? How do I make sure my registered IP has a license ready to go?"_
 
-Before you attach any sort of licenses or license terms to your [🧩 IP Asset](doc:ip-asset), it would be best to first understand what the [💊 Programmable IP License (PIL)](doc:programmable-ip-license) actually is. This "PIL" is what defines the available [License Terms](doc:license-terms) on Story, which in turn - when attached to an IP Asset - is what defines how others can use (commercially, create derivatives, etc) that IP Asset.
+Before you attach any sort of licenses or license terms to your [🧩 IP Asset](/concepts/ip-asset), it would be best to first understand what the [💊 Programmable IP License (PIL)](/concepts/programmable-ip-license) actually is. This "PIL" is what defines the available [License Terms](/concepts/licensing-module/license-terms) on Story, which in turn - when attached to an IP Asset - is what defines how others can use (commercially, create derivatives, etc) that IP Asset.
 
 Our tutorials will show you exactly how to attach license terms to your IP Asset:
 
@@ -147,7 +149,6 @@ Our tutorials will show you exactly how to attach license terms to your IP Asset
     title="Using the SDK"
     icon="thumbs-up"
     href="https://docs.story.foundation/docs/attach-terms-to-an-ip-asset"
-    target="_blank"
   >
     Learn how to attach license terms to your IP on Story using the TypeScript
     SDK.
@@ -156,7 +157,6 @@ Our tutorials will show you exactly how to attach license terms to your IP Asset
     title="Using the Smart Contracts"
     icon="thumbs-up"
     href="https://docs.story.foundation/docs/sc-attach-license-terms"
-    target="_blank"
   >
     Learn how to attach license terms to your IP on Story using the Smart
     Contracts.
@@ -166,7 +166,7 @@ Our tutorials will show you exactly how to attach license terms to your IP Asset
 <Note>
 Learn More
 
-For more information on licensing and the terminology behind it, check out the [📜 Licensing Module](doc:licensing-module).
+For more information on licensing and the terminology behind it, check out the [📜 Licensing Module](/concepts/licensing-module).
 
 </Note>
 
@@ -174,9 +174,9 @@ For more information on licensing and the terminology behind it, check out the [
 
 Now you may be wondering, _"How do I set up automatic royalty sharing between my IP Asset and someone else's? How do I then collect that payment?"_
 
-When you attach [License Terms](doc:license-terms) to your [🧩 IP Asset](doc:ip-asset), you can specify certain commercial terms such as `commercialRevShare`, which is the amount of revenue (from any source, original & derivative) that must be shared by derivative works with the original IP. See the above section for licensing questions.
+When you attach [License Terms](/concepts/licensing-module/license-terms) to your [🧩 IP Asset](/concepts/ip-asset), you can specify certain commercial terms such as `commercialRevShare`, which is the amount of revenue (from any source, original & derivative) that must be shared by derivative works with the original IP. See the above section for licensing questions.
 
-If someone then creates a derivative of my IP Asset - which has a `commercialRevShare` of let's say 10% in its license terms - and earns revenue on it, Story enforces the share of this revenue through the [💊 Programmable IP License (PIL)](doc:programmable-ip-license) (otherwise resulting in an on-chain dispute using the [❌ Dispute Module](doc:dispute-module) or traditional legal arbitration) and then handles the upstream revenue share at the protocol level. If the derivative work earns 100 \$WIP, my original IP Asset could claim 10 \$WIP.
+If someone then creates a derivative of my IP Asset - which has a `commercialRevShare` of let's say 10% in its license terms - and earns revenue on it, Story enforces the share of this revenue through the [💊 Programmable IP License (PIL)](/concepts/programmable-ip-license) (otherwise resulting in an on-chain dispute using the [❌ Dispute Module](/concepts/dispute-module) or traditional legal arbitration) and then handles the upstream revenue share at the protocol level. If the derivative work earns 100 \$WIP, my original IP Asset could claim 10 \$WIP.
 
 Our tutorials will show you exactly how to claim revenue:
 
@@ -185,7 +185,6 @@ Our tutorials will show you exactly how to claim revenue:
     title="Using the SDK"
     icon="thumbs-up"
     href="https://docs.story.foundation/docs/claim-revenue"
-    target="_blank"
   >
     Learn how to claim revenue on Story using the TypeScript SDK.
   </Card>
@@ -193,7 +192,6 @@ Our tutorials will show you exactly how to claim revenue:
     title="Using the Smart Contracts"
     icon="thumbs-up"
     href="https://docs.story.foundation/docs/sc-claiming-royalty"
-    target="_blank"
   >
     Learn how to claim revenue on Story using the Smart Contracts.
   </Card>
@@ -202,7 +200,7 @@ Our tutorials will show you exactly how to claim revenue:
 <Note>
 Learn More
 
-For more information on royalty and how it functions, check out the [Royalty Module](doc:royalty-module).
+For more information on royalty and how it functions, check out the [Royalty Module](/concepts/royalty-module).
 
 </Note>
 
@@ -212,11 +210,11 @@ Now you may be wondering, _"How can I actually dispute someone else's IP if they
 
 There are two main philosophies/ways to take down "bad" IP.
 
-The first is the [🕵️ Story Attestation Service](doc:story-attestation-service). This compromises of a bunch of infringement detection providers that, upon IP registration, automatically review the IP - using their own methods, whether it's AI, manual checking, etc - and flag it if the IP is infringing (ex. registering a picture of Pikachu). Then, any IP discovery platform like the [IP Portal](https://portal.story.foundation) can surface the reviews and let users decide if they want to use an IP or not.
+The first is the [🕵️ Story Attestation Service](/concepts/story-attestation-service). This compromises of a bunch of infringement detection providers that, upon IP registration, automatically review the IP - using their own methods, whether it's AI, manual checking, etc - and flag it if the IP is infringing (ex. registering a picture of Pikachu). Then, any IP discovery platform like the [IP Portal](https://portal.story.foundation) can surface the reviews and let users decide if they want to use an IP or not.
 
 _For example, an IP that has hundreds of flags from different infringement providers probably isn't a legitimate IP._
 
-The second is using the [❌ Dispute Module](doc:dispute-module) to officially tag & block IP at the protocol level. Anyone can flag an IP and it will be sent off to arbitration partners like [UMA](https://uma.xyz) who will decide its fate. If officially tagged, an IP can no longer earn revenue or create derivatives via the protocol.
+The second is using the [❌ Dispute Module](/concepts/dispute-module) to officially tag & block IP at the protocol level. Anyone can flag an IP and it will be sent off to arbitration partners like [UMA](https://uma.xyz) who will decide its fate. If officially tagged, an IP can no longer earn revenue or create derivatives via the protocol.
 
 _For example, if someone doesn't make a proper payment for using an IP commercially, or uses it in a disallowed territory, or contains NSFW content._
 
@@ -235,6 +233,6 @@ Our tutorials will show you exactly how to raise a dispute on-chain:
 <Note>
 Learn More
 
-For more information on filing a dispute on-chain, check out the [❌ Dispute Module](doc:dispute-module).
+For more information on filing a dispute on-chain, check out the [❌ Dispute Module](/concepts/dispute-module).
 
 </Note>

@@ -9,7 +9,6 @@ description: Learn how to claim due revenue from a child IP Asset in TypeScript.
     href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercialSpg.ts"
     icon="thumbs-up"
     iconType="solid"
-    target="_blank"
   >
     All of this page is covered in this working code example.
   </Card>
@@ -40,6 +39,7 @@ The IP Account (the smart contract that represents the [IP Asset](/developers/ip
 **Quick Note**
 
 The below scenarios and examples use a [Liquid Absolute Percentage](/developers/liquid-absolute-percentage) royalty policy. This is currently one of two royalty policies you can use.
+
 </Note>
 
 ## Scenario #1
@@ -49,6 +49,7 @@ In this scenario, I own IP Asset 3. Someone pays my IP Asset 3 directly, and I c
 1. As we can see in the below diagram, when IP Asset 4 (it doesn't have to be an IP Asset, it can be any address) pays IP Asset 3 1M $WIP, 850k $WIP automatically gets deposited into IP Royalty Vault 3.
 
    ![Payment flow to IP Royalty Vault](https://files.readme.io/54679e73c133053f6865da8f6587abf4090dc9edf7d87ff792fcb93cbe1f9b37-image.png)
+
 2. Now, IP Asset 3 wants to claim its revenue sitting in the IP Royalty Vault 3. It will look like this:
 
    ![Claiming revenue from IP Royalty Vault](https://files.readme.io/f5440ff2335b19874eda6607dbdf631045f9f9a0ce45e39f6d5cccf31f73dc51-image.png)
@@ -58,31 +59,31 @@ Below is how IP Asset 3 would claim their revenue, as shown in the image above, 
 > Associated Docs: [royalty.claimAllRevenue](https://docs.story.foundation/docs/sdk-royalty#claimallrevenue)
 
 ```typescript main.ts
-import { WIP_TOKEN_ADDRESS } from '@story-protocol/core-sdk'
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
 // you should already have a client set up (prerequisite)
-import { client } from './client'
+import { client } from "./client";
 
 async function main() {
   const claimRevenue = await client.royalty.claimAllRevenue({
     // IP Asset 3's ipId
-    ancestorIpId: '0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2',
+    ancestorIpId: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
     // whoever owns the royalty tokens associated with IP Royalty Vault 3
     // (most likely the associated ipId, which is IP Asset 3's ipId)
-    claimer: '0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2',
+    claimer: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
     currencyTokens: [WIP_TOKEN_ADDRESS],
     childIpIds: [],
     royaltyPolicies: [],
     claimOptions: {
-      // If the wallet claiming the revenue is the owner of the 
-      // IP Account/IP Asset (in other words, the owner of the 
-      // IP's underlying NFT), `claimAllRevenue` will transfer all 
-      // earnings to the user's external wallet holding the NFT 
+      // If the wallet claiming the revenue is the owner of the
+      // IP Account/IP Asset (in other words, the owner of the
+      // IP's underlying NFT), `claimAllRevenue` will transfer all
+      // earnings to the user's external wallet holding the NFT
       // instead of the IP Account, for convenience. You can disable it here.
       autoTransferAllClaimedTokensFromIp: true,
       // Unwraps the claimed $WIP to $IP for you
-      autoUnwrapIpTokens: true
-    }
-  })
+      autoUnwrapIpTokens: true,
+    },
+  });
 
   console.log(`Claimed revenue: ${claimRevenue.claimedTokens}`);
 }
@@ -97,9 +98,11 @@ In this scenario, I own IP Asset 1. Someone pays a derivative IP Asset 3, and I 
 1. As we can see in the below diagram, when IP Asset 4 (it doesn't have to be an IP Asset, it can be any address) pays IP Asset 3 1M $WIP, 150k $WIP automatically gets deposited to the LAP royalty policy contract to be distributed to ancestors.
 
    ![Revenue distribution to royalty policy contract](https://files.readme.io/26ac5c87e3e26305ac7426854991ce695922f4edc5e4594d70d40b32c62f2618-image.png)
+
 2. Then, in a second step, the tokens are transferred to the ancestors' [IP Royalty Vault](/developers/ip-royalty-vault) based on the negotiated `commercialRevShare` in the license terms.
 
    ![Revenue distribution to ancestors](https://files.readme.io/6c62982d41649c35d697e403d4f5281a73671488f260d9ca361e3a69e3d2888b-image.png)
+
 3. Lastly, IP Asset 1 & 2 want to claim their revenue sitting in their associated IP Royalty Vaults. It will look like this:
 
    ![Claiming revenue from ancestor IP Royalty Vaults](https://files.readme.io/5b4616d79ac5304abc2d1292bb3f490663b0f7e6a5b54847bcc0f727ea43d19b-image.png)
@@ -109,33 +112,33 @@ Below is how IP Asset 1 (or 2) would claim their revenue, as shown in the image 
 > Associated Docs: [royalty.claimAllRevenue](https://docs.story.foundation/docs/sdk-royalty#claimallrevenue)
 
 ```typescript main.ts
-import { WIP_TOKEN_ADDRESS } from '@story-protocol/core-sdk'
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
 // you should already have a client set up (prerequisite)
-import { client } from './client'
+import { client } from "./client";
 
 async function main() {
   const claimRevenue = await client.royalty.claimAllRevenue({
     // IP Asset 1's ipId
-    ancestorIpId: '0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384',
+    ancestorIpId: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
     // whoever owns the royalty tokens associated with IP Royalty Vault 1
     // (most likely the associated ipId, which is IP Asset 1's ipId)
-    claimer: '0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384',
+    claimer: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
     currencyTokens: [WIP_TOKEN_ADDRESS],
     // IP Asset 3's ipId
-    childIpIds: ['0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2'],
+    childIpIds: ["0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2"],
     // Aeneid testnet address of RoyaltyPolicyLAP
-    royaltyPolicies: ['0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E'],
+    royaltyPolicies: ["0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E"],
     claimOptions: {
-      // If the wallet claiming the revenue is the owner of the 
-      // IP Account/IP Asset (in other words, the owner of the 
-      // IP's underlying NFT), `claimAllRevenue` will transfer all 
-      // earnings to the user's external wallet holding the NFT 
+      // If the wallet claiming the revenue is the owner of the
+      // IP Account/IP Asset (in other words, the owner of the
+      // IP's underlying NFT), `claimAllRevenue` will transfer all
+      // earnings to the user's external wallet holding the NFT
       // instead of the IP Account, for convenience. You can disable it here.
       autoTransferAllClaimedTokensFromIp: true,
       // Unwraps the claimed $WIP to $IP for you
-      autoUnwrapIpTokens: true
-    }
-  })
+      autoUnwrapIpTokens: true,
+    },
+  });
 
   console.log(`Claimed revenue: ${claimRevenue.claimedTokens}`);
 }
@@ -153,7 +156,6 @@ Congratulations, you claimed revenue using the [Royalty Module](/developers/roya
     href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercialSpg.ts"
     icon="thumbs-up"
     iconType="solid"
-    target="_blank"
   >
     All of this page is covered in this working code example.
   </Card>

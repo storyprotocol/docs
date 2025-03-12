@@ -8,7 +8,6 @@ description: Learn how to mint a License Token from an IPA in Solidity.
   href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/3_LicenseToken.t.sol"
   icon="thumbs-up"
   iconType="solid"
-  target="_blank"
 >
   Follow the completed code all the way through.
 </Card>
@@ -18,7 +17,7 @@ This section demonstrates how to mint a [License Token](/concepts/licensing-modu
 There are two reasons you'd mint a License Token:
 
 1. To hold the license and be able to use the underlying IP Asset as the license described (for ex. "Can use commercially as long as you provide proper attribution and share 5% of your revenue)
-2. Use the license token to link another IP Asset as a derivative of it. *Note though that, as you'll see later, some SDK functions don't require you to explicitly mint a license token first in order to register a derivative, and will actually handle it for you behind the scenes.*
+2. Use the license token to link another IP Asset as a derivative of it. _Note though that, as you'll see later, some SDK functions don't require you to explicitly mint a license token first in order to register a derivative, and will actually handle it for you behind the scenes._
 
 ## Prerequisites
 
@@ -35,6 +34,7 @@ Let's say that IP Asset (`ipId = 0x01`) has License Terms (`licenseTermdId = 10`
 **Paid Licenses**
 
 Be mindful that some IP Assets may have license terms attached that require the user minting the license to pay a `mintingFee`.
+
 </Warning>
 
 Let's create a test file under `test/3_LicenseToken.t.sol` to see it work and verify the results:
@@ -43,6 +43,7 @@ Let's create a test file under `test/3_LicenseToken.t.sol` to see it work and ve
 **Contract Addresses**
 
 We have filled in the addresses from the Story contracts for you. However you can also find the addresses for them here: [Deployed Smart Contracts](/developers/deployed-smart-contracts)
+
 </Note>
 
 ```solidity
@@ -147,7 +148,6 @@ forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/3_LicenseTok
   href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/3_LicenseToken.t.sol"
   icon="thumbs-up"
   iconType="solid"
-  target="_blank"
 >
   Follow the completed code all the way through.
 </Card>

@@ -8,7 +8,6 @@ description: Learn how to Register an NFT as an IP Asset in Solidity.
   href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/0_IPARegistrar.t.sol"
   icon="thumbs-up"
   iconType="solid"
-  target="_blank"
 >
   Follow the completed code all the way through.
 </Card>
@@ -36,9 +35,9 @@ As you can see below, the registration process is relatively straightforward. We
 
 All you have to do is call `register` on the [IP Asset Registry](/concepts/registry/ip-asset-registry) with:
 
-* `chainid` - you can simply use `block.chainid`
-* `tokenContract` - the address of your NFT collection
-* `tokenId` - your NFT's ID
+- `chainid` - you can simply use `block.chainid`
+- `tokenContract` - the address of your NFT collection
+- `tokenId` - your NFT's ID
 
 Let's create a test file under `test/0_IPARegistrar.t.sol` to see it work and verify the results:
 
@@ -48,6 +47,7 @@ Let's create a test file under `test/0_IPARegistrar.t.sol` to see it work and ve
 We have filled in the addresses from the Story contracts for you. However you can also find the addresses for them here: [Deployed Smart Contracts](/developers/deployed-smart-contracts)
 
 You can view the `SimpleNFT` contract we're using to test [here](https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/src/mocks/SimpleNFT.sol).
+
 </Note>
 
 ```solidity
@@ -101,9 +101,9 @@ In order to use `mintAndRegisterIp`, we first have to create a new `SPGNFT` coll
 
 Once you have your own SPGNFT, all you have to do is call `mintAndRegisterIp` with:
 
-* `spgNftContract` - the address of your SPGNFT contract
-* `recipient` - the address of who will receive the NFT and thus be the owner of the newly registered IP. *Note: remember that registering IP on Story is permissionless, so you can register an IP for someone else (by paying for the transaction) yet they can still be the owner of that IP Asset.*
-* `ipMetadata` - the metadata associated with your NFT & IP. See [this](https://docs.story.foundation/docs/ip-asset#nft-vs-ip-metadata) section to better understand setting NFT & IP metadata.
+- `spgNftContract` - the address of your SPGNFT contract
+- `recipient` - the address of who will receive the NFT and thus be the owner of the newly registered IP. _Note: remember that registering IP on Story is permissionless, so you can register an IP for someone else (by paying for the transaction) yet they can still be the owner of that IP Asset._
+- `ipMetadata` - the metadata associated with your NFT & IP. See [this](https://docs.story.foundation/docs/ip-asset#nft-vs-ip-metadata) section to better understand setting NFT & IP metadata.
 
 1. Run `touch test/0_IPARegistrar.t.sol` to create a test file under `test/0_IPARegistrar.t.sol`. Then, paste in the following code:
 
@@ -111,6 +111,7 @@ Once you have your own SPGNFT, all you have to do is call `mintAndRegisterIp` wi
 **Contract Addresses**
 
 We have filled in the addresses from the Story contracts for you. However you can also find the addresses for them here: [Deployed Smart Contracts](/developers/deployed-smart-contracts)
+
 </Note>
 
 ```solidity
@@ -217,7 +218,6 @@ Congratulations, you registered an IP!
   href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/0_IPARegistrar.t.sol"
   icon="thumbs-up"
   iconType="solid"
-  target="_blank"
 >
   Follow the completed code all the way through.
 </Card>
