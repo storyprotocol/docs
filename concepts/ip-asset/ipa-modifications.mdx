@@ -1,0 +1,31 @@
+---
+title: IP Modifications & Restrictions
+description: Learn about the modifications and restrictions for IP Assets
+---
+
+# IP Asset Modifications
+
+IP Assets can be modified/customized a few ways. For example, by [setting the License Config](/concepts/licensing-module/license-config-hook) which allows you to change a few things as you'll see below, changing its metadata, and more. These things can **always be changed unless there is a certain condition**.
+
+| Action | Conditions | Via The... |
+| ------ | ---------- | ---------- |
+| Modify License Minting Fee | N/A | [License Config](/concepts/licensing-module/license-config-hook) |
+| Modify Licensing Hook | N/A | [License Config](/concepts/licensing-module/license-config-hook) |
+| Modify `commercialRevShare` | Cannot **decrease** `commercialRevShare` percentage. You can only increase it.<br/><br/>However, you **can** set it to 0 to disable the overwrite. | [License Config](/concepts/licensing-module/license-config-hook) |
+| Disable/Enable the License | License can be disabled or re-enabled at any time.<br/><br/>*Note that disabling a license disallows future licenses from being minted, but does not affect existing ones.* | [License Config](/concepts/licensing-module/license-config-hook) |
+| Modify Metadata | Cannot modify if the metadata is **frozen**. This is done by calling `freezeMetadata` in the [CoreMetadataModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/metadata/CoreMetadataModule.sol). | [CoreMetadataModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/metadata/CoreMetadataModule.sol) |
+
+## License Hook Modifications
+
+The IP can be further customized or modified using the [License Hook](https://docs.story.foundation/docs/license-config-hook#licensing-hook). This is a function that gets set within the License Config that gets called before a [License Token](/concepts/licensing-module/license-token) (or more simply, a "license") is minted. There are various features you can implement with the License Hook, and are **always modifiable**:
+
+| Feature | Description |
+| ------- | ----------- |
+| Dynamic License Fee | You can dynamically set the price of a license. For example, it can be updated dynamically via bonding curve logic. |
+| Total # of Licenses | You can abort the function based on a maximum number of license tokens that can be minted. |
+| Specific Receivers | You can restrict minting of license to a specific receiver. |
+| More... | Additional licensing hook features can be implemented as required. |
+
+# Group IPA Restrictions
+
+See [👥 Group IPA Restrictions](https://docs.story.foundation/docs/grouping-module#group-restrictions) for more information.

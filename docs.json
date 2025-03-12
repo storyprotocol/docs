@@ -7,7 +7,7 @@
     "light": "#07C983",
     "dark": "#15803D"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "navigation": {
     "tabs": [
       {
@@ -28,6 +28,96 @@
                 ]
               },
               "faq"
+            ]
+          },
+          {
+            "group": "Protocol Concepts",
+            "pages": [
+              "concepts/overview",
+              {
+                "group": "IP Asset",
+                "icon": "puzzle",
+                "pages": [
+                  "concepts/ip-asset/overview",
+                  "concepts/ip-asset/ip-account",
+                  "concepts/ip-asset/ipa-metadata-standard",
+                  "concepts/ip-asset/ipa-modifications"
+                ]
+              },
+              {
+                "group": "Modules",
+                "icon": "block-brick",
+                "pages": [
+                  "concepts/modules/overview",
+                  "concepts/modules/hooks",
+                  "concepts/modules/base-module",
+                  "concepts/modules/view-module",
+                  "concepts/modules/how-to-create-and-register-modules"
+                ]
+              },
+              {
+                "group": "Licensing Module",
+                "icon": "scroll",
+                "pages": [
+                  "concepts/licensing-module/overview",
+                  "concepts/licensing-module/license-template",
+                  "concepts/licensing-module/license-terms",
+                  "concepts/licensing-module/license-token",
+                  "concepts/licensing-module/license-config-hook"
+                ]
+              },
+              {
+                "group": "Royalty Module",
+                "icon": "sack-dollar",
+                "pages": [
+                  "concepts/royalty-module/overview",
+                  "concepts/royalty-module/liquid-absolute-percentage",
+                  "concepts/royalty-module/liquid-relative-percentage",
+                  "concepts/royalty-module/ip-royalty-vault",
+                  "concepts/royalty-module/external-royalty-policies",
+                  "concepts/royalty-module/payments-and-revenue-tokens"
+                ]
+              },
+              {
+                "group": "Dispute Module",
+                "icon": "x",
+                "pages": [
+                  "concepts/dispute-module/overview",
+                  "concepts/dispute-module/uma-arbitration-policy"
+                ]
+              },
+              "concepts/grouping-module",
+              {
+                "group": "Registry",
+                "icon": "folders",
+                "pages": [
+                  "concepts/registry/overview",
+                  "concepts/registry/ip-asset-registry",
+                  "concepts/registry/group-ip-asset-registry",
+                  "concepts/registry/license-registry",
+                  "concepts/registry/module-registry"
+                ]
+              },
+              {
+                "group": "Programmable IP License",
+                "icon": "capsules",
+                "pages": [
+                  "concepts/programmable-ip-license/overview",
+                  "concepts/programmable-ip-license/pil-terms",
+                  "concepts/programmable-ip-license/pil-flavors"
+                ]
+              },
+              "concepts/access-controller",
+              {
+                "group": "SPG (Periphery)",
+                "icon": "box-open",
+                "pages": [
+                  "concepts/spg/overview",
+                  "concepts/spg/batch-spg-function-calls"
+                ]
+              },
+              "concepts/story-attestation-service",
+              "concepts/concepts-faq"
             ]
           },
           {

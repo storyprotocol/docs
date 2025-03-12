@@ -1,0 +1,363 @@
+---
+title: PIL Flavors (examples)
+description: Pre-configured License Terms for ease of use
+---
+
+The [💊 Programmable IP License (PIL)](/concepts/programmable-ip-license/overview) is very configurable, but we support popular pre-configured License Terms (also known as "flavors") for ease of use. We expect these to be the most popular options:
+
+## Flavor #1: Non-Commercial Social Remixing
+
+<Note>
+  Already Registered
+
+  This flavor is already registered as `licenseTermsId = 1` on our protocol. This is because it doesn't take any inputs, so we registered it ahead of time.
+</Note>
+
+Let the world build on and play with your creation. This license allows for endless free remixing while tracking all uses of your work while giving you full credit. Similar to: TikTok plus attribution.
+
+### What others can do?
+
+| Others can | Others cannot |
+| ---------- | ------------- |
+| ✅ Remix this work (`derivativesAllowed == true`) | ❌ Commercialize the original and derivative works (`commercialUse == false`) |
+| ✅ Distribute their remix anywhere | ❌ Claim credit for any derivative works (`derivativesAttribution == true`) |
+| ✅ Get the license for free (`defaultMintingFee == 0`) | ❌ Claim credit for the original work ("Attribution" is true in the off-chain terms) |
+
+### PIL Term Values
+
+* **On-chain**:
+
+```solidity
+PILTerms({
+  transferable: true,
+  royaltyPolicy: address(0),
+  defaultMintingFee: 0,
+  expiration: 0,
+  commercialUse: false,
+  commercialAttribution: false,
+  commercializerChecker: address(0),
+  commercializerCheckerData: EMPTY_BYTES,
+  commercialRevShare: 0,
+  commercialRevCeiling: 0,
+  derivativesAllowed: true,
+  derivativesAttribution: true,
+  derivativesApproval: false,
+  derivativesReciprocal: true,
+  derivativeRevCeiling: 0,
+  currency: address(0),
+  uri: "https://github.com/piplabs/pil-document/blob/998c13e6ee1d04eb817aefd1fe16dfe8be3cd7a2/off-chain-terms/NCSR.json"
+});
+```
+
+```typescript
+import { zeroAddress } from 'viem';
+
+const nonCommercialSocialRemix = {
+  transferable: true,
+  royaltyPolicy: zeroAddress,
+  defaultMintingFee: 0n,
+  expiration: 0n,
+  commercialUse: false,
+  commercialAttribution: false,
+  commercializerChecker: zeroAddress,
+  commercializerCheckerData: "0x",
+  commercialRevShare: 0,
+  commercialRevCeiling: 0n,
+  derivativesAllowed: true,
+  derivativesAttribution: true,
+  derivativesApproval: false,
+  derivativesReciprocal: true,
+  derivativeRevCeiling: 0n,
+  currency: zeroAddress,
+  uri: "https://github.com/piplabs/pil-document/blob/998c13e6ee1d04eb817aefd1fe16dfe8be3cd7a2/off-chain-terms/NCSR.json"
+}
+```
+
+* **Off-chain:**
+
+| Parameter | Options / Tags |
+| --------- | -------------- |
+| Territory | No restrictions |
+| Channels of Distribution | No Restriction |
+| Attribution | True |
+| Content Standards | No Restriction |
+| Sublicensable | False |
+| AI Learning Models | True |
+| Restriction on Cross-Platform Use | False |
+| Governing Law | California |
+| Alternative Dispute Resolution | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
+| Additional License Parameters | None |
+
+## Flavor #2: Commercial Use
+
+Retain control over reuse of your work, while allowing anyone to appropriately use the work in exchange for the economic terms you set. This is similar to Shutterstock with creator-set rules.
+
+### What others can do?
+
+| Others can | Others cannot |
+| ---------- | ------------- |
+| ✅ Commercialize the original work (`commercialUse == true`) | ❌ Remix this work (`derivativesAllowed == false`) |
+| ✅ Keep all revenue (`commercialRevShare == 0`) | ❌ Claim credit for the original work (`commercialAttribution == true`) |
+| | ❌ Get the license for free (`defaultMintingFee` is set) |
+| | ❌ Claim credit for the original work even non-commercially ("Attribution is true in the off-chain terms) |
+
+### PIL Term Values
+
+* **On-chain**:
+
+```solidity
+PILTerms({
+  transferable: true,
+  royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+  defaultMintingFee: MINTING_FEE, // ex. costs 100 $WIP to mint
+  expiration: 0,
+  commercialUse: true,
+  commercialAttribution: true,
+  commercializerChecker: address(0),
+  commercializerCheckerData: EMPTY_BYTES,
+  commercialRevShare: 0,
+  commercialRevCeiling: 0,
+  derivativesAllowed: false,
+  derivativesAttribution: false,
+  derivativesApproval: false,
+  derivativesReciprocal: false,
+  derivativeRevCeiling: 0,
+  currency: CURRENCY, // ex. $WIP address
+  uri: "https://github.com/piplabs/pil-document/blob/9a1f803fcf8101a8a78f1dcc929e6014e144ab56/off-chain-terms/CommercialUse.json"
+})
+```
+
+```typescript
+import { zeroAddress } from 'viem';
+
+const commercialUse = {
+  transferable: true,
+  royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+  defaultMintingFee: MINTING_FEE, // ex. 100n (costs 100 $WIP to mint)
+  expiration: 0n,
+  commercialUse: true,
+  commercialAttribution: true,
+  commercializerChecker: zeroAddress,
+  commercializerCheckerData: "0x",
+  commercialRevShare: 0,
+  commercialRevCeiling: 0n,
+  derivativesAllowed: false,
+  derivativesAttribution: false,
+  derivativesApproval: false,
+  derivativesReciprocal: false,
+  derivativeRevCeiling: 0n,
+  currency: CURRENCY, // ex. $WIP address
+  uri: "https://github.com/piplabs/pil-document/blob/9a1f803fcf8101a8a78f1dcc929e6014e144ab56/off-chain-terms/CommercialUse.json"
+}
+```
+
+* **Off-chain**
+
+| Parameter | Options / Tags |
+| --------- | -------------- |
+| Territory | No restrictions |
+| Channels of Distribution | No Restriction |
+| Attribution | True |
+| Content Standards | No Restriction |
+| Sublicensable | False |
+| AI Learning Models | True |
+| Restriction on Cross-Platform Use | False |
+| Governing Law | California |
+| Alternative Dispute Resolution | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
+| Additional License Parameters | None |
+
+## Flavor #3: Commercial Remix
+
+Let the world build on and play with your creation... and earn money together from it! This license allows for endless free remixing while tracking all uses of your work while giving you full credit, with each derivative paying a percentage of revenue to its "parent" IP.
+
+### Example
+
+Check out Story's official mascot **Ippy**, which we have registered with commercial remix terms on both [Mainnet](https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42) and [Aeneid Testnet](https://aeneid.explorer.story.foundation/ipa/0x641E638e8FCA4d4844F509630B34c9D524d40BE5).
+
+### What others can do?
+
+| Others can | Others cannot |
+| ---------- | ------------- |
+| ✅ Remix this work (`derivativesAllowed == true`) | ❌ Claim credit for the original work (`commercialAttribution == true`) |
+| ✅ Commercialize the original and derivative works (`commercialUse == true`) | ❌ Claim credit for any derivative works (`derivativesAttribution == true`) |
+| ✅ Distribute their remix anywhere | ❌ Keep all revenue (`commercialRevShare` is set) |
+| | ❌ Get the license for free (`defaultMintingFee` is set) |
+| | ❌ Claim credit for the original work even non-commercially ("Attribution is true in the off-chain terms) |
+
+### PIL Term Values
+
+* **On-chain**:
+
+```solidity
+PILTerms({
+  transferable: true,
+  royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+  defaultMintingFee: MINTING_FEE, // ex. costs 100 $WIP to mint
+  expiration: 0,
+  commercialUse: true,
+  commercialAttribution: true,
+  commercializerChecker: address(0),
+  commercializerCheckerData: EMPTY_BYTES,
+  commercialRevShare: COMMERCIAL_REV_SHARE, // ex. 50 * 10 ** 6 (which means 50% of derivative revenue)
+  commercialRevCeiling: 0,
+  derivativesAllowed: true,
+  derivativesAttribution: true,
+  derivativesApproval: false,
+  derivativesReciprocal: true,
+  derivativeRevCeiling: 0,
+  currency: CURRENCY, // ex. $WIP address
+  uri: "https://github.com/piplabs/pil-document/blob/ad67bb632a310d2557f8abcccd428e4c9c798db1/off-chain-terms/CommercialRemix.json"
+});
+```
+
+```typescript
+import { zeroAddress } from 'viem';
+
+const commercialRemix = {
+  transferable: true,
+  royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+  defaultMintingFee: MINTING_FEE, // ex. 100n (costs 100 $WIP to mint)
+  expiration: 0n,
+  commercialUse: true,
+  commercialAttribution: true,
+  commercializerChecker: zeroAddress,
+  commercializerCheckerData: "0x",
+  commercialRevShare: COMMERCIAL_REV_SHARE, // ex. 50 (which means 50% of derivative revenue)
+  commercialRevCeiling: 0n,
+  derivativesAllowed: true,
+  derivativesAttribution: true,
+  derivativesApproval: false,
+  derivativesReciprocal: true,
+  derivativeRevCeiling: 0n,
+  currency: CURRENCY, // ex. $WIP address
+  uri: "https://github.com/piplabs/pil-document/blob/ad67bb632a310d2557f8abcccd428e4c9c798db1/off-chain-terms/CommercialRemix.json"
+}
+```
+
+* **Off-chain**
+
+| Parameter | Options / Tags |
+| --------- | -------------- |
+| Territory | No restrictions |
+| Channels of Distribution | No Restriction |
+| Attribution | True |
+| Content Standards | No Restriction |
+| Sublicensable | False |
+| AI Learning Models | True |
+| Restriction on Cross-Platform Use | False |
+| Governing Law | California |
+| Alternative Dispute Resolution | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
+| Additional License Parameters | None |
+
+## Flavor #4: Creative Commons Attribution
+
+Let the world build on and play with your creation - including making money.
+
+### What others can do?
+
+| Others can | Others cannot |
+| ---------- | ------------- |
+| ✅ Remix this work (`derivativesAllowed == true`) | ❌ Claim credit for the original work (`commercialAttribution == true`) |
+| ✅ Commercialize the original and derivative works (`commercialUse == true`) | ❌ Claim credit for any derivative works (`derivativesAttribution == true`) |
+| ✅ Distribute their remix anywhere | ❌ Claim credit for the original work even non-commercially ("Attribution is true in the off-chain terms) |
+| ✅ Get the license for free (`defaultMintingFee == 0`) | |
+| ✅ Keep all revenue (`commercialRevShare == 0`) | |
+
+### PIL Term Values
+
+* **On-chain**:
+
+```solidity
+PILTerms({
+  transferable: true,
+  royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+  defaultMintingFee: 0,
+  expiration: 0,
+  commercialUse: true,
+  commercialAttribution: true,
+  commercializerChecker: address(0),
+  commercializerCheckerData: EMPTY_BYTES,
+  commercialRevShare: 0,
+  commercialRevCeiling: 0,
+  derivativesAllowed: true,
+  derivativesAttribution: true,
+  derivativesApproval: false,
+  derivativesReciprocal: true,
+  derivativeRevCelling: 0,
+  currency: CURRENCY, // ex. $WIP address
+  uri: 'https://github.com/piplabs/pil-document/blob/998c13e6ee1d04eb817aefd1fe16dfe8be3cd7a2/off-chain-terms/CC-BY.json'
+});
+```
+
+```typescript
+import { zeroAddress } from 'viem';
+
+const creativeCommonsAttribution = {
+  transferable: true,
+  royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+  defaultMintingFee: 0n,
+  expiration: 0n,
+  commercialUse: true,
+  commercialAttribution: true,
+  commercializerChecker: zeroAddress,
+  commercializerCheckerData: "0x",
+  commercialRevShare: 0,
+  commercialRevCeiling: 0n,
+  derivativesAllowed: true,
+  derivativesAttribution: true,
+  derivativesApproval: false,
+  derivativesReciprocal: true,
+  derivativeRevCelling: 0n,
+  currency: CURRENCY, // ex. $WIP address
+  uri: 'https://github.com/piplabs/pil-document/blob/998c13e6ee1d04eb817aefd1fe16dfe8be3cd7a2/off-chain-terms/CC-BY.json'
+}
+```
+
+* **Off-chain**
+
+| Parameter | Options / Tags |
+| --------- | -------------- |
+| Territory | No restrictions |
+| Channels of Distribution | No Restriction |
+| Attribution | True |
+| Content Standards | No Restriction |
+| Sublicensable | False |
+| AI Learning Models | True |
+| Restriction on Cross-Platform Use | False |
+| Governing Law | California |
+| Alternative Dispute Resolution | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
+| Additional License Parameters | None |
+
+# Examples
+
+Here are some common examples of royalty flow. *More coming soon!*
+
+## Example 1
+
+<img 
+  src="https://files.readme.io/01710d13ebea0b9946a65dca0d5948b4a70d6ee6e5a3fbdbb722f74b588a6e42-Screenshot_2025-02-12_at_9.24.01_PM.png" 
+  alt="Example 1 Royalty Flow" 
+  className="mx-auto" 
+/>
+
+### Explanation
+
+Someone registers their Azuki on Story. By default, that IP Asset has Non-Commercial Social Remixing Terms, which specify that anyone can create derivatives of that work but cannot commercialize them. So, someone else creates & registers a remix of that work (IPA2) which inherits those same terms. Someone else then does the same to IPA2, creating & registering IPA3.
+
+The owner of IPA1 then decides that others can commercialize the work, but they cannot create derivatives to do so, they must pay a 10 $WIP minting fee, and they must share 10% of all revenue earned. So, someone wants to commercialize IPA1 by putting it on a t-shirt. They pay the 10 $WIP minting fee to get a License Token, which represents the license to commercialize IPA1. They then put the image on a t-shirt and sell it. 10% of revenue earned by that t-shirt must be sent on-chain to IPA1.
+
+## Example 2
+
+<img 
+  src="https://files.readme.io/9763a4efe56b88e8a29531e11341538ccd040a8c7d0a786fee8d1d237a2e7a85-Screenshot_2025-02-12_at_9.24.31_PM.png" 
+  alt="Example 2 Royalty Flow" 
+  className="mx-auto" 
+/>
+
+### Explanation
+
+Someone registers their Azuki on Story. By default, that IP Asset has Non-Commercial Social Remixing Terms, which specify that anyone can create derivatives of that work but cannot commercialize them. So, someone else creates & registers a remix of that work (IPA2) which inherits those same terms. Someone else then does the same to IPA2, creating & registering IPA3.
+
+The owner of IPA1 then decides that others can create derivatives of their work and commercialize them, but they must pay a 10 $WIP minting fee and share 10% of all revenue earned. So, someone wants to commercialize IPA1 by putting it on a t-shirt. They pay the 10 $WIP minting fee to get a License Token and burn it to create their own derivative, which changes the background color to red. They then put the remixed image on a t-shirt and sell it. 10% of revenue earned by that t-shirt must be sent on-chain to IPA1.
+
+A third person wants to commercialize the remix by putting it in a TV advertisement, but they want to change the hair color to white. So, they pay a 10 $WIP minting fee (of which, 1 $WIP gets sent back to IPA1) to create their own derivative. They then put the remixed image in a TV ad. 10% of revenue earned by that t-shirt must be sent on-chain to IPA4, of which 10% will be distributed back to IPA1.
