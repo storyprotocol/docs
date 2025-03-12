@@ -17,8 +17,10 @@
             "group": "Get Started",
             "pages": [
               "introduction",
+              "explain-like-im-five",
               "quickstart",
-              "development"
+              "ai-agents",
+              "faq"
             ]
           },
           {
@@ -39,9 +41,7 @@
         "groups": [
           {
             "group": "API Documentation",
-            "pages": [
-              "api-reference/introduction"
-            ]
+            "pages": ["api-reference/introduction"]
           },
           {
             "group": "Endpoint Examples",
