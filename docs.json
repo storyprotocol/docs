@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Story Documentation",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -19,7 +19,14 @@
               "introduction",
               "explain-like-im-five",
               "quickstart",
-              "ai-agents",
+              {
+                "group": "For AI Agents",
+                "pages": [
+                  "ai-agents/overview",
+                  "ai-agents/using-cursor-with-story",
+                  "ai-agents/implementing-atcpip"
+                ]
+              },
               "faq"
             ]
           },
