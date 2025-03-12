@@ -134,6 +134,99 @@
         ]
       },
       {
+        "tab": "Developers",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "developers/overview",
+              "developers/deployed-smart-contracts",
+              "developers/releases-page"
+            ]
+          },
+          {
+            "group": "Tutorials",
+            "pages": [
+              "developers/tutorials/overview",
+              "developers/tutorials/finetune-images",
+              "developers/tutorials/protect-dalle-ai-generated-images",
+              "developers/tutorials/register-stability-images",
+              "developers/tutorials/training-data",
+              "developers/tutorials/how-to-register-ip-on-story",
+              "developers/tutorials/how-to-register-music-on-story",
+              "developers/tutorials/how-to-tip-an-ip",
+              "developers/tutorials/case-study-register-derivative-ippy"
+            ]
+          },
+          {
+            "group": "TypeScript SDK",
+            "pages": [
+              "developers/typescript-sdk/overview",
+              "developers/typescript-sdk/typescript-sdk-setup",
+              "developers/typescript-sdk/register-an-ip-asset",
+              "developers/typescript-sdk/register-a-derivative",
+              "developers/typescript-sdk/attach-terms-to-an-ip-asset",
+              "developers/typescript-sdk/mint-a-license",
+              "developers/typescript-sdk/pay-ipa",
+              "developers/typescript-sdk/claim-revenue",
+              "developers/typescript-sdk/raise-a-dispute"
+            ]
+          },
+
+          {
+            "group": "Smart Contracts",
+            "pages": [
+              "developers/get-started-with-the-smart-contracts/overview",
+              "developers/get-started-with-the-smart-contracts/sc-setup",
+              "developers/get-started-with-the-smart-contracts/sc-register-an-ip-asset",
+              "developers/get-started-with-the-smart-contracts/sc-register-license-terms",
+              "developers/get-started-with-the-smart-contracts/sc-attach-license-terms",
+              "developers/get-started-with-the-smart-contracts/sc-mint-license-token",
+              "developers/get-started-with-the-smart-contracts/sc-claiming-royalty",
+              "developers/get-started-with-the-smart-contracts/sc-remix-ipa",
+              "developers/get-started-with-the-smart-contracts/sc-example"
+            ]
+          },
+          {
+            "group": "React Guide",
+            "pages": [
+              "developers/react-guide/overview",
+              {
+                "group": "Setup",
+                "pages": [
+                  "developers/react-guide/react-setup/overview",
+                  "developers/react-guide/react-setup/dynamic-setup",
+                  "developers/react-guide/react-setup/rainbowkit-setup",
+                  "developers/react-guide/react-setup/reown-setup",
+                  "developers/react-guide/react-setup/tomo-setup"
+                ]
+              },
+              "developers/react-guide/using-the-sdk-in-react"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDK Reference",
+        "groups": [
+          {
+            "group": "SDK Reference",
+            "pages": [
+              "sdk-reference/overview",
+              "sdk-reference/ipasset",
+              "sdk-reference/ipaccount",
+              "sdk-reference/license",
+              "sdk-reference/royalty",
+              "sdk-reference/dispute",
+              "sdk-reference/group",
+              "sdk-reference/permissions",
+              "sdk-reference/nftclient",
+              "sdk-reference/wip-client"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "API Reference",
         "groups": [
           {
@@ -155,19 +248,19 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
+          "anchor": "Learn",
+          "href": "https://learn.story.foundation",
           "icon": "book-open-cover"
         },
         {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
+          "anchor": "Help & Support",
+          "href": "https://discord.gg/fajKk8q7gU",
+          "icon": "discord"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "Network Status",
+          "href": "https://status.story.foundation",
+          "icon": "check"
         }
       ]
     }

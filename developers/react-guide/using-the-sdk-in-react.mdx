@@ -1,0 +1,79 @@
+---
+title: Using the SDK in React
+description: Learn how to use the SDK in React once you have it set up.
+---
+
+Once you have the SDK set up in React, you can use it just as we describe in the [TypeScript SDK Guide](/developers/typescript-sdk/overview).
+
+<CardGroup cols={2}>
+  <Card
+    title="Working Code Example"
+    href="https://github.com/jacob-tucker/story-developer-sandbox"
+    icon="thumbs-up"
+    iconType="solid"
+    target="_blank"
+  >
+    A working code example that shows setting up & calling TypeScript SDK functions in Next.js
+  </Card>
+
+  <Card
+    title="SDK Reference"
+    href="https://docs.story.foundation/docs/sdk-overview#/"
+    icon="books"
+    iconType="solid"
+    target="_blank"
+  >
+    View the whole SDK reference, which shows examples and types for every function in our SDK.
+  </Card>
+</CardGroup>
+
+## Prerequisites
+
+1. Complete the [SDK setup in React](/developers/react-guide/react-setup/overview)
+
+## Example
+
+Here is an example of calling an SDK function in React, which will look the same for any function you use:
+
+```jsx TestComponent.tsx
+import { custom, toHex } from 'viem';
+import { useWalletClient } from "wagmi";
+import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
+
+// example of how you would now use the fully setup sdk
+
+export default function TestComponent() {
+  const { data: wallet } = useWalletClient();
+
+  async function setupStoryClient(): Promise<StoryClient> {
+    const config: StoryConfig = {
+      wallet: wallet,
+      transport: custom(wallet!.transport),
+      chainId: "aeneid",
+    };
+    const client = StoryClient.newClient(config);
+    return client;
+  }
+
+  async function registerIp() {
+    const client = await setupStoryClient();
+    const response = await client.ipAsset.mintAndRegisterIp({
+      spgNftContract: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc',
+      ipMetadata: {
+        ipMetadataURI: "test-metadata-uri",
+        ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+        nftMetadataURI: "test-nft-metadata-uri",
+        nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      },
+      txOptions: { waitForTransaction: true }
+    });
+    console.log(
+      `Root IPA created at tx hash ${response.txHash}, IPA ID: ${response.ipId}`
+    );
+  }
+
+  return (
+    {/* */}
+  )
+}
+```

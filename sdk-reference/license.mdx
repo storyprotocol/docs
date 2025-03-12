@@ -1,0 +1,265 @@
+---
+title: License
+description: LicenseClient allows you to manage license terms and tokens within Story.
+---
+
+## LicenseClient
+
+### Methods
+
+* attachLicenseTerms
+* mintLicenseTokens
+* registerPILTerms
+* registerNonComSocialRemixingPIL
+* registerCommercialUsePIL
+* registerCommercialRemixPIL
+* getLicenseTerms
+
+### attachLicenseTerms
+
+Attaches license terms to an IP.
+
+| Method               | Type                                                                 |
+| -------------------- | -------------------------------------------------------------------- |
+| `attachLicenseTerms` | `(request: AttachLicenseTermsRequest) => AttachLicenseTermsResponse` |
+
+Parameters:
+
+* `request.ipId`: The address of the IP to which the license terms are attached.
+* `request.licenseTemplate`: The address of the license template.
+* `request.licenseTermsId`: The ID of the license terms.
+* `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript TypeScript
+const response = await client.license.attachLicenseTerms({
+  licenseTermsId: "1", 
+  ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+  txOptions: { waitForTransaction: true }
+});
+
+if (response.success) {
+  console.log(`Attached License Terms to IPA at transaction hash ${response.txHash}.`)
+} else {
+  console.log(`License Terms already attached to this IPA.`)
+}
+```
+
+```python Python
+response = story_client.License.attachLicenseTerms(
+  ip_id="0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+  license_template="0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316", # insert PILicenseTemplate from https://docs.story.foundation/docs/deployed-smart-contracts
+  license_terms_id="1"
+)
+```
+
+```typescript Request Type
+export type AttachLicenseTermsRequest = {
+  ipId: Address;
+  licenseTermsId: string | number | bigint;
+  licenseTemplate?: Address;
+  txOptions?: TxOptions;
+};
+```
+
+```typescript Response Type
+export type AttachLicenseTermsResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
+};
+```
+
+### mintLicenseTokens
+
+Mints license tokens for the license terms attached to an IP.
+
+The license tokens are minted to the receiver.
+
+The license terms must be attached to the IP before calling this function.
+
+IP owners can mint license tokens for their IPs for arbitrary license terms without attaching the license terms to IP.
+
+It might require the caller pay the minting fee, depending on the license terms or configured by the iP owner. The minting fee is paid in the minting fee token specified in the license terms or configured by the IP owner. IP owners can configure the minting fee of their IPs or configure the minting fee module to determine the minting fee.
+
+| Method              | Type                                                                        |
+| ------------------- | --------------------------------------------------------------------------- |
+| `mintLicenseTokens` | `(request: MintLicenseTokensRequest) => Promise<MintLicenseTokensResponse>` |
+
+Parameters:
+
+* `request.licensorIpId`: The licensor IP ID.
+* `request.licenseTemplate`: The address of the license template.
+* `request.licenseTermsId`: The ID of the license terms within the license template.
+* `request.amount`: The amount of license tokens to mint.
+* `request.receiver`: The address of the receiver.
+* `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript TypeScript
+const response = await client.license.mintLicenseTokens({
+  licenseTermsId: "1", 
+  licensorIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+  receiver: "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955", // optional
+  amount: 1,
+  maxMintingFee: BigInt(0), // disabled
+  maxRevenueShare: 100, // default
+  txOptions: { waitForTransaction: true }
+});
+
+console.log(`License Token minted at transaction hash ${response.txHash}, License IDs: ${response.licenseTokenIds}`)
+```
+
+```python Python
+response = client.License.mintLicenseTokens(
+  licensor_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+  license_template="0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316", # insert PILicenseTemplate from https://docs.story.foundation/docs/deployed-smart-contracts
+  license_terms_id="1",
+  amount=1,
+  receiver="0x14dC79964da2C08b23698B3D3cc7Ca32193d9955", # optional
+  max_minting_fee=0, # disabled
+  max_revenue_share=100 # default
+)
+```
+
+```typescript Request Type
+export type MintLicenseTokensRequest = {
+  licensorIpId: Address;
+  licenseTermsId: string | number | bigint;
+  licenseTemplate?: Address;
+  maxMintingFee: bigint | string | number;
+  maxRevenueShare: number | string;
+  amount?: number | string | bigint;
+  receiver?: Address;
+} & WithTxOptions & WithWipOptions;
+```
+
+```typescript Response Type
+export type MintLicenseTokensResponse = {
+  licenseTokenIds?: bigint[];
+  receipt?: TransactionReceipt;
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+};
+```
+
+### registerPILTerms
+
+Registers new license terms and return the ID of the newly registered license terms.
+
+| Method             | Type                                                                 |
+| ------------------ | -------------------------------------------------------------------- |
+| `registerPILTerms` | `(request: RegisterPILTermsRequest) => Promise<RegisterPILResponse>` |
+
+Parameters:
+
+* Expected Parameters: Instead of listing all of the expected parameters here, please see `LicenseTerms` type in [this](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts) file. They all come from the [PIL Terms](/concepts/programmable-ip-license/pil-terms).
+* `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript TypeScript
+import { LicenseTerms } from '@story-protocol/core-sdk';
+import { zeroAddress } from 'viem';
+
+const licenseTerms: LicenseTerms = {
+  transferable: false,
+  royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  defaultMintingFee: 0n,
+  expiration: 0n,
+  commercialUse: false,
+  commercialAttribution: false,
+  commercializerChecker: zeroAddress,
+  commercializerCheckerData: '0x',
+  commercialRevShare: 10, // 10%
+  commercialRevCeiling: 0n,
+  derivativesAllowed: true,
+  derivativesAttribution: false,
+  derivativesApproval: false,
+  derivativesReciprocal: false,
+  derivativeRevCeiling: 0n,
+  currency: '0x1514000000000000000000000000000000000000', // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  uri: '',
+}
+
+const response = await client.license.registerPILTerms({ 
+  ...licenseTerms, 
+  txOptions: { waitForTransaction: true } 
+})
+
+console.log(`PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`) 
+```
+
+```python Python
+response = story_client.License.registerPILTerms(
+  transferable=False,
+  royalty_policy="0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", # RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  default_minting_fee=0,
+  expiration=0,
+  commercial_use=False,
+  commercial_attribution=False,
+  commercializer_checker="0x0000000000000000000000000000000000000000",
+  commercializer_checker_data="0x",
+  commercial_rev_share=10, # 10%
+  commercial_rev_ceiling=0,
+  derivatives_allowed=True,
+  derivatives_attribution=False,
+  derivatives_approval=False,
+  derivatives_reciprocal=False,
+  derivative_rev_share=10, # 10%
+  derivative_rev_ceiling=0,
+  currency="0x1514000000000000000000000000000000000000", # $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  uri=""
+)
+```
+
+### registerNonComSocialRemixingPIL
+
+Registers a Non-Commercial Social Remixing PIL license terms.
+
+| Method                           | Type                                                                                                   |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `registerNonComSocialRemixingPIL` | `(request: RegisterNonComSocialRemixingPILRequest) => Promise<RegisterNonComSocialRemixingPILResponse>` |
+
+### registerCommercialUsePIL
+
+Registers a Commercial Use PIL license terms.
+
+| Method                   | Type                                                                               |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| `registerCommercialUsePIL` | `(request: RegisterCommercialUsePILRequest) => Promise<RegisterCommercialUsePILResponse>` |
+
+```typescript TypeScript
+const commercialUseParams = {
+  currency: '0x1514000000000000000000000000000000000000', // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  defaultMintingFee: '10', // 10 of the currency (using the above currency, 10 $WIP)
+  royaltyPolicyAddress: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E" // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+}
+
+const response = await client.license.registerCommercialUsePIL({
+  ...commercialUseParams,
+  txOptions: { waitForTransaction: true }
+})
+
+console.log(`Commercial Use PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`)
+```
+
+### registerCommercialRemixPIL
+
+Registers a Commercial Remix PIL license terms.
+
+| Method                     | Type                                                                                 |
+| -------------------------- | ------------------------------------------------------------------------------------ |
+| `registerCommercialRemixPIL` | `(request: RegisterCommercialRemixPILRequest) => Promise<RegisterCommercialRemixPILResponse>` |
+
+### getLicenseTerms
+
+Gets the license terms for a given license terms ID.
+
+| Method           | Type                                                                                                 |
+| ---------------- | ---------------------------------------------------------------------------------------------------- |
+| `getLicenseTerms` | `(request: PILicenseTemplateGetLicenseTermsRequest) => Promise<PiLicenseTemplateGetLicenseTermsResponse>` |
+
+```typescript TypeScript
+const response = await client.license.getLicenseTerms({
+  licenseTermsId: "1"
+})
+
+console.log(`License Terms: ${JSON.stringify(response.terms, null, 2)}`)
+```
