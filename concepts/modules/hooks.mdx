@@ -5,10 +5,10 @@ description: Learn about and view the available hooks in the Story Protocol
 
 Hooks are defined as a specialized interface that inherits from the Module framework. They are designed for developers to create custom implementations that integrate seamlessly with existing Modules.
 
-<img 
-  src="https://files.readme.io/2ea34f7-Screenshot_2024-02-05_at_16.09.49.png" 
-  alt="Hooks Diagram" 
-  className="mx-auto" 
+<img
+  src="https://files.readme.io/2ea34f7-Screenshot_2024-02-05_at_16.09.49.png"
+  alt="Hooks Diagram"
+  className="mx-auto"
 />
 
 ## Concept and Functionality
@@ -26,10 +26,11 @@ Below are available hooks deployed on our protocol that you can use.
 <Note>
   Deployed Addresses
 
-  View the deployed addresses for these hooks [here](https://docs.story.foundation/docs/deployed-smart-contracts#periphery-contracts).
+View the deployed addresses for these hooks [here](/developers/deployed-smart-contracts#periphery-contracts).
+
 </Note>
 
-| Hook                       | Description                                                                            | Contract Code                                                                                                                                              |
-| :------------------------- | :------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| LockLicenseHook            | Stop the minting of license tokens or registering new derivatives.                     | <a href="https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/hooks/LockLicenseHook.sol">View here ↗️</a>            |
-| TotalLicenseTokenLimitHook | Set a limit on the amount of license tokens that can be minted, updatable at any time. | <a href="https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/hooks/TotalLicenseTokenLimitHook.sol">View here ↗️</a> |
+| Hook                       | Description                                                                            | Contract Code                                                                                                                   |
+| :------------------------- | :------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| LockLicenseHook            | Stop the minting of license tokens or registering new derivatives.                     | [View here ↗️](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/hooks/LockLicenseHook.sol)            |
+| TotalLicenseTokenLimitHook | Set a limit on the amount of license tokens that can be minted, updatable at any time. | [View here ↗️](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/hooks/TotalLicenseTokenLimitHook.sol) |

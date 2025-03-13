@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Story Documentation",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#09ACFF",
+    "light": "#A1D1FF",
+    "dark": "#066DA1"
   },
   "favicon": "/favicon.png",
   "navigation": {

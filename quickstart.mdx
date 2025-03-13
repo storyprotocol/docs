@@ -85,7 +85,7 @@ See [Network Info](/network/network-info/overview) for all RPC, explorer, and fa
 
 ## Use our SDKs
 
-Check out the entire [SDK Reference](/sdk-reference) to see an explanation + example for every function in our :hammer_and_wrench: **TypeScript SDK** (can use this in React as well) and :snake: **Python SDK**.
+Check out the entire [SDK Reference](/sdk-reference) to see an explanation + example for every function in our 🛠️ **TypeScript SDK** (can use this in React as well) and 🐍 **Python SDK**.
 
 We have also built a [🛠️ TypeScript SDK Guide](/developers/typescript-sdk), which is more of a step-by-step walkthrough, with its own in-depth tutorials for popular functions and use cases.
 
@@ -93,7 +93,7 @@ We have also built a [🛠️ TypeScript SDK Guide](/developers/typescript-sdk),
 
 Check out the addresses for the deployed smart contracts [here](/developers/deployed-smart-contracts). Note that there are two different kinds of contracts:
 
-- [Story Protocol Core](https://github.com/storyprotocol/protocol-core-v1) - This repository contains the core protocol logic, consisting of a thin IP registry (the [IP Asset Registry](/concepts/ip-asset-registry)), a set of [🧱 Modules](/concepts/modules) defining logic around [📜 Licensing](/concepts/licensing-module), [💸 Royalty](/concepts/royalty-module), [❌ Dispute](/concepts/dispute-module), metadata, and a module manager for administering module and user access control.
+- [Story Protocol Core](https://github.com/storyprotocol/protocol-core-v1) - This repository contains the core protocol logic, consisting of a thin IP registry (the [IP Asset Registry](/concepts/registry/ip-asset-registry)), a set of [🧱 Modules](/concepts/modules) defining logic around [📜 Licensing](/concepts/licensing-module), [💸 Royalty](/concepts/royalty-module), [❌ Dispute](/concepts/dispute-module), metadata, and a module manager for administering module and user access control.
 - [Story Protocol Periphery](https://github.com/storyprotocol/protocol-periphery-v1)- Whereas the core contracts deal with the underlying protocol logic, the periphery contracts deal with protocol extensions that greatly increase UX and simplify IPA management. This is mostly handled through the [📦 SPG](/concepts/spg).
 
 ## Use our API
@@ -117,14 +117,14 @@ Follow the below tutorials to register IP on Story:
   <Card
     title="Using the SDK"
     icon="thumbs-up"
-    href="https://docs.story.foundation/docs/register-an-ip-asset"
+    href="/developers/typescript-sdk/register-an-ip-asset"
   >
     Learn how to register IP on Story using the TypeScript SDK.
   </Card>
   <Card
     title="Using the Smart Contracts"
     icon="thumbs-up"
-    href="https://docs.story.foundation/docs/sc-register-an-ip-asset"
+    href="/developers/get-started-with-the-smart-contracts/sc-register-an-ip-asset"
   >
     Learn how to register IP on Story using the Smart Contracts.
   </Card>
@@ -134,7 +134,7 @@ Follow the below tutorials to register IP on Story:
 
 A common question we get from developers while registering their IP on Story is: _"What metadata should be/is expected to be attached to the NFT, and then separately, the IP Asset?"_
 
-To answer that question, please see [NFT vs. IP Metadata](https://docs.story.foundation/docs/ip-asset#nft-vs-ip-metadata).
+To answer that question, please see [NFT vs. IP Metadata](/concepts/ip-asset/overview#nft-vs-ip-metadata).
 
 ## Licensing Your IP
 
@@ -148,7 +148,7 @@ Our tutorials will show you exactly how to attach license terms to your IP Asset
   <Card
     title="Using the SDK"
     icon="thumbs-up"
-    href="https://docs.story.foundation/docs/attach-terms-to-an-ip-asset"
+    href="/developers/typescript-sdk/attach-terms-to-an-ip-asset"
   >
     Learn how to attach license terms to your IP on Story using the TypeScript
     SDK.
@@ -156,7 +156,7 @@ Our tutorials will show you exactly how to attach license terms to your IP Asset
   <Card
     title="Using the Smart Contracts"
     icon="thumbs-up"
-    href="https://docs.story.foundation/docs/sc-attach-license-terms"
+    href="/developers/get-started-with-the-smart-contracts/sc-attach-license-terms"
   >
     Learn how to attach license terms to your IP on Story using the Smart
     Contracts.
@@ -164,7 +164,6 @@ Our tutorials will show you exactly how to attach license terms to your IP Asset
 </CardGroup>
 
 <Note>
-Learn More
 
 For more information on licensing and the terminology behind it, check out the [📜 Licensing Module](/concepts/licensing-module).
 
@@ -184,21 +183,20 @@ Our tutorials will show you exactly how to claim revenue:
   <Card
     title="Using the SDK"
     icon="thumbs-up"
-    href="https://docs.story.foundation/docs/claim-revenue"
+    href="/developers/typescript-sdk/claim-revenue"
   >
     Learn how to claim revenue on Story using the TypeScript SDK.
   </Card>
   <Card
     title="Using the Smart Contracts"
     icon="thumbs-up"
-    href="https://docs.story.foundation/docs/sc-claiming-royalty"
+    href="/developers/get-started-with-the-smart-contracts/sc-claiming-royalty"
   >
     Learn how to claim revenue on Story using the Smart Contracts.
   </Card>
 </CardGroup>
 
 <Note>
-Learn More
 
 For more information on royalty and how it functions, check out the [Royalty Module](/concepts/royalty-module).
 
@@ -224,14 +222,13 @@ Our tutorials will show you exactly how to raise a dispute on-chain:
   <Card
     title="Using the SDK"
     icon="thumbs-up"
-    href="https://docs.story.foundation/docs/raise-a-dispute"
+    href="/developers/typescript-sdk/raise-a-dispute"
   >
     Learn how to dispute IP on Story using the TypeScript SDK.
   </Card>
 </CardGroup>
 
 <Note>
-Learn More
 
 For more information on filing a dispute on-chain, check out the [❌ Dispute Module](/concepts/dispute-module).
 

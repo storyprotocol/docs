@@ -38,6 +38,7 @@ PINATA_GATEWAY=
 **Stability Credits**
 
 In order to generate an image, you'll need Stability credits. If you just created an account, you will probably have a free trial that will give you a few credits to start with.
+
 </Warning>
 
 ```yaml .env
@@ -69,22 +70,22 @@ import FormData from "form-data";
 
 async function main() {
   const payload = {
-    prompt: 'Lighthouse on a cliff overlooking the ocean',
-    output_format: 'png',
-  }
+    prompt: "Lighthouse on a cliff overlooking the ocean",
+    output_format: "png",
+  };
 
   const response = await axios.postForm(
     `https://api.stability.ai/v2beta/stable-image/generate/core`,
     axios.toFormData(payload, new FormData()),
     {
       validateStatus: undefined,
-      responseType: 'arraybuffer',
+      responseType: "arraybuffer",
       headers: {
         Authorization: `Bearer ${process.env.STABILITY_API_KEY}`,
-        Accept: 'image/*',
+        Accept: "image/*",
       },
     }
-  ) 
+  );
 }
 
 main();
@@ -104,7 +105,7 @@ async function main() {
 
   const condensedImgBuffer = await sharp(response.data)
     .png({ quality: 10 }) // Adjust the quality value as needed (between 0 and 100)
-    .toBuffer() 
+    .toBuffer();
 }
 
 main();
@@ -117,19 +118,22 @@ Now that we have our image, we need to store it on IPFS so we can get a URL back
 In a separate file `uploadToIpfs.ts`, create a function `uploadBlobToIPFS` that uploads our buffer to IPFS:
 
 ```typescript uploadToIpfs.ts
-import { PinataSDK } from 'pinata-web3'
+import { PinataSDK } from "pinata-web3";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.PINATA_JWT,
   // you can put your pinata gateway here, or leave it empty
-  pinataGateway: process.env.PINATA_GATEWAY
-})
+  pinataGateway: process.env.PINATA_GATEWAY,
+});
 
 // upload our image to ipfs by putting it in a public group
-export async function uploadBlobToIPFS(blob: Blob, fileName: string): Promise<string> {
-  const file = new File([blob], fileName, { type: 'image/png' })
-  const { IpfsHash } = await pinata.upload.file(file)
-  return IpfsHash
+export async function uploadBlobToIPFS(
+  blob: Blob,
+  fileName: string
+): Promise<string> {
+  const file = new File([blob], fileName, { type: "image/png" });
+  const { IpfsHash } = await pinata.upload.file(file);
+  return IpfsHash;
 }
 ```
 
@@ -139,15 +143,15 @@ Back in the main file, call the `uploadBlobToIPFS` function to store our image:
 import fs from "fs";
 import axios from "axios";
 import FormData from "form-data";
-import { uploadBlobToIPFS } from './uploadToIpfs.ts'
+import { uploadBlobToIPFS } from "./uploadToIpfs.ts";
 
 async function main() {
   // previous code here ...
 
   // convert the buffer to a blob
-  const blob = new Blob([condensedImgBuffer], { type: 'image/png' });
+  const blob = new Blob([condensedImgBuffer], { type: "image/png" });
   // store the blob on ipfs
-  const imageCid = await uploadBlobToIPFS(blob, 'lighthouse.png'); 
+  const imageCid = await uploadBlobToIPFS(blob, "lighthouse.png");
 }
 
 main();
@@ -157,7 +161,7 @@ main();
 
 Now that we have generated and stored our image, we can register the image as IP on Story. First, let's set up our config. In a `utils.ts` file, add the following code:
 
-* Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/typescript-sdk-setup)
+- Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/typescript-sdk-setup)
 
 ```typescript utils.ts
 import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
@@ -183,36 +187,36 @@ View the [IPA Metadata Standard](/developers/ipa-metadata-standard) and construc
 import fs from "fs";
 import axios from "axios";
 import FormData from "form-data";
-import { uploadBlobToIPFS } from './uploadToIpfs.ts'
-import { client, account } from './utils'
+import { uploadBlobToIPFS } from "./uploadToIpfs.ts";
+import { client, account } from "./utils";
 
 async function main() {
   // previous code here ...
 
   const ipMetadata = {
-    "title": "Lighthouse",
-    "description": "A generated picture of a lighthouse.",
-    "createdAt": "1728401700",
-    "image": process.env.PINATA_GATEWAY + '/files/' + imageCid,
-    "imageHash": "0x...", // a hash of the image
-    "mediaUrl": process.env.PINATA_GATEWAY + '/files/' + imageCid,
-    "mediaHash": "0x...", // a hash of the image
-    "mediaType": "image/png",
-    "creators": [
+    title: "Lighthouse",
+    description: "A generated picture of a lighthouse.",
+    createdAt: "1728401700",
+    image: process.env.PINATA_GATEWAY + "/files/" + imageCid,
+    imageHash: "0x...", // a hash of the image
+    mediaUrl: process.env.PINATA_GATEWAY + "/files/" + imageCid,
+    mediaHash: "0x...", // a hash of the image
+    mediaType: "image/png",
+    creators: [
       {
-        "name": "Jacob Tucker",
-        "address": "0x67ee74EE04A0E6d14Ca6C27428B27F3EFd5CD084",
-        "description": "A cool dev rel person.",
-        "contributionPercent": 100,
-        "socialMedia": [
+        name: "Jacob Tucker",
+        address: "0x67ee74EE04A0E6d14Ca6C27428B27F3EFd5CD084",
+        description: "A cool dev rel person.",
+        contributionPercent: 100,
+        socialMedia: [
           {
-            "platform": "Twitter",
-            "url": "https://x.com/jacobmtucker"
-          }
-        ]
-      }
-    ]
-  }
+            platform: "Twitter",
+            url: "https://x.com/jacobmtucker",
+          },
+        ],
+      },
+    ],
+  };
 }
 
 main();
@@ -226,31 +230,32 @@ The NFT Metadata follows the [ERC-721 Metadata Standard](https://eips.ethereum.o
 import fs from "fs";
 import axios from "axios";
 import FormData from "form-data";
-import { uploadBlobToIPFS } from './uploadToIpfs.ts'
-import { client, account } from './utils'
+import { uploadBlobToIPFS } from "./uploadToIpfs.ts";
+import { client, account } from "./utils";
 
 async function main() {
   // previous code here ...
 
   const nftMetadata = {
-    name: 'Ownership NFT',
-    description: 'This NFT represents ownership of the image generated by Stability',
-    image: process.env.PINATA_GATEWAY + '/files/' + imageCid,
+    name: "Ownership NFT",
+    description:
+      "This NFT represents ownership of the image generated by Stability",
+    image: process.env.PINATA_GATEWAY + "/files/" + imageCid,
     attributes: [
       {
-        key: 'Model',
-        value: 'Stability',
+        key: "Model",
+        value: "Stability",
       },
       {
-        key: 'Service',
-        value: 'Stable Image Core'
+        key: "Service",
+        value: "Stable Image Core",
       },
       {
-        key: 'Prompt',
-        value: 'Lighthouse on a cliff overlooking the ocean',
+        key: "Prompt",
+        value: "Lighthouse on a cliff overlooking the ocean",
       },
-    ]
-  } 
+    ],
+  };
 }
 
 main();
@@ -264,8 +269,8 @@ In the `uploadToIpfs.ts` file, create a function to upload your IP & NFT Metadat
 // previous code here ...
 
 export async function uploadJSONToIPFS(jsonMetadata: any): Promise<string> {
-  const { IpfsHash } = await pinata.upload.json(jsonMetadata)
-  return IpfsHash
+  const { IpfsHash } = await pinata.upload.json(jsonMetadata);
+  return IpfsHash;
 }
 ```
 
@@ -275,8 +280,8 @@ You can then use that function to upload your metadata, as shown below:
 import fs from "fs";
 import axios from "axios";
 import FormData from "form-data";
-import { uploadBlobToIPFS, uploadJSONToIPFS } from './uploadToIpfs.ts'
-import { client, account } from './utils'
+import { uploadBlobToIPFS, uploadJSONToIPFS } from "./uploadToIpfs.ts";
+import { client, account } from "./utils";
 import { createHash } from "crypto";
 
 async function main() {
@@ -305,18 +310,18 @@ Let's say we want to monetize our image such that every time someone wants to us
 import fs from "fs";
 import axios from "axios";
 import FormData from "form-data";
-import { uploadBlobToIPFS, uploadJSONToIPFS } from './uploadToIpfs.ts'
-import { client, account } from './utils'
+import { uploadBlobToIPFS, uploadJSONToIPFS } from "./uploadToIpfs.ts";
+import { client, account } from "./utils";
 import { createHash } from "crypto";
-import { LicenseTerms, WIP_TOKEN_ADDRESS } from '@story-protocol/core-sdk';
-import { zeroAddress } from 'viem';
+import { LicenseTerms, WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+import { zeroAddress } from "viem";
 
 async function main() {
   // previous code here ...
 
   const commercialRemixTerms: LicenseTerms = {
     transferable: true,
-    royaltyPolicy: '0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E', // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/developers/deployed-smart-contracts
     defaultMintingFee: BigInt(10),
     expiration: BigInt(0),
     commercialUse: true,
@@ -331,8 +336,8 @@ async function main() {
     derivativesReciprocal: true,
     derivativeRevCeiling: BigInt(0),
     currency: WIP_TOKEN_ADDRESS,
-    uri: '',
-  } 
+    uri: "",
+  };
 }
 
 main();
@@ -349,64 +354,70 @@ This function needs an SPG NFT Contract to mint from. For simplicity, you can us
 <Accordion title="Creating your own custom ERC-721 collection" icon="info-circle">
   Using the public collection we provide for you is fine, but when you do this for real, you should make your own NFT Collection for your IPs. You can do this in 2 ways:
 
-  1. Deploy a contract that implements the [ISPGNFT](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/interfaces/ISPGNFT.sol) interface, or use the SDK's [createNFTCollection](https://docs.story.foundation/docs/sdk-nftclient#createnftcollection) function (shown below) to do it for you. This will give you your own SPG NFT Collection that only you can mint from.
+1. Deploy a contract that implements the [ISPGNFT](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/interfaces/ISPGNFT.sol) interface, or use the SDK's [createNFTCollection](/sdk-reference/nftclient#createnftcollection) function (shown below) to do it for you. This will give you your own SPG NFT Collection that only you can mint from.
 
-  ```typescript createSpgNftCollection.ts
-  import { zeroAddress } from 'viem'
-  import { client } from './utils'
+```typescript createSpgNftCollection.ts
+import { zeroAddress } from "viem";
+import { client } from "./utils";
 
-  async function createSpgNftCollection() {
-    const newCollection = await client.nftClient.createNFTCollection({
-      name: 'Test NFTs',
-      symbol: 'TEST',
-      isPublicMinting: false,
-      mintOpen: true,
-      mintFeeRecipient: zeroAddress,
-      contractURI: '',
-      txOptions: { waitForTransaction: true },
-    })
+async function createSpgNftCollection() {
+  const newCollection = await client.nftClient.createNFTCollection({
+    name: "Test NFTs",
+    symbol: "TEST",
+    isPublicMinting: false,
+    mintOpen: true,
+    mintFeeRecipient: zeroAddress,
+    contractURI: "",
+    txOptions: { waitForTransaction: true },
+  });
 
-    console.log(`New SPG NFT collection created at transaction hash ${newCollection.txHash}`)
-    console.log(`NFT contract address: ${newCollection.spgNftContract}`)
-  }
+  console.log(
+    `New SPG NFT collection created at transaction hash ${newCollection.txHash}`
+  );
+  console.log(`NFT contract address: ${newCollection.spgNftContract}`);
+}
 
-  createSpgNftCollection();
-  ```
+createSpgNftCollection();
+```
 
-  2. Create a custom ERC-721 NFT collection on your own and use the [register](https://docs.story.foundation/docs/sdk-ipasset#register) function - providing an `nftContract` and `tokenId` - *instead of* using the `mintAndRegisterIp` function. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/simpleMintAndRegister.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
-</Accordion>
+2. Create a custom ERC-721 NFT collection on your own and use the [register](/sdk-reference/ipasset#register) function - providing an `nftContract` and `tokenId` - _instead of_ using the `mintAndRegisterIp` function. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/simpleMintAndRegister.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
+   </Accordion>
 
-> Associated Docs: [ipAsset.mintAndRegisterIp](https://docs.story.foundation/docs/sdk-ipasset#mintandregisterip)
+> Associated Docs: [ipAsset.mintAndRegisterIp](/sdk-reference/ipasset#mintandregisterip)
 
 ```typescript main.ts
 import fs from "fs";
 import axios from "axios";
 import FormData from "form-data";
-import { uploadBlobToIPFS, uploadJSONToIPFS } from './uploadToIpfs.ts'
+import { uploadBlobToIPFS, uploadJSONToIPFS } from "./uploadToIpfs.ts";
 import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
-import { client, account } from './utils'
+import { client, account } from "./utils";
 import { createHash } from "crypto";
-import { LicenseTerms } from '@story-protocol/core-sdk';
-import { zeroAddress, Address } from 'viem';
+import { LicenseTerms } from "@story-protocol/core-sdk";
+import { zeroAddress, Address } from "viem";
 
 async function main() {
   // previous code here ...
 
   const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
-    spgNftContract: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc',
+    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
     // the terms we created in the previous step
     licenseTermsData: [{ terms: commercialRemixTerms }],
     ipMetadata: {
-      ipMetadataURI: process.env.PINATA_GATEWAY + '/files/' + ipIpfsHash,
+      ipMetadataURI: process.env.PINATA_GATEWAY + "/files/" + ipIpfsHash,
       ipMetadataHash: `0x${ipHash}`,
-      nftMetadataURI: process.env.PINATA_GATEWAY + '/files/' + nftIpfsHash,
+      nftMetadataURI: process.env.PINATA_GATEWAY + "/files/" + nftIpfsHash,
       nftMetadataHash: `0x${nftHash}`,
     },
     txOptions: { waitForTransaction: true },
   });
 
-  console.log(`Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`);
-  console.log(`View on the explorer: https://aeneid.explorer.story.foundation/ipa/${response.ipId}`); 
+  console.log(
+    `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  console.log(
+    `View on the explorer: https://aeneid.explorer.story.foundation/ipa/${response.ipId}`
+  );
 }
 
 main();

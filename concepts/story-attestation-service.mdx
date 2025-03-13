@@ -33,11 +33,11 @@ If your IP is non-commercial, then this section doesn't apply to you.
 
 When [registering your IP on Story](/concepts/how-to-register-ip-on-story), you pass in IP-specific metadata that implements the [📝 IPA Metadata Standard](/concepts/ipa-metadata-standard). In this standard, you'll see 3 fields:
 
-| Property Name | Type     | Description                                                                                                                                                                                                                                    |
-| :------------ | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mediaUrl`    | `string` | Used for infringement checking, points to the actual media (ex. image or audio)                                                                                                                                                                |
-| `mediaHash`   | `string` | Hashed string of the media using SHA-256 hashing algorithm. See [here](https://docs.story.foundation/docs/ipa-metadata-standard#hashing-content) for how that is done.                                                                         |
-| `mediaType`   | `string` | Type of media (audio, video, image), based on [mimeType](https://developer.mozilla.org/en-US/docs/Web/HTTP/MIME_types/Common_types). See the allowed media types [here](https://docs.story.foundation/docs/ipa-metadata-standard#media-types). |
+| Property Name | Type     | Description                                                                                                                                                                                                           |
+| :------------ | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mediaUrl`    | `string` | Used for infringement checking, points to the actual media (ex. image or audio)                                                                                                                                       |
+| `mediaHash`   | `string` | Hashed string of the media using SHA-256 hashing algorithm. See [here](/concepts/ipa-metadata-standard#hashing-content) for how that is done.                                                                         |
+| `mediaType`   | `string` | Type of media (audio, video, image), based on [mimeType](https://developer.mozilla.org/en-US/docs/Web/HTTP/MIME_types/Common_types). See the allowed media types [here](/concepts/ipa-metadata-standard#media-types). |
 
 These are used for the commercial infringement check. Whatever media you pass in through `mediaUrl` will be checked by our infringement detection providers and flagged if infringement is detected.
 

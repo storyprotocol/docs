@@ -65,7 +65,7 @@ import { SimpleNFT } from "../src/mocks/SimpleNFT.sol";
 contract IPARegistrarTest is Test {
     address internal alice = address(0xa11ce);
 
-    // For addresses, see https://docs.story.foundation/docs/deployed-smart-contracts
+    // For addresses, see https://docs.story.foundation/developers/deployed-smart-contracts
     // Protocol Core - IPAssetRegistry
     IIPAssetRegistry internal IP_ASSET_REGISTRY = IIPAssetRegistry(0x77319B4031e6eF1250907aa00018B8B1c67a244b);
 
@@ -103,7 +103,7 @@ Once you have your own SPGNFT, all you have to do is call `mintAndRegisterIp` wi
 
 - `spgNftContract` - the address of your SPGNFT contract
 - `recipient` - the address of who will receive the NFT and thus be the owner of the newly registered IP. _Note: remember that registering IP on Story is permissionless, so you can register an IP for someone else (by paying for the transaction) yet they can still be the owner of that IP Asset._
-- `ipMetadata` - the metadata associated with your NFT & IP. See [this](https://docs.story.foundation/docs/ip-asset#nft-vs-ip-metadata) section to better understand setting NFT & IP metadata.
+- `ipMetadata` - the metadata associated with your NFT & IP. See [this](/concepts/ip-asset/overview#nft-vs-ip-metadata) section to better understand setting NFT & IP metadata.
 
 1. Run `touch test/0_IPARegistrar.t.sol` to create a test file under `test/0_IPARegistrar.t.sol`. Then, paste in the following code:
 
@@ -129,7 +129,7 @@ import { WorkflowStructs } from "@storyprotocol/periphery/lib/WorkflowStructs.so
 contract IPARegistrarTest is Test {
     address internal alice = address(0xa11ce);
 
-    // For addresses, see https://docs.story.foundation/docs/deployed-smart-contracts
+    // For addresses, see https://docs.story.foundation/developers/deployed-smart-contracts
     // Protocol Core - IPAssetRegistry
     IIPAssetRegistry internal IP_ASSET_REGISTRY = IIPAssetRegistry(0x77319B4031e6eF1250907aa00018B8B1c67a244b);
     // Protocol Periphery - RegistrationWorkflows

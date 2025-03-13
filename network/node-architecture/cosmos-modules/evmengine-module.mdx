@@ -2,6 +2,7 @@
 title: evmengine
 description: Module that facilitates communication between consensus and execution layers
 ---
+
 ## Abstract
 
 This document specifies the internal `x/evmengine` module of the Story blockchain.
@@ -97,8 +98,8 @@ At each block, if the node is the proposer, ABCI2 triggers `PrepareProposal` whi
 
 1. Loads staking & reward withdrawals from the [evmstaking](./evmstaking-module) module.
 2. Builds a valid EVM block.
-   * If optimistic building: loads the optimistically built block.
-   * Non-optimistic: requests and retrieves an EVM block from EL.
+   - If optimistic building: loads the optimistically built block.
+   - Non-optimistic: requests and retrieves an EVM block from EL.
 3. Collects the EVM logs of the previous/parent block.
 4. Assembles `MsgExecutionPayload` with the built EVM block and previous EVM logs.
 5. Returns a transaction containing the assembled `MsgExecutionPayload` data.
@@ -149,14 +150,14 @@ message EVMEvent {
 
 This message is expected to fail if:
 
-* authority is invalid (not evmengine authority)
-* execution payload fails to unmarshal to [ExecutableData](https://github.com/piplabs/story/blob/c38b80c13579d3df7174ea10c3368ef0692f52da/client/x/evmengine/types/executable_data.go#L17-L35) for reasons such as invalid fields
-* execution payload's block number does not match CL head's block number + 1
-* execution payload's block parent hash does not match CL head's hash
-* execution payload's timestamp is invalid
-* execution payload's RANDAO does not match CL head's hash (ie. parent hash)
-* execution payload's `Withdrawals`, `BlobGasUsed`, and `ExcessBlobGas` fields are nil
-* execution payload's `Withdrawals` count does not match local node's sum of dequeued stake & reward withdrawals
+- authority is invalid (not evmengine authority)
+- execution payload fails to unmarshal to [ExecutableData](https://github.com/piplabs/story/blob/c38b80c13579d3df7174ea10c3368ef0692f52da/client/x/evmengine/types/executable_data.go#L17-L35) for reasons such as invalid fields
+- execution payload's block number does not match CL head's block number + 1
+- execution payload's block parent hash does not match CL head's hash
+- execution payload's timestamp is invalid
+- execution payload's RANDAO does not match CL head's hash (ie. parent hash)
+- execution payload's `Withdrawals`, `BlobGasUsed`, and `ExcessBlobGas` fields are nil
+- execution payload's `Withdrawals` count does not match local node's sum of dequeued stake & reward withdrawals
 
 The message must contain previous block's events, which gets processed at the current CL block (in other words, execution events from EL block n-1 are processed at CL block n). In the future, the message will remove `prev_payload_events` and rely on [Engine API](engine-api) to get the current finalized EL block's events.
 
@@ -164,7 +165,7 @@ Also note that EVM events are processed in CL in the order they are generated in
 
 ## UBI
 
-All UBI-related changes must be triggered from the canonical UBI contract in the EVM execution layer. This module handles the execution handling of those triggers in CL. Read more about [UBI for validators](https://docs.story.foundation/docs/tokenomics-staking#ubi-for-validators)
+All UBI-related changes must be triggered from the canonical UBI contract in the EVM execution layer. This module handles the execution handling of those triggers in CL. Read more about [UBI for validators](/network/tokenomics-staking#ubi-for-validators)
 
 ### Set UBI Distribution
 
