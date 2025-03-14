@@ -28,7 +28,7 @@ Each IP Asset has an IP Royalty Vault, which acts as a pool for all monetary inf
 ## Token Terminology
 
 1. **Royalty Tokens**: the IP Royalty Vault contract is also the ERC-20 contract for the Royalty Tokens of each IP Asset. This means the address of the IP Royalty Vault for an IP Asset is also the ERC-20 token address of the Royalty Tokens. Each IP Asset has 100,000,000 Royalty Tokens associated, where each token represents 0.000001% of those gains. The holders of these Royalty Tokens can claim the Revenue Tokens (defined below) that are in the associated IP Royalty Vault.
-2. **Revenue Tokens**: these are the tokens used for payment (ie. WIP). Royalty Tokens can be used to claim Revenue Tokens. Read below on whitelisting ⬇️
+2. **Revenue Tokens**: these are the tokens used for payment (ie. WIP). Royalty Tokens can be used to claim Revenue Tokens. Read below on whitelisting ⤵️
 
 ### Whitelisted Revenue Tokens
 
@@ -68,31 +68,25 @@ Imagine we have a scenario where IPA4 tips IPA3 1M WIP by calling `payRoyaltyOnB
 
 1. Revenue Tokens flow to the Royalty Module contract. This contract then splits up the tokens based on the **royalty stack** on the receiving IPA. In this case, IPA3 has a royalty stack of 15%, so 850k tokens flow to IP Royalty Vault 3, and 150k tokens flow to the LAP contract.
 
-<img
-  src="https://files.readme.io/9cc0e9761fddd67bfeae74b14e2ec2bf51f686f72a145df096a96b54a17c5cd1-image.png"
-  alt="Revenue Flow Step 1"
-  className="mx-auto"
-/>
+<Frame>
+  <img src="/images/concepts/lap-1.png" alt="Revenue Flow Step 1" />
+</Frame>
 
 <br />
 
 2. The LAP contract separates the payment to the ancestors by calling `transferToVault`. In this case, IPA2 deserves 100k (10% of IPA3's earnings) and IPA1 deserves 50k (5% of IPA3's earnings).
 
-<img
-  src="https://files.readme.io/d91316a30d117ea76bd42eecf3030aa1c6bf251217193d4e6e504d0f7b7367b8-image.png"
-  alt="Revenue Flow Step 2"
-  className="mx-auto"
-/>
+<Frame>
+  <img src="/images/concepts/lap-2.png" alt="Revenue Flow Step 2" />
+</Frame>
 
 <br />
 
 3. Now that the Revenue Tokens are in the IP Royalty Vaults, the associated Royalty Token holders can claim from the vaults. Remember, the Revenue Tokens get claimed to whoever holds the Royalty Tokens. In the most common case, they are in the IP Account since that's where they originate. To claim, you would call either `claimRevenueOnBehalfByTokenBatch` or `claimRevenueOnBehalf`.
 
-<img
-  src="https://files.readme.io/ef288631b074cd82d2edb95b6b27844db6a36cd8976a29f20a0cd9b393752218-image.png"
-  alt="Revenue Flow Step 3"
-  className="mx-auto"
-/>
+<Frame>
+  <img src="/images/concepts/lap-3.png" alt="Revenue Flow Step 3" />
+</Frame>
 
 ### External Royalty Policies
 

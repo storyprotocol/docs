@@ -134,11 +134,10 @@
                 "icon": "sack-dollar",
                 "pages": [
                   "concepts/royalty-module/overview",
+                  "concepts/royalty-module/ip-royalty-vault",
                   "concepts/royalty-module/liquid-absolute-percentage",
                   "concepts/royalty-module/liquid-relative-percentage",
-                  "concepts/royalty-module/ip-royalty-vault",
-                  "concepts/royalty-module/external-royalty-policies",
-                  "concepts/royalty-module/payments-and-revenue-tokens"
+                  "concepts/royalty-module/external-royalty-policies"
                 ]
               },
               {
@@ -336,13 +335,13 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "https://discord.gg/storybuilders"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Quickstart",
+      "href": "https://docs.story.foundation/quickstart"
     }
   },
   "footer": {

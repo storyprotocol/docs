@@ -97,13 +97,13 @@ The `beforeMintLicenseTokens` function, which acts as a hook, is a function that
 
 It can also be used to implement various checks and logic, as [outlined above](/concepts/licensing-module/license-config-hook#logic-that-is-possible-with-license-config).
 
-<Note type="warning">
+<Warning>
   Beware of potentially malicious implementations of external license hooks.
   Please first verify the code of the hook you choose because it may be not
   reviewed or audited by the Story team.
-</Note>
+</Warning>
 
-```solidity
+```solidity ILicensingHook.sol
 /// @notice This function is called when the LicensingModule mints license tokens.
 /// @dev The hook can be used to implement various checks and determine the minting price.
 /// The hook should revert if the minting is not allowed.
@@ -132,5 +132,5 @@ Note that it returns the `totalMintingFee`. You may be wondering, "I can set the
 | Minting Fee                                                   | Importance       |
 | ------------------------------------------------------------- | ---------------- |
 | The `totalMintingFee` returned from `beforeMintLicenseTokens` | Highest Priority |
-| The `mintingFee` set in the `LicenseConfig`                   | :arrow_down:     |
+| The `mintingFee` set in the `LicenseConfig`                   | ⬇️               |
 | The `mintingFee` set in the License Terms                     | Lowest Priority  |

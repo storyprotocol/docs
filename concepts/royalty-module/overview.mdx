@@ -21,19 +21,24 @@ The Royalty Module defines how revenue flows between IPs on Story. More specific
 
 ## High-Level Example
 
-The below example (using [Liquid Absolute Percentage](/concepts/royalty-module/liquid-absolute-percentage)) shows what happens when an IP Asset 4 (IPA4) tips IPA3 1,000,000 WIP.
+The below example (using [Liquid Absolute Percentage](/concepts/royalty-module/liquid-absolute-percentage) ) shows what happens when an IP Asset 4 (IPA4) tips IPA3 1,000,000 WIP.
 
 1. Revenue first flows to the Royalty Module contract
 2. Royalty Module sends WIP to both IPA3 and the LAP contract based on the **royalty stack** (15%)
 3. LAP will distribute funds to further ancestors since they have negotiated some license agreement where they are due revenue from IPA3's earnings.
 
-> Don't worry if you don't understand everything in the picture, this is just to show you an overview of what the Royalty Module is all about.
+<Note>
 
-<img
-  src="https://files.readme.io/37507c9dda61f5be3028edc020733b183f728575ff592f4f81ecc405b3e41df6-image.png"
-  alt="Royalty Module Flow Example"
-  className="mx-auto"
-/>
+Don't worry if you don't understand everything in the picture, this is just to show you an overview of what the Royalty Module is all about.
+
+</Note>
+
+<Frame>
+  <img
+    src="/images/concepts/royalty-module-overview.png"
+    alt="Royalty Module Flow Example"
+  />
+</Frame>
 
 ## Royalty Policies
 
@@ -42,8 +47,6 @@ Royalty policies are a component of the license agreement between two IP Assets.
 The Royalty Module supports both whitelisted/native policies created by our team directly, and external ones created by you.
 
 <Note>
-  Note on Royalty Policies
-
 An IP Asset without any parents can mint licenses with different royalty policies while a derivative IP Asset inherits the royalty policy of its parents.
 
 Additionally, there will always be one royalty policy governing every link an IP Asset has with each of its derivatives.
@@ -83,11 +86,12 @@ Let's imagine the scenario below:
 
 In the image below there is an example of a one million WIP payment made to IP2. In the image we can see how much each Royalty Token holder of the entire derivative chain receives when the payment is made.
 
-<img
-  src="https://files.readme.io/a96e7d196a85f69dceb2b125ce70008115e15d0aa76b4e14b0dff2007525051b-image.png"
-  alt="Royalty Token Distribution Example"
-  className="mx-auto"
-/>
+<Frame>
+  <img
+    src="/images/concepts/rt-vs-rs.png"
+    alt="Royalty Token Distribution Example"
+  />
+</Frame>
 
 - RT Holder A - From the one million WIP payment gets 100k WIP. Royalty Stack percentage is paid first and RT Holder A has 100% of Royalty Tokens of IP1 so gets to keep the whole 100k WIP.
 - RT Holder B - From the one million WIP payment gets 180k WIP. IP2 holders as a whole receive 900k WIP from the original one million WIP payment. Those 900k WIP are then split among the different Royalty Token holders of IP2 which are B and C. B has 20% of Royalty Tokens of IP2 so it receives 900k WIP \* 20% = 180k.
@@ -95,11 +99,12 @@ In the image below there is an example of a one million WIP payment made to IP2.
 
 ## Derivative Chain Configurations
 
-<img
-  src="https://files.readme.io/79bd27f-image.png"
-  alt="Derivative Chain Configurations"
-  className="mx-auto"
-/>
+<Frame>
+  <img
+    src="/images/concepts/derivative-chain-config.png"
+    alt="Derivative Chain Configurations"
+  />
+</Frame>
 
 The derivative chain can assume multiple configurations.
 
