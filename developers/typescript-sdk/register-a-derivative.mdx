@@ -20,20 +20,24 @@ This section demonstrates how to register an IP Asset as a derivative of another
 
 There are a few steps you have to complete before you can start the tutorial.
 
-1. Complete the [TypeScript SDK Setup](/developers/typescript-sdk/typescript-sdk-setup)
+1. Complete the [TypeScript SDK Setup](/developers/typescript-sdk/setup)
 
 ## 1. Before We Start
 
 There are a lot of ways to register an IP Asset as a derivative of another. Below, we will help you figure out what function you should use.
 
 <Note>
-**Have no idea?**
 
-It is best to figure out which SDK function to use based on what is easiest for you. But if you have no idea, simply continue to the next section.
+**Have no idea?** It is best to figure out which SDK function to use based on what is easiest for you. But if you have no idea, simply continue to the next section.
 
 </Note>
 
-Do you already have a [License Token](/developers/license-token) you can use?
+<Tip>
+By the way we recognize this is confusing and are releasing an update to our SDK soon to combine all of these into 1 simple function. :\)
+
+</Tip>
+
+Do you already have a [License Token](/concepts/licensing-module/license-token) you can use?
 
 - ✅ Yes: Is the derivative IP Asset already registered?
   - ✅ Yes: Use [registerDerivativeWithLicenseTokens](/sdk-reference/ipasset#registerderivativewithlicensetokens)
@@ -56,9 +60,7 @@ There are a few times when **you would need** a License Token to register a deri
 ## 2. Register Derivative
 
 <Note>
-**This is just an example**
-
-You are encouraged to figure out the best derivative function to use based on the survey above. However, if you don't know and want to be walked through one solution, this next part is for you.
+**This is just an example**. You are encouraged to figure out the best derivative function to use based on the survey above. However, if you don't know and want to be walked through one solution, this next part is for you.
 
 </Note>
 
@@ -70,12 +72,15 @@ Modify your code such that...
 
 1. Instead of using `mintAndRegisterIp`, use `mintAndRegisterIpAndMakeDerivative`
 2. Add a `derivData` field, where:
-   1. `parentIpIds` is the `ipIds` of the parents you want to become a derivative of. **NOTE: Once you become a derivative, you cannot add more parents**
-   2. `licenseTermIds` is an array of license terms you want to register under. These are the terms your derivative must abide by
+   - `parentIpIds` is the `ipIds` of the parents you want to become a derivative of. **NOTE: Once you become a derivative, you cannot add more parents**
+   - `licenseTermIds` is an array of license terms you want to register under. These are the terms your derivative must abide by
 
 Now we can call the function like so:
 
-> Associated Docs: [ipAsset.mintAndRegisterIpAndMakeDerivative](/sdk-reference/ipasset#mintandregisteripandmakederivative)
+<Info>
+  Associated Docs:
+  [ipAsset.mintAndRegisterIpAndMakeDerivative](/sdk-reference/ipasset#mintandregisteripandmakederivative)
+</Info>
 
 ```typescript main.ts
 import { IpMetadata, DerivativeData } from "@story-protocol/core-sdk";

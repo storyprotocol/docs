@@ -58,7 +58,7 @@ npm install @story-protocol/core-sdk viem
 
 In a `utils.ts` file, add the following code to set up your Story Config:
 
-- Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/typescript-sdk-setup)
+- Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/setup)
 
 ```typescript utils.ts
 import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
@@ -155,10 +155,10 @@ Continuing, the parent should be able to claim its revenue as well. In this exam
 We will use the `claimAllRevenue` function to claim the due revenue tokens.
 
 1. `ancestorIpId` is the `ipId` of the parent ("ancestor") asset
-2. `claimer` is the address that holds the royalty tokens associated with the parent's [IP Royalty Vault](/developers/ip-royalty-vault). By default, they are in the IP Account, which is just the `ipId` of the parent asset
+2. `claimer` is the address that holds the royalty tokens associated with the parent's [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault). By default, they are in the IP Account, which is just the `ipId` of the parent asset
 3. `childIpIds` will have the `ipId` of the child asset
-4. `royaltyPolicies` will contain the address of the royalty policy. As explained in [Royalty Module](/developers/royalty-module), this is either `RoyaltyPolicyLAP` or `RoyaltyPolicyLRP`, depending on the license terms. In this case, let's assume the license terms specify a `RoyaltyPolicyLAP`. Simply go to [Deployed Smart Contracts](/developers/deployed-smart-contracts) and find the correct address.
-5. `currencyTokens` is an array that contains the address of $WIP, which can be found [here](/developers/ip-royalty-vault#whitelisted-revenue-tokens)
+4. `royaltyPolicies` will contain the address of the royalty policy. As explained in [Royalty Module](/concepts/royalty-module), this is either `RoyaltyPolicyLAP` or `RoyaltyPolicyLRP`, depending on the license terms. In this case, let's assume the license terms specify a `RoyaltyPolicyLAP`. Simply go to [Deployed Smart Contracts](/developers/deployed-smart-contracts) and find the correct address.
+5. `currencyTokens` is an array that contains the address of $WIP, which can be found [here](/concepts/royalty-module/ip-royalty-vault#whitelisted-revenue-tokens)
 
 ```typescript main.ts
 import { client } from "./utils";
@@ -201,7 +201,7 @@ main();
 <CardGroup cols={1}>
   <Card
     title="Go to Smart Contract Tutorial"
-    href="/developers/get-started-with-the-smart-contracts/sc-claiming-royalty"
+    href="/developers/smart-contracts-guide/claiming-royalty"
     icon="home"
     iconType="solid"
   >

@@ -3,7 +3,7 @@ title: "Case Study: Registering a Derivative of Ippy"
 description: A Case Study showing how PiPi, a generative pfp project, registers derivatives of Story's official Ippy mascot.
 ---
 
-[PiPi](https://pfp3.io/pipi/mint) is a free generative pfp project on Story that lets you mint derivative artworks of [Ippy](https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42), Story's official mascot. Ippy has [Non-Commercial Social Remixing (NCSR)](/developers/pil-flavors#flavor-1-non-commercial-social-remixing) terms attached, which means anyone can use it or create derivative works as long as it's not used commercially and proper attribution is shown.
+[PiPi](https://pfp3.io/pipi/mint) is a free generative pfp project on Story that lets you mint derivative artworks of [Ippy](https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42), Story's official mascot. Ippy has [Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing) terms attached, which means anyone can use it or create derivative works as long as it's not used commercially and proper attribution is shown.
 
 <CardGroup cols={3}>
   <Card
@@ -17,6 +17,7 @@ description: A Case Study showing how PiPi, a generative pfp project, registers 
   </Card>
 
 {" "}
+
 <Card
   title="PiPi Derivative"
   href="https://explorer.story.foundation/ipa/0xBB42BF2713ee736284C45B1b549a03625cc97e51"
@@ -50,7 +51,7 @@ In the following tutorial, you will learn how exactly these PiPi images were pro
 
 There are a few steps you have to complete before you can start the tutorial.
 
-1. Complete the [Setup Your Own Project](/developers/get-started-with-the-smart-contracts/sc-setup)
+1. Complete the [Setup Your Own Project](/developers/smart-contracts-guide/setup)
 
 ## 1. Setup Metadata
 
@@ -62,7 +63,7 @@ Before we register our new PiPi IP, we need to set up its metadata. There are tw
 <CardGroup cols={1}>
   <Card
     title="NFT vs. IP Metadata"
-    href="/developers/ip-asset#nft-vs-ip-metadata"
+    href="/concepts/ip-asset#nft-vs-ip-metadata"
     icon="home"
     iconType="solid"
   >
@@ -148,7 +149,7 @@ Once you have metadata written, you can upload them to IPFS and will later set i
 
 ## 2. Minting an NFT
 
-When you want to register an IP on Story, you must first mint an NFT. This NFT represents the **ownership** over the [IP Asset](/developers/ip-asset).
+When you want to register an IP on Story, you must first mint an NFT. This NFT represents the **ownership** over the [IP Asset](/concepts/ip-asset).
 
 <CardGroup cols={1}>
   <Card
@@ -224,11 +225,11 @@ function _registerAsIPAsset(uint256 tokenId) internal returns (address) {
 }
 ```
 
-All this is doing is calling the `register` function on the [IP Asset Registry](/developers/ip-asset-registry), which creates a new [IP Asset](/developers/ip-asset) in our protocol, and returns an `ipId`.
+All this is doing is calling the `register` function on the [IP Asset Registry](/concepts/ip-asset-registry), which creates a new [IP Asset](/concepts/ip-asset) in our protocol, and returns an `ipId`.
 
 ## 4. Set Metadata on IP
 
-Now that we have registered a new IP Asset, we can take our metadata from before and set it on the NFT & IP with the `CoreMetadataModule.sol`. As described [here](/developers/ip-asset#adding-nft--ip-metadata-to-ip-asset), we need to set 4 params:
+Now that we have registered a new IP Asset, we can take our metadata from before and set it on the NFT & IP with the `CoreMetadataModule.sol`. As described [here](/concepts/ip-asset#adding-nft--ip-metadata-to-ip-asset), we need to set 4 params:
 
 1. `nftMetadataHash`
 2. `nftMetadataURI`
@@ -287,11 +288,11 @@ function registerDerivativeForToken(address ipId) internal {
 }
 ```
 
-This function calls `registerDerivative` in the [Licensing Module](/developers/licensing-module), with:
+This function calls `registerDerivative` in the [Licensing Module](/concepts/licensing-module), with:
 
 - `ipId`: the new `ipId` we got in step 3
 - `parentIpIds`: an array that contains Ippy's `ipId`, which is `0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42`
-- `licenseTermsIds`: an array containing `1`, which is the license term ID of [Non-Commercial Social Remixing (NCSR)](/developers/pil-flavors#flavor-1-non-commercial-social-remixing). This means the derivative can use Ippy for free but not commercialize it
+- `licenseTermsIds`: an array containing `1`, which is the license term ID of [Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing). This means the derivative can use Ippy for free but not commercialize it
 - `licenseTemplate`: the address of `PILicenseTemplate`, found in [Deployed Smart Contracts](/developers/deployed-smart-contracts)
 - `royaltyContext`: just set to zero address
 - `maxMintingFee`, `maxRts`, and `maxRevenueShare` can be set to 0. They don't do anything because the license terms are non-commercial.

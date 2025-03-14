@@ -33,9 +33,9 @@ In this first section, we will combine a few of the tutorials into one. We will 
 
 ### Prerequisites
 
-- Complete [Register an IP Asset](/developers/get-started-with-the-smart-contracts/sc-register-an-ip-asset)
-- Complete [Register License Terms](/developers/get-started-with-the-smart-contracts/sc-register-license-terms)
-- Complete [Attach Terms to an IPA](/developers/get-started-with-the-smart-contracts/sc-attach-license-terms)
+- Complete [Register an IP Asset](/developers/smart-contracts-guide/register-an-ip-asset)
+- Complete [Register License Terms](/developers/smart-contracts-guide/register-license-terms)
+- Complete [Attach Terms to an IPA](/developers/smart-contracts-guide/attach-license-terms)
 
 ### Writing our Contract
 
@@ -48,7 +48,7 @@ In order to get the contract addresses to pass in the constructor, go to [Deploy
 
 </Note>
 
-```solidity
+```solidity src/Example.sol
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.26;
 
@@ -130,14 +130,14 @@ In this next section, we will combine a few of the later tutorials into one. We 
 
 ### Prerequisites
 
-- Complete [Mint a License Token](/developers/get-started-with-the-smart-contracts/sc-mint-license-token)
-- Complete [Register a Derivative](/developers/get-started-with-the-smart-contracts/sc-remix-ipa)
+- Complete [Mint a License Token](/developers/smart-contracts-guide/mint-license-token)
+- Complete [Register a Derivative](/developers/smart-contracts-guide/remix-ipa)
 
 ### Writing our Contract
 
 In your `Example.sol` contract, add the following function at the bottom:
 
-```solidity
+```solidity src/Example.sol
 /// @notice Mint and register a new child IPA, mint a License Token
 /// from the parent, and register it as a derivative of the parent.
 /// @param parentIpId The ipId of the parent IPA.
@@ -193,7 +193,7 @@ function mintLicenseTokenAndRegisterDerivative(
 
 Create another new file under `test/Example.t.sol` and paste the following:
 
-```solidity
+```solidity test/Example.t.sol
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.26;
 

@@ -161,7 +161,7 @@ main();
 
 Now that we have generated and stored our image, we can register the image as IP on Story. First, let's set up our config. In a `utils.ts` file, add the following code:
 
-- Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/typescript-sdk-setup)
+- Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/setup)
 
 ```typescript utils.ts
 import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
@@ -302,7 +302,7 @@ main();
 
 ## 7. Create License Terms
 
-When registering your image on Story, you can attach [License Terms](/developers/license-terms) to the IP. These are real, legally binding terms enforced on-chain by the [Licensing Module](/developers/licensing-module), disputable by the [Dispute Module](/developers/dispute-module), and in the worst case, able to be enforced off-chain in court through traditional means.
+When registering your image on Story, you can attach [License Terms](/concepts/licensing-module/license-terms) to the IP. These are real, legally binding terms enforced on-chain by the [Licensing Module](/concepts/licensing-module), disputable by the [Dispute Module](/concepts/dispute-module), and in the worst case, able to be enforced off-chain in court through traditional means.
 
 Let's say we want to monetize our image such that every time someone wants to use it (on merch, advertisement, or whatever) they have to pay an initial minting fee of 10 $WIP. Additionally, every time they earn revenue on derivative work, they owe 5% revenue back as royalty.
 
@@ -345,7 +345,7 @@ main();
 
 ## 8. Register an NFT as an IP Asset
 
-Next we will mint an NFT, register it as an [IP Asset](/developers/ip-asset), set [License Terms](/developers/license-terms) on the IP, and then set both NFT & IP metadata.
+Next we will mint an NFT, register it as an [IP Asset](/concepts/ip-asset), set [License Terms](/concepts/licensing-module/license-terms) on the IP, and then set both NFT & IP metadata.
 
 Luckily, we can use the `mintAndRegisterIp` function to mint an NFT and register it as an IP Asset in the same transaction.
 
@@ -381,7 +381,8 @@ createSpgNftCollection();
 ```
 
 2. Create a custom ERC-721 NFT collection on your own and use the [register](/sdk-reference/ipasset#register) function - providing an `nftContract` and `tokenId` - _instead of_ using the `mintAndRegisterIp` function. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/simpleMintAndRegister.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
-   </Accordion>
+
+</Accordion>
 
 > Associated Docs: [ipAsset.mintAndRegisterIp](/sdk-reference/ipasset#mintandregisterip)
 

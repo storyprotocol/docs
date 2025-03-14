@@ -4,11 +4,16 @@ description: Detailed explanation of all terms available in the Programmable IP 
 ---
 
 <CardGroup cols={3}>
-  <Card title="Read the Overview" href="/concepts/programmable-ip-license/overview" icon="pills" color="yellow">
-    If you haven't already, read the Programmable IP License (PIL💊) overview.
-  </Card>
 
-{" "}
+<Card
+  title="Read the Overview"
+  href="/concepts/programmable-ip-license/overview"
+  icon="pills"
+  color="yellow"
+>
+  If you haven't already, read the Programmable IP License (PIL💊) overview.
+</Card>
+
 <Card
   title="Preset PIL Terms"
   href="/concepts/programmable-ip-license/pil-flavors"
@@ -19,16 +24,23 @@ description: Detailed explanation of all terms available in the Programmable IP 
   preset "flavors" for you to use while developing.
 </Card>
 
-  <Card title="PIL Legal Text" href="https://github.com/piplabs/pil-document/blob/v1.3.0/Story%20Foundation%20-%20Programmable%20IP%20License%20(1.31.25).pdf" icon="scroll" color="#ccb092">
-    Check out the actual PIL legal text. It is very human-readable for a legal text!
-  </Card>
+<Card
+  title="PIL Legal Text"
+  href="https://github.com/piplabs/pil-document/blob/v1.3.0/Story%20Foundation%20-%20Programmable%20IP%20License%20(1.31.25).pdf"
+  icon="scroll"
+  color="#ccb092"
+>
+  Check out the actual PIL legal text. It is very human-readable for a legal
+  text!
+</Card>
+
 </CardGroup>
 
 # On-chain terms
 
 Most PIL terms are on-chain. They are implemented in the `IPILicenseTemplate.sol` contract as a `PILTerms` struct [here](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/interfaces/modules/licensing/IPILicenseTemplate.sol).
 
-```solidity
+```solidity IPILicenseTemplate.sol
 /// @notice This struct defines the terms for a Programmable IP License (PIL).
 /// These terms can be attached to IP Assets.
 struct PILTerms {
@@ -65,12 +77,12 @@ struct PILTerms {
 | `commercializerChecker`     | Address         | Commercializers that are allowed to commercially exploit the original work. If zero address, then no restrictions are enforced.                                                                                                                                                                                                                                                                        |
 | `commercializerCheckerData` | Bytes           | The data to be passed to the commercializer checker contract.                                                                                                                                                                                                                                                                                                                                          |
 | `commercialRevShare`        | [0-100,000,000] | Amount of revenue (from any source, original & derivative) that must be shared with the licensor (a value of 10,000,000 == 10% of revenue share). This will collect all revenue from tokens that are whitelisted in the [RoyaltyModule.sol contract](https://github.com/storyprotocol/protocol-core-v1/blob/e339f0671c9172a6699537285e32aa45d4c1b57b/contracts/modules/royalty/RoyaltyModule.sol#L50). |
-| `commercialRevCelling`      | #               | If `commercialUse` is set to true, this value determines the maximum revenue you can earn from the original work.                                                                                                                                                                                                                                                                                      |
+| `commercialRevCeiling`      | #               | If `commercialUse` is set to true, this value determines the maximum revenue you can earn from the original work.                                                                                                                                                                                                                                                                                      |
 | `derivativesAllowed`        | True/False      | Indicates whether the licensee can create derivatives of his work or not.                                                                                                                                                                                                                                                                                                                              |
 | `derivativesAttribution`    | True/False      | If true, derivatives that are made must give credit to the original work.                                                                                                                                                                                                                                                                                                                              |
 | `derivativesApproval`       | True/False      | If true, the licensor must approve derivatives of the work.                                                                                                                                                                                                                                                                                                                                            |
 | `derivativesReciprocal`     | True/False      | If true, derivatives of this derivative can be created indefinitely as long as they have the exact same terms.                                                                                                                                                                                                                                                                                         |
-| `derivativeRevCelling`      | #               | If `commercialUse` is set to true, this value determines the maximum revenue you can earn from derivative works.                                                                                                                                                                                                                                                                                       |
+| `derivativeRevCeiling`      | #               | If `commercialUse` is set to true, this value determines the maximum revenue you can earn from derivative works.                                                                                                                                                                                                                                                                                       |
 | `currency`                  | Address         | The ERC20 token to be used to pay the minting fee. The token must be registered in story protocol.                                                                                                                                                                                                                                                                                                     |
 | `uri`                       | String          | The URI of the license terms, which can be used to fetch [off-chain license terms](/concepts/programmable-ip-license/pil-terms#off-chain-terms-to-be-included-in-uri-field).                                                                                                                                                                                                                           |
 

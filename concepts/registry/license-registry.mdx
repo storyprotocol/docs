@@ -16,7 +16,7 @@ description: Learn about the registry that manages license-related states in the
 
 The License Registry stores all license-related states within the protocol, including managing global state like registering new License Templates like the [Programmable IP License (PIL💊)](/concepts/programmable-ip-license/overview), attaching licenses to individual [IP Assets](/concepts/ip-asset/overview), registering derivatives, and the like:
 
-```solidity
+```solidity LicenseRegistry.sol
 struct LicenseRegistryStorage {
   /// The default license template address
   address defaultLicenseTemplate;
@@ -41,13 +41,13 @@ struct LicenseRegistryStorage {
 
 ### Notable Functions
 
-```solidity
+```solidity LicenseRegistry.sol
 function attachLicenseTermsToIp(address ipId, address licenseTemplate, uint256 licenseTermsId) external onlyLicensingModule
 ```
 
 This function allows you to attach License Terms to an IP Asset.
 
-```solidity
+```solidity LicenseRegistry.sol
 function registerDerivativeIp(address childIpId, address[] calldata parentIpIds, address licenseTemplate, uint256[] calldata licenseTermsIds, bool isUsingLicenseToken) external onlyLicensingModule
 ```
 

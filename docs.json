@@ -207,6 +207,64 @@
             ]
           },
           {
+            "group": "Integration Guides",
+            "pages": [
+              {
+                "group": "TypeScript SDK",
+                "icon": "screwdriver-wrench",
+                "pages": [
+                  "developers/typescript-sdk/overview",
+                  "developers/typescript-sdk/setup",
+                  "developers/typescript-sdk/register-an-ip-asset",
+                  "developers/typescript-sdk/attach-terms-to-an-ip-asset",
+                  "developers/typescript-sdk/mint-a-license",
+                  "developers/typescript-sdk/register-a-derivative",
+                  "developers/typescript-sdk/pay-ipa",
+                  "developers/typescript-sdk/claim-revenue",
+                  "developers/typescript-sdk/raise-a-dispute"
+                ]
+              },
+              {
+                "group": "React SDK",
+                "icon": "atom",
+                "pages": [
+                  "developers/react-guide/overview",
+                  {
+                    "group": "Setup",
+                    "pages": [
+                      "developers/react-guide/react-setup/overview",
+                      "developers/react-guide/react-setup/dynamic-setup",
+                      "developers/react-guide/react-setup/rainbowkit-setup",
+                      "developers/react-guide/react-setup/reown-setup",
+                      "developers/react-guide/react-setup/tomo-setup"
+                    ]
+                  },
+                  "developers/react-guide/using-the-sdk-in-react"
+                ]
+              },
+              {
+                "group": "Python",
+                "icon": "snake",
+                "pages": []
+              },
+              {
+                "group": "Smart Contracts",
+                "icon": "scroll",
+                "pages": [
+                  "developers/smart-contracts-guide/overview",
+                  "developers/smart-contracts-guide/setup",
+                  "developers/smart-contracts-guide/register-an-ip-asset",
+                  "developers/smart-contracts-guide/register-license-terms",
+                  "developers/smart-contracts-guide/attach-license-terms",
+                  "developers/smart-contracts-guide/mint-license-token",
+                  "developers/smart-contracts-guide/remix-ipa",
+                  "developers/smart-contracts-guide/claiming-royalty",
+                  "developers/smart-contracts-guide/example"
+                ]
+              }
+            ]
+          },
+          {
             "group": "Tutorials",
             "pages": [
               "developers/tutorials/overview",
@@ -218,52 +276,6 @@
               "developers/tutorials/how-to-tip-an-ip",
               "developers/tutorials/case-study-register-derivative-ippy",
               "developers/tutorials/privy-tutorial"
-            ]
-          },
-          {
-            "group": "TypeScript SDK",
-            "pages": [
-              "developers/typescript-sdk/overview",
-              "developers/typescript-sdk/typescript-sdk-setup",
-              "developers/typescript-sdk/register-an-ip-asset",
-              "developers/typescript-sdk/register-a-derivative",
-              "developers/typescript-sdk/attach-terms-to-an-ip-asset",
-              "developers/typescript-sdk/mint-a-license",
-              "developers/typescript-sdk/pay-ipa",
-              "developers/typescript-sdk/claim-revenue",
-              "developers/typescript-sdk/raise-a-dispute"
-            ]
-          },
-
-          {
-            "group": "Smart Contracts",
-            "pages": [
-              "developers/get-started-with-the-smart-contracts/overview",
-              "developers/get-started-with-the-smart-contracts/sc-setup",
-              "developers/get-started-with-the-smart-contracts/sc-register-an-ip-asset",
-              "developers/get-started-with-the-smart-contracts/sc-register-license-terms",
-              "developers/get-started-with-the-smart-contracts/sc-attach-license-terms",
-              "developers/get-started-with-the-smart-contracts/sc-mint-license-token",
-              "developers/get-started-with-the-smart-contracts/sc-claiming-royalty",
-              "developers/get-started-with-the-smart-contracts/sc-remix-ipa",
-              "developers/get-started-with-the-smart-contracts/sc-example"
-            ]
-          },
-          {
-            "group": "React Guide",
-            "pages": [
-              "developers/react-guide/overview",
-              {
-                "group": "Setup",
-                "pages": [
-                  "developers/react-guide/react-setup/overview",
-                  "developers/react-guide/react-setup/dynamic-setup",
-                  "developers/react-guide/react-setup/rainbowkit-setup",
-                  "developers/react-guide/react-setup/reown-setup",
-                  "developers/react-guide/react-setup/tomo-setup"
-                ]
-              },
-              "developers/react-guide/using-the-sdk-in-react"
             ]
           }
         ]

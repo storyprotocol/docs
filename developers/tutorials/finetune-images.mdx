@@ -416,9 +416,9 @@ You can paste the `sample` into your browser and see the final result! Make sure
 
 ## 5. Set up your Story Config
 
-Next we will register this image on Story as an [IP Asset](/developers/ip-asset) in order to monetize and license the IP. Create a `story` folder and add a `utils.ts` file. In there, add the following code to set up your Story Config:
+Next we will register this image on Story as an [IP Asset](/concepts/ip-asset) in order to monetize and license the IP. Create a `story` folder and add a `utils.ts` file. In there, add the following code to set up your Story Config:
 
-- Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/typescript-sdk-setup)
+- Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/setup)
 
 ```typescript story/utils.ts
 import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
@@ -592,7 +592,7 @@ export async function registerIp(inference) {
 
 ## 10. Register the NFT as an IP Asset
 
-Next we will mint an NFT, register it as an [IP Asset](/developers/ip-asset), set [License Terms](/developers/license-terms) on the IP, and then set both NFT & IP metadata.
+Next we will mint an NFT, register it as an [IP Asset](/concepts/ip-asset), set [License Terms](/concepts/licensing-module/license-terms) on the IP, and then set both NFT & IP metadata.
 
 Luckily, we can use the `mintAndRegisterIp` function to mint an NFT and register it as an IP Asset in the same transaction.
 

@@ -14,13 +14,13 @@ description: Learn how to Register an NFT as an IP Asset in TypeScript.
   </Card>
 </CardGroup>
 
-Let's say you have some off-chain IP (ex. a book, a character, a drawing, etc). In order to register that IP on Story, you first need to mint an NFT. This NFT is the **ownership** over the IP. Then you **register** that NFT on Story, turning it into an [IP Asset](/developers/ip-asset). The below tutorial will walk you through how to do this.
+Let's say you have some off-chain IP (ex. a book, a character, a drawing, etc). In order to register that IP on Story, you first need to mint an NFT. This NFT is the **ownership** over the IP. Then you **register** that NFT on Story, turning it into an [IP Asset](/concepts/ip-asset). The below tutorial will walk you through how to do this.
 
 ### Prerequisites
 
 There are a few steps you have to complete before you can start the tutorial.
 
-1. Complete the [TypeScript SDK Setup](/developers/typescript-sdk/typescript-sdk-setup)
+1. Complete the [TypeScript SDK Setup](/developers/typescript-sdk/setup)
 2. \[OPTIONAL] Go to [Pinata](https://pinata.cloud/) and create a new API key. Add the JWT to your `.env` file:
 
 ```text .env
@@ -35,7 +35,7 @@ npm install pinata-web3
 
 ## 1. \[OPTIONAL] Set up your IP Metadata
 
-We can set metadata on our NFT & IP, _but you don't have to_. To do this, view the [IPA Metadata Standard](/developers/ipa-metadata-standard) and construct your metadata for both your NFT & IP.
+We can set metadata on our NFT & IP, _but you don't have to_. To do this, view the [IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard) and construct your metadata for both your NFT & IP.
 
 ```typescript main.ts
 // you should already have a client set up (prerequisite)
@@ -142,7 +142,7 @@ main();
 
 ## 4. Register an NFT as an IP Asset
 
-Remember that in order to register a new IP, we first have to mint an NFT, which will represent the underlying ownership of the IP. This NFT then gets "registered" and becomes an [IP Asset](/developers/ip-asset).
+Remember that in order to register a new IP, we first have to mint an NFT, which will represent the underlying ownership of the IP. This NFT then gets "registered" and becomes an [IP Asset](/concepts/ip-asset).
 
 Luckily, we can use the `mintAndRegisterIp` function to mint an NFT and register it as an IP Asset in the same transaction.
 
@@ -182,11 +182,15 @@ createSpgNftCollection();
 ```
 
 2. Create a custom ERC-721 NFT collection on your own and use the [register](/sdk-reference/ipasset#register) function - providing an `nftContract` and `tokenId` - _instead of_ using the `mintAndRegisterIp` function. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/simpleMintAndRegister.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
+
 </Accordion>
 
----
-
 Here is the code to register an IP:
+
+<Info>
+  Associated Docs:
+  [ipAsset.mintAndRegisterIp](/sdk-reference/ipasset#mintandregisterip)
+</Info>
 
 ```typescript main.ts
 import { IpMetadata } from "@story-protocol/core-sdk";
@@ -220,8 +224,6 @@ async function main() {
 main();
 ```
 
-- Associated Docs: [ipAsset.mintAndRegisterIp](/sdk-reference/ipasset#mintandregisterip)
-
 ## 5. View Completed Code
 
 Congratulations, you registered an IP!
@@ -239,7 +241,7 @@ Congratulations, you registered an IP!
 
 ## 6. Add License Terms to IP
 
-Now that your IP is registered, you can create and attach [License Terms](/developers/license-terms) to it. This will allow others to mint a license and use your IP, restricted by the terms.
+Now that your IP is registered, you can create and attach [License Terms](/concepts/licensing-module/license-terms) to it. This will allow others to mint a license and use your IP, restricted by the terms.
 
 We will go over this in the next section, but it's worth mentioning that instead of using the `mintAndRegisterIp` function, you can **register IP + create terms + attach terms** all in the same step with the following functions:
 

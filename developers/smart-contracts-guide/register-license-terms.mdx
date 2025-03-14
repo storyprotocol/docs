@@ -18,7 +18,7 @@ description: Learn how to create new License Terms in Solidity.
 
 There are a few steps you have to complete before you can start the tutorial.
 
-1. Complete the [Setup Your Own Project](/developers/get-started-with-the-smart-contracts/sc-setup)
+1. Complete the [Setup Your Own Project](/developers/smart-contracts-guide/setup)
 
 ## Before We Start
 
@@ -37,7 +37,7 @@ We have filled in the addresses from the Story contracts for you. However you ca
 
 </Note>
 
-```solidity
+```solidity test/1_LicenseTerms.t.sol
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.26;
 
@@ -133,7 +133,7 @@ We have convenience functions to help you register new terms. We have created [P
 
 For example:
 
-```solidity
+```solidity Solidity
 import { PILFlavors } from "@storyprotocol/core/lib/PILFlavors.sol";
 
 PILTerms memory pilTerms = PILFlavors.commercialRemix({

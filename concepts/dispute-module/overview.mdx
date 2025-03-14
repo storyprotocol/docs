@@ -1,5 +1,6 @@
 ---
 title: ❌ Dispute Module
+sidebarTitle: Overview
 description: A way for users to raise and resolve disputes through arbitration
 ---
 
@@ -47,11 +48,12 @@ The main components of the arbitration system are:
 
 ## Dispute Process Flow
 
-<img
-  src="https://files.readme.io/a1dc371-image.png"
-  alt="Dispute Process Flow"
-  className="mx-auto"
-/>
+<Frame>
+  <img
+    src="/images/concepts/dispute-process-flow.png"
+    alt="Dispute Process Flow"
+  />
+</Frame>
 
 ### Raise Dispute
 
@@ -80,11 +82,9 @@ The derivatives are then tagged directly without any need for judgment given tha
 
 **Example**: IPA 7 is first tagged ("PLAGIARISM") as infringing via `setDisputeJudgement` after having gone through a dispute process. Only after that can IPAs 3, 1, and 0 can be tagged via `tagIfRelatedIpInfringed` by any address without needing to go through a new dispute process.
 
-<img
-  src="https://files.readme.io/ee69754-image.png"
-  alt="Dispute Example"
-  className="mx-auto"
-/>
+<Frame>
+  <img src="/images/concepts/plagiarism-example.png" alt="Dispute Example" />
+</Frame>
 
 ### Resolve Dispute
 

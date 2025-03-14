@@ -3,7 +3,7 @@ title: Mint a License Token
 description: Learn how to mint a License Token from an IP Asset in TypeScript.
 ---
 
-This section demonstrates how to mint a [License Token](/developers/license-token) from an [IP Asset](/developers/ip-asset). You can only mint a License Token from an IP Asset if the IP Asset has [License Terms](/developers/license-terms) attached to it. A License Token is minted as an ERC-721.
+This section demonstrates how to mint a [License Token](/concepts/licensing-module/license-token) from an [IP Asset](/concepts/ip-asset). You can only mint a License Token from an IP Asset if the IP Asset has [License Terms](/concepts/licensing-module/license-terms) attached to it. A License Token is minted as an ERC-721.
 
 There are two reasons you'd mint a License Token:
 
@@ -14,21 +14,23 @@ There are two reasons you'd mint a License Token:
 
 There are a few steps you have to complete before you can start the tutorial.
 
-1. Complete the [TypeScript SDK Setup](/developers/typescript-sdk/typescript-sdk-setup)
+1. Complete the [TypeScript SDK Setup](/developers/typescript-sdk/setup)
 2. An IP Asset that has License Terms added. Learn how to add License Terms to an IPA [here](/developers/typescript-sdk/attach-terms-to-an-ip-asset).
 
 ## 1. Mint License
 
 Let's say that IP Asset (`ipId = 0x01`) has License Terms (`licenseTermdId = 10`) attached to it. We want to mint 2 License Tokens with those terms to a specific wallet address (`0x02`).
 
-<Note>
-**Paid Licenses**
+<Warning>
 
 Be mindful that some IP Assets may have license terms attached that require the user minting the license to pay a `defaultMintingFee`. You can see an example of that in the [TypeScript Tutorial](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercial.ts).
 
-</Note>
+</Warning>
 
-> Associated Docs: [license.mintLicenseTokens](/sdk-reference/license#mintlicensetokens)
+<Info>
+  Associated Docs:
+  [license.mintLicenseTokens](/sdk-reference/license#mintlicensetokens)
+</Info>
 
 ```typescript main.ts
 // you should already have a client set up (prerequisite)
@@ -61,7 +63,7 @@ This is a note for owners of an IP Asset who want to set restrictions on who or 
 - Charge dynamic fees based on who / how many are minted
 - Whitelisted certain wallets to mint the tokens
 
-... and more. Learn more by checking out the [License Config / Hook](/developers/license-config-hook) section of our documentation.
+... and more. Learn more by checking out the [License Config / Hook](/concepts/licensing-module/license-config-hook) section of our documentation.
 
 ## 2. Register a Derivative
 

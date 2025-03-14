@@ -7,9 +7,12 @@ description: Learn how to setup RainbowKit Wallet in your Story DApp.
 **Optional: Official RainbowKit Docs**
 
 Check out the official Wagmi + RainbowKit installation docs [here](https://www.rainbowkit.com/docs/installation).
+
 </Note>
 
 ## Install the Dependencies
+
+<CodeGroup>
 
 ```bash npm
 npm install --save @story-protocol/core-sdk @rainbow-me/rainbowkit wagmi viem @tanstack/react-query
@@ -23,13 +26,17 @@ pnpm install @story-protocol/core-sdk viem
 yarn add @story-protocol/core-sdk viem
 ```
 
+</CodeGroup>
+
 ## Setup
 
 Before diving into the example, make sure you have two things setup:
 
 1. Make sure to have `NEXT_PUBLIC_RPC_PROVIDER_URL` set up in your `.env` file.
-   - You can use the public default one (`https://aeneid.storyrpc.io`) or any other RPC [here](/developers/aeneid#-rpcs).
+   - You can use the public default one (`https://aeneid.storyrpc.io`) or any other RPC [here](/network/network-info/aeneid#rpcs).
 2. Make sure to have `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` set up in your `.env` file. Do this by logging into [Reown (prev. WalletConnect)](https://reown.com/) and creating a project.
+
+<CodeGroup>
 
 ```jsx Web3Providers.tsx
 "use client";
@@ -134,3 +141,5 @@ export default function TestComponent() {
   )
 }
 ```
+
+</CodeGroup>
