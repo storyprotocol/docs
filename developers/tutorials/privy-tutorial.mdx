@@ -6,7 +6,7 @@ description: Learn how to implement email logins and sponsored transactions with
 <Card
   title="Completed Code"
   href="https://github.com/jacob-tucker/story-privy-tutorial"
-  icon="fa-thumbs-up"
+  icon="thumbs-up"
   color="#51af51"
 >
   View the completed code for this tutorial.
@@ -25,7 +25,7 @@ Here is how Privy describes both of these things:
 
 We will be implementing both using [Privy](https://www.privy.io/) + [Pimlico](https://www.pimlico.io/).
 
-### :warning: Prerequisites
+### ⚠️ Prerequisites
 
 There are a few steps you have to complete before you can start the tutorial.
 
@@ -38,7 +38,11 @@ NEXT_PUBLIC_PRIVY_APP_ID=
 
 3. On your project dashboard, enable Smart Wallets under "**Wallet Configuration > Smart wallets**" and select "**Kernel (ZeroDev)**" as shown below:
 
-![](https://files.readme.io/4d62b6c1080f012ddb0899498bb6af24b834928ef4c5e97359ffb56223675658-image.png)
+<Frame>
+
+<img src="/images/tutorials/privy-tutorial-1.png" alt="Privy Dashboard" />
+
+</Frame>
 
 4. Once you enable Smart wallets, right underneath make sure to put a "Custom chain" with the following values:
    1. Name: `Story Aeneid Testnet`
@@ -46,11 +50,16 @@ NEXT_PUBLIC_PRIVY_APP_ID=
    3. RPC URL: `https://aeneid.storyrpc.io`
    4. For the Bundler URL and Paymaster URL, go to [Pimlico's Dashboard](https://dashboard.pimlico.io) and create a new app. Then click on "API Keys", create a new API Key, click "RPC URLs" as shown below, and then select "Story Aeneid Testnet" as the network:
 
-> 🚧 This is for testing
->
-> In a real scenario, you would have to set up proper sponsorship policies and billing info on Pimlico to automatically sponsor the transactions on behalf of your app. We don't have to do this on testnet.
+<Warning>
 
-![](https://files.readme.io/eb5092fec55f86d23003b4cf44d1f07a028952c04196b47a9460ca30c4667567-image.png)
+This is for testing. In a real scenario, you would have to set up proper sponsorship policies and billing info on Pimlico to automatically sponsor the transactions on behalf of your app. We don't have to do this on testnet.
+
+</Warning>
+<Frame>
+
+<img src="/images/tutorials/pimlico-dashboard.png" alt="Pimlico Dashboard" />
+
+</Frame>
 
 5. Install the dependencies:
 
@@ -60,20 +69,24 @@ npm install @story-protocol/core-sdk permissionless viem @privy-io/react-auth
 
 ## 1. Set up Embedded Wallets
 
-<Cards columns={1}>
+<CardGroup cols={1}>
   <Card
     title="Official Privy Tutoral"
     href="https://docs.privy.io/guide/react/wallets/smart-wallets/usage#setup"
-    icon="fa-home"
-    target="_blank"
+    icon="house"
   >
     Follow Privy's official tutorial for setup instead of reading this step.
   </Card>
-</Cards>
+</CardGroup>
 
-> 📘 Learn more on Embedded Wallets
->
-> You can read Privy's tutorial [here](https://docs.privy.io/guide/react/wallets/embedded/creation) that describes setting up Embedded Wallets, which is a fancy way of saying email login for your users. In the below example, we simply create an embedded wallet for every user, but you may want more customization by reading their tutorial.
+<Note>
+  You can read Privy's tutorial
+  [here](https://docs.privy.io/guide/react/wallets/embedded/creation) that
+  describes setting up Embedded Wallets, which is a fancy way of saying email
+  login for your users. In the below example, we simply create an embedded
+  wallet for every user, but you may want more customization by reading their
+  tutorial.
+</Note>
 
 You must wrap any component that will be using embedded/smart wallets with the `PrivyProvider` and `SmartWalletsProvider`. In a `providers.tsx` (or whatever you want to call it) file, add the following code:
 
@@ -168,17 +181,18 @@ export default function Home() {
 
 ## 3. Sign a Message with Privy
 
-<Cards columns={1}>
+<CardGroup cols={1}>
+
   <Card
     title="Official Privy Tutoral"
     href="https://docs.privy.io/guide/react/wallets/smart-wallets/usage#signing-messages"
-    icon="fa-home"
-    target="_blank"
+    icon="house"
   >
     Follow Privy's official tutorial for signing messages instead of reading
     this step.
   </Card>
-</Cards>
+  
+</CardGroup>
 
 We can use the generated smart wallet to sign messages:
 
@@ -215,19 +229,20 @@ export default function Home() {
 
 ## 4. Send an Arbitrary Transaction
 
-<Cards columns={1}>
+<CardGroup cols={1}>
   <Card
     title="Official Privy Tutoral"
     href="https://docs.privy.io/guide/react/wallets/smart-wallets/usage#sending-transactions"
-    icon="fa-home"
-    target="_blank"
+    icon="house"
   >
     Follow Privy's official tutorial for sending transactions instead of reading
     this step.
   </Card>
-</Cards>
+</CardGroup>
 
 We can also use the generated smart wallet to sponsor transactions for our users:
+
+<CodeGroup>
 
 ```jsx page.tsx
 import { useSmartWallets } from "@privy-io/react-auth/smart-wallets";
@@ -383,6 +398,8 @@ export const defaultNftContractAbi = [
 
 ```
 
+</CodeGroup>
+
 ## 5. Send a Transaction from Story SDK
 
 We can also use the generated smart wallet to send transactions from the [🛠️ TypeScript SDK](/developers/typescript-sdk). Some of the functions have an option to return the `encodedTxData`, which we can use to pass into Privy's smart wallet. You can see which functions support this in the [SDK Reference](/sdk-reference).
@@ -443,14 +460,16 @@ export default function Home() {
 
 ## 6. Done!
 
-<Cards columns={1}>
+<CardGroup cols={2}>
   <Card
     title="Completed Code"
     href="https://github.com/jacob-tucker/story-privy-tutorial"
-    icon="fa-thumbs-up"
+    icon="thumbs-up"
     iconColor="#51af51"
-    target="_blank"
   >
     View the completed code for this tutorial.
   </Card>
-</Cards>
+  <Card title="Learn More" href="/developers/tutorials" icon="book-open">
+    Explore more tutorials in our documentation
+  </Card>
+</CardGroup>

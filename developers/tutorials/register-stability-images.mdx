@@ -161,7 +161,9 @@ main();
 
 Now that we have generated and stored our image, we can register the image as IP on Story. First, let's set up our config. In a `utils.ts` file, add the following code:
 
-- Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/setup)
+<Info>
+  Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/setup)
+</Info>
 
 ```typescript utils.ts
 import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
@@ -181,7 +183,7 @@ export const client = StoryClient.newClient(config);
 
 ## 4. Set up your IP Metadata
 
-View the [IPA Metadata Standard](/developers/ipa-metadata-standard) and construct the metadata for your IP. Properly format your metadata as shown below:
+View the [IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard) and construct the metadata for your IP. Properly format your metadata as shown below:
 
 ```typescript main.ts
 import fs from "fs";
@@ -384,7 +386,10 @@ createSpgNftCollection();
 
 </Accordion>
 
-> Associated Docs: [ipAsset.mintAndRegisterIp](/sdk-reference/ipasset#mintandregisterip)
+<Info>
+  Associated Docs:
+  [ipAsset.mintAndRegisterIp](/sdk-reference/ipasset#mintandregisterip)
+</Info>
 
 ```typescript main.ts
 import fs from "fs";
@@ -429,12 +434,7 @@ main();
 Congratulations! Now your image is registered on Story with commercial license terms.
 
 <CardGroup cols={1}>
-  <Card
-    title="Learn More"
-    href="/developers/typescript-sdk"
-    icon="book-open"
-    iconType="solid"
-  >
-    Explore more tutorials in our TypeScript SDK documentation
+  <Card title="Learn More" href="/developers/tutorials" icon="book-open">
+    Explore more tutorials in our documentation
   </Card>
 </CardGroup>

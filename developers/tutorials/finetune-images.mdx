@@ -8,7 +8,6 @@ description: Learn how to use the FLUX Finetuning API to finetune images and the
     title="Completed Code"
     href="https://github.com/jacob-tucker/finetune-story-flux"
     icon="thumbs-up"
-    iconType="solid"
   >
     View the completed code for this tutorial.
   </Card>
@@ -418,7 +417,9 @@ You can paste the `sample` into your browser and see the final result! Make sure
 
 Next we will register this image on Story as an [IP Asset](/concepts/ip-asset) in order to monetize and license the IP. Create a `story` folder and add a `utils.ts` file. In there, add the following code to set up your Story Config:
 
-- Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/setup)
+<Info>
+  Associated docs: [TypeScript SDK Setup](/developers/typescript-sdk/setup)
+</Info>
 
 ```typescript story/utils.ts
 import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
@@ -490,7 +491,7 @@ We will now use this function in the following step.
 
 In your `story` folder, create a `registerIp.ts` file.
 
-View the [IPA Metadata Standard](/developers/ipa-metadata-standard) and construct the metadata for your IP as shown below:
+View the [IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard) and construct the metadata for your IP as shown below:
 
 ```typescript story/registerIp.ts
 import { client, account } from "./utils";
@@ -631,7 +632,10 @@ This function needs an SPG NFT Contract to mint from. For simplicity, you can us
 
 </Accordion>
 
-> Associated Docs: [ipAsset.mintAndRegisterIp](/sdk-reference/ipasset#mintandregisterip)
+<Info>
+  Associated Docs:
+  [ipAsset.mintAndRegisterIp](/sdk-reference/ipasset#mintandregisterip)
+</Info>
 
 ```typescript story/registerIp.ts
 import { client, account } from "./utils";
@@ -698,13 +702,15 @@ main();
 
 ## 12. Done!
 
-<CardGroup cols={1}>
+<CardGroup cols={2}>
   <Card
     title="Completed Code"
     href="https://github.com/jacob-tucker/finetune-story-flux"
     icon="thumbs-up"
-    iconType="solid"
   >
     View the completed code for this tutorial.
+  </Card>
+  <Card title="Learn More" href="/developers/tutorials" icon="book-open">
+    Explore more tutorials in our documentation
   </Card>
 </CardGroup>

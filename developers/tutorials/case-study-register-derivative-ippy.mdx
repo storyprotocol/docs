@@ -9,8 +9,8 @@ description: A Case Study showing how PiPi, a generative pfp project, registers 
   <Card
     title="Original Ippy"
     href="https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42"
-    icon="home"
-    iconType="solid"
+    icon="house"
+    
     
   >
     View the original Ippy mascot on our explorer.
@@ -21,8 +21,7 @@ description: A Case Study showing how PiPi, a generative pfp project, registers 
 <Card
   title="PiPi Derivative"
   href="https://explorer.story.foundation/ipa/0xBB42BF2713ee736284C45B1b549a03625cc97e51"
-  icon="home"
-  iconType="solid"
+  icon="house"
 >
   View a derviative PiPi on our explorer.
 </Card>
@@ -31,7 +30,7 @@ description: A Case Study showing how PiPi, a generative pfp project, registers 
     title="View PiPi Contract"
     href="https://www.storyscan.xyz/address/0x5C6b236A100d09f8A625dB87E11122749A9B71A6?tab=contract"
     icon="scroll"
-    iconType="solid"
+    
     
   >
     View the PiPi contract source code.
@@ -40,10 +39,12 @@ description: A Case Study showing how PiPi, a generative pfp project, registers 
 
 When a PiPi is linked as a derivative of Ippy, it automatically inherits the same license terms (NCSR) and is linked in its ancestry graph, which you can see directly on our explorer:
 
-<img
-  src="https://files.readme.io/0d7c3ca3a88a9906dac899d6a776417f1c01a07cfa01d9f732974260fd9ea469-Screenshot_2025-02-18_at_10.03.13_AM.png"
-  alt="In the bottom right, you can see Ippy is the root IP of this PiPi."
-/>
+<Frame caption="In the bottom right, you can see Ippy is the root IP of this PiPi.">
+  <img
+    src="/images/tutorials/pippy-explorer.png"
+    alt="In the bottom right, you can see Ippy is the root IP of this PiPi."
+  />
+</Frame>
 
 In the following tutorial, you will learn how exactly these PiPi images were properly registered as derivatives of the official Ippy IP.
 
@@ -63,15 +64,16 @@ Before we register our new PiPi IP, we need to set up its metadata. There are tw
 <CardGroup cols={1}>
   <Card
     title="NFT vs. IP Metadata"
-    href="/concepts/ip-asset#nft-vs-ip-metadata"
-    icon="home"
-    iconType="solid"
+    href="/concepts/ip-asset/overview#nft-vs-ip-metadata"
+    icon="house"
   >
     Learn how to properly set up NFT and IP Metadata.
   </Card>
 </CardGroup>
 
 Using [this PiPi](https://explorer.story.foundation/ipa/0xBB42BF2713ee736284C45B1b549a03625cc97e51) as an example, here is what the NFT & IP metadata should be:
+
+<CodeGroup>
 
 ```json NFT Metadata
 {
@@ -145,6 +147,8 @@ Using [this PiPi](https://explorer.story.foundation/ipa/0xBB42BF2713ee736284C45B
 }
 ```
 
+</CodeGroup>
+
 Once you have metadata written, you can upload them to IPFS and will later set it when minting our NFT.
 
 ## 2. Minting an NFT
@@ -156,7 +160,6 @@ When you want to register an IP on Story, you must first mint an NFT. This NFT r
     title="View PiPi Contract"
     href="https://www.storyscan.xyz/address/0x5C6b236A100d09f8A625dB87E11122749A9B71A6?tab=contract"
     icon="scroll"
-    iconType="solid"
   >
     View the PiPi contract source code.
   </Card>
@@ -225,11 +228,11 @@ function _registerAsIPAsset(uint256 tokenId) internal returns (address) {
 }
 ```
 
-All this is doing is calling the `register` function on the [IP Asset Registry](/concepts/ip-asset-registry), which creates a new [IP Asset](/concepts/ip-asset) in our protocol, and returns an `ipId`.
+All this is doing is calling the `register` function on the [IP Asset Registry](/concepts/registry/ip-asset-registry), which creates a new [IP Asset](/concepts/ip-asset) in our protocol, and returns an `ipId`.
 
 ## 4. Set Metadata on IP
 
-Now that we have registered a new IP Asset, we can take our metadata from before and set it on the NFT & IP with the `CoreMetadataModule.sol`. As described [here](/concepts/ip-asset#adding-nft--ip-metadata-to-ip-asset), we need to set 4 params:
+Now that we have registered a new IP Asset, we can take our metadata from before and set it on the NFT & IP with the `CoreMetadataModule.sol`. As described [here](/concepts/ip-asset/overview#adding-nft-%26-ip-metadata-to-ip-asset), we need to set 4 params:
 
 1. `nftMetadataHash`
 2. `nftMetadataURI`
@@ -313,13 +316,15 @@ function _mintNFT(address recipient) internal returns (string memory, address) {
 
 Congratulations, you registered a derivative of the official Ippy IP!
 
-<CardGroup cols={1}>
+<CardGroup cols={2}>
   <Card
     title="View on Explorer"
     href="https://explorer.story.foundation/ipa/0xBB42BF2713ee736284C45B1b549a03625cc97e51"
-    icon="home"
-    iconType="solid"
+    icon="house"
   >
     View a derviative PiPi on our explorer.
+  </Card>
+  <Card title="Learn More" href="/developers/tutorials" icon="book-open">
+    Explore more tutorials in our documentation
   </Card>
 </CardGroup>
