@@ -1,86 +1,89 @@
 ---
-title: Overview
-description: View every single function in our SDK with examples and types.
+title: "SDK Reference Overview"
+description: "A detailed description of every function in our SDK"
 ---
 
 This section provides a detailed description of every function in our SDK.
 
-<CardGroup cols={4}>
-  <Card title="Package" icon="cube">
-    🔷 TypeScript
-  </Card>
-  <Card title="Status" icon="check-circle">
-    Full Compatibility
-  </Card>
-  <Card title="Package" icon="box">
-    <a href="https://www.npmjs.com/package/@story-protocol/core-sdk">
-      npm Package
-    </a>
-  </Card>
-  <Card title="GitHub" icon="github">
-    <a href="https://github.com/storyprotocol/sdk/tree/main">View Code</a>
-  </Card>
-</CardGroup>
-
-<CardGroup cols={4}>
-  <Card title="Package" icon="cube">
-    🐍 Python
-  </Card>
-  <Card title="Status" icon="triangle-exclamation">
-    Partial Compatibility (some functions are not yet released)
-  </Card>
-  <Card title="Package" icon="box">
-    <a href="https://pypi.org/project/story-protocol-python-sdk">
-      PyPi Package
-    </a>
-  </Card>
-  <Card title="GitHub" icon="github">
-    <a href="https://github.com/storyprotocol/python-sdk">View Code</a>
-  </Card>
-</CardGroup>
+| Package      | Status                                                         | Package                                                                  | GitHub                                                         |
+| ------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| 🔷TypeScript | ✅ Full Compatibility                                          | [📦 npm Package](https://www.npmjs.com/package/@story-protocol/core-sdk) | [↗️ View Code](https://github.com/storyprotocol/sdk/tree/main) |
+| 🐍Python     | ⚠️ Partial Compatibility (some functions are not yet released) | [📦 PyPi Package](https://pypi.org/project/story-protocol-python-sdk)    | [↗️ View Code](https://github.com/storyprotocol/python-sdk)    |
 
 ---
 
 <Card
   title="Step-by-Step Guide"
-  href="/developers/typescript-sdk/overview"
-  icon="book"
+  icon="house"
+  href="https://docs.story.foundation/docs/typescript-sdk"
 >
   Learn our SDK through a series of tutorials with the TypeScript SDK Guide.
 </Card>
 
-## SDK Reference Sections
+## Licensing Module
 
-### Licensing Module
+<CardGroup cols={2}>
 
-Interact with the [Licensing Module](/concepts/licensing-module/overview):
+<Card title="Register an IP Asset" icon="house" href="/sdk-reference/ipasset">
+  Learn how to register an IP asset using the SDK.
+</Card>
 
-- [Register an IP Asset](/developers/sdk-reference/ipasset)
-- [Mint & Attach License Terms](/developers/sdk-reference/license)
+<Card
+  title="Mint & Attach License Terms"
+  icon="house"
+  href="/sdk-reference/license"
+>
+  Learn how to mint and attach license terms using the SDK.
+</Card>
 
-### Royalty Module
+</CardGroup>
 
-Interact with the [Royalty Module](/concepts/royalty-module/overview):
+## Royalty Module
 
-- [Pay & Claim Royalty](/developers/sdk-reference/royalty)
+<CardGroup cols={2}>
 
-### Dispute Module
+<Card title="Pay & Claim Royalty" icon="house" href="/sdk-reference/royalty">
+  Learn how to pay and claim royalty using the SDK.
+</Card>
 
-Interact with the [Dispute Module](/concepts/dispute-module/overview):
+</CardGroup>
 
-- [Raise a Dispute](/developers/sdk-reference/dispute)
+## Dispute Module
 
-### Grouping Module
+<CardGroup cols={2}>
 
-Interact with the [Grouping Module](/concepts/grouping-module):
+<Card title="Raise a Dispute" icon="house" href="/sdk-reference/dispute">
+  Learn how to raise a dispute using the SDK.
+</Card>
 
-- [Manage Groups](/developers/sdk-reference/group)
+</CardGroup>
 
-### Utility Clients
+## Grouping Module
 
-And lastly, some utility/extra clients:
+<CardGroup cols={2}>
 
-- [Set Permissions](/developers/sdk-reference/permissions)
-- [NFT Client](/developers/sdk-reference/nftclient)
-- [WIP Client](/developers/sdk-reference/wip-client)
-- [IP Account](/developers/sdk-reference/ipaccount)
+<Card title="Manage Groups" icon="house" href="/sdk-reference/group">
+  Learn how to manage groups using the SDK.
+</Card>
+
+</CardGroup>
+
+## Utility Clients
+
+Additional utility and extra clients:
+
+<CardGroup cols={2}>
+
+<Card title="Set Permissions" icon="house" href="/sdk-reference/permissions">
+  Learn how to set permissions using the SDK.
+</Card>
+
+<Card title="NFT Client" icon="house" href="/sdk-reference/nftclient">
+  Learn how to interact with NFTs using the SDK.
+</Card>
+
+<Card title="WIP Client" icon="house" href="/sdk-reference/wip-client">
+  Learn how to use the WIP client using the SDK.
+</Card>
+
+</CardGroup>

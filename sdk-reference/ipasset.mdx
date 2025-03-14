@@ -7,175 +7,50 @@ description: IPAssetClient allows you to create, get, and list IP Assets within 
 
 ### Methods
 
-* register
-* registerDerivative
-* registerDerivativeWithLicenseTokens
-* mintAndRegisterIpAssetWithPilTerms
-* registerIpAndAttachPilTerms
-* registerDerivativeIp
-* mintAndRegisterIpAndMakeDerivative
-* mintAndRegisterIp
-* registerPilTermsAndAttach
-* mintAndRegisterIpAndMakeDerivativeWithLicenseTokens
-* registerIpAndMakeDerivativeWithLicenseTokens
+- register
+- registerDerivative
+- registerDerivativeWithLicenseTokens
+- mintAndRegisterIpAssetWithPilTerms
+- registerIpAndAttachPilTerms
+- registerDerivativeIp
+- mintAndRegisterIpAndMakeDerivative
+- mintAndRegisterIp
+- registerPilTermsAndAttach
+- mintAndRegisterIpAndMakeDerivativeWithLicenseTokens
+- registerIpAndMakeDerivativeWithLicenseTokens
 
 ### Navigating Around the IPAssetClient
 
-Because there are a lot of functions to interact with the [Licensing Module](/concepts/licensing-module/overview), we have broken them down into a helpful chart so you can identify what you're looking for, and then find the associated docs.
+Because there are a lot of functions to interact with the [📜 Licensing Module](doc:licensing-module), we have broken them down into a helpful chart so you can identify what you're looking for, and then find the associated docs.
 
-<table>
-  <thead>
-    <tr>
-      <th>Function</th>
-      <th style={{ textAlign: "center" }}>Mint an NFT</th>
-      <th style={{ textAlign: "center" }}>Register IPA</th>
-      <th style={{ textAlign: "center" }}>Create License Terms</th>
-      <th style={{ textAlign: "center" }}>Attach License Terms</th>
-      <th style={{ textAlign: "center" }}>Mint License Token</th>
-      <th style={{ textAlign: "center" }}>Register as Derivative</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><span style={{color: "#e03130"}}>register</span></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-    </tr>
-    <tr>
-      <td><span style={{color: "#e03130"}}>mintAndRegisterIp</span></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-    </tr>
-    <tr>
-      <td><span style={{color: "#e03130"}}>registerIpAndAttachPilTerms</span></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-    </tr>
-    <tr>
-      <td><span style={{color: "#e03130"}}>mintAndRegisterIpAssetWithPilTerms</span></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-    </tr>
-    <tr>
-      <td><span style={{color: "#e03130"}}>registerDerivativeIp</span></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-    </tr>
-    <tr>
-      <td><span style={{color: "#e03130"}}>mintAndRegisterIpAndMakeDerivativeWithLicenseTokens</span></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-    </tr>
-    <tr>
-      <td><span style={{color: "#e03130"}}>registerIpAndMakeDerivativeWithLicenseTokens</span></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-    </tr>
-    <tr>
-      <td><span style={{color: "#e03130"}}>mintAndRegisterIpAndMakeDerivative</span></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-    </tr>
-    <tr>
-      <td><span style={{color: "#e03130"}}>registerDerivative</span></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-    </tr>
-    <tr>
-      <td><span style={{color: "#e03130"}}>registerDerivativeWithLicenseTokens</span></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-    </tr>
-    <tr>
-      <td><span style={{color: "#e03130"}}>registerPilTermsAndAttach</span></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-    </tr>
-    <tr>
-      <td><span style={{color: "#1971c2"}}>registerPILTerms</span></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-    </tr>
-    <tr>
-      <td><span style={{color: "#1971c2"}}>attachLicenseTerms</span></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-    </tr>
-    <tr>
-      <td><span style={{color: "#1971c2"}}>mintLicenseTokens</span></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}></td>
-      <td style={{ textAlign: "center" }}>✓</td>
-      <td style={{ textAlign: "center" }}></td>
-    </tr>
-  </tbody>
-</table>
+| **Function**                                                                                | **Mint an NFT** | **Register IPA** | **Create License Terms** | **Attach License Terms** | **Mint License Token** | **Register as Derivative** |
+| ------------------------------------------------------------------------------------------- | :-------------: | :--------------: | :----------------------: | :----------------------: | :--------------------: | :------------------------: |
+| <span style={{color: "#e03130"}}>register</span>                                            |                 |        ✓         |                          |                          |                        |                            |
+| <span style={{color: "#e03130"}}>mintAndRegisterIp</span>                                   |        ✓        |        ✓         |                          |                          |                        |                            |
+| <span style={{color: "#e03130"}}>registerIpAndAttachPilTerms</span>                         |                 |        ✓         |            ✓             |            ✓             |                        |                            |
+| <span style={{color: "#e03130"}}>mintAndRegisterIpAssetWithPilTerms</span>                  |        ✓        |        ✓         |            ✓             |            ✓             |                        |                            |
+| <span style={{color: "#e03130"}}>registerDerivativeIp</span>                                |                 |        ✓         |                          |                          |                        |             ✓              |
+| <span style={{color: "#e03130"}}>mintAndRegisterIpAndMakeDerivativeWithLicenseTokens</span> |        ✓        |        ✓         |                          |                          |                        |             ✓              |
+| <span style={{color: "#e03130"}}>registerIpAndMakeDerivativeWithLicenseTokens</span>        |                 |        ✓         |                          |                          |                        |             ✓              |
+| <span style={{color: "#e03130"}}>mintAndRegisterIpAndMakeDerivative</span>                  |        ✓        |        ✓         |                          |                          |                        |             ✓              |
+| <span style={{color: "#e03130"}}>registerDerivative</span>                                  |                 |                  |                          |                          |                        |             ✓              |
+| <span style={{color: "#e03130"}}>registerDerivativeWithLicenseTokens</span>                 |                 |                  |                          |                          |                        |             ✓              |
+| <span style={{color: "#e03130"}}>registerPilTermsAndAttach</span>                           |                 |                  |            ✓             |            ✓             |                        |                            |
+| <span style={{color: "#1971c2"}}>registerPILTerms</span>                                    |                 |                  |            ✓             |                          |                        |                            |
+| <span style={{color: "#1971c2"}}>attachLicenseTerms</span>                                  |                 |                  |                          |            ✓             |                        |                            |
+| <span style={{color: "#1971c2"}}>mintLicenseTokens</span>                                   |                 |                  |                          |                          |           ✓            |                            |
 
-* <span style={{color: "#e03130"}}>Red</span>: IPAssetClient (this page)
-* <span style={{color: "#1971c2"}}>Blue</span>: [LicenseClient](/developers/sdk-reference/license)
+- <span style={{ color: "#e03130" }}>Red</span>: IPAssetClient (this page)
+- <span style={{ color: "#1971c2" }}>Blue</span>:
+  [LicenseClient](doc:sdk-license)
 
 ## register
 
-Registers an NFT as IP, creating a corresponding [IP Asset](/concepts/ip-asset/overview). If the given NFT was already registered, this function will return the existing `ipId`.
+Registers an NFT as IP, creating a corresponding [🧩 IP Asset](doc:ip-asset). If the given NFT was already registered, this function will return the existing `ipId`.
 
-<Note>
-**NFT Metadata**
-
-Note that this function will also set the underlying NFT's `tokenUri` to whatever is passed under `ipMetadata.nftMetadataURI`.
+<Note title="NFT Metadata">
+  Note that this function will also set the underlying NFT's `tokenUri` to
+  whatever is passed under `ipMetadata.nftMetadataURI`.
 </Note>
 
 | Method     | Type                                                        |
@@ -184,32 +59,36 @@ Note that this function will also set the underlying NFT's `tokenUri` to whateve
 
 Parameters:
 
-* `request.nftContract`: The address of the NFT.
-* `request.tokenId`: The token identifier of the NFT.
-* `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
-  * `request.ipMetadata.ipMetadataURI` \[Optional] The URI of the metadata for the IP.
-  * `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
-  * `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
-  * `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
-* `request.deadline`: \[Optional] The deadline for the signature in milliseconds.
-* `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+- `request.nftContract`: The address of the NFT.
+- `request.tokenId`: The token identifier of the NFT.
+- `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
+  - `request.ipMetadata.ipMetadataURI` \[Optional] The URI of the metadata for the IP.
+  - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
+  - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
+  - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
+- `request.deadline`: \[Optional] The deadline for the signature in milliseconds.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
 
 ```typescript TypeScript
-import { toHex } from 'viem';
+import { toHex } from "viem";
 
 const response = await client.ipAsset.register({
   nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73",
   tokenId: "12",
   ipMetadata: {
-    ipMetadataURI: 'test-uri',
-    ipMetadataHash: toHex('test-metadata-hash', { size: 32 }),
-    nftMetadataHash: toHex('test-nft-metadata-hash', { size: 32 }),
-    nftMetadataURI: 'test-nft-uri',
+    ipMetadataURI: "test-uri",
+    ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+    nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+    nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true }
+  txOptions: { waitForTransaction: true },
 });
 
-console.log(`Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`)
+console.log(
+  `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+);
 ```
 
 ```python Python
@@ -243,6 +122,8 @@ export type RegisterIpResponse = {
 };
 ```
 
+</CodeGroup>
+
 ## batchRegister
 
 Batch registers an NFT as IP, creating a corresponding IP record.
@@ -267,21 +148,906 @@ The derivative IP owner must be the caller or an authorized operator.
 
 Parameters:
 
-* `request.childIpId`: The derivative IP ID.
-* `request.parentIpIds`: The parent IP IDs.
-* `request.licenseTermsIds`: The IDs of the license terms that the parent IP supports.
-* `request.maxMintingFee`: \[Optional] The maximum minting fee that the caller is willing to pay. If set to 0, then there is no no limit. **Default: 0**
-* `request.maxRevenueShare`: \[Optional] The maximum revenue share percentage agreed upon between a child and parent when a child is registering as derivative. Must be between 0 and 100. **Default: 100**
-* `request.maxRts`: \[Optional] The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Default: 100\_000\_000**
-* `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+- `request.childIpId`: The derivative IP ID.
+- `request.parentIpIds`: The parent IP IDs.
+- `request.licenseTermsIds`: The IDs of the license terms that the parent IP supports.
+- `request.maxMintingFee`: \[Optional] The maximum minting fee that the caller is willing to pay. If set to 0, then there is no no limit. **Default: 0**
+- `request.maxRevenueShare`: \[Optional] The maximum revenue share percentage agreed upon between a child and parent when a child is registering as derivative. Must be between 0 and 100. **Default: 100**
+- `request.maxRts`: \[Optional] The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Default: 100_000_000**
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
 
 ```typescript TypeScript
 const response = await client.ipAsset.registerDerivative({
   childIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   parentIpIds: ["0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba"],
   licenseTermsIds: ["5"],
-  txOptions: { waitForTransaction: true }
+  txOptions: { waitForTransaction: true },
 });
 
-console.log(`Derivative IPA linked to parent at transaction hash ${response.txHash}`)
+console.log(
+  `Derivative IPA linked to parent at transaction hash ${response.txHash}`
+);
 ```
+
+```python Python
+response = story_client.IPAsset.registerDerivative(
+  child_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+  parent_ip_ids=["0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba"],
+  license_terms_ids=["5"],
+  max_minting_fee=0, # disabled
+  max_rts=100_000_000, # default
+  max_revenue_share=100 # default
+)
+```
+
+```typescript Request Type
+export type RegisterDerivativeRequest = {
+  txOptions?: TxOptions;
+  childIpId: Address;
+} & DerivativeData &
+  WithWipOptions;
+
+export type DerivativeData = {
+  parentIpIds: Address[];
+  licenseTermsIds: bigint[] | string[] | number[];
+  maxMintingFee: bigint | string | number;
+  maxRts: number | string;
+  maxRevenueShare: number | string;
+  licenseTemplate?: Address;
+};
+```
+
+```typescript Response Type
+export type RegisterDerivativeResponse = {
+  txHash?: Hex;
+  encodedTxData?: EncodedTxData;
+};
+```
+
+</CodeGroup>
+
+## registerDerivativeWithLicenseTokens
+
+Registers a derivative with license tokens.
+
+The derivative IP is registered with license tokens minted from the parent IP's license terms.
+
+The license terms of the parent IPs issued with license tokens are attached to the derivative IP.
+
+The caller must be the derivative IP owner or an authorized operator.
+
+| Method                                | Type                                                                                                            |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `registerDerivativeWithLicenseTokens` | `(request: RegisterDerivativeWithLicenseTokensRequest) => Promise<RegisterDerivativeWithLicenseTokensResponse>` |
+
+Parameters:
+
+- `request.childIpId`: The derivative IP ID.
+- `request.licenseTokenIds`: The IDs of the license tokens.
+- `request.maxRts`: The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Recommended for simplicity: 100_000_000**
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+const response = await client.ipAsset.registerDerivativeWithLicenseTokens({
+  childIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+  licenseTokenIds: ["5"], // array of license ids relevant to the creation of the derivative, minted from the parent IPA
+  txOptions: { waitForTransaction: true },
+});
+
+console.log(
+  `Derivative IPA linked to parent at transaction hash ${response.txHash}`
+);
+```
+
+```python Python
+response = story_client.IPAsset.registerDerivativeWithLicenseTokens(
+  child_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+  license_token_ids=["5"],
+  max_rts=100_000_000 # default
+)
+```
+
+```typescript Request Type
+export type RegisterDerivativeWithLicenseTokensRequest = {
+  childIpId: Address;
+  licenseTokenIds: string[] | bigint[] | number[];
+  maxRts: number | string;
+  txOptions?: TxOptions;
+};
+```
+
+```typescript Response Type
+export type RegisterDerivativeWithLicenseTokensResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+};
+```
+
+</CodeGroup>
+
+## mintAndRegisterIpAssetWithPilTerms
+
+Mint an NFT from a collection, register it as an IP, attach metadata to the IP, and attach License Terms to the IP all in one function.
+
+<Note>
+  Note that this function will also set the underlying NFT's `tokenUri` to
+  whatever is passed under `ipMetadata.nftMetadataURI`.
+</Note>
+
+| Method                               | Type                                                                                                          |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `mintAndRegisterIpAssetWithPilTerms` | `(request: MintAndRegisterIpAssetWithPilTermsRequest) => Promise<MintAndRegisterIpAssetWithPilTermsResponse>` |
+
+Parameters:
+
+- `request.spgNftContract`: The address of the NFT collection.
+- `request.allowDuplicates`: \[Optional] Set to true to allow minting IPs with the same NFT metadata. **Default: true**
+- `request.licenseTermsData[]`: The array of license terms to be attached. ⚠️ **This function will fail if you pass in an empty array.**
+  - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
+  - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/dev/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+- `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
+  - `request.ipMetadata.ipMetadataURI`: \[Optional] The URI of the metadata for the IP.
+  - `request.ipMetadata.ipMetadataHash`: \[Optional] The hash of the metadata for the IP.
+  - `request.ipMetadata.nftMetadataURI`: \[Optional] The URI of the metadata for the NFT.
+  - `request.ipMetadata.nftMetadataHash`: \[Optional] The hash of the metadata for the IP NFT.
+- `request.recipient`: \[Optional] The address of the recipient of the minted NFT.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { LicenseTerms } from "@story-protocol/core-sdk";
+import { zeroAddress } from "viem";
+
+const commercialRemixTerms: LicenseTerms = {
+  transferable: true,
+  royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  defaultMintingFee: 0n,
+  expiration: 0n,
+  commercialUse: true,
+  commercialAttribution: true,
+  commercializerChecker: zeroAddress,
+  commercializerCheckerData: zeroAddress,
+  commercialRevShare: 50, // can claim 50% of derivative revenue
+  commercialRevCeiling: 0n,
+  derivativesAllowed: true,
+  derivativesAttribution: true,
+  derivativesApproval: false,
+  derivativesReciprocal: true,
+  derivativeRevCeiling: 0n,
+  currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  uri: "",
+};
+
+const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
+  spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+  licenseTermsData: [{ terms: commercialRemixTerms }],
+  // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+  ipMetadata: {
+    ipMetadataURI: "test-uri",
+    ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+    nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+    nftMetadataURI: "test-nft-uri",
+  },
+  txOptions: { waitForTransaction: true },
+});
+
+console.log(`
+  Token ID: ${response.tokenId}, 
+  IPA ID: ${response.ipId}, 
+  License Terms ID: ${response.licenseTermsId}
+`);
+```
+
+```python Python
+commercial_remix_terms = {
+  "transferable": True,
+  "royalty_policy": "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", # RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  "default_minting_fee": 0,
+  "expiration": 0,
+  "commercial_use": True,
+  "commercial_attribution": True,
+  "commercializer_checker": "0x0000000000000000000000000000000000000000",
+  "commercializer_checker_data": "0x0000000000000000000000000000000000000000",
+  "commercial_rev_share": 50,
+  "commercial_rev_ceiling": 0,
+  "derivatives_allowed": True,
+  "derivatives_attribution": True,
+  "derivatives_approval": False,
+  "derivatives_reciprocal": True,
+  "derivative_rev_ceiling": 0,
+  "currency": "0x1514000000000000000000000000000000000000", # $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  "uri": "",
+}
+
+licensing_config = {
+  "is_set": False,
+  "minting_fee": 0,
+  "licensing_hook": "0x0000000000000000000000000000000000000000",
+  "hook_data": "0x0000000000000000000000000000000000000000",
+  "commercial_rev_share": 0,
+  "disabled": False,
+  "expect_minimum_group_reward_share": 0,
+  "expect_group_reward_pool": "0x0000000000000000000000000000000000000000",
+}
+
+metadata = {
+  'ip_metadata_uri': "test-uri",
+  'ip_metadata_hash': web3.to_hex(web3.keccak(text="test-ip-metadata-hash")),
+  'nft_metadata_uri': "test-uri",
+  'nft_metadata_hash': web3.to_hex(web3.keccak(text="test-nft-metadata-hash"))
+}
+
+response = story_client.IPAsset.mintAndRegisterIpAssetWithPilTerms(
+  spg_nft_contract="0xfE265a91dBe911db06999019228a678b86C04959",
+  terms=[{
+    "terms": commercial_remix_terms,
+    "licensingConfig": licensing_config
+  }],
+  allow_duplicates=True,
+  ip_metadata=metadata
+)
+```
+
+```typescript Request Type
+export type MintAndRegisterIpAssetWithPilTermsRequest = {
+  spgNftContract: Address;
+  allowDuplicates: boolean;
+  licenseTermsData: LicenseTermsData<
+    RegisterPILTermsRequest,
+    LicensingConfig
+  >[];
+  recipient?: Address;
+  royaltyPolicyAddress?: Address;
+} & IpMetadataAndTxOptions &
+  WithWipOptions;
+```
+
+```typescript Response Type
+export type MintAndRegisterIpAssetWithPilTermsResponse = {
+  txHash?: Hex;
+  encodedTxData?: EncodedTxData;
+  ipId?: Address;
+  tokenId?: bigint;
+  receipt?: TransactionReceipt;
+  licenseTermsIds?: bigint[];
+};
+```
+
+</CodeGroup>
+
+## batchMintAndRegisterIpAssetWithPilTerms
+
+Batch mint an NFT from a collection and register it as an IP.
+
+| Method                                    | Type                                                                                                                    |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `batchMintAndRegisterIpAssetWithPilTerms` | `(request: BatchMintAndRegisterIpAssetWithPilTermsRequest) => Promise<BatchMintAndRegisterIpAssetWithPilTermsResponse>` |
+
+## registerIpAndAttachPilTerms
+
+Register a given NFT as an IP, attach metadata to the IP, and attach License Terms to the IP all in one function.
+
+<Note>
+  Note that this function will also set the underlying NFT's `tokenUri` to
+  whatever is passed under `ipMetadata.nftMetadataURI`.
+</Note>
+
+| Method                        | Type                                                                                            |
+| ----------------------------- | ----------------------------------------------------------------------------------------------- |
+| `registerIpAndAttachPilTerms` | `(request: RegisterIpAndAttachPilTermsRequest) => Promise<RegisterIpAndAttachPilTermsResponse>` |
+
+Parameters:
+
+- `request.nftContract`: The address of the NFT collection.
+- `request.tokenId`: The ID of the NFT.
+- `request.licenseTermsData[]`: The array of license terms to be attached. ⚠️ **This function will fail if you pass in an empty array.**
+  - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
+  - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/dev/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+- `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
+  - `request.ipMetadata.ipMetadataURI`: \[Optional] The URI of the metadata for the IP.
+  - `request.ipMetadata.ipMetadataHash`: \[Optional] The hash of the metadata for the IP.
+  - `request.ipMetadata.nftMetadataURI`: \[Optional] The URI of the metadata for the NFT.
+  - `request.ipMetadata.nftMetadataHash`: \[Optional] The hash of the metadata for the IP NFT.
+- `request.deadline`: \[Optional] The deadline for the signature in milliseconds.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { LicenseTerms } from "@story-protocol/core-sdk";
+import { toHex, zeroAddress } from "viem";
+
+const commercialRemixTerms: LicenseTerms = {
+  transferable: true,
+  royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  defaultMintingFee: 0n,
+  expiration: 0n,
+  commercialUse: true,
+  commercialAttribution: true,
+  commercializerChecker: zeroAddress,
+  commercializerCheckerData: zeroAddress,
+  commercialRevShare: 50, // can claim 50% of derivative revenue
+  commercialRevCeiling: 0n,
+  derivativesAllowed: true,
+  derivativesAttribution: true,
+  derivativesApproval: false,
+  derivativesReciprocal: true,
+  derivativeRevCeiling: 0n,
+  currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  uri: "",
+};
+
+const response = await client.ipAsset.registerIpAndAttachPilTerms({
+  nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73",
+  tokenId: "12",
+  licenseTermsData: [{ terms: commercialRemixTerms }],
+  ipMetadata: {
+    ipMetadataURI: "test-uri",
+    ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+    nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+    nftMetadataURI: "test-nft-uri",
+  },
+  txOptions: { waitForTransaction: true },
+});
+console.log(
+  `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+);
+```
+
+```typescript Request Type
+export type RegisterIpAndAttachPilTermsRequest = {
+  nftContract: Address;
+  tokenId: bigint | string | number;
+  licenseTermsData: LicenseTermsData<
+    RegisterPILTermsRequest,
+    LicensingConfig
+  >[];
+  deadline?: bigint | number | string;
+} & IpMetadataAndTxOptions;
+```
+
+```typescript Response Type
+export type RegisterIpAndAttachPilTermsResponse = {
+  txHash?: Hex;
+  encodedTxData?: EncodedTxData;
+  ipId?: Address;
+  licenseTermsIds?: bigint[];
+  tokenId?: bigint;
+};
+```
+
+</CodeGroup>
+
+## registerDerivativeIp
+
+Register an NFT as IP and then link it as a derivative of another IP Asset without using license tokens.
+
+<Note>
+  Note that this function will also set the underlying NFT's `tokenUri` to
+  whatever is passed under `ipMetadata.nftMetadataURI`.
+</Note>
+
+| Method                 | Type                                                                                            |
+| ---------------------- | ----------------------------------------------------------------------------------------------- |
+| `registerDerivativeIp` | `(request: RegisterIpAndMakeDerivativeRequest) => Promise<RegisterIpAndMakeDerivativeResponse>` |
+
+Parameters:
+
+- `request.nftContract`: The address of the NFT collection.
+- `request.tokenId`: The ID of the NFT.
+- `request.derivData`: The derivative data to be used for registerDerivative.
+  - `request.derivData.parentIpIds`: The IDs of the parent IPs to link the registered derivative IP.
+  - `request.derivData.licenseTermsIds`: The IDs of the license terms to be used for the linking.
+  - `request.derivData.maxMintingFee`: \[Optional] The maximum minting fee that the caller is willing to pay. If set to 0, then there is no no limit. **Default: 0**
+  - `request.derivData.maxRevenueShare`: \[Optional] The maximum revenue share percentage agreed upon between a child and parent when a child is registering as derivative. Must be between 0 and 100. **Default: 100**
+  - `request.derivData.maxRts`: \[Optional]The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Default: 100_000_000**
+  - `request.derivData.licenseTemplate`: \[Optional] The address of the license template to be used for the linking.
+- `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
+  - `request.ipMetadata.ipMetadataURI` \[Optional] The URI of the metadata for the IP.
+  - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
+  - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
+  - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
+- `request.deadline`: \[Optional] The deadline for the signature in milliseconds.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { toHex } from "viem";
+
+const response = await client.ipAsset.registerDerivativeIp({
+  nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73", // your NFT contract address
+  tokenId: "127",
+  derivData: {
+    parentIpIds: ["0xd142822Dc1674154EaF4DDF38bbF7EF8f0D8ECe4"],
+    licenseTermsIds: ["1"],
+  },
+  // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+  ipMetadata: {
+    ipMetadataURI: "test-uri",
+    ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+    nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+    nftMetadataURI: "test-nft-uri",
+  },
+  txOptions: { waitForTransaction: true },
+});
+
+console.log(
+  `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+);
+```
+
+```typescript Request Type
+export type RegisterIpAndMakeDerivativeRequest = {
+  nftContract: Address;
+  tokenId: string | number | bigint;
+  deadline?: string | number | bigint;
+  derivData: DerivativeData;
+  sigMetadataAndRegister?: {
+    signer: Address;
+    deadline: bigint | string | number;
+    signature: Hex;
+  };
+} & IpMetadataAndTxOptions &
+  WithWipOptions;
+
+export type DerivativeData = {
+  parentIpIds: Address[];
+  licenseTermsIds: bigint[] | string[] | number[];
+  /**
+   * The maximum minting fee that the caller is willing to pay. if set to 0 then no limit.
+   * @default 0
+   */
+  maxMintingFee?: bigint | string | number;
+  /**
+   * The maximum number of royalty tokens that can be distributed to the external royalty policies (max: 100,000,000).
+   * @default 100_000_000
+   */
+  maxRts?: number | string;
+  /**
+   * The maximum revenue share percentage allowed for minting the License Tokens. Must be between 0 and 100 (where 100% represents 100_000_000).
+   * @default 100
+   */
+  maxRevenueShare?: number | string;
+  licenseTemplate?: Address;
+};
+```
+
+```typescript Response Type
+export type RegisterIpAndMakeDerivativeResponse = {
+  txHash?: Hex;
+  encodedTxData?: EncodedTxData;
+  ipId?: Address;
+  tokenId?: bigint;
+  receipt?: TransactionReceipt;
+};
+```
+
+</CodeGroup>
+
+## batchRegisterDerivative
+
+Batch registers a derivative directly with parent IP's license terms.
+
+| Method                    | Type                                                                                    |
+| ------------------------- | --------------------------------------------------------------------------------------- |
+| `batchRegisterDerivative` | `(request: BatchRegisterDerivativeRequest) => Promise<BatchRegisterDerivativeResponse>` |
+
+## mintAndRegisterIpAndMakeDerivative
+
+Mint an NFT from a collection and register it as a derivative IP without license tokens.
+
+<Note>
+  Note that this function will also set the underlying NFT's `tokenUri` to
+  whatever is passed under `ipMetadata.nftMetadataURI`.
+</Note>
+
+| Method                               | Type                                                                                                          |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `mintAndRegisterIpAndMakeDerivative` | `(request: MintAndRegisterIpAndMakeDerivativeRequest) => Promise<MintAndRegisterIpAndMakeDerivativeResponse>` |
+
+Parameters:
+
+- `request.spgNftContract`: The address of the NFT collection.
+- `request.allowDuplicates`: \[Optional] Set to true to allow minting IPs with the same NFT metadata. **Default: true**
+- `request.derivData`: The derivative data to be used for registerDerivative.
+  - `request.derivData.parentIpIds`: The IDs of the parent IPs to link the registered derivative IP.
+  - `request.derivData.licenseTermsIds`: The IDs of the license terms to be used for the linking.
+  - `request.derivData.maxMintingFee`: \[Optional] The maximum minting fee that the caller is willing to pay. If set to 0, then there is no no limit. **Default: 0**
+  - `request.derivData.maxRevenueShare`: \[Optional] The maximum revenue share percentage agreed upon between a child and parent when a child is registering as derivative. Must be between 0 and 100. **Default: 100**
+  - `request.derivData.maxRts`: \[Optional] The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Default: 100_000_000**
+  - `request.derivData.licenseTemplate`: \[Optional] The address of the license template to be used for the linking.
+- `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
+  - `request.ipMetadata.ipMetadataURI` \[Optional] The URI of the metadata for the IP.
+  - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
+  - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
+  - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
+- `request.recipient`: \[Optional] The address of the recipient of the minted NFT, default value is your wallet address.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { toHex } from "viem";
+
+const response = await client.ipAsset.mintAndRegisterIpAndMakeDerivative({
+  // an NFT contract address created by the SPG
+  spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+  derivData: {
+    parentIpIds: ["0xd142822Dc1674154EaF4DDF38bbF7EF8f0D8ECe4"],
+    licenseTermsIds: ["1"],
+  },
+  // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+  ipMetadata: {
+    ipMetadataURI: "test-uri",
+    ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+    nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+    nftMetadataURI: "test-nft-uri",
+  },
+  txOptions: { waitForTransaction: true },
+});
+
+console.log(
+  `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}, Token ID: ${response.tokenId}`
+);
+```
+
+```typescript Request Type
+export type MintAndRegisterIpAndMakeDerivativeRequest = {
+  spgNftContract: Address;
+  derivData: DerivativeData;
+  recipient?: Address;
+  allowDuplicates: boolean;
+} & IpMetadataAndTxOptions &
+  WithWipOptions;
+
+export type DerivativeData = {
+  parentIpIds: Address[];
+  licenseTermsIds: bigint[] | string[] | number[];
+  /**
+   * The maximum minting fee that the caller is willing to pay. if set to 0 then no limit.
+   * @default 0
+   */
+  maxMintingFee?: bigint | string | number;
+  /**
+   * The maximum number of royalty tokens that can be distributed to the external royalty policies (max: 100,000,000).
+   * @default 100_000_000
+   */
+  maxRts?: number | string;
+  /**
+   * The maximum revenue share percentage allowed for minting the License Tokens. Must be between 0 and 100 (where 100% represents 100_000_000).
+   * @default 100
+   */
+  maxRevenueShare?: number | string;
+  licenseTemplate?: Address;
+};
+```
+
+```typescript Response Type
+export type MintAndRegisterIpAndMakeDerivativeResponse = {
+  encodedTxData?: EncodedTxData;
+} & CommonRegistrationResponse;
+
+export type CommonRegistrationResponse = {
+  txHash?: Hex;
+  ipId?: Address;
+  tokenId?: bigint;
+  receipt?: TransactionReceipt;
+};
+```
+
+</CodeGroup>
+
+## batchMintAndRegisterIpAndMakeDerivative
+
+Batch mint an NFT from a collection and register it as a derivative IP without license tokens.
+
+| Method                                    | Type                                                                                                                    |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `batchMintAndRegisterIpAndMakeDerivative` | `(request: BatchMintAndRegisterIpAndMakeDerivativeRequest) => Promise<BatchMintAndRegisterIpAndMakeDerivativeResponse>` |
+
+## mintAndRegisterIp
+
+Mint an NFT from an SPGNFT collection and register it with metadata as an IP.
+
+<Note>
+  Note that this function will also set the underlying NFT's `tokenUri` to
+  whatever is passed under `ipMetadata.nftMetadataURI`.
+</Note>
+
+| Method              | Type                                                                 |
+| ------------------- | -------------------------------------------------------------------- |
+| `mintAndRegisterIp` | `(request: MintAndRegisterIpRequest) => Promise<RegisterIpResponse>` |
+
+Parameters:
+
+- `request.spgNftContract`: The address of the NFT collection.
+- `request.allowDuplicates`: \[Optional] Set to true to allow minting IPs with the same NFT metadata. **Default: true**
+- `request.recipient`: \[Optional] The address of the recipient of the minted NFT, default value is your wallet address.
+- `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
+  - `request.ipMetadata.ipMetadataURI` \[Optional] The URI of the metadata for the IP.
+  - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
+  - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
+  - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { toHex, Address, zeroAddress } from "viem";
+
+const response = await client.ipAsset.mintAndRegisterIp({
+  // an NFT contract address created by the SPG
+  spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+  // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+  ipMetadata: {
+    ipMetadataURI: "test-uri",
+    ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+    nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+    nftMetadataURI: "test-nft-uri",
+  },
+  txOptions: { waitForTransaction: true },
+});
+
+console.log(
+  `Completed at transaction hash ${response.txHash}, NFT Token ID: ${response.tokenId}, IPA ID: ${response.ipId}, License Terms ID: ${response.licenseTermsId}`
+);
+```
+
+```typescript Request Type
+export type MintAndRegisterIpRequest = {
+  spgNftContract: Address;
+  recipient?: Address;
+  allowDuplicates: boolean;
+} & IpMetadataAndTxOptions &
+  WithWipOptions;
+```
+
+```typescript Response Type
+export type RegisterIpResponse = {
+  encodedTxData?: EncodedTxData;
+} & CommonRegistrationResponse;
+
+export type CommonRegistrationResponse = {
+  txHash?: Hex;
+  ipId?: Address;
+  tokenId?: bigint;
+  receipt?: TransactionReceipt;
+};
+```
+
+</CodeGroup>
+
+## registerPilTermsAndAttach
+
+Register Programmable IP License Terms (if unregistered) and attach it to IP.
+
+| Method                      | Type                                                                                        |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| `registerPilTermsAndAttach` | `(request: RegisterPilTermsAndAttachRequest) => Promise<RegisterPilTermsAndAttachResponse>` |
+
+Parameters:
+
+- `request.ipId`: The ID of the IP.
+- `request.licenseTermsData[]`: The array of license terms to be attached.
+  - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
+  - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/dev/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+- `request.deadline`: \[Optional] The deadline for the signature in milliseconds, default is 1000s.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { LicenseTerms } from "@story-protocol/core-sdk";
+import { zeroAddress } from "viem";
+
+const commercialRemixTerms: LicenseTerms = {
+  transferable: true,
+  royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  defaultMintingFee: 0n,
+  expiration: 0n,
+  commercialUse: true,
+  commercialAttribution: true,
+  commercializerChecker: zeroAddress,
+  commercializerCheckerData: zeroAddress,
+  commercialRevShare: 50, // can claim 50% of derivative revenue
+  commercialRevCeiling: 0n,
+  derivativesAllowed: true,
+  derivativesAttribution: true,
+  derivativesApproval: false,
+  derivativesReciprocal: true,
+  derivativeRevCeiling: 0n,
+  currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  uri: "",
+};
+
+const response = await client.ipAsset.registerPilTermsAndAttach({
+  ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+  licenseTermsData: [{ terms: commercialRemixTerms }],
+  txOptions: { waitForTransaction: true },
+});
+console.log(`License Terms ${response.licenseTermsId} attached to IP Asset.`);
+```
+
+```typescript Request Type
+export type RegisterPilTermsAndAttachRequest = {
+  ipId: Address;
+  licenseTermsData: LicenseTermsData<
+    RegisterPILTermsRequest,
+    LicensingConfig
+  >[];
+  deadline?: string | number | bigint;
+  txOptions?: TxOptions;
+};
+```
+
+```typescript Response Type
+export type RegisterPilTermsAndAttachResponse = {
+  txHash?: Hex;
+  encodedTxData?: EncodedTxData;
+  licenseTermsIds?: bigint[];
+};
+```
+
+</CodeGroup>
+
+## mintAndRegisterIpAndMakeDerivativeWithLicenseTokens
+
+Mint an NFT from a collection and register it as a derivative IP using license tokens
+
+<Note>
+  Note that this function will also set the underlying NFT's `tokenUri` to
+  whatever is passed under `ipMetadata.nftMetadataURI`.
+</Note>
+
+| Method                                                | Type                                                                                                   |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `mintAndRegisterIpAndMakeDerivativeWithLicenseTokens` | `(request: MintAndRegisterIpAndMakeDerivativeWithLicenseTokensRequest) => Promise<RegisterIpResponse>` |
+
+Parameters:
+
+- `request.spgNftContract`: The address of the NFT collection.
+- `request.allowDuplicates`: \[Optional] Set to true to allow minting IPs with the same NFT metadata. **Default: true**
+- `request.maxRts`: The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Recommended for simplicity: 100_000_000**
+- `request.licenseTokenIds`: The IDs of the license tokens to be burned for linking the IP to parent IPs.
+- `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
+  - `request.ipMetadata.ipMetadataURI` \[Optional] The URI of the metadata for the IP.
+  - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
+  - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
+  - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
+- `request.recipient`: \[Optional] The address to receive the minted NFT, default value is your wallet address.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { toHex } from "viem";
+
+const response =
+  await client.ipAsset.mintAndRegisterIpAndMakeDerivativeWithLicenseTokens({
+    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc", // your SPG NFT contract address
+    licenseTokenIds: ["10"],
+    // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+    ipMetadata: {
+      ipMetadataURI: "test-uri",
+      ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+      nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      nftMetadataURI: "test-nft-uri",
+    },
+    maxRts: 100_000_000, // default
+    txOptions: { waitForTransaction: true },
+  });
+
+console.log(
+  `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}, Token ID: ${response.tokenId}`
+);
+```
+
+```typescript Request Type
+export type MintAndRegisterIpAndMakeDerivativeWithLicenseTokensRequest = {
+  spgNftContract: Address;
+  licenseTokenIds: string[] | bigint[] | number[];
+  recipient?: Address;
+  maxRts: number | string;
+  allowDuplicates: boolean;
+} & IpMetadataAndTxOptions &
+  WithWipOptions;
+```
+
+```typescript Response Type
+export type RegisterIpResponse = {
+  encodedTxData?: EncodedTxData;
+} & CommonRegistrationResponse;
+
+export type CommonRegistrationResponse = {
+  txHash?: Hex;
+  ipId?: Address;
+  tokenId?: bigint;
+  receipt?: TransactionReceipt;
+};
+```
+
+</CodeGroup>
+
+## registerIpAndMakeDerivativeWithLicenseTokens
+
+Register the given NFT as a derivative IP using license tokens.
+
+<Note>
+  Note that this function will also set the underlying NFT's `tokenUri` to
+  whatever is passed under `ipMetadata.nftMetadataURI`.
+</Note>
+
+| Method                                         | Type                                                                                            |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `registerIpAndMakeDerivativeWithLicenseTokens` | `(request: RegisterIpAndMakeDerivativeWithLicenseTokensRequest) => Promise<RegisterIpResponse>` |
+
+Parameters:
+
+- `request.nftContract`: The address of the NFT collection.
+- `request.tokenId`: The ID of the NFT.
+- `request.maxRts`: The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Recommended for simplicity: 100_000_000**
+- `request.licenseTokenIds`: The IDs of the license tokens to be burned for linking the IP to parent IPs.
+- `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
+  - `request.ipMetadata.ipMetadataURI` \[Optional] The URI of the metadata for the IP.
+  - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
+  - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
+  - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
+- `request.deadline`: \[Optional] The deadline for the signature in milliseconds, default is 1000ms.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { toHex } from "viem";
+
+const response =
+  await client.ipAsset.registerIpAndMakeDerivativeWithLicenseTokens({
+    nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73", // your NFT contract address
+    tokenId: "127",
+    licenseTokenIds: ["10"],
+    // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+    ipMetadata: {
+      ipMetadataURI: "test-uri",
+      ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+      nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      nftMetadataURI: "test-nft-uri",
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+console.log(
+  `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+);
+```
+
+```typescript Request Type
+export type RegisterIpAndMakeDerivativeWithLicenseTokensRequest = {
+  nftContract: Address;
+  tokenId: string | number | bigint;
+  licenseTokenIds: string[] | bigint[] | number[];
+  deadline?: string | number | bigint;
+  maxRts: number | string;
+} & IpMetadataAndTxOptions &
+  WithWipOptions;
+```
+
+```typescript Response Type
+export type RegisterIpResponse = {
+  encodedTxData?: EncodedTxData;
+} & CommonRegistrationResponse;
+
+export type CommonRegistrationResponse = {
+  txHash?: Hex;
+  ipId?: Address;
+  tokenId?: bigint;
+  receipt?: TransactionReceipt;
+};
+```
+
+</CodeGroup>

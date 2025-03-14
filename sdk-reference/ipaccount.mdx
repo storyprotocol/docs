@@ -27,6 +27,8 @@ Parameters:
 - `request.metadataHash`: The hash of metadata at metadataURI.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
+<CodeGroup>
+
 ```typescript TypeScript
 const txHash = await client.ipAccount.setIpMetadata({
   ipId: "0x01",
@@ -47,6 +49,8 @@ export type SetIpMetadataRequest = {
 };
 ```
 
+</CodeGroup>
+
 ### execute
 
 Executes a transaction from the IP Account.
@@ -64,6 +68,8 @@ Parameters:
 - `request.data`: The data to send along with the transaction.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
+<CodeGroup>
+
 ```typescript Request Type
 export type IPAccountExecuteRequest = {
   ipId: Address;
@@ -80,6 +86,8 @@ export type IPAccountExecuteResponse = {
   encodedTxData?: EncodedTxData;
 };
 ```
+
+</CodeGroup>
 
 ### executeWithSig
 
@@ -99,6 +107,8 @@ Parameters:
 - `request.signature`: The signature of the transaction, EIP-712 encoded.
 - `request.value`: \[Optional] The amount of Ether to send.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
 
 ```typescript Request Type
 export type IPAccountExecuteWithSigRequest = {
@@ -120,6 +130,8 @@ export type IPAccountExecuteWithSigResponse = {
 };
 ```
 
+</CodeGroup>
+
 ### transferErc20
 
 Transfers an ERC20 token from the IP Account.
@@ -136,6 +148,8 @@ Parameters:
   - `request.tokens.amount`: The amount of tokens to transfer
   - `request.tokens.target`: The address of the recipient.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
 
 ```typescript Request Type
 export type TransferErc20Request = {
@@ -157,3 +171,5 @@ export type TransactionResponse = {
   receipt?: TransactionReceipt;
 };
 ```
+
+</CodeGroup>

@@ -21,6 +21,7 @@
               "quickstart",
               {
                 "group": "For AI Agents",
+                "icon": "robot",
                 "pages": [
                   "ai-agents/overview",
                   "ai-agents/using-cursor-with-story",
@@ -181,17 +182,6 @@
               "concepts/story-attestation-service",
               "concepts/concepts-faq"
             ]
-          },
-          {
-            "group": "Essentials",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
-            ]
           }
         ]
       },
@@ -284,9 +274,12 @@
         "tab": "SDK Reference",
         "groups": [
           {
+            "group": "Get Started",
+            "pages": ["sdk-reference/overview"]
+          },
+          {
             "group": "SDK Reference",
             "pages": [
-              "sdk-reference/overview",
               "sdk-reference/ipasset",
               "sdk-reference/ipaccount",
               "sdk-reference/license",
@@ -315,6 +308,15 @@
               "api-reference/endpoint/delete",
               "api-reference/endpoint/webhook"
             ]
+          }
+        ]
+      },
+      {
+        "tab": "Governance",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["governance"]
           }
         ]
       }

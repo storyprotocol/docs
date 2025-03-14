@@ -7,12 +7,12 @@ description: Used to handle the wrapping/unwrapping of WIP (Wrapped IP) tokens w
 
 ### Methods
 
-* deposit
-* withdraw
-* approve
-* balanceOf
-* transfer
-* transferFrom
+- deposit
+- withdraw
+- approve
+- balanceOf
+- transfer
+- transferFrom
 
 ### deposit
 
@@ -24,8 +24,8 @@ Wraps the selected amount of IP to WIP. The WIP will be deposited to the wallet 
 
 Parameters:
 
-* `request.amount`: The amount to deposit.
-* `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+- `request.amount`: The amount to deposit.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Request Type
 export type DepositRequest = WithTxOptions & {
@@ -43,8 +43,8 @@ Unwraps the selected amount of WIP to IP.
 
 Parameters:
 
-* `request.amount`: The amount to withdraw.
-* `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+- `request.amount`: The amount to withdraw.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Request Type
 export type WithdrawRequest = WithTxOptions & {
@@ -62,9 +62,9 @@ Approve a spender to use the wallet's WIP balance.
 
 Parameters:
 
-* `request.amount`: The amount of WIP tokens to approve.
-* `request.spender`: The address that will use the WIP tokens
-* `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+- `request.amount`: The amount of WIP tokens to approve.
+- `request.spender`: The address that will use the WIP tokens
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Request Type
 export type ApproveRequest = WithTxOptions & {
@@ -83,7 +83,7 @@ Returns the balance of WIP for an address.
 
 Parameters:
 
-* `addr`: The address you want to check the balance for.
+- `addr`: The address you want to check the baalnce for.
 
 ### transfer
 
@@ -95,9 +95,9 @@ Transfers `amount` of WIP to a recipient `to`.
 
 Parameters:
 
-* `request.to`: Who you're transferring to.
-* `request.amount`: The amount to transfer.
-* `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+- `request.to`: Who you're transferring to.
+- `request.amount`: The amount to transfer.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Request Type
 export type TransferRequest = WithTxOptions & {
@@ -116,10 +116,10 @@ Transfers `amount` of WIP from `from` to a recipient `to`.
 
 Parameters:
 
-* `request.to`: Who you're transferring to.
-* `request.amount`: The amount to transfer.
-* `request.from`: The address to transfer from.
-* `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+- `request.to`: Who you're transferring to.
+- `request.amount`: The amount to transfer.
+- `request.from`: The address to transfer from.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Request Type
 export type TransferFromRequest = WithTxOptions & {
