@@ -301,13 +301,8 @@
             "pages": ["api-reference/introduction"]
           },
           {
-            "group": "Endpoint Examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
-            ]
+            "group": "Protocol API",
+            "openapi": "/api-reference/openapi.json"
           }
         ]
       },
@@ -363,6 +358,15 @@
       "x": "https://x.com/mintlify",
       "github": "https://github.com/mintlify",
       "linkedin": "https://linkedin.com/company/mintlify"
+    }
+  },
+  "api": {
+    "mdx": {
+      "server": "https://api.storyapis.com",
+      "auth": {
+        "method": "key",
+        "name": "x-api-key"
+      }
     }
   }
 }
