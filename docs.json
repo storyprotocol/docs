@@ -359,7 +359,8 @@
             "group": "API Documentation",
             "pages": [
               "api-reference/introduction",
-              "api-reference/blockscout-api"
+              "api-reference/blockscout-api",
+              "api-reference/test"
             ]
           },
           {
