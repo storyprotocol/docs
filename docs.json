@@ -82,7 +82,7 @@
                 "icon": "book",
                 "pages": [
                   "network/more/additional-resources",
-                  "network/more/network-faq",
+                  "network/more/troubleshooting",
                   {
                     "group": "Oracles",
                     "pages": [
