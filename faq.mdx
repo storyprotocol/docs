@@ -4,6 +4,55 @@ description: "Get answers to the most common questions about Story as a whole."
 icon: question
 ---
 
+<AccordionGroup>
+
+<Accordion title="What's the gas token?">$IP</Accordion>
+
+<Accordion title="What wallet should I use?">
+
+Your preference obviously, since you can use any EVM-based wallet. But we
+recommend [MetaMask](https://metamask.io/) for [OKX](https://www.okx.com/web3). You can add Story's L1 below:
+
+<CardGroup cols={2}>
+
+<Card
+  title="Add Story Mainnet"
+  icon="globe"
+  href="https://chainid.network/chain/1514/"
+>
+  Connect your wallet to Story's mainnet.
+</Card>
+
+<Card
+  title="Add Story 'Aeneid' Testnet"
+  icon="globe"
+  href="https://chainid.network/chain/1315/"
+>
+  Connect your wallet to Story's 'Aeneid' testnet.
+</Card>
+
+  </CardGroup>
+
+</Accordion>
+
+<Accordion title="Where can I see the ecosystem?">
+
+Check out our [Ecosystem - Getting Started](https://storyprotocol.notion.site/Story-Ecosystem-Getting-Started-169051299a5480cc9b3dcac7c3ec82da) page.
+
+</Accordion>
+
+<Accordion title="What are my stablecoin options?">
+
+We don't have a native stablecoin right now. You can use bridge USDC.e powered by [Stargate](https://stargate.finance/bridge).
+
+</Accordion>
+
+<Accordion title="How do I bridge and what's the best method?">
+
+Use [Stargate](https://stargate.finance/bridge), [deBridge](https://app.debridge.finance/?inputChain=1&outputChain=1514&inputCurrency=&outputCurrency=0xf1815bd50389c46847f0bda824ec8da914045d14&dlnMode=simple&address=&amount=1), [Orbiter Finance](https://www.orbiter.finance/en?tgt_chain=1514&src_chain=1&src_token=ETH)
+
+</Accordion>
+
 <Accordion title="Is on-chain IP real?">
 Story isn't replacing the legal system, it's providing on-chain rails to make the legal system more efficient for creative IP.
 
@@ -26,20 +75,18 @@ Furthermore, one of the terms of the [Programmable IP License (PIL💊)](/concep
 </Accordion>
 
 <Accordion title="What is a simple example?">
-Before Story, if you wanted to create a comic with someone else's Azuki NFT and your Pudgy NFT, you would first need to hope the Azuki has a license and then find & contact the owner. You would also need to research your license terms for your Pudgy. Since you're not a legal expert, you would probably need a lawyer to create a new contract between the two IPs. This creates a burden on anything ever getting created legally, because few people have the time, expertise, or money for that except large studios. Thus IP is not easily composable.
+Imagine you're an artist who creates digital paintings, or a musician who makes original songs. You want to share your work online, but you want to ensure that if others use or change your work, they give you credit and—if they make money from it—you get a share. That’s where Story comes in. It's a platform that uses technology to give IP owners like you control over how your work is used, tracked, and shared, so it’s both protected and fairly rewarded.
 
-With Story, Azuki & Pudgy holders can register their IP as **IP Assets** and then set terms - using the PIL - outlining how people can license and remix their IP. If your Pudgy is registered on Story, anyone can see those terms on-chain and license your Pudgy automatically using the licensing module, which generates a real license agreement. You can then register the resulting comic as a derivative, and any revenue that flows in can be distributed between you and the IP holders automatically.
+Think of it like this: Suppose you upload a song to Story. Now, anyone can see that you’re the original creator, and if someone wants to remix it, they can do so through Story. The system then automatically tracks the remix as a "derivative" of your song and notes you as the original artist. This way, if the remix becomes popular and earns money, Story can help you earn a portion of those earnings, just like the remixer.
 
 </Accordion>
 
 <Accordion title="What are the challenges?">
 The natural question arises: "_What if I'm a bad actor and I ignore all of this and just Right Click Save As?_"
 
-First, its underestimated the extent to which people want to follow the law. This is why PIL is so important - all of the\
-IP is not just on-chain, it is tied to a real legal contract! If people rip off your IP, they can be sued in court. However this "happy path" doesn't always happen. When things go wrong, we want to provide as many layers of escalation before resorting to off-chain arbitration.
+First, its underestimated the extent to which people want to follow the law. This is why PIL is so important - all of the IP is not just on-chain, it is tied to a real legal contract! If people rip off your IP, they can be sued in court. However this "happy path" doesn't always happen. When things go wrong, we want to provide as many layers of escalation before resorting to off-chain arbitration.
 
-Thus, we've created the [❌ Dispute Module](/concepts/dispute-module) that allows anyone to flag violating content on-chain. If the dispute is\
-successful, that IP will be flagged and no longer able to monetize or generate licenses.
+Thus, we've created the [❌ Dispute Module](/concepts/dispute-module) that allows anyone to flag violating content on-chain. If the dispute is successful, that IP will be flagged and no longer able to monetize or generate licenses.
 
 The worst case scenario on Story is the best case scenario anywhere else: legal arbitration. Creators using us can always use the traditional legal system as a backstop. This is a situation we want to avoid, but one that's necessary for creators to have trust in the system.
 
@@ -57,19 +104,16 @@ First and most obvious, building our own Layer 1 allows us to innovate across th
 
 The need to innovate the entire stack ourselves was proven when we tried to build on a few existing chains and quickly realized it would not work due to technical limitations of those chains. Here are a few reasons we decided - or rather were forced - to build an L1:
 
-1. Existing L1s are simply not able to handle the registration of IP upon 1000s of parents - each with their own complicated licensing details - in one transaction efficiently. As you can see below, gas usage on Geth EVM rapidly increases with ancestor IPs, making it impractical beyond 670 ancestors due to block gas limits. So we improved the efficiency of graph traversing and storing for our IP graph by leveraging a new stateful precompile approach, written directly in the execution client. This creates a "shortcut" around EVM to write and read certain values in the blockchain we use for our graphs, under the restrictions of PoC protocol.
+1. Existing L1s are simply not able to handle the registration of IP upon 1000s of parents - each with their own complicated licensing details - in one transaction efficiently. Gas usage on Geth EVM rapidly increases with ancestor IPs, making it impractical beyond 670 ancestors due to block gas limits. So we improved the efficiency of graph traversing and storing for our IP graph by leveraging a new stateful precompile approach, written directly in the execution client. This creates a "shortcut" around EVM to write and read certain values in the blockchain we use for our graphs, under the restrictions of PoC protocol.
 2. Similarly, existing L1s are not able to handle the royalty token flow between 1000s of IP Assets. Again, this was solved by making improvements directly in the execution client.
 3. Max composability by having license data on-chain, allows for 100s of IPs to remix at once.
 4. Potential rollup support with bespoke X-CHAIN data (e.g. [Initia's](https://initia.xyz/) model) for Web2 apps with millions of transactions requiring rollups. Also support Web2 apps running their own validators for max incentive alignment.
-5. Future roadmap for tokenization of IPs on Story Network (more info to come).
-6. Future validator-enshrined L1 tech like native oracles for NFTs and off-chain RWA IPs (Cosmos SDK vote extensions).
-
-Lastly, by building an L1, we provide a flexible foundation that supports diverse IP-specific L2 solutions. Such that, for example, each IP can potentially launch its own L2, driving our grand vision for the future of global IP.
+5. Future validator-enshrined L1 tech like native oracles for NFTs and off-chain RWA IPs (Cosmos SDK vote extensions).
 
 </Accordion>
 
 <Accordion title="Why not just settle for an L2?">
-We actually tried to build an L2 before deciding to build an L1. However, we not only wanted to innovate the execution layer (also possible on L2), but add in a consensus mechanism, make improvements to validator node storage, and novel validator features.
+We actually did build an L2 before deciding to build an L1. However, we not only wanted to innovate the execution layer (also possible on L2), but add in a consensus mechanism, make improvements to validator node storage, novel validator features, and most importantly precompiles.
 
 For example, we eventually want to allow Netflix, TikTok, etc to run validators to stream IP data directly on-chain, and also allow those nodes to have graph DBs optimized for IP graphs. Imagine any transaction involving a disputed IP Asset being immediately rejected.
 
@@ -101,3 +145,5 @@ A more nuanced answer to this (one that we're constantly exploring/improving upo
 Ultimately Story is not a system built to prevent bad actors, rather it is meant to help facilitate honest actors to more easily register their IP, remix from others, and set proper terms for their work. The protocol is permissionless and stopping bad actors entirely would be near impossible, but we can try to disincentivize them as best we can. Much like how the pirating of media plummeted when Apple Music, Spotify, and Netflix made such media more accessible by creating a "path of least resistance", we see a similar future with Story & IP.
 
 </Accordion>
+
+</AccordionGroup>

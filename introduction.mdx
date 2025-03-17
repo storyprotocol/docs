@@ -10,19 +10,20 @@ icon: hand-wave
 
 ## Introducing the World's IP Blockchain
 
-Story is a purpose-built layer 1 blockchain designed specifically for intellectual property. Here's the rundown:
+Story is a purpose-built layer 1 blockchain designed specifically for intellectual property.
 
-- Story allows you to register your IP on the blockchain. This IP could be an image, a song, an RWA, AI training data, or anything in-between.
-- You can add usage terms to your IP, which specifies how others can use it, like "You owe me 50% of your commercial revenue if you use my IP", or "You cannot create derivatives of my IP".
-- By making IP programmable on the blockchain, it becomes this transparent & decentralized global IP repository where AI agents (or any other software) and humans alike can transact on IP.
+You can register your IP on-chain and add usage terms to it in seconds, massively lowering the barrier to the currently complex & antiquated legal system for IP. For example, enforcing "you owe me 50% of your commercial revenue if you use my IP" without needing time, money, or lawyers.
+
+<Note>
+  IP could be an image, a song, an RWA, AI training data, or anything
+  in-between.
+</Note>
+
+By making IP programmable on the blockchain, it becomes this transparent & decentralized global IP repository where AI agents (or any other software) and humans alike can transact on & monetize IP with a simple API call.
 
 <CardGroup cols={2}>
-  <Card
-    title="Skip the Read - 1 Minute Summary"
-    icon="house"
-    href="/explain-like-im-five"
-  >
-    Get your docs set up locally for easy development
+  <Card title="Explain Like I'm 5" icon="house" href="/explain-like-im-five">
+    Read a 1 minute summary.
   </Card>
   <Card
     title="Read the Whitepaper"
@@ -33,7 +34,7 @@ Story is a purpose-built layer 1 blockchain designed specifically for intellectu
   </Card>
 </CardGroup>
 
-<Accordion title="Why did we built Story?" icon="question">
+<Accordion title="Why did we built Story?" icon="face-thinking">
 When IP owners share their work online, it’s easy for others to use or change it without crediting them, and they often don't get paid fairly if their work becomes popular or valuable. This can be discouraging for people who want to share their ideas and creations but don’t want to lose control over them.
 
 Additionally, the sheer speed and superabundance of AI-generated media is outpacing the current IP system that was designed for physical replication. In many cases, [AI is trained on and is producing copyrighted data](https://twitter.com/BriannaWu/status/1823833723764084846).
@@ -42,9 +43,62 @@ Story fixes this by providing a way for creators to share their work with built-
 
 </Accordion>
 
-## The "How"
+## Quick FAQs
 
-There are several elements that make up Story as a whole. Below we will cover the most important components: Story Network (the L1), the Proof-of-Creativity Protocol (the smart contracts), and the Programmable IP License.
+<AccordionGroup>
+
+<Accordion title="What's the gas token?">$IP</Accordion>
+
+<Accordion title="What wallet should I use?">
+
+Your preference obviously, since you can use any EVM-based wallet. But we
+recommend [MetaMask](https://metamask.io/) for [OKX](https://www.okx.com/web3). You can add Story's L1 below:
+
+<CardGroup cols={2}>
+
+<Card
+  title="Add Story Mainnet"
+  icon="globe"
+  href="https://chainid.network/chain/1514/"
+>
+  Connect your wallet to Story's mainnet.
+</Card>
+
+<Card
+  title="Add Story 'Aeneid' Testnet"
+  icon="globe"
+  href="https://chainid.network/chain/1315/"
+>
+  Connect your wallet to Story's 'Aeneid' testnet.
+</Card>
+
+  </CardGroup>
+
+</Accordion>
+
+<Accordion title="Where can I see the ecosystem?">
+
+Check out our [Ecosystem - Getting Started](https://storyprotocol.notion.site/Story-Ecosystem-Getting-Started-169051299a5480cc9b3dcac7c3ec82da) page.
+
+</Accordion>
+
+<Accordion title="What are my stablecoin options?">
+
+You can use bridged USDC.e powered by [Stargate](https://stargate.finance/bridge).
+
+</Accordion>
+
+<Accordion title="How do I bridge and what's the best method?">
+
+Use [Stargate](https://stargate.finance/bridge), [deBridge](https://app.debridge.finance/?inputChain=1&outputChain=1514&inputCurrency=&outputCurrency=0xf1815bd50389c46847f0bda824ec8da914045d14&dlnMode=simple&address=&amount=1), or [Orbiter Finance](https://www.orbiter.finance/en?tgt_chain=1514&src_chain=1&src_token=ETH).
+
+</Accordion>
+
+</AccordionGroup>
+
+## Brief Architecture Overview
+
+There are several elements that make up Story as a whole. Below we will cover the most important components.
 
 <Frame>
   <img src="/images/story-stack.png" alt="Story Diagram" />
@@ -57,22 +111,23 @@ Story Network is a purpose-built layer 1 blockchain achieving the best of EVM an
 - using precompiled primitives to traverse complex data structures like IP graphs within seconds at marginal costs
 - a consensus layer based on the mature CometBFT stack to ensure fast finality and cheap transactions
 
-### Proof-of-Creativity Protocol
+### "Proof-of-Creativity" Protocol
 
-Our "Proof-of-Creativity" Protocol, made up of smart contracts, is natively deployed on Story Network and allows anyone to onramp IP to Story. Most of our documentation focuses on the protocol.
+Our "Proof-of-Creativity" Protocol, made up of smart contracts written in Solidity, are natively deployed on Story Network and allow anyone to onramp IP to Story. Most of our documentation focuses on the protocol.
 
-Creators can register their IP as [🧩 IP Assets](/concepts/ip-asset) on our protocol. IP Assets (IPA) are the foundational programmable IP metadata on the protocol. Each IPA is composed of:
+Creators register their IP as [🧩 IP Assets](/concepts/ip-asset) on Story. You use [🧱 Modules](/concepts/modules) to interact with IP Assets. For example, enforcing proper usage of your IP via the [Licensing Module](/concepts/licensing-module), paying & claiming revenue via the [Royalty Module](/concepts/royalty-module), and disputing infringing IP via the [Dispute Module](/concepts/dispute-module).
 
-1. an on-chain NFT. This could be an existing NFT like [Azuki](https://www.azuki.com/en) that itself is the IP, or a new NFT specifically minted to represent some off-chain IP like a real-world asset.
-2. its associated IP Account, which is a modified ERC-6551 (Token Bound Account) implementation.
-
-To interact with IP Assets within the protocol, we use “**modules**” such as the licensing, royalty, and dispute modules. For example, the owner of an IP Asset can set **terms** on their IP such as whether or not derivative works can use the IP commercially (and at what cost). Creators of derivative works can then seamlessly extend their work by minting “**License Tokens**” - outlined by the terms and also represented as NFTs themselves - using the [📜 Licensing Module](/concepts/licensing-module), create revenue streams from derivative works using the [💸 Royalty Module](/concepts/royalty-module), or raise a dispute using the [❌ Dispute Module](/concepts/dispute-module).
+Each IP Asset has an associated ERC721 NFT, which represents _ownership_ over the IP. This means IP ownership can be bought & sold. Additionally, the licenses minted from an IP are also ERC721 NFTs, meaning you can buy & sell the rights to use an IP under certain terms. Together, this unlocks a new realm of **IPFi**.
 
 ### Programmable IP License
 
-Although on-chain, an IP's usage terms and minted licenses are enforced by an off-chain legal contract called the [Programmable IP License (PIL💊)](/concepts/programmable-ip-license), which allows anyone to offramp tokenized IP into the off-chain legal system and outlines real legal terms for how creators can remix, monetize, and create derivatives of their IP. _The protocol, or more specifically the IP Assets and modules described above, are what automate and enforce those terms on-chain_, creating a mapping between the legal world (PIL) and the blockchain.
+Although on-chain, an IP's usage terms and minted licenses are enforced by an off-chain legal contract called the [Programmable IP License (PIL💊)](/concepts/programmable-ip-license).
 
-Like USDC enables redemption for fiat, the PIL enables redemption for IP.
+The PIL allows anyone to offramp tokenized IP on Story into the "real world" legal system and outlines real legal terms for how creators can remix, monetize, and create derivatives of their IP. _The protocol, or more specifically the IP Assets and modules described above, are what automate and enforce those terms on-chain_, creating a mapping between the legal world (PIL) and the blockchain.
+
+<Note>
+  Like USDC enables redemption for fiat, the PIL enables redemption for IP.
+</Note>
 
 ## Examples
 
