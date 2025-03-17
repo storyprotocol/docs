@@ -356,9 +356,11 @@ Parameters:
 <CodeGroup>
 
 ```typescript TypeScript
+import { parseEther } from "viem";
+
 const commercialUseParams = {
   currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
-  defaultMintingFee: "10", // 10 of the currency (using the above currency, 10 $WIP)
+  defaultMintingFee: parseEther("1"), // 1 $WIP
   royaltyPolicyAddress: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
 };
 
@@ -418,9 +420,11 @@ Parameters:
 <CodeGroup>
 
 ```typescript TypeScript
+import { parseEther } from "viem";
+
 const commercialRemixParams = {
   currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
-  defaultMintingFee: "10", // 10 of the currency (using the above currency, 10 $WIP)
+  defaultMintingFee: parseEther("1"), // 1 $WIP
   royaltyPolicyAddress: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
   commercialRevShare: 10, // 10%
 };

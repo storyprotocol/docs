@@ -57,3 +57,9 @@ forge script <script_file> \
   --verifier blockscout \
   --verifier-url <blockscout_homepage_explorer_url>/api/
 ```
+
+<Warning>
+
+Do not use RANDAO for pseudo-randomness, instead use onchain VRF (Pyth or Gelato). Currently, RANDAO value is set as the parent block hash and thus is not random for X-1 block.
+
+</Warning>

@@ -39,8 +39,8 @@ import { client } from "./client";
 async function main() {
   const response = await client.license.mintLicenseTokens({
     licenseTermsId: "10",
-    licensorIpId: "0x01",
-    receiver: "0x02", // optional. if not provided, it will go to the tx sender
+    licensorIpId: "0x641E638e8FCA4d4844F509630B34c9D524d40BE5",
+    receiver: "0x641E638e8FCA4d4844F509630B34c9D524d40BE5", // optional. if not provided, it will go to the tx sender
     amount: 2,
     maxMintingFee: BigInt(0), // disabled
     maxRevenueShare: 100, // default

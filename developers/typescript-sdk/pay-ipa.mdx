@@ -58,13 +58,14 @@ In this scenario, you're an external 3rd-party user who wants to pay an IP Asset
 import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
 // you should already have a client set up (prerequisite)
 import { client } from "./utils";
+import { zeroAddress, parseEther } from "viem";
 
 async function main() {
   const payRoyalty = await client.royalty.payRoyaltyOnBehalf({
     receiverIpId: "0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1", // the ip you're paying
     payerIpId: zeroAddress,
     token: WIP_TOKEN_ADDRESS,
-    amount: 2,
+    amount: parseEther("2"), // 2 $WIP
     txOptions: { waitForTransaction: true },
   });
 
@@ -89,13 +90,14 @@ In this scenario, lets say a derivative IP Asset earned 2 USD off-chain. Because
 import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
 // you should already have a client set up (prerequisite)
 import { client } from "./utils";
+import { parseEther } from "viem";
 
 async function main() {
   const payRoyalty = await client.royalty.payRoyaltyOnBehalf({
     receiverIpId: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2", // parentIpId
     payerIpId: "0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1", // childIpId
     token: WIP_TOKEN_ADDRESS,
-    amount: 1,
+    amount: parseEther("1"), // 1 $WIP
     txOptions: { waitForTransaction: true },
   });
 

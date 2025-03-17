@@ -316,7 +316,7 @@ import { uploadBlobToIPFS, uploadJSONToIPFS } from "./uploadToIpfs.ts";
 import { client, account } from "./utils";
 import { createHash } from "crypto";
 import { LicenseTerms, WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
-import { zeroAddress } from "viem";
+import { zeroAddress, parseEther } from "viem";
 
 async function main() {
   // previous code here ...
@@ -324,7 +324,7 @@ async function main() {
   const commercialRemixTerms: LicenseTerms = {
     transferable: true,
     royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/developers/deployed-smart-contracts
-    defaultMintingFee: BigInt(10),
+    defaultMintingFee: parseEther("1"), // 1 $WIP
     expiration: BigInt(0),
     commercialUse: true,
     commercialAttribution: true, // must give us attribution
@@ -400,7 +400,7 @@ import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
 import { client, account } from "./utils";
 import { createHash } from "crypto";
 import { LicenseTerms } from "@story-protocol/core-sdk";
-import { zeroAddress, Address } from "viem";
+import { zeroAddress, parseEther, Address } from "viem";
 
 async function main() {
   // previous code here ...

@@ -115,7 +115,7 @@ Retain control over reuse of your work, while allowing anyone to appropriately u
 PILTerms({
   transferable: true,
   royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
-  defaultMintingFee: MINTING_FEE, // ex. costs 100 $WIP to mint
+  defaultMintingFee: MINTING_FEE, // ex. 1000000000000000000 (which means it costs 1 $WIP to mint)
   expiration: 0,
   commercialUse: true,
   commercialAttribution: true,
@@ -134,12 +134,12 @@ PILTerms({
 ```
 
 ```typescript TypeScript
-import { zeroAddress } from "viem";
+import { zeroAddress, parseEther } from "viem";
 
 const commercialUse = {
   transferable: true,
   royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
-  defaultMintingFee: MINTING_FEE, // ex. 100n (costs 100 $WIP to mint)
+  defaultMintingFee: MINTING_FEE, // ex. parseEther("1") (which means it costs 1 $WIP to mint)
   expiration: 0n,
   commercialUse: true,
   commercialAttribution: true,
@@ -202,7 +202,7 @@ Check out Story's official mascot **Ippy**, which we have registered with commer
 PILTerms({
   transferable: true,
   royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
-  defaultMintingFee: MINTING_FEE, // ex. costs 100 $WIP to mint
+  defaultMintingFee: MINTING_FEE, // ex. 1000000000000000000 (which means it costs 1 $WIP to mint)
   expiration: 0,
   commercialUse: true,
   commercialAttribution: true,
@@ -221,12 +221,12 @@ PILTerms({
 ```
 
 ```typescript TypeScript
-import { zeroAddress } from "viem";
+import { zeroAddress, parseEther } from "viem";
 
 const commercialRemix = {
   transferable: true,
   royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
-  defaultMintingFee: MINTING_FEE, // ex. 100n (costs 100 $WIP to mint)
+  defaultMintingFee: MINTING_FEE, // ex. parseEther("1") (which means it costs 1 $WIP to mint)
   expiration: 0n,
   commercialUse: true,
   commercialAttribution: true,
