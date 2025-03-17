@@ -462,6 +462,10 @@
                 ]
               }
             ]
+          },
+          {
+            "group": "Consensus Client API",
+            "openapi": "api-reference/consensus-client-api.json"
           }
         ]
       },
@@ -521,11 +525,7 @@
   },
   "api": {
     "mdx": {
-      "server": "https://api.storyapis.com",
-      "auth": {
-        "method": "key",
-        "name": "x-api-key"
-      }
+      "server": "https://api.storyapis.com"
     }
   },
   "redirects": [
