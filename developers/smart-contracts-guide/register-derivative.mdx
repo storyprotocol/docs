@@ -1,30 +1,28 @@
 ---
-title: Attach Terms to an IPA
-description: Learn how to attach License Terms to an IP Asset in Solidity.
+title: Register a Derivative
+description: Learn how to register a derivative/remix IP Asset as a child of another in Solidity.
 ---
 
 <Card
   title="Completed Code"
-  href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/2_AttachTerms.t.sol"
+  href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/4_IPARemix.t.sol"
   icon="thumbs-up"
 >
-  Follow the completed code all the way through.
+  All of this page is covered in this working code example.
 </Card>
 
-This section demonstrates how to attach [License Terms](/concepts/licensing-module/license-terms) to an [IP Asset](/concepts/ip-asset/overview). By attaching terms, users can publicly mint [License Tokens](/concepts/licensing-module/license-token) (the on-chain "license") with those terms from the IP.
+Once a [License Token](/concepts/licensing-module/license-token) has been minted from an IP Asset, the owner of that token (an ERC-721 NFT) can burn it to register their own IP Asset as a derivative of the IP Asset associated with the License Token.
 
 ## Prerequisites
 
 There are a few steps you have to complete before you can start the tutorial.
 
 1. Complete the [Setup Your Own Project](/developers/smart-contracts-guide/setup)
-2. Create License Terms and have a `licenseTermsId`. You can do that by following the [previous page](/developers/smart-contracts-guide/register-license-terms).
+2. Have a minted License Token. You can learn how to do that [here](/developers/smart-contracts-guide/mint-license)
 
-## Attach License Terms
+## Register as Derivative
 
-Now that we have created terms and have the associated `licenseTermsId`, we can attach them to an existing IP Asset.
-
-Let's create a test file under `test/2_AttachTerms.t.sol` to see it work and verify the results:
+Let's create a test file under `test/4_IPARemix.t.sol` to see it work and verify the results:
 
 <Note>
 **Contract Addresses**
@@ -33,7 +31,7 @@ We have filled in the addresses from the Story contracts for you. However you ca
 
 </Note>
 
-```solidity test/2_AttachTerms.t.sol
+```solidity test/4_IPARemix.t.sol
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.26;
 
@@ -50,9 +48,10 @@ import { PILTerms } from "@storyprotocol/core/interfaces/modules/licensing/IPILi
 import { SimpleNFT } from "../src/mocks/SimpleNFT.sol";
 
 // Run this test:
-// forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/2_AttachTerms.t.sol
-contract AttachTermsTest is Test {
+// forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/4_IPARemix.t.sol
+contract IPARemixTest is Test {
     address internal alice = address(0xa11ce);
+    address internal bob = address(0xb0b);
 
     // For addresses, see https://docs.story.foundation/developers/deployed-smart-contracts
     // Protocol Core - IPAssetRegistry
@@ -72,6 +71,7 @@ contract AttachTermsTest is Test {
     uint256 public tokenId;
     address public ipId;
     uint256 public licenseTermsId;
+    uint256 public startLicenseTokenId;
 
     function setUp() public {
         // this is only for testing purposes
@@ -83,7 +83,6 @@ contract AttachTermsTest is Test {
         tokenId = SIMPLE_NFT.mint(alice);
         ipId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), tokenId);
 
-        // Register random Commercial Remix terms so we can attach them later
         licenseTermsId = PIL_TEMPLATE.registerLicenseTerms(
             PILFlavors.commercialRemix({
                 mintingFee: 0,
@@ -92,24 +91,50 @@ contract AttachTermsTest is Test {
                 currencyToken: MERC20
             })
         );
-    }
 
-    /// @notice Attaches license terms to an IP Asset.
-    /// @dev Only the owner of an IP Asset can attach license terms to it.
-    /// So in this case, alice has to be the caller of the function because
-    /// she owns the NFT associated with the IP Asset.
-    function test_attachLicenseTerms() public {
         vm.prank(alice);
         LICENSING_MODULE.attachLicenseTerms(ipId, address(PIL_TEMPLATE), licenseTermsId);
-
-        assertTrue(LICENSE_REGISTRY.hasIpAttachedLicenseTerms(ipId, address(PIL_TEMPLATE), licenseTermsId));
-        assertEq(LICENSE_REGISTRY.getAttachedLicenseTermsCount(ipId), 1);
-        (address licenseTemplate, uint256 attachedLicenseTermsId) = LICENSE_REGISTRY.getAttachedLicenseTerms({
-            ipId: ipId,
-            index: 0
+        startLicenseTokenId = LICENSING_MODULE.mintLicenseTokens({
+            licensorIpId: ipId,
+            licenseTemplate: address(PIL_TEMPLATE),
+            licenseTermsId: licenseTermsId,
+            amount: 2,
+            receiver: bob,
+            royaltyContext: "", // for PIL, royaltyContext is empty string
+            maxMintingFee: 0,
+            maxRevenueShare: 0
         });
-        assertEq(licenseTemplate, address(PIL_TEMPLATE));
-        assertEq(attachedLicenseTermsId, licenseTermsId);
+    }
+
+    /// @notice Mints an NFT to be registered as IP, and then
+    /// linked as a derivative of alice's asset using the
+    /// minted license token.
+    function test_registerDerivativeWithLicenseTokens() public {
+        // First we mint an NFT and register it as an IP Asset,
+        // owned by Bob.
+        uint256 childTokenId = SIMPLE_NFT.mint(bob);
+        address childIpId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), childTokenId);
+
+        uint256[] memory licenseTokenIds = new uint256[](1);
+        licenseTokenIds[0] = startLicenseTokenId;
+
+        // Bob uses the License Token he has from Alice's IP
+        // to register his IP as a derivative of Alice's IP.
+        vm.prank(bob);
+        LICENSING_MODULE.registerDerivativeWithLicenseTokens({
+            childIpId: childIpId,
+            licenseTokenIds: licenseTokenIds,
+            royaltyContext: "", // empty for PIL
+            maxRts: 0
+        });
+
+        assertTrue(LICENSE_REGISTRY.hasDerivativeIps(ipId));
+        assertTrue(LICENSE_REGISTRY.isParentIp(ipId, childIpId));
+        assertTrue(LICENSE_REGISTRY.isDerivativeIp(childIpId));
+        assertEq(LICENSE_REGISTRY.getParentIpCount(childIpId), 1);
+        assertEq(LICENSE_REGISTRY.getDerivativeIpCount(ipId), 1);
+        assertEq(LICENSE_REGISTRY.getParentIp({ childIpId: childIpId, index: 0 }), ipId);
+        assertEq(LICENSE_REGISTRY.getDerivativeIp({ parentIpId: ipId, index: 0 }), childIpId);
     }
 }
 ```
@@ -121,19 +146,19 @@ Run `forge build`. If everything is successful, the command should successfully 
 Now run the test by executing the following command:
 
 ```bash
-forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/2_AttachTerms.t.sol
+forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/4_IPARemix.t.sol
 ```
 
-## Mint a License
+## Paying and Claiming Revenue
 
-Congratulations, you attached terms to an IPA!
+Congratulations, you registered a derivative IP Asset!
 
 <Card
   title="Completed Code"
-  href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/2_AttachTerms.t.sol"
+  href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/4_IPARemix.t.sol"
   icon="thumbs-up"
 >
-  Follow the completed code all the way through.
+  All of this page is covered in this working code example.
 </Card>
 
-Now that we have attached License Terms to our IP, the next step is minting a License Token, which we'll go over on the next page.
+Now that we have established parent-child IP relationships, we can begin to explore payments and automated revenue share based on the license terms. We'll cover that in the upcoming pages.
