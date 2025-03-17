@@ -180,7 +180,7 @@
                 ]
               },
               "concepts/story-attestation-service",
-              "concepts/concepts-faq"
+              "concepts/faq"
             ]
           }
         ]
@@ -219,14 +219,14 @@
                 "icon": "atom",
                 "pages": [
                   "developers/react-guide/overview",
+                  "developers/react-guide/setup",
                   {
-                    "group": "Setup",
+                    "group": "Wallet Providers",
                     "pages": [
-                      "developers/react-guide/react-setup/overview",
-                      "developers/react-guide/react-setup/dynamic-setup",
-                      "developers/react-guide/react-setup/rainbowkit-setup",
-                      "developers/react-guide/react-setup/reown-setup",
-                      "developers/react-guide/react-setup/tomo-setup"
+                      "developers/react-guide/wallet-providers/dynamic-setup",
+                      "developers/react-guide/wallet-providers/rainbowkit-setup",
+                      "developers/react-guide/wallet-providers/reown-setup",
+                      "developers/react-guide/wallet-providers/tomo-setup"
                     ]
                   },
                   "developers/react-guide/using-the-sdk-in-react"
@@ -524,5 +524,346 @@
         "name": "x-api-key"
       }
     }
-  }
+  },
+  "redirects": [
+    { "source": "/docs/:slug*", "destination": "/:slug*" },
+    { "source": "/what-is-story", "destination": "/introduction" },
+    { "source": "/ai-agents-on-story", "destination": "/ai-agents" },
+    {
+      "source": "/using-cursor-with-story",
+      "destination": "/ai-agents/using-cursor-with-story"
+    },
+    {
+      "source": "/implementing-the-atcpip-whitepaper",
+      "destination": "/ai-agents/implementing-atcpip"
+    },
+    {
+      "source": "/story-architect-overview",
+      "destination": "/network"
+    },
+    {
+      "source": "/story-node-structure",
+      "destination": "/network/node-architecture"
+    },
+    {
+      "source": "/engine-api",
+      "destination": "/network/node-architecture/engine-api"
+    },
+    {
+      "source": "/cosmos-module-overview",
+      "destination": "/network/node-architecture/cosmos-modules"
+    },
+    {
+      "source": "/evmengine-module",
+      "destination": "/network/node-architecture/cosmos-modules/evmengine-module"
+    },
+    {
+      "source": "/evmstaking-module",
+      "destination": "/network/node-architecture/cosmos-modules/evmstaking-module"
+    },
+    {
+      "source": "/mint-module",
+      "destination": "/network/node-architecture/cosmos-modules/mint-module"
+    },
+    {
+      "source": "/staking-module",
+      "destination": "/network/node-architecture/cosmos-modules/staking-module"
+    },
+    {
+      "source": "/precompile",
+      "destination": "/network/node-architecture/precompile"
+    },
+    {
+      "source": "/network",
+      "destination": "/network/network-info"
+    },
+    {
+      "source": "/mainnet",
+      "destination": "/network/network-info/mainnet"
+    },
+    {
+      "source": "/aeneid",
+      "destination": "/network/network-info/aeneid"
+    },
+    {
+      "source": "/localnet",
+      "destination": "/network/network-info/localnet"
+    },
+    {
+      "source": "/node-setup-mainnet",
+      "destination": "/network/operating-a-node/node-setup-mainnet"
+    },
+    {
+      "source": "/operate-your-node",
+      "destination": "/network/operating-a-node/operate-your-node"
+    },
+    {
+      "source": "/node-upgrade",
+      "destination": "/network/operating-a-node/node-upgrade"
+    },
+    {
+      "source": "/release-notes",
+      "destination": "/network/operating-a-node/release-notes"
+    },
+    {
+      "source": "/become-a-validator",
+      "destination": "/network/become-a-validator"
+    },
+    {
+      "source": "/tokenomics-staking",
+      "destination": "/network/tokenomics-staking"
+    },
+    {
+      "source": "/infrastructure-partners",
+      "destination": "/network/infrastructure-partners"
+    },
+    {
+      "source": "/network/more/network-faq",
+      "destination": "/network/more/troubleshooting"
+    },
+    {
+      "source": "/overview",
+      "destination": "/concepts/overview"
+    },
+    {
+      "source": "/ip-asset",
+      "destination": "/concepts/ip-asset"
+    },
+    {
+      "source": "/ip-account",
+      "destination": "/concepts/ip-asset/ip-account"
+    },
+    {
+      "source": "/ipa-metadata-standard",
+      "destination": "/concepts/ip-asset/ipa-metadata-standard"
+    },
+    {
+      "source": "/ipa-modifications",
+      "destination": "/concepts/ip-asset/ipa-modifications"
+    },
+    {
+      "source": "/story-modules",
+      "destination": "/concepts/modules"
+    },
+    {
+      "source": "/base-module",
+      "destination": "/concepts/modules/base-module"
+    },
+    {
+      "source": "/hooks",
+      "destination": "/concepts/modules/hooks"
+    },
+    {
+      "source": "/licensing-module",
+      "destination": "/concepts/licensing-module"
+    },
+    {
+      "source": "/license-template",
+      "destination": "/concepts/licensing-module/license-template"
+    },
+    {
+      "source": "/license-terms",
+      "destination": "/concepts/licensing-module/license-terms"
+    },
+    {
+      "source": "/license-token",
+      "destination": "/concepts/licensing-module/license-token"
+    },
+    {
+      "source": "/license-config-hook",
+      "destination": "/concepts/licensing-module/license-config-hook"
+    },
+    {
+      "source": "/royalty-module",
+      "destination": "/concepts/royalty-module"
+    },
+    {
+      "source": "/ip-royalty-vault",
+      "destination": "/concepts/royalty-module/ip-royalty-vault"
+    },
+    {
+      "source": "/liquid-absolute-percentage",
+      "destination": "/concepts/royalty-module/liquid-absolute-percentage"
+    },
+    {
+      "source": "/liquid-relative-percentage",
+      "destination": "/concepts/royalty-module/liquid-relative-percentage"
+    },
+    {
+      "source": "/external-royalty-policies",
+      "destination": "/concepts/royalty-module/external-royalty-policies"
+    },
+    {
+      "source": "/dispute-module",
+      "destination": "/concepts/dispute-module"
+    },
+    {
+      "source": "/uma-arbitration-policy",
+      "destination": "/concepts/dispute-module/uma-arbitration-policy"
+    },
+    {
+      "source": "/grouping-module",
+      "destination": "/concepts/grouping-module"
+    },
+    {
+      "source": "/registry",
+      "destination": "/concepts/registry"
+    },
+    {
+      "source": "/ip-asset-registry",
+      "destination": "/concepts/registry/ip-asset-registry"
+    },
+    {
+      "source": "/group-ip-asset-registry",
+      "destination": "/concepts/registry/group-ip-asset-registry"
+    },
+    {
+      "source": "/license-registry",
+      "destination": "/concepts/registry/license-registry"
+    },
+    {
+      "source": "/module-registry",
+      "destination": "/concepts/registry/module-registry"
+    },
+    {
+      "source": "/programmable-ip-license",
+      "destination": "/concepts/programmable-ip-license"
+    },
+    {
+      "source": "/pil-terms",
+      "destination": "/concepts/programmable-ip-license/pil-terms"
+    },
+    {
+      "source": "/pil-flavors",
+      "destination": "/concepts/programmable-ip-license/pil-flavors"
+    },
+    {
+      "source": "/access-controller",
+      "destination": "/concepts/access-controller"
+    },
+    {
+      "source": "/spg",
+      "destination": "/concepts/spg"
+    },
+    {
+      "source": "/batch-spg-function-calls",
+      "destination": "/concepts/spg/batch-spg-function-calls"
+    },
+    {
+      "source": "/story-attestation-service",
+      "destination": "/concepts/story-attestation-service"
+    },
+    {
+      "source": "/concepts-faq",
+      "destination": "/concepts/faq"
+    },
+    {
+      "source": "/dev-overview",
+      "destination": "/developers/overview"
+    },
+    {
+      "source": "/tutorials",
+      "destination": "/developers/tutorials"
+    },
+    {
+      "source": "/case-study-register-derivative-ippy",
+      "destination": "/developers/tutorials/case-study-register-derivative-ippy"
+    },
+    {
+      "source": "/how-to-register-ip-on-story",
+      "destination": "/developers/tutorials/how-to-register-ip-on-story"
+    },
+    {
+      "source": "/how-to-register-music-on-story",
+      "destination": "/developers/tutorials/how-to-register-music-on-story"
+    },
+    {
+      "source": "/how-to-tip-an-ip",
+      "destination": "/developers/tutorials/how-to-tip-an-ip"
+    },
+    {
+      "source": "/privy-tutorial",
+      "destination": "/developers/tutorials/privy-tutorial"
+    },
+    {
+      "source": "/protect-dalle-ai-generated-images",
+      "destination": "/developers/tutorials/protect-dalle-ai-generated-images"
+    },
+    {
+      "source": "/register-stability-images",
+      "destination": "/developers/tutorials/register-stability-images"
+    },
+    {
+      "source": "/finetune-images",
+      "destination": "/developers/tutorials/finetune-images"
+    },
+    {
+      "source": "/typescript-sdk",
+      "destination": "/developers/typescript-sdk"
+    },
+    {
+      "source": "/typescript-sdk-setup",
+      "destination": "/developers/typescript-sdk/setup"
+    },
+    {
+      "source": "/register-an-ip-asset",
+      "destination": "/developers/typescript-sdk/register-an-ip-asset"
+    },
+    {
+      "source": "/attach-terms-to-an-ip-asset",
+      "destination": "/developers/typescript-sdk/attach-terms-to-an-ip-asset"
+    },
+    {
+      "source": "/typescript-sdk/mint-a-license",
+      "destination": "/developers/typescript-sdk/mint-a-license"
+    },
+    {
+      "source": "/typescript-sdk/register-a-derivative",
+      "destination": "/developers/typescript-sdk/register-a-derivative"
+    },
+    {
+      "source": "/typescript-sdk/pay-ipa",
+      "destination": "/developers/typescript-sdk/pay-ipa"
+    },
+    {
+      "source": "/typescript-sdk/claim-revenue",
+      "destination": "/developers/typescript-sdk/claim-revenue"
+    },
+    {
+      "source": "/typescript-sdk/raise-a-dispute",
+      "destination": "/developers/typescript-sdk/raise-a-dispute"
+    },
+    {
+      "source": "/react-guide",
+      "destination": "/developers/react-guide"
+    },
+    {
+      "source": "/react-setup",
+      "destination": "/developers/react-guide/setup"
+    },
+    {
+      "source": "/dynamic-setup",
+      "destination": "/developers/react-guide/wallet-providers/dynamic-setup"
+    },
+    {
+      "source": "/rainbowkit-setup",
+      "destination": "/developers/react-guide/wallet-providers/rainbowkit-setup"
+    },
+    {
+      "source": "/reown-setup",
+      "destination": "/developers/react-guide/wallet-providers/reown-setup"
+    },
+    {
+      "source": "/tomo-setup",
+      "destination": "/developers/react-guide/wallet-providers/tomo-setup"
+    },
+    {
+      "source": "/using-the-sdk-in-react",
+      "destination": "/developers/react-guide/using-the-sdk-in-react"
+    },
+    {
+      "source": "/get-started-with-the-smart-contracts",
+      "destination": "/developers/smart-contracts-guide"
+    }
+  ]
 }
