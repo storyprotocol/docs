@@ -44,7 +44,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber, descendantCount or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -101,7 +101,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -271,7 +271,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber, assetCount, licensesCount or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -383,7 +383,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -440,7 +440,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -552,7 +552,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber, groupId or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -609,7 +609,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be groupId or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -666,7 +666,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -778,7 +778,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -890,7 +890,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -1002,7 +1002,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -1160,7 +1160,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -1272,7 +1272,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -1384,7 +1384,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -1496,7 +1496,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -1608,7 +1608,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber, resourceType or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
@@ -1665,7 +1665,7 @@
           }
         ],
         "requestBody": {
-          "description": "Query Parameters must be wrapped in options object (though it can be left empty) \u2757\ufe0f \ud83d\udc40. OrderBy must be blockNumber, resourceType or empty.",
+          "description": "",
           "required": true,
           "content": {
             "application/json": {
