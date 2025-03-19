@@ -124,7 +124,7 @@ Below is a list of optional flags to further customize your validator setup:
 - `--moniker`: Defines a custom name for the validator, visible to users on the network.
 - `--chain-id`: Specifies the Chain ID for the transaction. By default, this is set to `1516`.
 - `--commission-rate`: Sets the validator's commission rate in bips (1% = 100 bips). For instance, `1000` represents a 10% commission (default is `1000`).
-- `--explorer`: Specifies the URL of the blockchain explorer (default: [https://storyscan.io](https://storyscan.io)).
+- `--explorer`: Specifies the URL of the blockchain explorer (default: [https://www.storyscan.io](https://www.storyscan.io)).
 - `--keyfile`: Points to the path of the Tendermint key file (default: `$HOME/.story/story/config/priv_validator_key.json`).
 - `--max-commission-change-rate`: Sets the maximum rate at which the validator's commission can change, in bips. For example, `100` represents a maximum change of 1% (default is `1000`).
 - `--max-commission-rate`: Defines the maximum commission rate the validator can charge, in bips. For instance, `5000` allows a 50% maximum rate (default is `5000`).
@@ -211,7 +211,7 @@ Like in the staking operation, please use the `Explorer URL` to confirm the tran
 
 - `--chain-id`: (int) Chain ID to use for the transaction (default: 1514)
 - `--delegation-id`: (uint32) The delegation ID (0 for flexible staking)
-- `--explorer`: (string) URL of the blockchain explorer (default: "[https://storyscan.io](https://storyscan.io)")
+- `--explorer`: (string) URL of the blockchain explorer (default: "[https://www.storyscan.io](https://www.storyscan.io)")
 - `--help`, `-h`: Help for unstake command
 - `--private-key`: (string) Private key used for the transaction
 - `--rpc`: (string) RPC URL to connect to the network (default: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
@@ -250,7 +250,7 @@ Like in the other staking operations, please use the `Explorer URL` to confirm t
 
 - `--chain-id`: (int) Chain ID to use for the transaction (default: 1514)
 - `--delegator-address`: (string) Delegator's EVM address
-- `--explorer`: (string) URL of the blockchain explorer (default: "[https://storyscan.io](https://storyscan.io)")
+- `--explorer`: (string) URL of the blockchain explorer (default: "[https://www.storyscan.io](https://www.storyscan.io)")
 - `--help`, `-h`: Help for stake-on-behalf command
 - `--private-key`: (string) Private key used for the transaction
 - `--rpc`: (string) RPC URL to connect to the network (default: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
@@ -292,7 +292,7 @@ Like in the other staking operations, please use the `Explorer URL` to confirm t
 
 - `--chain-id`: (int) Chain ID to use for the transaction (default: 1514)
 - `--delegator-address`: (string) Delegator's EVM address
-- `--explorer`: (string) URL of the blockchain explorer (default: "[https://storyscan.io](https://storyscan.io)")
+- `--explorer`: (string) URL of the blockchain explorer (default: "[https://www.storyscan.io](https://www.storyscan.io)")
 - `--help`, `-h`: Help for unstake-on-behalf command
 - `--private-key`: (string) Private key used for the transaction
 - `--rpc`: (string) RPC URL to connect to the network (default: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
@@ -389,7 +389,7 @@ To redelegate from one validator to another, run the following command:
 
 - `--chain-id`: (int) Chain ID to use for the transaction (default 1514)
 - `--delegation-id`: (uint32) The delegation ID (0 for flexible staking)
-- `--explorer`: (string) URL of the blockchain explorer (default "[https://storyscan.io](https://storyscan.io)")
+- `--explorer`: (string) URL of the blockchain explorer (default "[https://www.storyscan.io](https://www.storyscan.io)")
 - `--help`, `-h`: Help for redelegate command
 - `--private-key`: (string) Private key used for the transaction
 - `--redelegate`: (string) Amount to redelegate in wei
@@ -428,7 +428,7 @@ If you are an authorized operator, you may redelegate from one validator to anot
 - `--chain-id`: (int) Chain ID to use for the transaction (default 1514)
 - `--delegation-id`: (uint32) The delegation ID (0 for flexible staking)
 - `--delegator-address`: (string) Delegator's EVM address
-- `--explorer`: (string) URL of the blockchain explorer (default "[https://storyscan.io](https://storyscan.io)")
+- `--explorer`: (string) URL of the blockchain explorer (default "[https://www.storyscan.io](https://www.storyscan.io)")
 - `--help`, `-h`: Help for redelegate-on-behalf command
 - `--private-key`: (string) Private key used for the transaction
 - `--redelegate`: (string) Amount to redelegate in wei
@@ -454,7 +454,7 @@ If you are an authorized operator, you may redelegate from one validator to anot
 Delegators may add operators to unstake or redelegate on their behalf. To add an operator, run the following command:
 
 - `--chain-id` int Chain ID to use for the transaction (default 1514)
-- `--explorer` string URL of the blockchain explorer (default "[https://storyscan.io](https://storyscan.io)")
+- `--explorer` string URL of the blockchain explorer (default "[https://www.storyscan.io](https://www.storyscan.io)")
 - `--operator` string Sets an operator to your delegator
 - `--private-key` string Private key used for the transaction
 - `--rpc` string RPC URL to connect to the network (default "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
