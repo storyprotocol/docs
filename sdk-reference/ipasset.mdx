@@ -149,8 +149,9 @@ The derivative IP owner must be the caller or an authorized operator.
 Parameters:
 
 - `request.childIpId`: The derivative IP ID.
-- `request.parentIpIds`: The parent IP IDs.
-- `request.licenseTermsIds`: The IDs of the license terms that the parent IP supports.
+- `request.licenseTermsIds`: Array of license term IDs that authorize the creation of this derivative IP. Each ID must correspond positionally to a parent IP in the `parentIpIds` array, creating a one-to-one mapping. Story verifies on-chain that each specified license term permits derivative registration for its corresponding parent IP. Transaction fails if arrays don't match in length or if terms don't permit derivative creation.
+- `request.parentIpIds`: Array of parent IP IDs from which this derivative is created. Each parent IP must have corresponding license terms specified at the same index in the `licenseTermsIds` array that authorize the derivative relationship.
+- `request.licenseTemplate`: \[Optional] The address of the license template to be used for the linking. For now, this can only be the [PIL](/concepts/programmable-ip-license)
 - `request.maxMintingFee`: \[Optional] The maximum minting fee that the caller is willing to pay. If set to 0, then there is no no limit. **Default: 0**
 - `request.maxRevenueShare`: \[Optional] The maximum revenue share percentage agreed upon between a child and parent when a child is registering as derivative. Must be between 0 and 100. **Default: 100**
 - `request.maxRts`: \[Optional] The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Default: 100_000_000**
@@ -546,7 +547,7 @@ Parameters:
   - `request.derivData.maxMintingFee`: \[Optional] The maximum minting fee that the caller is willing to pay. If set to 0, then there is no no limit. **Default: 0**
   - `request.derivData.maxRevenueShare`: \[Optional] The maximum revenue share percentage agreed upon between a child and parent when a child is registering as derivative. Must be between 0 and 100. **Default: 100**
   - `request.derivData.maxRts`: \[Optional]The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Default: 100_000_000**
-  - `request.derivData.licenseTemplate`: \[Optional] The address of the license template to be used for the linking.
+  - `request.derivData.licenseTemplate`: \[Optional] The address of the license template to be used for the linking. For now, this can only be the [PIL](/concepts/programmable-ip-license)
 - `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
   - `request.ipMetadata.ipMetadataURI` \[Optional] The URI of the metadata for the IP.
   - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
@@ -661,7 +662,7 @@ Parameters:
   - `request.derivData.maxMintingFee`: \[Optional] The maximum minting fee that the caller is willing to pay. If set to 0, then there is no no limit. **Default: 0**
   - `request.derivData.maxRevenueShare`: \[Optional] The maximum revenue share percentage agreed upon between a child and parent when a child is registering as derivative. Must be between 0 and 100. **Default: 100**
   - `request.derivData.maxRts`: \[Optional] The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Default: 100_000_000**
-  - `request.derivData.licenseTemplate`: \[Optional] The address of the license template to be used for the linking.
+  - `request.derivData.licenseTemplate`: \[Optional] The address of the license template to be used for the linking. For now, this can only be the [PIL](/concepts/programmable-ip-license)
 - `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
   - `request.ipMetadata.ipMetadataURI` \[Optional] The URI of the metadata for the IP.
   - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
