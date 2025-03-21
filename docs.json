@@ -87,7 +87,8 @@
                     "group": "Oracles",
                     "pages": [
                       "network/more/oracle/gelato",
-                      "network/more/oracle/pyth"
+                      "network/more/oracle/pyth",
+                      "network/more/oracle/redstone"
                     ]
                   }
                 ]
