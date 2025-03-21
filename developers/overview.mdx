@@ -58,6 +58,12 @@ Check out the following resources to learn the protocol:
 - [Deployed Smart Contracts](/developers/deployed-smart-contracts) - all the deployed protocol addresses
 - [Tutorials](/developers/tutorials/overview) - includes tutorials that cover more specific topics, like registering music, registering AI-generated images, etc **_(includes working code so you can jump right to coding)_**
 
+<Warning>
+  Do not use `RANDAO` for pseudo-randomness, instead use onchain VRF (Pyth or
+  Gelato). Currently, `RANDAO` value is set as the parent block hash and thus is
+  not random for X-1 block.
+</Warning>
+
 ## API
 
 View our [API Reference](/api-reference).

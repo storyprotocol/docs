@@ -11,3 +11,9 @@ description: "A detailed description of every function in our smart contract"
   Learn our smart contracts through a series of tutorials with the Smart
   Contract Guide.
 </Card>
+
+<Warning>
+  Do not use `RANDAO` for pseudo-randomness, instead use onchain VRF (Pyth or
+  Gelato). Currently, `RANDAO` value is set as the parent block hash and thus is
+  not random for X-1 block.
+</Warning>
