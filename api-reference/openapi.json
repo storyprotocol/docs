@@ -16,11 +16,6 @@
         "summary": "List IPAssets",
         "description": "Retrieve a paginated, filtered list of IPAssets",
         "tags": ["IPAssets"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -73,11 +68,6 @@
         "summary": "List IP Edges",
         "description": "Retrieve a paginated, filtered list of IP Edges",
         "tags": ["IPAssets"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -133,11 +123,6 @@
         "summary": "Get an IPAsset",
         "description": "Retrieve an IPAsset",
         "tags": ["IPAssets"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "assetId",
@@ -188,11 +173,6 @@
         "summary": "Get metadata for an IPAsset",
         "description": "Retrieve metadata for an IPAsset",
         "tags": ["IPAssets"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "assetId",
@@ -243,11 +223,6 @@
         "summary": "List Collections",
         "description": "Retrieve a paginated, filtered list of Collections",
         "tags": ["Collections"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -300,11 +275,6 @@
         "summary": "Get an Collection",
         "description": "Retrieve a Collection",
         "tags": ["Collections"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -355,11 +325,6 @@
         "summary": "List detailed ip license term",
         "description": "Retrieve detailed IP License Terms associated with list of IP ID",
         "tags": ["IPLicenseTerms"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -412,11 +377,6 @@
         "summary": "List Disputes",
         "description": "Retrieve a paginated, filtered list of Disputes",
         "tags": ["Disputes"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -469,11 +429,6 @@
         "summary": "Get a Dispute",
         "description": "Retrieve a Dispute",
         "tags": ["Disputes"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "disputeId",
@@ -524,11 +479,6 @@
         "summary": "List a IPGroup's edges",
         "description": "Retrieve an IPGroup edges",
         "tags": ["IPGroup"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -581,11 +531,6 @@
         "summary": "List IP groups",
         "description": "Retrieve an IPGroup",
         "tags": ["IPGroup"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -638,11 +583,6 @@
         "summary": "List IPLicenseTerms",
         "description": "Retrieve a paginated, filtered list of IPLicenseTerms",
         "tags": ["IPLicenseTerms"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -695,11 +635,6 @@
         "summary": "Get IP License Terms for an IP",
         "description": "Retrieve IP License Terms associated with an IP ID",
         "tags": ["IPLicenseTerms"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -750,11 +685,6 @@
         "summary": "List LicenseMintingFeePays",
         "description": "Retrieve a paginated, filtered list of LicenseMintingFeePaids",
         "tags": ["Licenses"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -807,11 +737,6 @@
         "summary": "Get a LicenseMintingFeePay",
         "description": "Retrieve a LicenseMintingFeePay",
         "tags": ["Licenses"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -862,11 +787,6 @@
         "summary": "List LicenseTemplates",
         "description": "Retrieve a paginated, filtered list of LicenseTemplates",
         "tags": ["LicenseTemplates"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -919,11 +839,6 @@
         "summary": "Get a LicenseTemplate",
         "description": "Retrieve a LicenseTemplate",
         "tags": ["LicenseTemplates"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -974,11 +889,6 @@
         "summary": "List LicenseTerms",
         "description": "Retrieve a paginated, filtered list of LicenseTerms",
         "tags": ["LicenseTerms"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -1031,11 +941,6 @@
         "summary": "Get default license term",
         "description": "Retrieve default license term",
         "tags": ["IPLicenseTerms"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -1077,11 +982,6 @@
         "summary": "Get a LicenseTerm",
         "description": "Retrieve a LicenseTerm",
         "tags": ["LicenseTerms"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -1132,11 +1032,6 @@
         "summary": "List LicenseTokens",
         "description": "Retrieve a paginated, filtered list of LicenseTokens",
         "tags": ["LicenseTokens"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -1189,11 +1084,6 @@
         "summary": "Get an LicenseToken",
         "description": "Retrieve a LicenseToken",
         "tags": ["LicenseTokens"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -1244,11 +1134,6 @@
         "summary": "List Modules",
         "description": "Retrieve a paginated, filtered list of Modules",
         "tags": ["Modules"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -1301,11 +1186,6 @@
         "summary": "Get a Module",
         "description": "Retrieve a Module",
         "tags": ["Modules"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -1356,11 +1236,6 @@
         "summary": "List Permissions",
         "description": "Retrieve a paginated, filtered list of Permissions",
         "tags": ["Permissions"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -1413,11 +1288,6 @@
         "summary": "Get a Permission",
         "description": "Retrieve a Permission",
         "tags": ["Permissions"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -1468,11 +1338,6 @@
         "summary": "List RoyaltyPays",
         "description": "Retrieve a paginated, filtered list of RoyaltyPays",
         "tags": ["Royalties"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -1525,11 +1390,6 @@
         "summary": "Get a RoyaltyPay",
         "description": "Retrieve a RoyaltyPay",
         "tags": ["Royalties"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -1580,11 +1440,6 @@
         "summary": "List Transactions",
         "description": "Retrieve a paginated, filtered list of Transactions",
         "tags": ["Transactions"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -1637,11 +1492,6 @@
         "summary": "List Latest Transactions",
         "description": "Retrieve a paginated, filtered list of Latest Transactions",
         "tags": ["Transactions"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "X-Api-Key",
@@ -1694,11 +1544,6 @@
         "summary": "Get a Transaction",
         "description": "Retrieve a Transaction",
         "tags": ["Transactions"],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "trxId",
