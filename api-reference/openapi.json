@@ -15,9 +15,7 @@
       "post": {
         "summary": "List IPAssets",
         "description": "Retrieve a paginated, filtered list of IPAssets",
-        "tags": [
-          "IPAssets"
-        ],
+        "tags": ["IPAssets"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -30,7 +28,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -39,7 +38,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -72,9 +72,7 @@
       "post": {
         "summary": "List IP Edges",
         "description": "Retrieve a paginated, filtered list of IP Edges",
-        "tags": [
-          "IPAssets"
-        ],
+        "tags": ["IPAssets"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -87,7 +85,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -96,7 +95,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -132,9 +132,7 @@
       "get": {
         "summary": "Get an IPAsset",
         "description": "Retrieve an IPAsset",
-        "tags": [
-          "IPAssets"
-        ],
+        "tags": ["IPAssets"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -156,7 +154,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -165,7 +164,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -187,9 +187,7 @@
       "get": {
         "summary": "Get metadata for an IPAsset",
         "description": "Retrieve metadata for an IPAsset",
-        "tags": [
-          "IPAssets"
-        ],
+        "tags": ["IPAssets"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -211,7 +209,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -220,7 +219,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -242,9 +242,7 @@
       "post": {
         "summary": "List Collections",
         "description": "Retrieve a paginated, filtered list of Collections",
-        "tags": [
-          "Collections"
-        ],
+        "tags": ["Collections"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -257,7 +255,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -266,7 +265,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -299,9 +299,7 @@
       "get": {
         "summary": "Get an Collection",
         "description": "Retrieve a Collection",
-        "tags": [
-          "Collections"
-        ],
+        "tags": ["Collections"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -314,7 +312,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -323,7 +322,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           },
           {
@@ -354,9 +354,7 @@
       "post": {
         "summary": "List detailed ip license term",
         "description": "Retrieve detailed IP License Terms associated with list of IP ID",
-        "tags": [
-          "IPLicenseTerms"
-        ],
+        "tags": ["IPLicenseTerms"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -369,7 +367,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -378,7 +377,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -411,9 +411,7 @@
       "post": {
         "summary": "List Disputes",
         "description": "Retrieve a paginated, filtered list of Disputes",
-        "tags": [
-          "Disputes"
-        ],
+        "tags": ["Disputes"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -426,7 +424,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -435,7 +434,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -468,9 +468,7 @@
       "get": {
         "summary": "Get a Dispute",
         "description": "Retrieve a Dispute",
-        "tags": [
-          "Disputes"
-        ],
+        "tags": ["Disputes"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -492,7 +490,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -501,7 +500,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -523,9 +523,7 @@
       "post": {
         "summary": "List a IPGroup's edges",
         "description": "Retrieve an IPGroup edges",
-        "tags": [
-          "IPGroup"
-        ],
+        "tags": ["IPGroup"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -538,7 +536,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -547,7 +546,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -580,9 +580,7 @@
       "post": {
         "summary": "List IP groups",
         "description": "Retrieve an IPGroup",
-        "tags": [
-          "IPGroup"
-        ],
+        "tags": ["IPGroup"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -595,7 +593,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -604,7 +603,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -637,9 +637,7 @@
       "post": {
         "summary": "List IPLicenseTerms",
         "description": "Retrieve a paginated, filtered list of IPLicenseTerms",
-        "tags": [
-          "IPLicenseTerms"
-        ],
+        "tags": ["IPLicenseTerms"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -652,7 +650,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -661,7 +660,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -694,9 +694,7 @@
       "get": {
         "summary": "Get IP License Terms for an IP",
         "description": "Retrieve IP License Terms associated with an IP ID",
-        "tags": [
-          "IPLicenseTerms"
-        ],
+        "tags": ["IPLicenseTerms"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -709,7 +707,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -718,7 +717,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           },
           {
@@ -749,9 +749,7 @@
       "post": {
         "summary": "List LicenseMintingFeePays",
         "description": "Retrieve a paginated, filtered list of LicenseMintingFeePaids",
-        "tags": [
-          "Licenses"
-        ],
+        "tags": ["Licenses"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -764,7 +762,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -773,7 +772,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -806,9 +806,7 @@
       "get": {
         "summary": "Get a LicenseMintingFeePay",
         "description": "Retrieve a LicenseMintingFeePay",
-        "tags": [
-          "Licenses"
-        ],
+        "tags": ["Licenses"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -821,7 +819,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -830,7 +829,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           },
           {
@@ -861,9 +861,7 @@
       "post": {
         "summary": "List LicenseTemplates",
         "description": "Retrieve a paginated, filtered list of LicenseTemplates",
-        "tags": [
-          "LicenseTemplates"
-        ],
+        "tags": ["LicenseTemplates"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -876,7 +874,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -885,7 +884,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -918,9 +918,7 @@
       "get": {
         "summary": "Get a LicenseTemplate",
         "description": "Retrieve a LicenseTemplate",
-        "tags": [
-          "LicenseTemplates"
-        ],
+        "tags": ["LicenseTemplates"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -933,7 +931,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -942,7 +941,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           },
           {
@@ -973,9 +973,7 @@
       "post": {
         "summary": "List LicenseTerms",
         "description": "Retrieve a paginated, filtered list of LicenseTerms",
-        "tags": [
-          "LicenseTerms"
-        ],
+        "tags": ["LicenseTerms"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -988,7 +986,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -997,7 +996,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -1030,9 +1030,7 @@
       "get": {
         "summary": "Get default license term",
         "description": "Retrieve default license term",
-        "tags": [
-          "IPLicenseTerms"
-        ],
+        "tags": ["IPLicenseTerms"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -1045,7 +1043,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -1054,7 +1053,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -1076,9 +1076,7 @@
       "get": {
         "summary": "Get a LicenseTerm",
         "description": "Retrieve a LicenseTerm",
-        "tags": [
-          "LicenseTerms"
-        ],
+        "tags": ["LicenseTerms"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -1091,7 +1089,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -1100,7 +1099,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           },
           {
@@ -1131,9 +1131,7 @@
       "post": {
         "summary": "List LicenseTokens",
         "description": "Retrieve a paginated, filtered list of LicenseTokens",
-        "tags": [
-          "LicenseTokens"
-        ],
+        "tags": ["LicenseTokens"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -1146,7 +1144,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -1155,7 +1154,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -1188,9 +1188,7 @@
       "get": {
         "summary": "Get an LicenseToken",
         "description": "Retrieve a LicenseToken",
-        "tags": [
-          "LicenseTokens"
-        ],
+        "tags": ["LicenseTokens"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -1203,7 +1201,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -1212,7 +1211,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           },
           {
@@ -1243,9 +1243,7 @@
       "post": {
         "summary": "List Modules",
         "description": "Retrieve a paginated, filtered list of Modules",
-        "tags": [
-          "Modules"
-        ],
+        "tags": ["Modules"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -1258,7 +1256,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -1267,7 +1266,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -1300,9 +1300,7 @@
       "get": {
         "summary": "Get a Module",
         "description": "Retrieve a Module",
-        "tags": [
-          "Modules"
-        ],
+        "tags": ["Modules"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -1315,7 +1313,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -1324,7 +1323,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           },
           {
@@ -1355,9 +1355,7 @@
       "post": {
         "summary": "List Permissions",
         "description": "Retrieve a paginated, filtered list of Permissions",
-        "tags": [
-          "Permissions"
-        ],
+        "tags": ["Permissions"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -1370,7 +1368,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -1379,7 +1378,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -1412,9 +1412,7 @@
       "get": {
         "summary": "Get a Permission",
         "description": "Retrieve a Permission",
-        "tags": [
-          "Permissions"
-        ],
+        "tags": ["Permissions"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -1427,7 +1425,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -1436,7 +1435,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           },
           {
@@ -1467,9 +1467,7 @@
       "post": {
         "summary": "List RoyaltyPays",
         "description": "Retrieve a paginated, filtered list of RoyaltyPays",
-        "tags": [
-          "Royalties"
-        ],
+        "tags": ["Royalties"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -1482,7 +1480,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -1491,7 +1490,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -1524,9 +1524,7 @@
       "get": {
         "summary": "Get a RoyaltyPay",
         "description": "Retrieve a RoyaltyPay",
-        "tags": [
-          "Royalties"
-        ],
+        "tags": ["Royalties"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -1539,7 +1537,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -1548,7 +1547,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           },
           {
@@ -1579,9 +1579,7 @@
       "post": {
         "summary": "List Transactions",
         "description": "Retrieve a paginated, filtered list of Transactions",
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -1594,7 +1592,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -1603,7 +1602,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -1636,9 +1636,7 @@
       "post": {
         "summary": "List Latest Transactions",
         "description": "Retrieve a paginated, filtered list of Latest Transactions",
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -1651,7 +1649,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -1660,7 +1659,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -1693,9 +1693,7 @@
       "get": {
         "summary": "Get a Transaction",
         "description": "Retrieve a Transaction",
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "security": [
           {
             "ApiKeyAuth": []
@@ -1717,7 +1715,8 @@
             "description": "API Key",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U"
             }
           },
           {
@@ -1726,7 +1725,8 @@
             "description": "Chain Destination",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "default": "story-aeneid"
             }
           }
         ],
@@ -3367,19 +3367,11 @@
         "properties": {
           "orderBy": {
             "type": "string",
-            "enum": [
-              "id",
-              "blockNumber",
-              "ipId",
-              "resourceType"
-            ]
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
             "type": "string",
-            "enum": [
-              "asc",
-              "desc"
-            ]
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
