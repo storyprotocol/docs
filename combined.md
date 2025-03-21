@@ -18497,7 +18497,7 @@ Adding Story docs lets you interact with our docs directly and get the most accu
   <img src="/images/ai-agents/add-cursor.png" />
 </Frame>
 
-2. Paste the URL `https://raw.githubusercontent.com/storyprotocol/documentation/refs/heads/v1.3/combined.md`
+2. Paste the URL `https://raw.githubusercontent.com/storyprotocol/docs/refs/heads/main/combined.md`
 
 <Note>
   This is our entire documentation combined into a single `.md` file, **which is
@@ -18524,7 +18524,7 @@ You can then reference the Story docs in your prompt with the `@Story` symbol.
 This page is all about AI Agents. We have prepared a way for you to use our documentation as training data which can be seen below, or continue to learn about developing AI Agents on Story.
 
 <CardGroup cols={2}>
-  <Card title="Train on Our Docs" href="https://github.com/storyprotocol/documentation/blob/v1.3/combined.md" icon="robot" color="#4e8189">
+  <Card title="Train on Our Docs" href="https://github.com/storyprotocol/docs/blob/main/combined.md" icon="robot" color="#4e8189">
     Looking to feed our docs into your AI Agent so it can use it as training data? Check out this file, which contains all of our docs in one combined `.md` file.
   </Card>
 
