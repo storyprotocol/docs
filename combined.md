@@ -208,10 +208,7 @@ Story is a purpose-built layer 1 blockchain designed specifically for intellectu
 
 You can register your IP on-chain and add usage terms to it in seconds, massively lowering the barrier to the currently complex & antiquated legal system for IP. For example, enforcing "you owe me 50% of your commercial revenue if you use my IP" without needing time, money, or lawyers.
 
-<Note>
-  IP could be an image, a song, an RWA, AI training data, or anything
-  in-between.
-</Note>
+<Note>IP could be an image, a song, an RWA, AI training data.</Note>
 
 By making IP programmable on the blockchain, it becomes this transparent & decentralized global IP repository where AI agents (or any other software) and humans alike can transact on & monetize IP with a simple API call.
 
