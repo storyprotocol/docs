@@ -161,6 +161,22 @@ X-API-Key: MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U
 The above public API key has a requests/second of 300. If you'd like an API key with a higher limit, please join our Builder Discord and describe your project needs in the discussion channel.
 
 
+# "Introduction"
+
+Welcome to the Story API Reference! Please use the `https://api.storyapis.com/api/v3` endpoint.
+
+```http Headers
+// pick one depending on the network. `story` = mainnet, `story-aeneid` = testnet
+X-CHAIN: story | story-aeneid
+// same for both networks
+X-API-Key: MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U
+```
+
+## Rate Limit
+
+The above public API key has a requests/second of 300. If you'd like an API key with a higher limit, please join our Builder Discord and describe your project needs in the discussion channel.
+
+
 # "Blockscout API"
 
 Storyscan has a public API endpoint that returns gas price, average block time, market cap, token price (coin gecko), and several other stats: `https://www.storyscan.io/api/v2/stats`
@@ -5316,7 +5332,7 @@ Check out the addresses for the deployed smart contracts [here](/developers/depl
 
 ## Use our API
 
-Check out the entire [API Reference](/api-reference/introduction) for learning how to use our API. For common things like fetching gas price, average block time, market cap, token price, and more, check out the [Blockscout API](/api-reference/blockscout-api).
+Check out the entire [API Reference](/api-reference) for learning how to use our API. For common things like fetching gas price, average block time, market cap, token price, and more, check out the [Blockscout API](/api-reference/blockscout-api).
 
 ## Register IP on Story
 
