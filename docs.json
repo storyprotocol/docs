@@ -381,17 +381,18 @@
       },
       {
         "tab": "API Reference",
-        "groups": [
+        "dropdowns": [
           {
-            "group": "API Documentation",
-            "pages": [
-              "api-reference/introduction",
-              "api-reference/blockscout-api"
-            ]
-          },
-          {
-            "group": "Protocol API",
-            "pages": [
+            "dropdown": "Protocol API",
+            "icon": "globe",
+            "groups": [
+              {
+                "group": "Protocol API Overview",
+                "pages": [
+                  "api-reference/protocol/introduction",
+                  "api-reference/blockscout-api"
+                ]
+              },
               {
                 "group": "IPAssets",
                 "pages": [
@@ -491,8 +492,18 @@
             ]
           },
           {
-            "group": "Consensus Client API",
-            "openapi": "api-reference/consensus-client-api.json"
+            "dropdown": "Consensus Client API",
+            "icon": "circle-nodes",
+            "groups": [
+              {
+                "group": "Consensus Client API Overview",
+                "pages": ["api-reference/consensus-client/introduction"]
+              },
+              {
+                "group": "Endpoints",
+                "openapi": "api-reference/consensus-client/consensus-client-api.json"
+              }
+            ]
           }
         ]
       },
