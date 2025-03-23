@@ -147,7 +147,7 @@ Ultimately Story is not a system built to prevent bad actors, rather it is meant
 
 # "Introduction"
 
-Welcome to the Story API Reference! Please use the `https://api.storyapis.com/api/v3` endpoint.
+Welcome to the Story API Reference! Please use the `https://api.storyapis.com` endpoint.
 
 ```http Headers
 // pick one depending on the network. `story` = mainnet, `story-aeneid` = testnet
