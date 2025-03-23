@@ -12,6 +12,7 @@ description: GroupClient allows you to create groups and add IP Assets to them.
 - registerIpAndAttachLicenseAndAddToGroup
 - registerGroupAndAttachLicense
 - registerGroupAndAttachLicenseAndAddIps
+- collectAndDistributeGroupRoyalties
 
 ### registerGroup
 
@@ -170,6 +171,65 @@ export type RegisterGroupAndAttachLicenseAndAddIpsResponse = {
   txHash?: string;
   encodedTxData?: EncodedTxData;
   groupId?: Address;
+};
+```
+
+</CodeGroup>
+
+### collectAndDistributeGroupRoyalties
+
+Collect royalties for the entire group and distribute the rewards to each member IP's royalty vault.
+
+| Method                               | Type                                                                                                          |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `collectAndDistributeGroupRoyalties` | `(request: CollectAndDistributeGroupRoyaltiesRequest) => Promise<CollectAndDistributeGroupRoyaltiesResponse>` |
+
+Parameters:
+
+- `request.groupIpId`: The IP ID of the group.
+- `request.currencyTokens`: The addresses of the currency (revenue) tokens to claim.
+- `request.memberIpIds`: The IDs of the member IPs to distribute the rewards to.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+const response = await client.groupClient.collectAndDistributeGroupRoyalties({
+  groupIpId: "0x01",
+  currencyTokens: [WIP_TOKEN_ADDRESS],
+  memberIpIds: ["0x02"],
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type CollectAndDistributeGroupRoyaltiesRequest = {
+  groupIpId: Address;
+  currencyTokens: Address[];
+  memberIpIds: Address[];
+  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+};
+```
+
+```typescript Response Type
+export type CollectAndDistributeGroupRoyaltiesResponse = {
+  txHash: Hash;
+  receipts?: TransactionReceipt[];
+  collectedRoyalties?: Omit<
+    GroupingModuleCollectedRoyaltiesToGroupPoolEvent,
+    "pool"
+  >[];
+  royaltiesDistributed?: {
+    ipId: Address;
+    amount: bigint;
+    token: Address;
+    /**
+     * Amount after the fee to the royalty module treasury.
+     */
+    amountAfterFee: bigint;
+  }[];
 };
 ```
 

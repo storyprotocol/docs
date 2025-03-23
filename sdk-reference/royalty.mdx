@@ -13,6 +13,7 @@ description: RoyaltyClient allows you to manage royalty payments and claims with
 - batchClaimAllRevenue
 - getRoyaltyVaultAddress
 - batchClaimAllRevenue
+- transferToVault
 
 ### payRoyaltyOnBehalf
 
@@ -273,3 +274,41 @@ Get the royalty vault proxy address of given royaltyVaultIpId.
 Parameters:
 
 - `royaltyVaultIpId`: the `ipId` associated with the royalty vault.
+
+### transferToVault
+
+Transfers to vault an amount of revenue tokens claimable via a royalty policy.
+
+| Method            | Type                                                                |
+| ----------------- | ------------------------------------------------------------------- |
+| `transferToVault` | `(request: TransferToVaultRequest) => Promise<TransactionResponse>` |
+
+Parameters:
+
+- `request.royaltyPolicy`: The royalty policy to use.
+- `request.ipId`: The ID of the IP asset that pays the royalties.
+- `request.ancestorIpId`: The ID of the ancestor IP asset.
+- `request.token`: The token address to transfer.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript Request Type
+export type TransferToVaultRequest = WithTxOptions & {
+  royaltyPolicy: RoyaltyPolicyInput;
+  ipId: Address;
+  ancestorIpId: Address;
+  token: Address;
+};
+```
+
+```typescript Response Type
+export type TransactionResponse = {
+  txHash: Hex;
+
+  /** Transaction receipt, only available if waitForTransaction is set to true */
+  receipt?: TransactionReceipt;
+};
+```
+
+</CodeGroup>
