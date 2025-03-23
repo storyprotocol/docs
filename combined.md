@@ -8988,6 +8988,7 @@ export type SetLicensingConfigResponse = {
 - batchClaimAllRevenue
 - getRoyaltyVaultAddress
 - batchClaimAllRevenue
+- transferToVault
 
 ### payRoyaltyOnBehalf
 
@@ -9248,6 +9249,44 @@ Get the royalty vault proxy address of given royaltyVaultIpId.
 Parameters:
 
 - `royaltyVaultIpId`: the `ipId` associated with the royalty vault.
+
+### transferToVault
+
+Transfers to vault an amount of revenue tokens claimable via a royalty policy.
+
+| Method            | Type                                                                |
+| ----------------- | ------------------------------------------------------------------- |
+| `transferToVault` | `(request: TransferToVaultRequest) => Promise<TransactionResponse>` |
+
+Parameters:
+
+- `request.royaltyPolicy`: The royalty policy to use.
+- `request.ipId`: The ID of the IP asset that pays the royalties.
+- `request.ancestorIpId`: The ID of the ancestor IP asset.
+- `request.token`: The token address to transfer.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript Request Type
+export type TransferToVaultRequest = WithTxOptions & {
+  royaltyPolicy: RoyaltyPolicyInput;
+  ipId: Address;
+  ancestorIpId: Address;
+  token: Address;
+};
+```
+
+```typescript Response Type
+export type TransactionResponse = {
+  txHash: Hex;
+
+  /** Transaction receipt, only available if waitForTransaction is set to true */
+  receipt?: TransactionReceipt;
+};
+```
+
+</CodeGroup>
 
 
 # Dispute
@@ -11533,6 +11572,7 @@ export type TransactionResponse = {
 - registerIpAndAttachLicenseAndAddToGroup
 - registerGroupAndAttachLicense
 - registerGroupAndAttachLicenseAndAddIps
+- collectAndDistributeGroupRoyalties
 
 ### registerGroup
 
@@ -11691,6 +11731,65 @@ export type RegisterGroupAndAttachLicenseAndAddIpsResponse = {
   txHash?: string;
   encodedTxData?: EncodedTxData;
   groupId?: Address;
+};
+```
+
+</CodeGroup>
+
+### collectAndDistributeGroupRoyalties
+
+Collect royalties for the entire group and distribute the rewards to each member IP's royalty vault.
+
+| Method                               | Type                                                                                                          |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `collectAndDistributeGroupRoyalties` | `(request: CollectAndDistributeGroupRoyaltiesRequest) => Promise<CollectAndDistributeGroupRoyaltiesResponse>` |
+
+Parameters:
+
+- `request.groupIpId`: The IP ID of the group.
+- `request.currencyTokens`: The addresses of the currency (revenue) tokens to claim.
+- `request.memberIpIds`: The IDs of the member IPs to distribute the rewards to.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+const response = await client.groupClient.collectAndDistributeGroupRoyalties({
+  groupIpId: "0x01",
+  currencyTokens: [WIP_TOKEN_ADDRESS],
+  memberIpIds: ["0x02"],
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type CollectAndDistributeGroupRoyaltiesRequest = {
+  groupIpId: Address;
+  currencyTokens: Address[];
+  memberIpIds: Address[];
+  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+};
+```
+
+```typescript Response Type
+export type CollectAndDistributeGroupRoyaltiesResponse = {
+  txHash: Hash;
+  receipts?: TransactionReceipt[];
+  collectedRoyalties?: Omit<
+    GroupingModuleCollectedRoyaltiesToGroupPoolEvent,
+    "pool"
+  >[];
+  royaltiesDistributed?: {
+    ipId: Address;
+    amount: bigint;
+    token: Address;
+    /**
+     * Amount after the fee to the royalty module treasury.
+     */
+    amountAfterFee: bigint;
+  }[];
 };
 ```
 
