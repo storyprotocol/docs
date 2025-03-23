@@ -384,7 +384,7 @@
         "dropdowns": [
           {
             "dropdown": "Protocol API",
-            "icon": "globe",
+            "icon": "link",
             "groups": [
               {
                 "group": "Protocol API Overview",
