@@ -7074,7 +7074,7 @@ A third person wants to commercialize the remix by putting it in a TV advertisem
 
 <Card
   title="PIL Legal Text"
-  href="https://github.com/piplabs/pil-document/blob/v1.3.0/Story%20Foundation%20-%20Programmable%20IP%20License%20(1.31.25).pdf"
+  href="https://github.com/piplabs/pil-document/blob/main/Story%20Foundation%20-%20Programmable%20IP%20License%20(1.31.25).pdf"
   icon="scroll"
   color="#ccb092"
 >
@@ -7148,7 +7148,7 @@ Some PIL terms must be stored off-chain and passed in the `uri` field above. Thi
 | AI Learning Models                | Whether or not the IP can be used to develop AI learning models. By default, the IP **cannot** be used for such development.                                                                                                                          |
 | Restriction On Cross-Platform Use | Limit licensing and creation of derivative works solely on the app on which the IP is made available. By default, the IP can be used anywhere.                                                                                                        |
 | Governing Law                     | The laws of a certain jurisdiction by which this license abides. By default, this is California, USA.                                                                                                                                                 |
-| Alternative Dispute Resolution    | Please see section 3.1 (s) [here](https://github.com/storyprotocol/protocol-core-v1/blob/main/PIL_Testnet.pdf).                                                                                                                                       |
+| Alternative Dispute Resolution    | Please see section 3.1 (s) [here](<https://github.com/piplabs/pil-document/blob/main/Story%20Foundation%20-%20Programmable%20IP%20License%20(1.31.25).pdf>).                                                                                          |
 | Additional License Parameters     | There may be other terms the licensor would like to add and they can do so in this tag.                                                                                                                                                               |
 
 
@@ -7161,7 +7161,7 @@ The parameters outlined in the PIL (ex. "Commercial Use", "Derivatives Allowed",
 <CardGroup cols={1}>
   <Card
     title="PIL Legal Text"
-    href="https://github.com/piplabs/pil-document/blob/v1.3.0/Story%20Foundation%20-%20Programmable%20IP%20License%20(1.31.25).pdf"
+    href="https://github.com/piplabs/pil-document/blob/main/Story%20Foundation%20-%20Programmable%20IP%20License%20(1.31.25).pdf"
     icon="scroll"
     color="#ccb092"
   >
@@ -7201,7 +7201,7 @@ We are excited to collect feedback and collaborate with IP owners to unlock the 
 <CardGroup cols={1}>
   <Card
     title="PIL Legal Text"
-    href="https://github.com/piplabs/pil-document/blob/v1.3.0/Story%20Foundation%20-%20Programmable%20IP%20License%20(1.31.25).pdf"
+    href="https://github.com/piplabs/pil-document/blob/main/Story%20Foundation%20-%20Programmable%20IP%20License%20(1.31.25).pdf"
     icon="scroll"
     color="#ccb092"
   >
