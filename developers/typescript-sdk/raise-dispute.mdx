@@ -43,6 +43,7 @@ Create a `main.ts` file and add the code below:
 
 ```typescript main.ts
 import { client } from "./utils";
+import { parseEther } from "viem";
 
 async function main() {
   const disputeResponse = await client.dispute.raiseDispute({
@@ -52,7 +53,7 @@ async function main() {
     cid: "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR",
     // you must pick from one of the whitelisted tags here: https://docs.story.foundation/concepts/dispute-module#dispute-tags
     targetTag: "IMPROPER_REGISTRATION",
-    bond: 0,
+    bond: parseEther("0.1"), // minimum of 0.1
     liveness: 2592000,
     txOptions: { waitForTransaction: true },
   });
