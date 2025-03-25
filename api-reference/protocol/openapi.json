@@ -474,7 +474,7 @@
         }
       }
     },
-    "/api/v3/ip_group_edges": {
+    "/api/v3/ip-group-edges": {
       "post": {
         "summary": "List a IPGroup's edges",
         "description": "Retrieve an IPGroup edges",
@@ -526,7 +526,7 @@
         }
       }
     },
-    "/api/v3/ip_groups": {
+    "/api/v3/ip-groups": {
       "post": {
         "summary": "List IP groups",
         "description": "Retrieve an IPGroup",
