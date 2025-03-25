@@ -9311,7 +9311,7 @@ Parameters:
 - `request.targetTag`: The target tag of the dispute. See [dispute tags](https://docs.story.foundation/docs/dispute-module#dispute-tags). **Example: "IMPROPER_REGISTRATION"**
 - `request.cid`: Content Identifier (CID) for the dispute evidence. This should be obtained by uploading your dispute evidence (documents, images, etc.) to IPFS. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
 - `request.liveness`: The liveness is the time window (in seconds) in which a counter dispute can be presented (30days).
-- `request.bond`: The amount of wrapper IP that the dispute initiator pays upfront into a pool. To counter that dispute the opposite party of the dispute has to place a bond of the same amount. The winner of the dispute gets the original bond back + 50% of the other party bond. The remaining 50% of the loser party bond goes to the reviewer.
+- `request.bond`: **Minimum of 0.1**. The amount of wrapper IP that the dispute initiator pays upfront into a pool. To counter that dispute the opposite party of the dispute has to place a bond of the same amount. The winner of the dispute gets the original bond back + 50% of the other party bond. The remaining 50% of the loser party bond goes to the reviewer.
 - `request.wipOptions`: \[Optional]
   - `request.wipOptions.enableAutoWrapIp`: \[Optional]By default IP is converted to WIP if the current WIP balance does not cover the fees. Set this to `false` to disable this behavior. **Default: true**
   - `request.wipOptions.enableAutoApprove`: \[Optional]Automatically approve WIP usage when WIP is needed but current allowance is not sufficient. Set this to `false` to disable this behavior. **Default: true**
@@ -9320,6 +9320,8 @@ Parameters:
 <CodeGroup>
 
 ```typescript TypeScript
+import { parseEther } from "viem";
+
 const response = await client.dispute.raiseDispute({
   targetIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   // NOTE: you must use your own CID here, because every time it is used,
@@ -9328,7 +9330,7 @@ const response = await client.dispute.raiseDispute({
   // you must pick from one of the whitelisted tags here:
   // https://docs.story.foundation/docs/dispute-module#dispute-tags
   targetTag: "IMPROPER_REGISTRATION",
-  bond: 0,
+  bond: parseEther("0.1"), // minimum of 0.1
   liveness: 2592000,
   txOptions: { waitForTransaction: true },
 });
@@ -17256,6 +17258,7 @@ Create a `main.ts` file and add the code below:
 
 ```typescript main.ts
 import { client } from "./utils";
+import { parseEther } from "viem";
 
 async function main() {
   const disputeResponse = await client.dispute.raiseDispute({
@@ -17265,7 +17268,7 @@ async function main() {
     cid: "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR",
     // you must pick from one of the whitelisted tags here: https://docs.story.foundation/concepts/dispute-module#dispute-tags
     targetTag: "IMPROPER_REGISTRATION",
-    bond: 0,
+    bond: parseEther("0.1"), // minimum of 0.1
     liveness: 2592000,
     txOptions: { waitForTransaction: true },
   });
