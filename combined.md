@@ -163,9 +163,13 @@ The above public API key has a requests/second of 300. If you'd like an API key 
 
 # "Introduction"
 
-In order to use the Consensus Client API, you must run your own node. We have included the API Reference here so you know what to expect in the response.
+<Warning>
 
-See the (Node Setup Guide)(/network/operating-a-node/node-setup-mainnet).
+In order to use the Consensus Client API, you must run your own node. See the [Node Setup Guide](/network/operating-a-node/node-setup-mainnet).
+
+</Warning>
+
+We have included the API Reference here so you know what to expect in the response.
 
 
 # "Blockscout API"
