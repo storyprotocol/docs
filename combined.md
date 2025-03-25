@@ -6237,18 +6237,18 @@ This arbitration policy is a dispute resolution mechanism that uses UMA’s opti
    After this step, the dispute will be “open” to be countered/appealed by other users. If there is no counter/appeal, UMA rules define that the IP will be considered to be infringing.
 
    ```sol DisputeModule.sol
-       /// @notice Raises a dispute on a given ipId
-       /// @param targetIpId The ipId that is the target of the dispute
-       /// @param disputeEvidenceHash The hash pointing to the dispute evidence - this could be an IPFS CID 				converted to a bytes32 hash. This is the document with the proof that UMA reviewers will potentially read
-       /// @param targetTag The target tag of the dispute
-       /// @param data The data to initialize the policy - here you can do abi.encode of liveness, token address 	and bond amount
-       /// @return disputeId The id of the newly raised dispute
-       function raiseDispute(
-           address targetIpId,
-           bytes32 disputeEvidenceHash,
-           bytes32 targetTag,
-           bytes calldata data
-       ) external returns (uint256 disputeId);
+   /// @notice Raises a dispute on a given ipId
+   /// @param targetIpId The ipId that is the target of the dispute
+   /// @param disputeEvidenceHash The hash pointing to the dispute evidence - this could be an IPFS CID 				converted to a bytes32 hash. This is the document with the proof that UMA reviewers will potentially read
+   /// @param targetTag The target tag of the dispute
+   /// @param data The data to initialize the policy - here you can do abi.encode of liveness, token address 	and bond amount
+   /// @return disputeId The id of the newly raised dispute
+   function raiseDispute(
+    address targetIpId,
+    bytes32 disputeEvidenceHash,
+    bytes32 targetTag,
+    bytes calldata data
+   ) external returns (uint256 disputeId);
    ```
 
 2. (Optional) Dispute Assertion / Counter Dispute / Make Appeal - After the `raiseDispute` call there is a period of time called "liveness" in which a counter dispute/appeal can be submitted. The liveness period is split in two parts: (i) the first part of the liveness period in which only the IP owner can counter dispute/appeal and (ii) a second part in which any address can counter dispute/appeal - which can be done by calling `disputeAssertion` on `ArbitrationPolicyUMA.sol`. To counter a dispute the caller will need to post a bond of the same amount and currency that was used by the dispute initiator when raising a dispute. Note that this bond will be lost if the original dispute is deemed to be verifiably correct by the oracle.
@@ -6256,14 +6256,14 @@ This arbitration policy is a dispute resolution mechanism that uses UMA’s opti
    After this step, the dispute is escalated and will be reviewed by external party UMA.
 
    ```sol ArbitrationPolicyUMA.sol
-       /// @notice Allows the IP that was targeted with a dispute to dispute the assertion while providing 				counter evidence
-       /// @param assertionId The identifier of the assertion that was disputed
-       /// @param counterEvidenceHash The hash of the counter evidence
-       function disputeAssertion(bytes32 assertionId, bytes32 counterEvidenceHash) external;
+    /// @notice Allows the IP that was targeted with a dispute to dispute the assertion while providing counter evidence
+    /// @param assertionId The identifier of the assertion that was disputed
+    /// @param counterEvidenceHash The hash of the counter evidence
+    function disputeAssertion(bytes32 assertionId, bytes32 counterEvidenceHash) external;
 
-       /// @notice Returns the assertion id for a given dispute id
-       /// @param disputeId The dispute id
-       function disputeIdToAssertionId(uint256 disputeId) external view returns (bytes32);
+    /// @notice Returns the assertion id for a given dispute id
+    /// @param disputeId The dispute id
+    function disputeIdToAssertionId(uint256 disputeId) external view returns (bytes32);
    ```
 
 3. (If step 2 happened) UMA reviewers judge the dispute. On this step the user just has to wait until the UMA reviewers make the dispute judgement. This step could take 48-96 hours.
