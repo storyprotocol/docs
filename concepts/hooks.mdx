@@ -78,14 +78,27 @@ View the deployed addresses for these hooks [here](/developers/deployed-smart-co
 
 ### Implementing the Hooks
 
+<CodeGroup cols={2}>
+
 <Card
-  title="Code Example"
+  title="SDK Code Example"
   href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/licenses/oneTimeUseLicense.ts"
   icon="code"
 >
-  A working code example that shows how to implement a licensing hook. More
-  specifically, how to limit the # of licenses that can be minted.
+  A working TypeScript SDK code example that shows how to implement a licensing
+  hook. More specifically, how to limit the # of licenses that can be minted.
 </Card>
+
+<Card
+  title="Solidity Code Example"
+  href="https://github.com/storyprotocol/protocol-periphery-v1/blob/main/test/hooks/TotalLicenseTokenLimitHook.t.sol"
+  icon="code"
+>
+  A working Solidity code example that shows how to implement a licensing hook.
+  More specifically, how to limit the # of licenses that can be minted.
+</Card>
+
+</CodeGroup>
 
 Licensing Hooks are ultimately a smart contract that implements the `ILicensingHook` interface. You can view the interface [here](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/interfaces/ILicensingHook.sol). We have a few Licensing Hooks deployed already (view the chart above).
 
