@@ -165,15 +165,6 @@
                   "concepts/registry/module-registry"
                 ]
               },
-              {
-                "group": "Programmable IP License",
-                "icon": "capsules",
-                "pages": [
-                  "concepts/programmable-ip-license/overview",
-                  "concepts/programmable-ip-license/pil-terms",
-                  "concepts/programmable-ip-license/pil-flavors"
-                ]
-              },
               "concepts/access-controller",
               {
                 "group": "SPG (Periphery)",
@@ -185,6 +176,14 @@
               },
               "concepts/story-attestation-service",
               "concepts/faq"
+            ]
+          },
+          {
+            "group": "Programmable IP License",
+            "pages": [
+              "concepts/programmable-ip-license/overview",
+              "concepts/programmable-ip-license/pil-terms",
+              "concepts/programmable-ip-license/pil-flavors"
             ]
           }
         ]
