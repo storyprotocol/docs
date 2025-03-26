@@ -412,8 +412,7 @@
                 "pages": [
                   "api-reference/protocol/iplicenseterms/list-detailed-ip-license-term",
                   "api-reference/protocol/iplicenseterms/list-iplicenseterms",
-                  "api-reference/protocol/iplicenseterms/get-ip-license-terms-for-an-ip",
-                  "api-reference/protocol/iplicenseterms/get-default-license-term"
+                  "api-reference/protocol/iplicenseterms/get-ip-license-terms-for-an-ip"
                 ]
               },
               {
