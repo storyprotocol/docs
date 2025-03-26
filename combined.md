@@ -5706,23 +5706,216 @@ The permissions associated with the IPAccount are exclusively linked to its curr
 </Note>
 
 
+# 🪝 Hooks
+
+Hooks allow developers to create custom implementations, restrictions, and functionality upon minting [License Tokens](/concepts/licensing-module/license-token) or registering derivatives.
+
+There are two types of hooks:
+
+1. **Licensing Hooks**: allow you to [add custom logic before minting license tokens](/concepts/licensing-module/license-config#logic-that-is-possible-with-license-config) (and registering derivatives). For example, requesting a dynamic price, limiting the amount of license tokens that can be minted, whitelists, etc. Licensing Hooks can be added / modified on a licensing config at any point.
+2. **Commercializer Checker Hooks**: similar to Licensing Hooks, however they are directly a part of the license terms and do not change. You also cannot return a custom minting fee.
+
+## Licensing Hooks
+
+These are contracts that implement the `ILicensingHook` interface, which extends from `IModule`.
+
+Most importantly, a Licensing Hook implements a `beforeMintLicenseTokens` function, which is a function that is called before a License Token is minted to implement [custom logic](/concepts/licensing-module/license-config#logic-that-is-possible-with-license-config) and determine the final `totalMintingFee` of that License Token.
+
+<Note>
+  View the `ILicensingHook` smart contract
+  [here](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/interfaces/modules/licensing/ILicensingHook.sol#L26).
+</Note>
+
+```solidity ILicensingHook.sol
+/// @notice This function is called when the LicensingModule mints license tokens.
+/// @dev The hook can be used to implement various checks and determine the minting price.
+/// The hook should revert if the minting is not allowed.
+/// @param caller The address of the caller who calling the mintLicenseTokens() function.
+/// @param licensorIpId The ID of licensor IP from which issue the license tokens.
+/// @param licenseTemplate The address of the license template.
+/// @param licenseTermsId The ID of the license terms within the license template,
+/// which is used to mint license tokens.
+/// @param amount The amount of license tokens to mint.
+/// @param receiver The address of the receiver who receive the license tokens.
+/// @param hookData The data to be used by the licensing hook.
+/// @return totalMintingFee The total minting fee to be paid when minting amount of license tokens.
+function beforeMintLicenseTokens(
+  address caller,
+  address licensorIpId,
+  address licenseTemplate,
+  uint256 licenseTermsId,
+  uint256 amount,
+  address receiver,
+  bytes calldata hookData
+) external returns (uint256 totalMintingFee);
+```
+
+Note that it returns the `totalMintingFee`. You may be wondering, "I can set the minting fee in the License Terms, in the `LicenseConfig`, and return a dynamic price from `beforeMintLicenseTokens`. What will the final minting fee actually be?" Here is the priority:
+
+| Minting Fee                                                   | Importance       |
+| ------------------------------------------------------------- | ---------------- |
+| The `totalMintingFee` returned from `beforeMintLicenseTokens` | Highest Priority |
+| The `mintingFee` set in the `LicenseConfig`                   | ⬇️               |
+| The `mintingFee` set in the License Terms                     | Lowest Priority  |
+
+<Warning>
+  Beware of potentially malicious implementations of external license hooks.
+  Please first verify the code of the hook you choose because it may be not
+  reviewed or audited by the Story team.
+</Warning>
+
+### Available Hooks
+
+Below are available hooks deployed on our protocol that you can use.
+
+<Info>
+
+View the deployed addresses for these hooks [here](/developers/deployed-smart-contracts#license-hooks).
+
+</Info>
+
+| Hook                       | Description                                                                            | Contract Code                                                                                                                   |
+| :------------------------- | :------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| LockLicenseHook            | Stop the minting of license tokens or registering new derivatives.                     | [View here ↗️](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/hooks/LockLicenseHook.sol)            |
+| TotalLicenseTokenLimitHook | Set a limit on the amount of license tokens that can be minted, updatable at any time. | [View here ↗️](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/hooks/TotalLicenseTokenLimitHook.sol) |
+
+### Implementing the Hooks
+
+<Card
+  title="Code Example"
+  href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/licenses/oneTimeUseLicense.ts"
+  icon="code"
+>
+  A working code example that shows how to implement a licensing hook. More
+  specifically, how to limit the # of licenses that can be minted.
+</Card>
+
+Licensing Hooks are ultimately a smart contract that implements the `ILicensingHook` interface. You can view the interface [here](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/interfaces/ILicensingHook.sol). We have a few Licensing Hooks deployed already (view the chart above).
+
+In order to actually use a Licensing Hook, you must set it in the Licensing Config, which is basically a set of configurations that you set on License Terms when attaching terms to an IP Asset.
+
+<Steps>
+  <Step title="Create Licensing Config">
+    First you have to create a Licensing Config:
+
+    ```typescript {6-8}
+    import { LicensingConfig } from '@story-protocol/core-sdk';
+
+    const licensingConfig: LicensingConfig = {
+        isSet: true,
+        mintingFee: 0n,
+        // address of TotalLicenseTokenLimitHook
+        // from https://docs.story.foundation/developers/deployed-smart-contracts
+        licensingHook: '0xba8E30d9EB784Badc2aF610F56d99d212BC2A90c',
+        hookData: zeroAddress,
+        commercialRevShare: 0,
+        disabled: false,
+        expectMinimumGroupRewardShare: 0,
+        expectGroupRewardPool: zeroAddress,
+    }
+    ```
+
+  </Step>
+  <Step title="Set the Licensing Config">
+    Next, we'll set the Licensing Config on the License Terms. In the following example, we'll show this happening upon registering the IP Asset:
+
+<Tip>
+  This code snippet requires a bit of setup, and it meant for developers who
+  already understand how to setup the TypeScript SDK. If you want to learn more,
+  check out the [working code
+  example](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/licenses/oneTimeUseLicense.ts).
+</Tip>
+
+<Note>
+
+This uses the `mintAndRegisterIpAssetWithPilTerms` method found [here](/sdk-reference/ipasset#mintandregisteripassetwithpilterms).
+
+</Note>
+
+    ```typescript {6-7}
+    const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
+        spgNftContract: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc', // public spg contract for ease-of-use
+        licenseTermsData: [
+            {
+                terms: { defaultMintingFee: 0, commercialUse: true, ... }, // dummy license terms
+                // set the licensing config here
+                licensingConfig: licensingConfig
+            },
+        ],
+        ipMetadata: {
+            ipMetadataURI: 'test-uri',
+            ipMetadataHash: toHex('test-metadata-hash', { size: 32 }),
+            nftMetadataHash: toHex('test-nft-metadata-hash', { size: 32 }),
+            nftMetadataURI: 'test-nft-uri',
+        },
+        txOptions: { waitForTransaction: true },
+    })
+    ```
+
+  </Step>
+  <Step title="Set the Limit to 1">
+    Now that we have set the Licensing Config on our terms, we can call the `setTotalLicenseTokenLimit` function on the hook and set the max # of licenses that can be minted to 1.
+
+    <Note>
+    There is no Story SDK method for this, so you'll have to use viem's `writeContract` method.
+    </Note>
+
+    ```typescript
+    import { totalLicenseTokenLimitHook } from './abi/totalLicenseTokenLimitHook'
+
+    const { request } = await publicClient.simulateContract({
+        // address of TotalLicenseTokenLimitHook
+        // from https://docs.story.foundation/developers/deployed-smart-contracts
+        address: '0xba8E30d9EB784Badc2aF610F56d99d212BC2A90c',
+        abi: totalLicenseTokenLimitHook,
+        functionName: 'setTotalLicenseTokenLimit',
+        args: [
+            response.ipId, // ipId from the step above
+            '0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316', // the address of PILicenseTemplate from https://docs.story.foundation/developers/deployed-smart-contracts
+            response.licenseTermsIds![0], // licenseTermsId
+            1n, // limit (as BigInt)
+        ],
+        account: account, // Specify the account to use for permission checking
+    })
+
+    // Prepare transaction
+    const hash = await walletClient.writeContract({ ...request, account: account })
+
+    // Wait for transaction to be mined
+    const receipt = await publicClient.waitForTransactionReceipt({
+        hash,
+    })
+    ```
+
+  </Step>
+</Steps>
+
+## Commercializer Checker Hooks
+
+<Warning>
+
+Documentation coming soon. If you have questions in the meantime, ask in the [Builder's Discord](https://discord.gg/storybuilders).
+
+</Warning>
+
+
 # IP Modifications & Restrictions
 
 # IP Asset Modifications
 
-IP Assets can be modified/customized a few ways. For example, by [setting the License Config](/concepts/licensing-module/license-config-hook) which allows you to change a few things as you'll see below, changing its metadata, and more. These things can **always be changed unless there is a certain condition**.
+IP Assets can be modified/customized a few ways. For example, by [setting the License Config](/concepts/licensing-module/license-config) which allows you to change a few things as you'll see below, changing its metadata, and more. These things can **always be changed unless there is a certain condition**.
 
 | Action                      | Conditions                                                                                                                                                                                                                            | Via The...                                                                                                                              |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Modify License Minting Fee  | N/A                                                                                                                                                                                                                                   | [License Config](/concepts/licensing-module/license-config-hook)                                                                        |
-| Modify Licensing Hook       | N/A                                                                                                                                                                                                                                   | [License Config](/concepts/licensing-module/license-config-hook)                                                                        |
-| Modify `commercialRevShare` | Cannot **decrease** `commercialRevShare` percentage. You can only increase it.<br/><br/>However, you **can** set it to 0 to disable the overwrite.                                                                                    | [License Config](/concepts/licensing-module/license-config-hook)                                                                        |
-| Disable/Enable the License  | License can be disabled or re-enabled at any time.<br/><br/>_Note that disabling a license disallows future licenses from being minted, but does not affect existing ones._                                                           | [License Config](/concepts/licensing-module/license-config-hook)                                                                        |
+| Modify License Minting Fee  | N/A                                                                                                                                                                                                                                   | [License Config](/concepts/licensing-module/license-config)                                                                             |
+| Modify Licensing Hook       | N/A                                                                                                                                                                                                                                   | [License Config](/concepts/licensing-module/license-config)                                                                             |
+| Modify `commercialRevShare` | Cannot **decrease** `commercialRevShare` percentage. You can only increase it.<br/><br/>However, you **can** set it to 0 to disable the overwrite.                                                                                    | [License Config](/concepts/licensing-module/license-config)                                                                             |
+| Disable/Enable the License  | License can be disabled or re-enabled at any time.<br/><br/>_Note that disabling a license disallows future licenses from being minted, but does not affect existing ones._                                                           | [License Config](/concepts/licensing-module/license-config)                                                                             |
 | Modify Metadata             | Cannot modify if the metadata is **frozen**. This is done by calling `freezeMetadata` in the [CoreMetadataModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/metadata/CoreMetadataModule.sol). | [CoreMetadataModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/metadata/CoreMetadataModule.sol) |
 
 ## License Hook Modifications
 
-The IP can be further customized or modified using the [License Hook](/concepts/licensing-module/license-config-hook#licensing-hook). This is a function that gets set within the License Config that gets called before a [License Token](/concepts/licensing-module/license-token) (or more simply, a "license") is minted. There are various features you can implement with the License Hook, and are **always modifiable**:
+The IP can be further customized or modified using the [License Hook](/concepts/hooks#licensing-hooks). This is a function that gets set within the License Config that gets called before a [License Token](/concepts/licensing-module/license-token) (or more simply, a "license") is minted. There are various features you can implement with the License Hook, and are **always modifiable**:
 
 | Feature             | Description                                                                                                         |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------- |
@@ -7740,57 +7933,40 @@ The derivative chain can assume multiple configurations.
 Each IP Asset is restricted to a total royalty % of 100%. It will revert when minting a license that would make the IPA reserve more than 100% of its royalty tokens for ancestors, since this would make no sense.
 
 
-# 🪝 Hooks
+# 🧱 Modules
 
-Hooks are defined as a specialized interface that inherits from the Module framework. They are designed for developers to create custom implementations that integrate seamlessly with existing Modules.
+Modules are standalone contracts that adhere to the [`IModule` interface](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/interfaces/modules/base/IModule.sol). These modules play a crucial role in taking action on IP to change the data/state around or of IP.
 
-<Frame>
-  <img src="/images/concepts/hooks-diagram.png" alt="Hooks Diagram" />
-</Frame>
+## Existing Modules
 
-## Concept and Functionality
+There are a few important modules, created by the Story team, to be aware of:
 
-While Modules are the backbone of the Story Protocol, executing actions and managing interactions, Hooks are distinct in their specific focus. They are tailored to verify conditions, an essential feature embodied in their `verify()` functionality. This design choice positions Hooks as a unique subset of Modules, specialized for particular tasks within the ecosystem.
+| Module                                            | Description                                                                            |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| [📜 Licensing Module](/concepts/licensing-module) | Responsible for defining and attaching licenses to IP Assets.                          |
+| [💸 Royalty Module](/concepts/royalty-module)     | Responsible for handling royalty flow between parent & child IP Assets.                |
+| [❌ Dispute Module](/concepts/dispute-module)     | Responsible for handling the dispute of wrongfully registered or misbehaved IP Assets. |
+| [👥 Grouping Module](/concepts/grouping-module)   | Responsible for handling groups of IPAs.                                               |
 
-## Design Philosophy
+## Base Module
 
-From a structural standpoint, Hooks are not treated as separate entities from Modules. This decision avoids unnecessary complexity in the architecture. Viewing Hooks as specialized Modules allows for a simplified, efficient design that emphasizes clarity in roles and interactions.
-
-## Available Hooks
-
-Below are available hooks deployed on our protocol that you can use.
+The Base Module provides a standard set of must-have functionalities for all modules registered on Story. Anyone wishing to create and register a module on Story must inherit and override the Base Module.
 
 <Note>
 
-View the deployed addresses for these hooks [here](/developers/deployed-smart-contracts#periphery-contracts).
+View the smart contract [here](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/BaseModule.sol).
 
 </Note>
 
-| Hook                       | Description                                                                            | Contract Code                                                                                                                   |
-| :------------------------- | :------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| LockLicenseHook            | Stop the minting of license tokens or registering new derivatives.                     | [View here ↗️](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/hooks/LockLicenseHook.sol)            |
-| TotalLicenseTokenLimitHook | Set a limit on the amount of license tokens that can be minted, updatable at any time. | [View here ↗️](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/hooks/TotalLicenseTokenLimitHook.sol) |
+### Key Features
 
+#### Simplicity and Flexibility
 
-# Base Module
+The BaseModule is intentionally kept simple and generalized. It only implements the ERC165 interface, which is crucial for interface detection. This design choice allows for maximum flexibility when developing more specific modules within Story.
 
-The Base Module provides a standard set of must-have functionalities for all modules registered on Story Protocol. Anyone wishing to create and register a module on Story Protocol must inherit and override the Base Module.
+#### ERC165 Interface Implementation
 
-<Note>
-  Contract
-
-  View the smart contract [here](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/BaseModule.sol).
-</Note>
-
-# Key Features
-
-## Simplicity and Flexibility
-
-The BaseModule is intentionally kept simple and generalized. It only implements the ERC165 interface, which is crucial for interface detection. This design choice allows for maximum flexibility when developing more specific modules within the Story Protocol.
-
-## ERC165 Interface Implementation
-
-By implementing the ERC165 interface, BaseModule allows other contracts to query whether it supports a specific interface. This feature is essential for ensuring compatibility and interoperability within the Story Protocol ecosystem and beyond.
+By implementing the ERC165 interface, BaseModule allows other contracts to query whether it supports a specific interface. This feature is essential for ensuring compatibility and interoperability within the Story ecosystem and beyond.
 
 ```solidity
 abstract contract BaseModule is ERC165, IModule {
@@ -7798,7 +7974,7 @@ abstract contract BaseModule is ERC165, IModule {
 }
 ```
 
-## `supportsInterface` Function
+#### `supportsInterface` Function
 
 A key function in the BaseModule is `supportsInterface`, which overrides the ERC165's `supportsInterface` method. This function is crucial for interface detection, allowing the contract to declare support for both its own `IModule` interface and any other interfaces it might inherit.
 
@@ -7807,31 +7983,6 @@ function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1
     return interfaceId == type(IModule).interfaceId || super.supportsInterface(interfaceId);
 }
 ```
-
-
-# 🧱 Modules
-
-Modules are standalone contracts that adhere to the [`IModule` interface](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/interfaces/modules/base/IModule.sol). These modules play a crucial role in taking action on IP to change the data/state around or of IP.
-
-# Existing Modules
-
-There are a few important modules, created by the Story team, to be aware of:
-
-## [📜 Licensing Module](/concepts/licensing-module)
-
-Responsible for defining and attaching licenses to IP Assets.
-
-## [💸 Royalty Module](/concepts/royalty-module)
-
-Responsible for handling royalty flow between parent & child IP Assets.
-
-## [❌ Dispute Module](/concepts/dispute-module)
-
-Responsible for handling the dispute of wrongfully registered or misbehaved IP Assets.
-
-## [👥 Grouping Module](/concepts/grouping-module)
-
-Responsible for handling groups of IPAs.
 
 
 # Overview
@@ -7934,7 +8085,7 @@ On the other hand, derivative IP Assets inherit their License Terms from the par
 
 You may be wondering: "if I cannot set new License Terms on my derivative, does that also mean I can't change the minting fee, or disallowing more derivatives, on my derivative?"
 
-Thankfully, there is a way to get around this! Although you cannot change License Terms on a derivative IP, you can utilize the [License Config to implement special behaviors](/concepts/licensing-module/license-config-hook).
+Thankfully, there is a way to get around this! Although you cannot change License Terms on a derivative IP, you can utilize the [License Config to implement special behaviors](/concepts/licensing-module/license-config).
 
 </Note>
 
@@ -8024,7 +8175,7 @@ You can also register a derivative directly, without the need for a License Toke
 </Frame>
 
 
-# License Config / Hook
+# License Config
 
 ## License Config
 
@@ -8081,9 +8232,13 @@ What do some of these mean?
 
 Fields like the `mintingFee` and `commercialRevShare` overwrite their duplicate in the license terms themselves. **A benefit of this is that derivative IP Assets, which normally cannot change their license terms, are able to overwrite certain fields.**
 
-The `licensingHook` is an address to a smart contract that implements the `ILicensingHook.sol` interface, which contains a `beforeMintLicenseTokens` function which will be run before a user mints a License Token. This means you can insert logic to be run upon minting a license.
+The `licensingHook` is an address to a smart contract that implements the `ILicensingHook` interface, which contains a `beforeMintLicenseTokens` function which will be run before a user mints a License Token. This means you can insert logic to be run upon minting a license.
 
-The hook itself is defined below in a different section. You can see it contains information about the license, who is minting the License Token, and who is receiving it.
+The hook itself is described in a different section. You can see it contains information about the license, who is minting the License Token, and who is receiving it.
+
+<Tip>
+  Learn all about Licensing Hooks [here](/concepts/hooks#licensing-hooks).
+</Tip>
 
 ### Setting the License Config
 
@@ -8102,61 +8257,6 @@ You can set the License Config by calling the `setLicenseConfig` function in the
 ### Restrictions
 
 See [IP Modifications & Restrictions](/concepts/ip-asset/ipa-modifications) for the various restrictions on setting the License Config.
-
-## Licensing Hook
-
-<CardGroup cols={1}>
-  <Card
-    title="ILicensingHook.sol"
-    href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/interfaces/modules/licensing/ILicensingHook.sol#L26"
-    icon="scroll"
-    color="#ccb092"
-  >
-    View the smart contract for the Licensing Hook.
-  </Card>
-</CardGroup>
-
-The `beforeMintLicenseTokens` function, which acts as a hook, is a function that can be called before a License Token is minted to implement custom logic and determine the final `totalMintingFee` of that License Token. The owner of an IP Asset must set the License Config (of which the hook is contained in), with their own implementation of the `beforeMintLicenseTokens` function, for this to be called.
-
-It can also be used to implement various checks and logic, as [outlined above](/concepts/licensing-module/license-config-hook#logic-that-is-possible-with-license-config).
-
-<Warning>
-  Beware of potentially malicious implementations of external license hooks.
-  Please first verify the code of the hook you choose because it may be not
-  reviewed or audited by the Story team.
-</Warning>
-
-```solidity ILicensingHook.sol
-/// @notice This function is called when the LicensingModule mints license tokens.
-/// @dev The hook can be used to implement various checks and determine the minting price.
-/// The hook should revert if the minting is not allowed.
-/// @param caller The address of the caller who calling the mintLicenseTokens() function.
-/// @param licensorIpId The ID of licensor IP from which issue the license tokens.
-/// @param licenseTemplate The address of the license template.
-/// @param licenseTermsId The ID of the license terms within the license template,
-/// which is used to mint license tokens.
-/// @param amount The amount of license tokens to mint.
-/// @param receiver The address of the receiver who receive the license tokens.
-/// @param hookData The data to be used by the licensing hook.
-/// @return totalMintingFee The total minting fee to be paid when minting amount of license tokens.
-function beforeMintLicenseTokens(
-  address caller,
-  address licensorIpId,
-  address licenseTemplate,
-  uint256 licenseTermsId,
-  uint256 amount,
-  address receiver,
-  bytes calldata hookData
-) external returns (uint256 totalMintingFee);
-```
-
-Note that it returns the `totalMintingFee`. You may be wondering, "I can set the minting fee in the License Terms, in the `LicenseConfig`, and return a dynamic price from `beforeMintLicenseTokens`. What will the final minting fee actually be?" Here is the priority:
-
-| Minting Fee                                                   | Importance       |
-| ------------------------------------------------------------- | ---------------- |
-| The `totalMintingFee` returned from `beforeMintLicenseTokens` | Highest Priority |
-| The `mintingFee` set in the `LicenseConfig`                   | ⬇️               |
-| The `mintingFee` set in the License Terms                     | Lowest Priority  |
 
 
 # License Template
@@ -8248,7 +8348,7 @@ The following document will walk through all of the major components of the Lice
 - [License Terms](/concepts/licensing-module/license-terms)
 - [License Token](/concepts/licensing-module/license-token)
 - [License Registry](/concepts/registry/license-registry)
-- [License Config / Hook](/concepts/licensing-module/license-config-hook)
+- [License Config](/concepts/licensing-module/license-config)
 
 
 # License Registry
@@ -13802,7 +13902,6 @@ Do not use RANDAO for pseudo-randomness, instead use onchain VRF (Pyth or Gelato
   "DerivativeWorkflows": "0x9e2d496f72C547C2C535B167e06ED8729B374a4f",
   "GroupingWorkflows": "0xD7c0beb3aa4DCD4723465f1ecAd045676c24CDCd",
   "LicenseAttachmentWorkflows": "0xcC2E862bCee5B6036Db0de6E06Ae87e524a79fd8",
-  "LockLicenseHook": "0x5D874d4813c4A8A9FB2AB55F30cED9720AEC0222",
   "OwnableERC20Beacon": "0x9a81C447C0b4C47d41d94177AEea3511965d3Bc9",
   "OwnableERC20Template": "0x37DbEbcFe991901C4F255E7a3C4F7D3B45EAEDe9",
   "RegistrationWorkflows": "0xbe39E1C756e921BD25DF86e7AAa31106d1eb0424",
@@ -13810,8 +13909,7 @@ Do not use RANDAO for pseudo-randomness, instead use onchain VRF (Pyth or Gelato
   "RoyaltyWorkflows": "0x9515faE61E0c0447C6AC6dEe5628A2097aFE1890",
   "SPGNFTBeacon": "0xD2926B9ecaE85fF59B6FB0ff02f568a680c01218",
   "SPGNFTImpl": "0xc09e3788Fdfbd3dd8CDaa2aa481B52CcFAb74a42",
-  "TokenizerModule": "0x7e14cD9833E8A0c649bCF4AB6768f62D57febbd3",
-  "TotalLicenseTokenLimitHook": "0xba8E30d9EB784Badc2aF610F56d99d212BC2A90c"
+  "TokenizerModule": "0x7e14cD9833E8A0c649bCF4AB6768f62D57febbd3"
 }
 ```
 
@@ -13820,7 +13918,6 @@ Do not use RANDAO for pseudo-randomness, instead use onchain VRF (Pyth or Gelato
   "DerivativeWorkflows": "0x9e2d496f72C547C2C535B167e06ED8729B374a4f",
   "GroupingWorkflows": "0xD7c0beb3aa4DCD4723465f1ecAd045676c24CDCd",
   "LicenseAttachmentWorkflows": "0xcC2E862bCee5B6036Db0de6E06Ae87e524a79fd8",
-  "LockLicenseHook": "0x5D874d4813c4A8A9FB2AB55F30cED9720AEC0222",
   "OwnableERC20Beacon": "0x9a81C447C0b4C47d41d94177AEea3511965d3Bc9",
   "OwnableERC20Template": "0xE6505ffc5A7C19B68cEc2311Cc35BC02d8f7e0B1",
   "RegistrationWorkflows": "0xbe39E1C756e921BD25DF86e7AAa31106d1eb0424",
@@ -13828,7 +13925,27 @@ Do not use RANDAO for pseudo-randomness, instead use onchain VRF (Pyth or Gelato
   "RoyaltyWorkflows": "0x9515faE61E0c0447C6AC6dEe5628A2097aFE1890",
   "SPGNFTBeacon": "0xD2926B9ecaE85fF59B6FB0ff02f568a680c01218",
   "SPGNFTImpl": "0x6Cfa03Bc64B1a76206d0Ea10baDed31D520449F5",
-  "TokenizerModule": "0xAC937CeEf893986A026f701580144D9289adAC4C",
+  "TokenizerModule": "0xAC937CeEf893986A026f701580144D9289adAC4C"
+}
+```
+
+</CodeGroup>
+
+## License Hooks
+
+- View contracts on our GitHub [here](https://github.com/storyprotocol/protocol-periphery-v1/tree/main/contracts/hooks)
+
+<CodeGroup>
+```json Aeneid Testnet
+{
+  "LockLicenseHook": "0x5D874d4813c4A8A9FB2AB55F30cED9720AEC0222",
+  "TotalLicenseTokenLimitHook": "0xba8E30d9EB784Badc2aF610F56d99d212BC2A90c"
+}
+```
+
+```json Mainnet
+{
+  "LockLicenseHook": "0x5D874d4813c4A8A9FB2AB55F30cED9720AEC0222",
   "TotalLicenseTokenLimitHook": "0xB72C9812114a0Fc74D49e01385bd266A75960Cda"
 }
 ```
@@ -17355,7 +17472,7 @@ This is a note for owners of an IP Asset who want to set restrictions on who or 
 - Charge dynamic fees based on who / how many are minted
 - Whitelisted certain wallets to mint the tokens
 
-... and more. Learn more by checking out the [License Config / Hook](/concepts/licensing-module/license-config-hook) section of our documentation.
+... and more. Learn more by checking out the [License Config](/concepts/licensing-module/license-config) section of our documentation.
 
 ## 2. Register a Derivative
 
