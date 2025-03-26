@@ -117,43 +117,42 @@
                 "icon": "block-brick",
                 "pages": [
                   "concepts/modules/overview",
-                  "concepts/modules/hooks",
-                  "concepts/modules/base-module",
+                  {
+                    "group": "Licensing Module",
+                    "icon": "scroll",
+                    "pages": [
+                      "concepts/licensing-module/overview",
+                      "concepts/licensing-module/license-template",
+                      "concepts/licensing-module/license-terms",
+                      "concepts/licensing-module/license-token",
+                      "concepts/licensing-module/license-config"
+                    ]
+                  },
+                  {
+                    "group": "Royalty Module",
+                    "icon": "sack-dollar",
+                    "pages": [
+                      "concepts/royalty-module/overview",
+                      "concepts/royalty-module/ip-royalty-vault",
+                      "concepts/royalty-module/liquid-absolute-percentage",
+                      "concepts/royalty-module/liquid-relative-percentage",
+                      "concepts/royalty-module/external-royalty-policies"
+                    ]
+                  },
+                  {
+                    "group": "Dispute Module",
+                    "icon": "x",
+                    "pages": [
+                      "concepts/dispute-module/overview",
+                      "concepts/dispute-module/uma-arbitration-policy"
+                    ]
+                  },
+                  "concepts/grouping-module",
                   "concepts/modules/view-module",
                   "concepts/modules/how-to-create-and-register-modules"
                 ]
               },
-              {
-                "group": "Licensing Module",
-                "icon": "scroll",
-                "pages": [
-                  "concepts/licensing-module/overview",
-                  "concepts/licensing-module/license-template",
-                  "concepts/licensing-module/license-terms",
-                  "concepts/licensing-module/license-token",
-                  "concepts/licensing-module/license-config-hook"
-                ]
-              },
-              {
-                "group": "Royalty Module",
-                "icon": "sack-dollar",
-                "pages": [
-                  "concepts/royalty-module/overview",
-                  "concepts/royalty-module/ip-royalty-vault",
-                  "concepts/royalty-module/liquid-absolute-percentage",
-                  "concepts/royalty-module/liquid-relative-percentage",
-                  "concepts/royalty-module/external-royalty-policies"
-                ]
-              },
-              {
-                "group": "Dispute Module",
-                "icon": "x",
-                "pages": [
-                  "concepts/dispute-module/overview",
-                  "concepts/dispute-module/uma-arbitration-policy"
-                ]
-              },
-              "concepts/grouping-module",
+              "concepts/hooks",
               {
                 "group": "Registry",
                 "icon": "folders",
@@ -687,11 +686,11 @@
     },
     {
       "source": "/base-module",
-      "destination": "/concepts/modules/base-module"
+      "destination": "/concepts/modules"
     },
     {
       "source": "/hooks",
-      "destination": "/concepts/modules/hooks"
+      "destination": "/concepts/hooks"
     },
     {
       "source": "/licensing-module",
@@ -711,7 +710,7 @@
     },
     {
       "source": "/license-config-hook",
-      "destination": "/concepts/licensing-module/license-config-hook"
+      "destination": "/concepts/licensing-module/license-config"
     },
     {
       "source": "/royalty-module",
