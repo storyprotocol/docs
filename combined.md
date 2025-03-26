@@ -6189,7 +6189,7 @@ All other metadata, such as the ownership, legal, and economic details of an IP 
 ### Adding NFT & IP Metadata to IP Asset
 
 <CardGroup cols={2}>
-  <Card title="SDK Completed Code Example" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/simpleMintAndRegisterSpg.ts" icon="computer">
+  <Card title="SDK Completed Code Example" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/register.ts" icon="computer">
     Jump to the code and see a completed code example of adding NFT & IP metadata to an IP Asset
   </Card>
 
@@ -15067,7 +15067,7 @@ async function createSpgNftCollection() {
 createSpgNftCollection();
 ```
 
-2. Create a custom ERC-721 NFT collection on your own and use the [register](/sdk-reference/ipasset#register) function - providing an `nftContract` and `tokenId` - _instead of_ using the `mintAndRegisterIp` function. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/simpleMintAndRegister.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
+2. Create a custom ERC-721 NFT collection on your own and use the [register](/sdk-reference/ipasset#register) function - providing an `nftContract` and `tokenId` - _instead of_ using the `mintAndRegisterIp` function. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/registerCustom.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
 
 </Accordion>
 
@@ -15891,7 +15891,7 @@ This function needs an SPG NFT Contract to mint from. For simplicity, you can us
    createSpgNftCollection();
    ```
 
-2. Create a custom ERC-721 NFT collection on your own and use the [register](/sdk-reference/ipasset#register) function - providing an `nftContract` and `tokenId` - _instead of_ using the `mintAndRegisterIp` function. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/simpleMintAndRegister.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
+2. Create a custom ERC-721 NFT collection on your own and use the [register](/sdk-reference/ipasset#register) function - providing an `nftContract` and `tokenId` - _instead of_ using the `mintAndRegisterIp` function. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/registerCustom.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
 
 </Accordion>
 
@@ -15989,7 +15989,7 @@ main();
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercial.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercialCustom.ts"
     icon="thumbs-up"
   >
     See a completed, working example of setting up a simple derivative chain and
@@ -16164,7 +16164,7 @@ main();
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercial.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercialCustom.ts"
     icon="thumbs-up"
   >
     See a completed, working example of setting up a simple derivative chain and
@@ -17221,7 +17221,7 @@ In the following series of tutorials, you will learn how to setup the TypeScript
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/disputeIp.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/dispute/disputeIp.ts"
     icon="thumbs-up"
   >
     All of this page is covered in this working code example.
@@ -17285,7 +17285,7 @@ main();
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/disputeIp.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/dispute/disputeIp.ts"
     icon="thumbs-up"
   >
     See a completed, working example disputing an IP.
@@ -17315,7 +17315,7 @@ Let's say that IP Asset (`ipId = 0x01`) has License Terms (`licenseTermdId = 10`
 
 <Warning>
 
-Be mindful that some IP Assets may have license terms attached that require the user minting the license to pay a `defaultMintingFee`. You can see an example of that in the [TypeScript Tutorial](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercial.ts).
+Be mindful that some IP Assets may have license terms attached that require the user minting the license to pay a `defaultMintingFee`. You can see an example of that in the [TypeScript Tutorial](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercialCustom.ts).
 
 </Warning>
 
@@ -17376,7 +17376,7 @@ There are a few times when **you would need** a License Token to register a deri
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercialSpg.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts"
     icon="thumbs-up"
   >
     All of this page is covered in this working code example.
@@ -17551,7 +17551,7 @@ Congratulations, you claimed revenue using the [Royalty Module](/concepts/royalt
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercialSpg.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts"
     icon="thumbs-up"
   >
     All of this page is covered in this working code example.
@@ -17568,7 +17568,7 @@ Now what happens if an IP Asset doesn't pay their due share? We can dispute the 
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/simpleMintAndRegisterSpg.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/register.ts"
     icon="thumbs-up"
   >
     Follow the completed code all the way through.
@@ -17742,7 +17742,7 @@ async function createSpgNftCollection() {
 createSpgNftCollection();
 ```
 
-2. Create a custom ERC-721 NFT collection on your own and use the [register](/sdk-reference/ipasset#register) function - providing an `nftContract` and `tokenId` - _instead of_ using the `mintAndRegisterIp` function. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/simpleMintAndRegister.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
+2. Create a custom ERC-721 NFT collection on your own and use the [register](/sdk-reference/ipasset#register) function - providing an `nftContract` and `tokenId` - _instead of_ using the `mintAndRegisterIp` function. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/registerCustom.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
 
 </Accordion>
 
@@ -17792,7 +17792,7 @@ Congratulations, you registered an IP!
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/simpleMintAndRegisterSpg.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/register.ts"
     icon="thumbs-up"
   >
     Follow the completed code all the way through.
@@ -17847,7 +17847,7 @@ Next we can initiate the SDK Client. There are two ways to do this:
 <CardGroup cols={1}>
   <Card
     title="Working Example"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/utils/utils.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/utils/config.ts"
     icon="thumbs-up"
   >
     Check out the TypeScript Tutorial for a working example of how to set up the
@@ -17887,7 +17887,7 @@ The [React Setup Guide](/developers/react-guide/setup) shows how we can also use
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercialSpg.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts"
     icon="thumbs-up"
   >
     All of this page is covered in this working code example.
@@ -18005,7 +18005,7 @@ Congratulations, you registered a derivative IP Asset!
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercialSpg.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts"
     icon="thumbs-up"
   >
     All of this page is covered in this working code example.
@@ -18022,7 +18022,7 @@ Now that we have established parent-child IP relationships, we can begin to expl
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercialSpg.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts"
     icon="thumbs-up"
   >
     All of this page is covered in this working code example.
@@ -18134,7 +18134,7 @@ Congratulations, you paid an IP Asset on-chain!
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registerDerivativeCommercialSpg.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts"
     icon="thumbs-up"
   >
     All of this page is covered in this working code example.
