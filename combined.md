@@ -775,7 +775,7 @@ Returns the next arbitration update timestamp for a given ipId.
 
 # "GroupingModule"
 
-The Grouping Module is the main entry point for the IPA grouping in Story Protocol. It is responsible for:
+The Grouping Module is the main entry point for the IPA grouping on Story. It is responsible for:
 
 - Registering a group
 - Adding IP to group
@@ -1254,7 +1254,7 @@ Returns the total allocated reward share of the group.
 
 # "CoreMetadataModule"
 
-The CoreMetadataModule manages the core metadata for IP assets within the Story Protocol. It allows setting and updating metadata attributes for IP assets, with the ability to freeze metadata to prevent further changes.
+The CoreMetadataModule manages the core metadata for IP assets within Story. It allows setting and updating metadata attributes for IP assets, with the ability to freeze metadata to prevent further changes.
 
 ## State Variables
 
@@ -1390,7 +1390,7 @@ Implements the IERC165 interface.
 
 # "PILicenseTemplate"
 
-The PILicenseTemplate (Programmable IP License Template) is a smart contract that defines and manages license terms for IP assets in Story Protocol. It allows IP owners to create customizable license terms that can be attached to their IP assets, enabling them to control how their IP can be used commercially and for derivative works.
+The PILicenseTemplate (Programmable IP License Template) is a smart contract that defines and manages license terms for IP assets on Story. It allows IP owners to create customizable license terms that can be attached to their IP assets, enabling them to control how their IP can be used commercially and for derivative works.
 
 ## State Variables
 
@@ -1709,7 +1709,7 @@ struct PILTerms {
 
 # "LicenseToken"
 
-The LicenseToken contract, also known as LNFT (License NFT), is an ERC721 token that represents a license agreement for IP assets within the Story Protocol ecosystem. It enables the creation, transfer, and management of programmable IP licenses.
+The LicenseToken contract, also known as LNFT (License NFT), is an ERC721 token that represents a license agreement for IP assets within the Story ecosystem. It enables the creation, transfer, and management of programmable IP licenses.
 
 ## State Variables
 
@@ -1758,6 +1758,7 @@ struct LicenseTokenMetadata {
 ```
 
 Metadata structure for license tokens:
+
 - `licensorIpId`: The IP asset that is the licensor
 - `licenseTemplate`: The license template contract address
 - `licenseTermsId`: The ID of the license terms
@@ -1991,7 +1992,7 @@ ERC721 OpenSea metadata JSON representation of the LNFT parameters.
 
 # "LicensingModule"
 
-The Licensing Module is the main entry point for the licensing system in Story Protocol. It is responsible for:
+The Licensing Module is the main entry point for the licensing system on Story. It is responsible for:
 
 - Attaching license terms to IP assets
 - Minting license tokens
@@ -2249,7 +2250,7 @@ This function can be used to calculate the minting license fee before minting li
 
 # "RoyaltyModule"
 
-The RoyaltyModule is the main entry point for handling royalty payments in the Story Protocol. It allows IP owners to set royalty policies for their IP assets and enables derivative IP owners to pay royalties to their parent IPs.
+The RoyaltyModule is the main entry point for handling royalty payments on Story. It allows IP owners to set royalty policies for their IP assets and enables derivative IP owners to pay royalties to their parent IPs.
 
 ## State Variables
 
@@ -3526,7 +3527,7 @@ In contrast, the LAP (Liquid Absolute Percentage) royalty policy enforces a fixe
 
 # "IPAccountImpl"
 
-The IPAccountImpl contract is Story Protocol's implementation of the IP Account, which follows the ERC-6551 standard for token-bound accounts. It provides functionality for IP assets to own and manage other assets, execute transactions, and interact with other contracts in a permissioned manner.
+The IPAccountImpl contract is Story's implementation of the IP Account, which follows the ERC-6551 standard for token-bound accounts. It provides functionality for IP assets to own and manage other assets, execute transactions, and interact with other contracts in a permissioned manner.
 
 ## State Variables
 
@@ -3541,6 +3542,7 @@ The address of the AccessController contract used for permission checks. This is
 ## Inheritance
 
 IPAccountImpl inherits from:
+
 - ERC6551: Base implementation of the ERC-6551 standard
 - IPAccountStorage: Storage contract for IP Account data
 - IIPAccount: Interface for IP Account functionality
@@ -3887,7 +3889,7 @@ ipAccount.executeWithSig(
 
 # "IPAccountRegistry"
 
-The IPAccountRegistry is responsible for managing the registration and tracking of IP Accounts. It leverages a public ERC6551 registry to deploy IPAccount contracts, which represent tokenized intellectual property assets within the Story Protocol ecosystem.
+The IPAccountRegistry is responsible for managing the registration and tracking of IP Accounts. It leverages a public ERC6551 registry to deploy IPAccount contracts, which represent tokenized intellectual property assets within the Story ecosystem.
 
 ## State Variables
 
@@ -3955,7 +3957,7 @@ Returns the IPAccount implementation address.
 
 - `address`: The address of the IPAccount implementation.
 
-### _registerIpAccount (internal)
+### \_registerIpAccount (internal)
 
 ```solidity
 function _registerIpAccount(
@@ -3977,7 +3979,7 @@ Deploys an IPAccount contract with the IPAccount implementation and returns the 
 
 - `ipAccountAddress`: The address of the newly created IP Account.
 
-### _get6551AccountAddress (internal)
+### \_get6551AccountAddress (internal)
 
 ```solidity
 function _get6551AccountAddress(
@@ -3999,7 +4001,7 @@ Helper function to get the IPAccount address from the ERC6551 registry.
 
 - `address`: The address of the IP Account.
 
-### _upgradeIPAccountImpl (internal)
+### \_upgradeIPAccountImpl (internal)
 
 ```solidity
 function _upgradeIPAccountImpl(address newIpAccountImpl) internal
@@ -4115,7 +4117,7 @@ Sets the default license terms that are attached to all IPs by default.
 function registerLicenseTemplate(address licenseTemplate) external restricted
 ```
 
-Registers a new license template in the Story Protocol.
+Registers a new license template on Story.
 
 **Parameters:**
 
@@ -4788,7 +4790,7 @@ Retrieves the total number of members in a Group IPA.
 
 # "IPAssetRegistry"
 
-The IPAssetRegistry acts as the source of truth for all IP registered in Story Protocol. An IP is identified by its contract address, token id, and chain id, meaning any NFT may be conceptualized as an IP. Once an IP is registered into the protocol, a corresponding IP asset is generated, which references an IP resolver for metadata attribution and an IP account for protocol authorization.
+The IPAssetRegistry acts as the source of truth for all IP registered on Story. An IP is identified by its contract address, token id, and chain id, meaning any NFT may be conceptualized as an IP. Once an IP is registered into the protocol, a corresponding IP asset is generated, which references an IP resolver for metadata attribution and an IP account for protocol authorization.
 
 ## State Variables
 
@@ -4971,7 +4973,7 @@ Retrieves the registration fee amount for IP assets.
 
 # "ModuleRegistry"
 
-The ModuleRegistry contract is used to register and track modules within the Story Protocol ecosystem. It serves as a central registry for all protocol modules, allowing for easy discovery and management of different module types and implementations.
+The ModuleRegistry contract is used to register and track modules within the Story ecosystem. It serves as a central registry for all protocol modules, allowing for easy discovery and management of different module types and implementations.
 
 ## State Variables
 
@@ -5251,7 +5253,7 @@ If you'd like to read up on Story before diving into the technical details, chec
 >
   <img
     src="https://files.readme.io/49a6d447c37d25ec4566db511dead5b70a641fab57088e1cbd24d8236e3bef19-image.png"
-    alt="Story Protocol"
+    alt="Story"
   />
 </Frame>
 
@@ -5561,7 +5563,7 @@ Now you want to add more training data to the group. Since the group is now lock
   </Card>
 </CardGroup>
 
-Access Controller manages all permission-related states and permission checks in Story Protocol. In particular, it maintains the _Permission Table_ and _Permission Engine_ to process and store permissions. IPAccount permissions are set by the IPAccount owner.
+Access Controller manages all permission-related states and permission checks on Story. In particular, it maintains the _Permission Table_ and _Permission Engine_ to process and store permissions. IPAccount permissions are set by the IPAccount owner.
 
 <Frame>
   <img src="/images/concepts/ac-overview.png" alt="Access Controller Diagram" />
@@ -7250,6 +7252,120 @@ The owner of IPA1 then decides that others can create derivatives of their work 
 A third person wants to commercialize the remix by putting it in a TV advertisement, but they want to change the hair color to white. So, they pay a 10 \$WIP minting fee (of which, 1 \$WIP gets sent back to IPA1) to create their own derivative. They then put the remixed image in a TV ad. 10% of revenue earned by that t-shirt must be sent on-chain to IPA4, of which 10% will be distributed back to IPA1.
 
 
+# How does Story protect IP?
+
+<img src="/images/concepts/hdspip.png" alt="How Does Story Protect IP?" />
+
+<Tip>Every license created on Story is a real, enforceable legal contract.</Tip>
+
+## The Programmable IP License (PIL): The Foundation of Legal Enforcement
+
+At its core, every [IP Asset](/concepts/ip-asset) registered on Story is wrapped by a **legally binding document called the [Programmable IP License (PIL)](/concepts/programmable-ip-license)**. Based on US copyright law, the PIL acts as a universal license agreement template that allows IP owners to attach customizable terms to their assets.
+
+**Licensing on Story means making a genuine legal commitment.** The parameters defined in the PIL—commercial use, derivative allowances, attribution requirements, and royalty structures—represent legally enforceable terms between the IP owner (licensor) and anyone who licenses the IP (licensee).
+
+### How does the PIL enable enforcement?
+
+- **Clear Legal Terms:** The PIL provides a standardized way for IP owners to define usage rules.
+- **On-Chain Record as Evidence:** PIL terms attached to an IP Asset are recorded immutably on Story's purpose-built blockchain, serving as _irrefutable evidence_ of the agreed-upon terms.
+- **Off-Chain Legal Recourse:** If IP is misused in violation of PIL terms, the IP owner can leverage on-chain evidence in **off-chain legal proceedings** such as arbitration or court actions.
+- **License Tokens as Proof of Rights:** Licensees receive a [**License Token**](/concepts/licensing-module/license-token) (NFT) representing specific usage rights granted under the PIL terms, providing further evidence of authorization status.
+
+## The Story Attestation Service (SAS): Proactive Infringement Monitoring
+
+Beyond the legal framework, we are building the [**Story Attestation Service (SAS)**](/concepts/story-attestation-service) to help IP owners monitor for potential copyright infringement using a multi-layered decentralized approach.
+
+<Note>
+  SAS is a signal layer, not a judgment layer—it flags potential issues for the
+  IP owner to act upon, rather than taking automated enforcement actions.
+</Note>
+
+### How the SAS Helps with Infringement Detection:
+
+- **Network of Specialized Providers:** SAS coordinates with service providers like Yakoa and Pex that use AI and machine learning to detect copyright violations across different media types on the internet and other blockchains.
+- **Transparent Signals:** SAS provides publicly accessible signals regarding the legitimacy of an IP Asset based on provider findings.
+- **Focus on Commercial IP:** Currently, SAS primarily runs infringement checks on commercial IP Assets—those with at least one License Terms where `commercialUse = true`.
+- **Metadata-Driven Checks:** SAS relies on IP-specific metadata provided during registration to perform checks against existing online content.
+
+### Important Considerations:
+
+- **Detection, Not Prevention:** SAS primarily flags potential infringements after IP registration rather than preventing them.
+- **Internet-Based Checks:** Currently, SAS primarily detects infringement based on content already existing online, not offline uses.
+- **No Guarantee of Perfection:** No system can guarantee 100% detection of all copyright infringement.
+
+## The Role of the Dispute Module
+
+We have also built a [**Dispute Module**](/concepts/dispute-module) that allows anyone to raise on-chain disputes against IP Assets for reasons such as improper registration or potential plagiarism. This can lead to on-chain flagging of disputed IP, potentially affecting its ability to generate licenses or earn revenue.
+
+## The Hybrid Enforcement Model
+
+<Note>
+  Story doesn't replace courts or lawyers—it gives IP holders tools that work
+  with traditional enforcement systems while benefiting from on-chain
+  automation, transparency, and interoperability.
+</Note>
+
+### What Story Can Do:
+
+- Provide a legally sound framework for IP licensing through the PIL
+- Create an immutable on-chain record of IP ownership and license terms
+- Offer monitoring tools through the SAS to detect potential online infringement
+- Facilitate on-chain dispute resolution through the Dispute Module
+- Provide evidence usable for off-chain legal enforcement
+
+### What Story Cannot Do:
+
+- Act as a global police force for IP infringement
+- Guarantee prevention of all unauthorized IP uses
+- Directly enforce legal judgments in the physical world
+- Monitor every digital and physical interaction with registered IP
+
+```
++--------------------------+      +-----------------------------+
+| IP Owner Registers IP on |----->| IP Asset Created on Story   |
+| Story                    |      | (with associated metadata)  |
++--------------------------+      +-----------------------------+
+                                          |
+                                          v
++---------------------------------------+   +-------------------------+
+| Programmable IP License (PIL)         |<--| IP Owner Attaches Legal |
+| (Legal wrapper defining usage terms)  |   | Terms via PIL           |
++---------------------------------------+   +-------------------------+
+                                          |
+                                          v
+                                  +-------------------------+
+                                  | IP Asset with PIL Terms |
+                                  | (Commercial Use = true) |
+                                  +-------------------------+
+                                          |
+                                          v
++--------------------------+      +-------------------------------------+
+| Story Attestation        |----->| SAS Providers Scan Internet & Other |
+| Service (SAS) Coordinates|      | Sources for Infringement (using IP  |
++--------------------------+      | Metadata)                           |
+                                  +-------------------------------------+
+                                          |
+                                          v
++----------------------------------------------------------------------+
+| SAS Providers Report Potential Infringement Signals for the IP Asset |
+| (e.g., "Potential copy found on website X")                          |
++----------------------------------------------------------------------+
+                                          |
+                                          v
++---------------------------------------------------------------------+
+| IP Owner Reviews SAS Signals on IP Portal (Coming Soon)             |
++---------------------------------------------------------------------+
+                                          |
+                                          v
++---------------------------------------------------------------------+
+| IP Owner Can Use SAS Signals & PIL Terms as Evidence for:           |
+| - On-Chain Dispute via Dispute Module                               |
+| - Off-Chain Legal Action (e.g., Cease & Desist, Lawsuit)            |
++---------------------------------------------------------------------+
+
+```
+
+
 # PIL Terms
 
 <CardGroup cols={3}>
@@ -7332,7 +7448,7 @@ struct PILTerms {
 | `derivativesApproval`       | True/False      | If true, the licensor must approve derivatives of the work.                                                                                                                                                                                                                                                                                                                                            |
 | `derivativesReciprocal`     | True/False      | If false, you cannot create a derivative of a derivative. Set this to true to allow indefinite remixing.                                                                                                                                                                                                                                                                                               |
 | `derivativeRevCeiling`      | #               | If `commercialUse` is set to true, this value determines the maximum revenue you can earn from derivative works.                                                                                                                                                                                                                                                                                       |
-| `currency`                  | Address         | The ERC20 token to be used to pay the minting fee. The token must be registered in story protocol.                                                                                                                                                                                                                                                                                                     |
+| `currency`                  | Address         | The ERC20 token to be used to pay the minting fee. The token must be registered on Story.                                                                                                                                                                                                                                                                                                              |
 | `uri`                       | String          | The URI of the license terms, which can be used to fetch [off-chain license terms](/concepts/programmable-ip-license/pil-terms#off-chain-terms-to-be-included-in-uri-field).                                                                                                                                                                                                                           |
 
 # Off-chain terms to be included in `uri` field
@@ -8299,7 +8415,7 @@ The first (and currently only) example of a License Template was developed by th
 License Templates are responsible for:
 
 - Providing a link to the actual, off-chain, legal contract template, with all the parameters, their possible values, and the correspondent legalese, in `licenseTextUrl`.
-  - For a licensing framework to be compatible with Story Protocol, the legal text **must** be clear and parametrized, with each licensing parameter establishing the possible outcomes of each value.
+  - For a licensing framework to be compatible with Story, the legal text **must** be clear and parametrized, with each licensing parameter establishing the possible outcomes of each value.
   - The parameter values in each License Template (called "License Template terms") drive the legal text for each license agreement.
 - Defining a `struct` with the particular definitions of the parameters in accordance, which must be encoded into the License Terms struct (described below).
 - Providing registration methods for the License Terms, and getters.
@@ -8882,7 +8998,7 @@ Convenient function to register a PIL commercial use license to the registry.
 Parameters:
 
 - `request.defaultMintingFee`: The fee to be paid when minting a license.
-- `request.currency`: The ERC20 token to be used to pay the minting fee and the token must be registered in story protocol.
+- `request.currency`: The ERC20 token to be used to pay the minting fee and the token must be registered on Story's protocol.
 - `request.royaltyPolicyAddress`: \[Optional] The address of the royalty policy contract, default value is LAP.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
@@ -8946,7 +9062,7 @@ Parameters:
 
 - `request.defaultMintingFee`: The fee to be paid when minting a license.
 - `request.commercialRevShare`: Percentage of revenue that must be shared with the licensor.
-- `request.currency`: The ERC20 token to be used to pay the minting fee and the token must be registered in story protocol.
+- `request.currency`: The ERC20 token to be used to pay the minting fee and the token must be registered on Story's protocol.
 - `request.royaltyPolicyAddress`: \[Optional] The address of the royalty policy contract, default value is LAP.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
@@ -10974,7 +11090,7 @@ Convenient function to register a PIL commercial use license to the registry.
 Parameters:
 
 - `default_minting_fee`: The fee to be paid when minting a license.
-- `currency`: The ERC20 token to be used to pay the minting fee and the token must be registered in story protocol.
+- `currency`: The ERC20 token to be used to pay the minting fee and the token must be registered on Story's protocol.
 - `royalty_policy`: [Optional] The address of the royalty policy contract, default value is LAP.
 - `tx_options`: [Optional] Transaction options dictionary.
 
@@ -11016,7 +11132,7 @@ Parameters:
 
 - `default_minting_fee`: The fee to be paid when minting a license.
 - `commercial_rev_share`: Percentage of revenue that must be shared with the licensor.
-- `currency`: The ERC20 token to be used to pay the minting fee and the token must be registered in story protocol.
+- `currency`: The ERC20 token to be used to pay the minting fee and the token must be registered on Story's protocol.
 - `royalty_policy`: The address of the royalty policy contract, default value is LAP.
 - `tx_options`: [Optional] Transaction options dictionary.
 
@@ -13249,8 +13365,8 @@ In this guide, we will show you how to setup the Story smart contract developmen
 
 ## Prerequisites
 
-* [Install Foundry](https://book.getfoundry.sh/getting-started/installation)
-* [Install yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
+- [Install Foundry](https://book.getfoundry.sh/getting-started/installation)
+- [Install yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
 
 ## Creating a Project
 
@@ -13272,13 +13388,13 @@ solc = '0.8.26'
 fs_permissions = [{ access = 'read', path = './out' }, { access = 'read-write', path = './deploy-out' }]
 evm_version = 'cancun'
 remappings = [
-    '@openzeppelin/=node_modules/@openzeppelin/', 
-    '@storyprotocol/core/=node_modules/@story-protocol/protocol-core/contracts/', 
-    '@storyprotocol/periphery/=node_modules/@story-protocol/protocol-periphery/contracts/', 
-    'erc6551/=node_modules/erc6551/', 
-    'forge-std/=node_modules/forge-std/src/', 
-    'ds-test/=node_modules/ds-test/src/', 
-    '@storyprotocol/test/=node_modules/@story-protocol/protocol-core/test/foundry/', 
+    '@openzeppelin/=node_modules/@openzeppelin/',
+    '@storyprotocol/core/=node_modules/@story-protocol/protocol-core/contracts/',
+    '@storyprotocol/periphery/=node_modules/@story-protocol/protocol-periphery/contracts/',
+    'erc6551/=node_modules/erc6551/',
+    'forge-std/=node_modules/forge-std/src/',
+    'ds-test/=node_modules/ds-test/src/',
+    '@storyprotocol/test/=node_modules/@story-protocol/protocol-core/test/foundry/',
     '@solady/=node_modules/solady/'
 ]
 ```
@@ -16540,32 +16656,36 @@ Once you have done that, you should see a console log with a link to our IP-expl
     arrow={true}
   />
 
-  <Card
-    title="Deployed Smart Contract Addresses"
-    href="/developers/deployed-smart-contracts"
-    icon="file-contract"
-  />
+{" "}
+<Card
+  title="Deployed Smart Contract Addresses"
+  href="/developers/deployed-smart-contracts"
+  icon="file-contract"
+/>
 
-  <Card
-    title="Protocol Core"
-    href="https://github.com/storyprotocol/protocol-core-v1/releases"
-    icon="github"
-    arrow={true}
-  />
+{" "}
+<Card
+  title="Protocol Core"
+  href="https://github.com/storyprotocol/protocol-core-v1/releases"
+  icon="github"
+  arrow={true}
+/>
 
-  <Card
-    title="Protocol Periphery"
-    href="https://github.com/storyprotocol/protocol-periphery-v1/releases"
-    icon="github"
-    arrow={true}
-  />
+{" "}
+<Card
+  title="Protocol Periphery"
+  href="https://github.com/storyprotocol/protocol-periphery-v1/releases"
+  icon="github"
+  arrow={true}
+/>
 
-  <Card
-    title="Story - Consensus Implementation"
-    href="https://github.com/piplabs/story/releases"
-    icon="github"
-    arrow={true}
-  />
+{" "}
+<Card
+  title="Story - Consensus Implementation"
+  href="https://github.com/piplabs/story/releases"
+  icon="github"
+  arrow={true}
+/>
 
   <Card
     title="Story Geth - Execution Layer Implementation"
@@ -17953,7 +18073,7 @@ We require node version 18 or later version and npm version 8 to be installed in
 
 ### Install the Dependencies
 
-Install the [Story Protocol SDK](https://www.npmjs.com/package/@story-protocol/core-sdk) node package, as well as [viem](https://www.npmjs.com/package/viem).
+Install the [Story SDK](https://www.npmjs.com/package/@story-protocol/core-sdk) node package, as well as [viem](https://www.npmjs.com/package/viem).
 
 <CodeGroup>
 
