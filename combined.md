@@ -6723,7 +6723,7 @@ The Multicall3 contract allows you to execute multiple calls within a single tra
   "contractName": "Multicall3",
   "chainId": 1516,
   "contractAddress": "0xcA11bde05977b3631167028862bE2a173976CA11",
-  "url": "https://aeneid.storyscan.xyz/address/0xcA11bde05977b3631167028862bE2a173976CA11"
+  "url": "https://aeneid.storyscan.io/address/0xcA11bde05977b3631167028862bE2a173976CA11"
 }
 ```
 
@@ -7629,14 +7629,14 @@ An ERC-20 token must be whitelisted by our protocol in the [RoyaltyModule.sol co
   <Tab title="Aeneid Testnet">
     | Token  | Contract Address                             | Explorer                                                                                                                   | Mint                                                                                                                                                |
     | :----- | :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | WIP    | `0x1514000000000000000000000000000000000000` | [View here ↗️](https://aeneid.storyscan.xyz/address/0x1514000000000000000000000000000000000000) | N/A                                                                                                                                                 |
-    | MERC20 | `0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E` | [View here ↗️](https://aeneid.storyscan.xyz/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E) | [Mint ↗️](https://aeneid.storyscan.xyz/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E?tab=write_contract#0x40c10f19) |
+    | WIP    | `0x1514000000000000000000000000000000000000` | [View here ↗️](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000) | N/A                                                                                                                                                 |
+    | MERC20 | `0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E` | [View here ↗️](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E) | [Mint ↗️](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E?tab=write_contract#0x40c10f19) |
   </Tab>
 
   <Tab title="Mainnet">
     | Token | Contract Address                             | Explorer                                                                                                                   | Mint |
     | :---- | :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- | :--- |
-    | WIP   | `0x1514000000000000000000000000000000000000` | [View here ↗️](https://aeneid.storyscan.xyz/address/0x1514000000000000000000000000000000000000) | N/A  |
+    | WIP   | `0x1514000000000000000000000000000000000000` | [View here ↗️](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000) | N/A  |
   </Tab>
 </Tabs>
 
@@ -12707,11 +12707,11 @@ forge create \
   ./src/Example.sol:Example \
   --verify \
   --verifier blockscout \
-  --verifier-url https://aeneid.storyscan.xyz/api/ \
+  --verifier-url https://aeneid.storyscan.io/api/ \
   --constructor-args 0x77319B4031e6eF1250907aa00018B8B1c67a244b 0x04fbd8a2e56dd85CFD5500A4A4DfA955B9f1dE6f 0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316 0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E 0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E
 ```
 
-If everything worked correctly, you should see something like `Deployed to: 0xfb0923D531C1ca54AB9ee10CB8364b23d0C7F47d` in the console. Paste that address into [the explorer](https://aeneid.storyscan.xyz/) and see your verified contract!
+If everything worked correctly, you should see something like `Deployed to: 0xfb0923D531C1ca54AB9ee10CB8364b23d0C7F47d` in the console. Paste that address into [the explorer](https://aeneid.storyscan.io/) and see your verified contract!
 
 # Great job! :)
 
@@ -12917,7 +12917,7 @@ There are a few steps you have to complete before you can start the tutorial.
 
 You can pay an IP Asset using the `payRoyaltyOnBehalf` function from the [Royalty Module](/concepts/royalty-module/overview).
 
-You will be paying the IP Asset with [MockERC20](https://aeneid.storyscan.xyz/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E). Usually you would pay with $WIP, but because we need to mint some tokens to test, we will use MockERC20.
+You will be paying the IP Asset with [MockERC20](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E). Usually you would pay with $WIP, but because we need to mint some tokens to test, we will use MockERC20.
 
 To help with the following scenarios, let's say we have a parent IP Asset that has negotiated a 50% `commercialRevShare` with its child IP Asset.
 
@@ -14095,14 +14095,14 @@ The below list contains the whitelisted revenue tokens that can be used in the R
   <Tab title="Aeneid Testnet">
     | Token  | Contract Address                             | Explorer                                                                                                                   | Mint                                                                                                                                                |
     | :----- | :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | WIP    | `0x1514000000000000000000000000000000000000` | [View here ↗️](https://aeneid.storyscan.xyz/address/0x1514000000000000000000000000000000000000) | N/A                                                                                                                                                 |
-    | MERC20 | `0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E` | [View here ↗️](https://aeneid.storyscan.xyz/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E) | [Mint ↗️](https://aeneid.storyscan.xyz/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E?tab=write_contract#0x40c10f19) |
+    | WIP    | `0x1514000000000000000000000000000000000000` | [View here ↗️](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000) | N/A                                                                                                                                                 |
+    | MERC20 | `0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E` | [View here ↗️](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E) | [Mint ↗️](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E?tab=write_contract#0x40c10f19) |
   </Tab>
 
   <Tab title="Mainnet">
     | Token | Contract Address                             | Explorer                                                                                                                   | Mint |
     | :---- | :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- | :--- |
-    | WIP   | `0x1514000000000000000000000000000000000000` | [View here ↗️](https://aeneid.storyscan.xyz/address/0x1514000000000000000000000000000000000000) | N/A  |
+    | WIP   | `0x1514000000000000000000000000000000000000` | [View here ↗️](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000) | N/A  |
   </Tab>
 </Tabs>
 
@@ -14737,7 +14737,7 @@ export default function Home() {
       transactionRequest,
       { uiOptions }
     );
-    console.log(`View Tx: https://aeneid.storyscan.xyz/tx/${txHash}`);
+    console.log(`View Tx: https://aeneid.storyscan.io/tx/${txHash}`);
   }
 
   return (
@@ -14909,7 +14909,7 @@ export default function Home() {
       response.encodedTxData as EncodedTxData,
       { uiOptions }
     );
-    console.log(`View Tx: https://aeneid.storyscan.xyz/tx/${txHash}`);
+    console.log(`View Tx: https://aeneid.storyscan.io/tx/${txHash}`);
   }
 
   return (
@@ -16309,7 +16309,7 @@ export const client = StoryClient.newClient(config);
 
 Now create a `main.ts` file. We will use the `payRoyaltyOnBehalf` function to pay the derivative asset.
 
-You will be paying the IP Asset with [$WIP](https://aeneid.storyscan.xyz/address/0x1514000000000000000000000000000000000000). **Note that if you don't have enough $WIP, the function will auto wrap an equivalent amount of $IP into $WIP for you.** If you don't have enough of either, it will fail.
+You will be paying the IP Asset with [$WIP](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000). **Note that if you don't have enough $WIP, the function will auto wrap an equivalent amount of $IP into $WIP for you.** If you don't have enough of either, it will fail.
 
 <Note>
 **Whitelisted Revenue Tokens**
@@ -18303,7 +18303,7 @@ There are a few steps you have to complete before you can start the tutorial.
 
 You can pay an IP Asset using the `payRoyaltyOnBehalf` function.
 
-You will be paying the IP Asset with [\$WIP](https://aeneid.storyscan.xyz/address/0x1514000000000000000000000000000000000000). **Note that if you don't have enough \$WIP, the function will auto wrap an equivalent amount of \$IP into \$WIP for you.** If you don't have enough of either, it will fail.
+You will be paying the IP Asset with [\$WIP](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000). **Note that if you don't have enough \$WIP, the function will auto wrap an equivalent amount of \$IP into \$WIP for you.** If you don't have enough of either, it will fail.
 
 To help with the following scenarios, let's say we have a parent IP Asset that has negotiated a 50% `commercialRevShare` with its child IP Asset.
 
@@ -18313,7 +18313,7 @@ Only tokens that are whitelisted by our protocol can be used as payment ("revenu
 
 <Tip>
 
-If you want to test paying IP Assets, you'll probably want a whitelisted revenue token you can mint freely for testing. We have provided [MockERC20](https://aeneid.storyscan.xyz/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E?tab=write_contract#0x40c10f19) on Aeneid testnet which you can mint and pay with. Then when you're ready, you should use \$WIP.
+If you want to test paying IP Assets, you'll probably want a whitelisted revenue token you can mint freely for testing. We have provided [MockERC20](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E?tab=write_contract#0x40c10f19) on Aeneid testnet which you can mint and pay with. Then when you're ready, you should use \$WIP.
 
 </Tip>
 
@@ -18624,7 +18624,7 @@ Can't find something? Ask the writer of our docs for help in our [Builder Discor
 
 <Card
   title="Testnet Block Explorer"
-  href="https://aeneid.storyscan.xyz"
+  href="https://aeneid.storyscan.io"
   icon="house"
 >
   View all testnet block & transaction data on Story.
@@ -19000,7 +19000,7 @@ See [Implementing the ATCP/IP Whitepaper](/ai-agents/implementing-atcpip).
 
 | Explorer                                                                                                                       | URL                                        | Official |
 | :----------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------- | :------: |
-| [Blockscout Explorer ↗️](https://aeneid.storyscan.xyz)                                                                         | `https://aeneid.storyscan.xyz`             |    ✅    |
+| [Blockscout Explorer ↗️](https://aeneid.storyscan.io)                                                                          | `https://aeneid.storyscan.io`              |    ✅    |
 | [IP Explorer ↗️](https://aeneid.explorer.story.foundation) (only for IP-related actions like licensing, minting licenses, etc) | `https://aeneid.explorer.story.foundation` |    ✅    |
 
 ## Faucet
@@ -19410,13 +19410,13 @@ See Pyth's [Documentation](https://docs.pyth.network/price-feeds/price-feeds) gu
 
 ### Mainnet
 
-#### [ERC1967Proxy.sol](https://www.storyscan.xyz/address/0xD458261E832415CFd3BAE5E416FdF3230ce6F134)
+#### [ERC1967Proxy.sol](https://www.storyscan.io/address/0xD458261E832415CFd3BAE5E416FdF3230ce6F134)
 
 ```
 0xD458261E832415CFd3BAE5E416FdF3230ce6F134
 ```
 
-#### [PythUpgradable.sol](https://www.storyscan.xyz/address/0x5f3c61944CEb01B3eAef861251Fb1E0f14b848fb)
+#### [PythUpgradable.sol](https://www.storyscan.io/address/0x5f3c61944CEb01B3eAef861251Fb1E0f14b848fb)
 
 ```
 0x5f3c61944CEb01B3eAef861251Fb1E0f14b848fb
@@ -19424,13 +19424,13 @@ See Pyth's [Documentation](https://docs.pyth.network/price-feeds/price-feeds) gu
 
 ### Testnet (Aeneid)
 
-#### [ERC1967Proxy.sol](https://aeneid.storyscan.xyz/address/0x36825bf3Fbdf5a29E2d5148bfe7Dcf7B5639e320)
+#### [ERC1967Proxy.sol](https://aeneid.storyscan.io/address/0x36825bf3Fbdf5a29E2d5148bfe7Dcf7B5639e320)
 
 ```
 0x36825bf3Fbdf5a29E2d5148bfe7Dcf7B5639e320
 ```
 
-#### [PythUpgradeable.sol](https://aeneid.storyscan.xyz/address/0x98046Bd286715D3B0BC227Dd7a956b83D8978603)
+#### [PythUpgradeable.sol](https://aeneid.storyscan.io/address/0x98046Bd286715D3B0BC227Dd7a956b83D8978603)
 
 ```
 0x98046Bd286715D3B0BC227Dd7a956b83D8978603
@@ -19448,28 +19448,27 @@ See Pyth's [How to Generate Random numbers in EVM dApps](https://docs.pyth.netwo
 
 ### Mainnet
 
-#### [ERC1967Proxy.sol](https://www.storyscan.xyz/address/0xdF21D137Aadc95588205586636710ca2890538d5)
+#### [ERC1967Proxy.sol](https://www.storyscan.io/address/0xdF21D137Aadc95588205586636710ca2890538d5)
 
 ```
 0xdF21D137Aadc95588205586636710ca2890538d5
 ```
 
-#### [EntropyUpgradeable.sol](<[https://www.storyscan.xyz/address/0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF](https://www.storyscan.xyz/address/0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF)>)
+#### [EntropyUpgradeable.sol](https://www.storyscan.io/address/0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF)
 
 ```
 0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF
-
 ```
 
 ### Testnet (Aeneid)
 
-#### [ERC1967Proxy.sol](<[https://aeneid.storyscan.xyz/address/0x5744Cbf430D99456a0A8771208b674F27f8EF0Fb](https://aeneid.storyscan.xyz/address/0x5744Cbf430D99456a0A8771208b674F27f8EF0Fb)>)
+#### [ERC1967Proxy.sol](https://aeneid.storyscan.io/address/0x5744Cbf430D99456a0A8771208b674F27f8EF0Fb)
 
 ```
 0x5744Cbf430D99456a0A8771208b674F27f8EF0Fb
 ```
 
-#### [EntropyUpgradeable.sol](https://aeneid.storyscan.xyz/address/0x74f09cb3c7e2A01865f424FD14F6dc9A14E3e94E)
+#### [EntropyUpgradeable.sol](https://aeneid.storyscan.io/address/0x74f09cb3c7e2A01865f424FD14F6dc9A14E3e94E)
 
 ```
 0x74f09cb3c7e2A01865f424FD14F6dc9A14E3e94E
@@ -19549,7 +19548,7 @@ See Redstone's [Documentation](https://docs.redstone.finance/docs/introduction) 
 
 Gelato VRF provides verifiable randomness for blockchain applications by utilizing Drand, a decentralized and trusted source of random numbers. It ensures that developers receive truly random values that are both provable and tamper-resistant.
 
-See Gelato's [Documentation](<[https://docs.gelato.network/web3-services/vrf](https://docs.gelato.network/web3-services/vrf)>) guide to integrate your application with their price feeds.
+See Gelato's [Documentation](https://docs.gelato.network/web3-services/vrf) guide to integrate your application with their price feeds.
 
 ## Smart Contracts
 
@@ -19557,13 +19556,13 @@ See Gelato's [Documentation](<[https://docs.gelato.network/web3-services/vrf](ht
 
 #### Mainnet
 
-##### [EIP173Proxy.sol](https://www.storyscan.xyz/address/0xafd37d0558255aA687167560cd3AaeEa75c2841E)
+##### [EIP173Proxy.sol](https://www.storyscan.io/address/0xafd37d0558255aA687167560cd3AaeEa75c2841E)
 
 ```
 0xafd37d0558255aA687167560cd3AaeEa75c2841E
 ```
 
-##### [Automate.sol](https://www.storyscan.xyz/address/0xab2c44495F5F954149b94C750ca20B64ea60B51c)
+##### [Automate.sol](https://www.storyscan.io/address/0xab2c44495F5F954149b94C750ca20B64ea60B51c)
 
 ```
 0xab2c44495F5F954149b94C750ca20B64ea60B51c
