@@ -21394,19 +21394,19 @@ In a single queue of withdrawals, reward withdrawals can significantly delay sta
 
 ## Withdrawal Queue Content
 
-Since the module only processes unstakes/rewards/ubi and stores them in queues, the actual dequeueing for withdrawal to the execution layer is carried out in the [evmengine](./evmengine-module) module. More specifically, a proposer dequeues the max number of withdrawals from each queue and adds them to the EVM block payload, which gets executed by EL via the [Engine API](/network/node-architecture/engine-api). When validators receive proposed block payload from the proposer, they individually peek the local queues and compare them against the received block's withdrawals. Mismatching withdrawals indicate non-determinism in staking logics and should result in chain halt.
+Since the module only processes unstakes/rewards/ubi and stores them in queues, the actual dequeueing for withdrawal to the execution layer is carried out in the [evmengine](/network/node-architecture/cosmos-modules/evmengine-module) module. More specifically, a proposer dequeues the max number of withdrawals from each queue and adds them to the EVM block payload, which gets executed by EL via the [Engine API](/network/node-architecture/engine-api). When validators receive proposed block payload from the proposer, they individually peek the local queues and compare them against the received block's withdrawals. Mismatching withdrawals indicate non-determinism in staking logics and should result in chain halt.
 
 In other words, the `evmstaking` module is in charge of parsing, processing, and inserting withdrawal requests to two queues, while the `evmengine` module is in charge of validating and dequeuing withdrawal requests, as well as depositing them to corresponding withdrawal addresses in EL.
 
 ## End Block
 
-The `EndBlock` ABCI2 call is responsible for fetching the unbonded entries (stakes that have unbonded after 14 days) from the [staking](./staking-module) module and inserting them into the (stake) withdrawal queue. Furthermore, it processes stake reward withdrawals into the reward withdrawal queue and UBI withdrawals into the (stake) withdrawal queue.
+The `EndBlock` ABCI2 call is responsible for fetching the unbonded entries (stakes that have unbonded after 14 days) from the [staking](/network/node-architecture/cosmos-modules/staking-module) module and inserting them into the (stake) withdrawal queue. Furthermore, it processes stake reward withdrawals into the reward withdrawal queue and UBI withdrawals into the (stake) withdrawal queue.
 
 If the network is in the [Singularity period](/network/tokenomics-staking#singularity), the End Block is skipped as there are no staking rewards and withdrawals available during this period. Otherwise, refer to [Withdrawing Delegations](#withdrawing-delegations) and [Withdrawing Rewards](#withdrawing-rewards) for detailed withdrawal processes.
 
 ## Processing Staking Events
 
-The module parses and processes staking events emitted from the [IPTokenStaking contract](https://github.com/piplabs/story/blob/main/contracts/src/protocol/IPTokenStaking.sol), which are collected by the [evmengine](./evmengine-module) module. The list of events are:
+The module parses and processes staking events emitted from the [IPTokenStaking contract](https://github.com/piplabs/story/blob/main/contracts/src/protocol/IPTokenStaking.sol), which are collected by the [evmengine](/network/node-architecture/cosmos-modules/evmengine-module) module. The list of events are:
 
 ### Staking events
 
@@ -21636,7 +21636,7 @@ message Params {
 
 At each block, if the node is the proposer, ABCI2 triggers `PrepareProposal` which
 
-1. Loads staking & reward withdrawals from the [evmstaking](./evmstaking-module) module.
+1. Loads staking & reward withdrawals from the [evmstaking](/network/node-architecture/cosmos-modules/evmstaking-module) module.
 2. Builds a valid EVM block.
    - If optimistic building: loads the optimistically built block.
    - Non-optimistic: requests and retrieves an EVM block from EL.
@@ -21658,7 +21658,7 @@ More specifically, the node processes the received `MsgExecutionPayload` data in
 2. Compare local stake & reward withdrawals with the received withdrawals data.
 3. Push the received execution payload to EL via the Engine API and wait for payload validation.
 4. Update the EL forkchoice to the execution payload's block hash.
-5. Process staking events using the [evmstaking](./evmstaking-module) module.
+5. Process staking events using the [evmstaking](/network/node-architecture/cosmos-modules/evmstaking-module) module.
 6. Process upgrade events.
 7. Update the execution head to the execution payload (finalized block).
 
@@ -21725,7 +21725,8 @@ Similar to the software upgrade, the module processes the cancel upgrade event f
 
 
 # staking
-## Abstrat
+
+## Abstract
 
 The staking module has been modified to accommodate for the following changes below. Refer to the Cosmos SDK's [staking module docs](https://docs.cosmos.network/main/build/modules/staking) for more information.
 
@@ -21737,36 +21738,43 @@ Validators can choose to accept either locked tokens or unlocked tokens as deleg
 
 Since each validator receives different inflation distribution based on delegations, the inflation distribution I<sub>v<sub>i</sub></sub> for validator v<sub>i</sub> in the rewards pool is calculated as follows:
 
-<Image align="center" src="https://files.readme.io/3ee4914a7cc6036ceebbdd31ce93e525984a08364f8c3ab2152b86b3bcd5df7e-Screenshot_2025-02-11_at_8.30.07_AM.png" />
+<Image
+  align="center"
+  src="https://files.readme.io/3ee4914a7cc6036ceebbdd31ce93e525984a08364f8c3ab2152b86b3bcd5df7e-Screenshot_2025-02-11_at_8.30.07_AM.png"
+/>
 
 where
 
-* I<sub>v<sub>i</sub></sub> is the total inflationary token rewards for v<sub>i</sub>
-* S<sub>v<sub>i</sub></sub> is the staked tokens for v<sub>i</sub>
-* M<sub>v<sub>i</sub></sub> is the rewards multiplier for v<sub>i</sub>
-  * 0.5 for locked tokens
-  * 1 for unlocked tokens
-* R<sub>n</sub> is the total inflationary tokens allocated for the rewards pool in block n, calculated in the [mint](./mint-module.md) module
+- I<sub>v<sub>i</sub></sub> is the total inflationary token rewards for v<sub>i</sub>
+- S<sub>v<sub>i</sub></sub> is the staked tokens for v<sub>i</sub>
+- M<sub>v<sub>i</sub></sub> is the rewards multiplier for v<sub>i</sub>
+  - 0.5 for locked tokens
+  - 1 for unlocked tokens
+- R<sub>n</sub> is the total inflationary tokens allocated for the rewards pool in block n, calculated in the [mint](/network/node-architecture/cosmos-modules/mint-module) module
 
 ### Delegations
 
 Delegators can delegate with four different staking lock times, which results in different staking reward multiplier for each delegation (delegator-validator pair of stakes). The inflation distribution for each delegation D<sub>i</sub> is calculated as follows:
 
-<Image align="center" src="https://files.readme.io/002ae69aa3b3e52a33747452fe0c0b91b9120f20155deb19b56fb7917132b8de-Screenshot_2025-02-11_at_8.34.44_AM.png" />
+<Image
+  align="center"
+  src="https://files.readme.io/002ae69aa3b3e52a33747452fe0c0b91b9120f20155deb19b56fb7917132b8de-Screenshot_2025-02-11_at_8.34.44_AM.png"
+/>
 
 where
 
-* S<sub>d<sub>i</sub></sub> is the staked tokens of delegation d<sub>i</sub> on validator v<sub>d</sub>
-* M<sub>d<sub>i</sub></sub> is the rewards multiplier of d<sub>i</sub> on v<sub>d</sub>
-* I<sub>v</sub> is the total inflationary token rewards for v<sub>d</sub>
-* C<sub>v</sub> is the commission rate for v<sub>d</sub>
+- S<sub>d<sub>i</sub></sub> is the staked tokens of delegation d<sub>i</sub> on validator v<sub>d</sub>
+- M<sub>d<sub>i</sub></sub> is the rewards multiplier of d<sub>i</sub> on v<sub>d</sub>
+- I<sub>v</sub> is the total inflationary token rewards for v<sub>d</sub>
+- C<sub>v</sub> is the commission rate for v<sub>d</sub>
 
 #### Time-weighted Reward Multiplier M<sub>d<sub>i</sub></sub>
 
-* *Flexible* (no lockup): 1
-* *Short* (90 days): 1.1
-* *Medium* (360 days): 1.5
-* *Long* (540 days): 2.0
+- _Flexible_ (no lockup): 1
+- _Short_ (90 days): 1.1
+- _Medium_ (360 days): 1.5
+- _Long_ (540 days): 2.0
+
 
 # List of Modules
 
@@ -21774,15 +21782,15 @@ where
 
 Here is a list of all production-grade modules that can be used on the Story blockchain, along with their respective documentation:
 
-- [evmengine](./evmengine-module) - Handles Cosmos-side logics on each EVM state transition via the [Engine API](/network/node-architecture/engine-api).
-- [evmstaking](./evmstaking-module) - Handles staking and network emission logics with queues.
-- [mint](./mint-module)
+- [evmengine](/network/node-architecture/cosmos-modules/evmengine-module) - Handles Cosmos-side logics on each EVM state transition via the [Engine API](/network/node-architecture/engine-api).
+- [evmstaking](/network/node-architecture/cosmos-modules/evmstaking-module) - Handles staking and network emission logics with queues.
+- [mint](/network/node-architecture/cosmos-modules/mint-module)
 
 ## Cosmos SDK (modified)
 
 Story network uses the following Cosmos SDK modules with some modifications:
 
-- [staking](./staking-module)
+- [staking](/network/node-architecture/cosmos-modules/staking-module)
 - [distribution](https://docs.cosmos.network/main/build/modules/distribution)
 
 ## Cosmos SDK (unmodified)
