@@ -1,14 +1,14 @@
 ---
 title: Setup
-description: Set up your development environment for Story Protocol smart contracts
+description: Set up your development environment for Story smart contracts.
 ---
 
 In this guide, we will show you how to setup the Story smart contract development environment in just a few minutes.
 
 ## Prerequisites
 
-* [Install Foundry](https://book.getfoundry.sh/getting-started/installation)
-* [Install yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
+- [Install Foundry](https://book.getfoundry.sh/getting-started/installation)
+- [Install yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
 
 ## Creating a Project
 
@@ -30,13 +30,13 @@ solc = '0.8.26'
 fs_permissions = [{ access = 'read', path = './out' }, { access = 'read-write', path = './deploy-out' }]
 evm_version = 'cancun'
 remappings = [
-    '@openzeppelin/=node_modules/@openzeppelin/', 
-    '@storyprotocol/core/=node_modules/@story-protocol/protocol-core/contracts/', 
-    '@storyprotocol/periphery/=node_modules/@story-protocol/protocol-periphery/contracts/', 
-    'erc6551/=node_modules/erc6551/', 
-    'forge-std/=node_modules/forge-std/src/', 
-    'ds-test/=node_modules/ds-test/src/', 
-    '@storyprotocol/test/=node_modules/@story-protocol/protocol-core/test/foundry/', 
+    '@openzeppelin/=node_modules/@openzeppelin/',
+    '@storyprotocol/core/=node_modules/@story-protocol/protocol-core/contracts/',
+    '@storyprotocol/periphery/=node_modules/@story-protocol/protocol-periphery/contracts/',
+    'erc6551/=node_modules/erc6551/',
+    'forge-std/=node_modules/forge-std/src/',
+    'ds-test/=node_modules/ds-test/src/',
+    '@storyprotocol/test/=node_modules/@story-protocol/protocol-core/test/foundry/',
     '@solady/=node_modules/solady/'
 ]
 ```
