@@ -7254,7 +7254,9 @@ A third person wants to commercialize the remix by putting it in a TV advertisem
 
 # How does Story protect IP?
 
-<img src="/images/concepts/hdspip.png" alt="How Does Story Protect IP?" />
+<Frame>
+  <img src="/images/concepts/hdspip.png" alt="How Does Story Protect IP?" />
+</Frame>
 
 <Tip>Every license created on Story is a real, enforceable legal contract.</Tip>
 
@@ -18976,6 +18978,17 @@ See [Implementing the ATCP/IP Whitepaper](/ai-agents/implementing-atcpip).
   }
 >
   <img src="/images/eli5.png" alt="explain like im five" />
+</Frame>
+
+<Frame
+  caption={
+    <>
+      Credit to the original tweet{" "}
+      <a href="https://x.com/jacobmtucker/status/1905602225600430206">here</a>
+    </>
+  }
+>
+  <img src="/images/concepts/hdspip.png" alt="How Does Story Protect IP?" />
 </Frame>
 
 
