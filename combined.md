@@ -19662,6 +19662,33 @@ Relay method: `sponsoredCallERC2771`
 ```
 
 
+# Multisig
+
+## Story Safe
+
+Users can access Safe via a user-friendly web UI or directly through smart contracts, giving both regular users and developers flexible options for managing multisig wallets.
+
+### Using Safe's Web App
+
+Use Safe’s intuitive web app to easily propose, review, and execute multisig transactions — no coding required!
+
+<Card title="Story Safe" href="https://safe.story.foundation/welcome" horizontal icon="vault">
+
+Go to the web app and try it out.
+
+</Card>
+
+### Smart Contract Integration
+
+For direct interaction with Safe's smart contracts, see the official documentation for technical guidance and examples to build or automate Safe workflows.
+
+<Card title="Safe Docs" href="https://docs.safe.global/home/what-is-safe" horizontal icon="book">
+
+Check out Safe's documentation to learn more.
+
+</Card>
+
+
 # Additional Resources
 
 # Additional Resources
