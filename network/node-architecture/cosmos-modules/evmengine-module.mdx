@@ -96,7 +96,7 @@ message Params {
 
 At each block, if the node is the proposer, ABCI2 triggers `PrepareProposal` which
 
-1. Loads staking & reward withdrawals from the [evmstaking](./evmstaking-module) module.
+1. Loads staking & reward withdrawals from the [evmstaking](/network/node-architecture/cosmos-modules/evmstaking-module) module.
 2. Builds a valid EVM block.
    - If optimistic building: loads the optimistically built block.
    - Non-optimistic: requests and retrieves an EVM block from EL.
@@ -118,7 +118,7 @@ More specifically, the node processes the received `MsgExecutionPayload` data in
 2. Compare local stake & reward withdrawals with the received withdrawals data.
 3. Push the received execution payload to EL via the Engine API and wait for payload validation.
 4. Update the EL forkchoice to the execution payload's block hash.
-5. Process staking events using the [evmstaking](./evmstaking-module) module.
+5. Process staking events using the [evmstaking](/network/node-architecture/cosmos-modules/evmstaking-module) module.
 6. Process upgrade events.
 7. Update the execution head to the execution payload (finalized block).
 
