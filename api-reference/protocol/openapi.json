@@ -1631,10 +1631,12 @@
         "type": "object",
         "properties": {
           "orderBy": {
-            "type": "string"
+            "type": "string",
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
@@ -2458,10 +2460,12 @@
         "type": "object",
         "properties": {
           "orderBy": {
-            "type": "string"
+            "type": "string",
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
@@ -2539,10 +2543,12 @@
             }
           },
           "orderBy": {
-            "type": "string"
+            "type": "string",
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
@@ -2618,10 +2624,12 @@
             }
           },
           "orderBy": {
-            "type": "string"
+            "type": "string",
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
@@ -2688,10 +2696,12 @@
         "type": "object",
         "properties": {
           "orderBy": {
-            "type": "string"
+            "type": "string",
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
@@ -2735,10 +2745,12 @@
         "type": "object",
         "properties": {
           "orderBy": {
-            "type": "string"
+            "type": "string",
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
@@ -2797,10 +2809,12 @@
             }
           },
           "orderBy": {
-            "type": "string"
+            "type": "string",
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
@@ -2868,10 +2882,12 @@
         "type": "object",
         "properties": {
           "orderBy": {
-            "type": "string"
+            "type": "string",
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
@@ -2915,10 +2931,12 @@
         "type": "object",
         "properties": {
           "orderBy": {
-            "type": "string"
+            "type": "string",
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
@@ -2959,10 +2977,12 @@
         "type": "object",
         "properties": {
           "orderBy": {
-            "type": "string"
+            "type": "string",
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
@@ -3003,10 +3023,12 @@
         "type": "object",
         "properties": {
           "orderBy": {
-            "type": "string"
+            "type": "string",
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
@@ -3053,10 +3075,12 @@
         "type": "object",
         "properties": {
           "orderBy": {
-            "type": "string"
+            "type": "string",
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
@@ -3097,10 +3121,12 @@
         "type": "object",
         "properties": {
           "orderBy": {
-            "type": "string"
+            "type": "string",
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
@@ -3153,10 +3179,12 @@
         "type": "object",
         "properties": {
           "orderBy": {
-            "type": "string"
+            "type": "string",
+            "enum": ["id", "blockNumber", "ipId", "resourceType"]
           },
           "orderDirection": {
-            "type": "string"
+            "type": "string",
+            "enum": ["asc", "desc"]
           },
           "pagination": {
             "type": "object",
