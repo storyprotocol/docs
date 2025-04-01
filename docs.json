@@ -283,9 +283,7 @@
             "groups": [
               {
                 "group": "Get Started",
-                "pages": [
-                  "sdk-reference/overview"
-                ]
+                "pages": ["sdk-reference/overview"]
               },
               {
                 "group": "SDK Reference",
@@ -309,9 +307,7 @@
             "groups": [
               {
                 "group": "Get Started",
-                "pages": [
-                  "sdk-reference/python/overview"
-                ]
+                "pages": ["sdk-reference/python/overview"]
               },
               {
                 "group": "SDK Reference",
@@ -329,9 +325,7 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": [
-              "smart-contract-reference/overview"
-            ]
+            "pages": ["smart-contract-reference/overview"]
           },
           {
             "group": "Smart Contract Reference",
@@ -356,9 +350,7 @@
               },
               {
                 "group": "Dispute",
-                "pages": [
-                  "smart-contract-reference/dispute/disputemodule"
-                ]
+                "pages": ["smart-contract-reference/dispute/disputemodule"]
               },
               {
                 "group": "Registry",
@@ -504,9 +496,7 @@
             "groups": [
               {
                 "group": "Consensus Client API Overview",
-                "pages": [
-                  "api-reference/consensus-client/introduction"
-                ]
+                "pages": ["api-reference/consensus-client/introduction"]
               },
               {
                 "group": "Endpoints",
@@ -521,9 +511,7 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": [
-              "governance"
-            ]
+            "pages": ["governance"]
           }
         ]
       }
@@ -1022,5 +1010,8 @@
       "source": "/reference/blockscout-api",
       "destination": "/api-reference/blockscout-api"
     }
-  ]
+  ],
+  "contextual": {
+    "options": ["copy", "view", "chatgpt", "claude"]
+  }
 }
