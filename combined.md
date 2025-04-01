@@ -3871,6 +3871,8 @@ ipAccount.executeWithSig(
 
 # "Overview"
 
+<CardGroup cols={2}>
+
 <Card
   title="Step-by-Step Guide"
   icon="house"
@@ -3879,6 +3881,16 @@ ipAccount.executeWithSig(
   Learn our smart contracts through a series of tutorials with the Smart
   Contract Guide.
 </Card>
+
+<Card
+  title="Deployed Protocol Addresses"
+  icon="gear"
+  href="/developers/deployed-smart-contracts"
+>
+  All of the deployed protocol addresses for **testnet** and **mainnet**.
+</Card>
+
+</CardGroup>
 
 <Warning>
   Do not use `RANDAO` for pseudo-randomness, instead use onchain VRF (Pyth or
