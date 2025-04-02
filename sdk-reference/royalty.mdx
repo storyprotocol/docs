@@ -30,6 +30,12 @@ Parameters:
 - `request.token`: The token to use to pay the royalties.
 - `request.amount`: The amount to pay.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+- `request.wipOptions`: \[Optional]
+  - `request.wipOptions.useMulticallWhenPossible`: \[Optional] Use multicall to batch the WIP calls into one transaction when possible. **Default: true**
+  - `request.wipOptions.enableAutoWrapIp`: \[Optional] By default IP is converted to WIP if the current WIP balance does not cover the fees. Set this to `false` to disable this behavior. **Default: true**
+  - `request.wipOptions.enableAutoApprove`: \[Optional] Automatically approve WIP usage when WIP is needed but current allowance is not sufficient. Set this to `false` to disable this behavior. **Default: true**
+- `request.erc20Options`: \[Optional]
+  - `request.erc20Options.enableAutoApprove`: \[Optional] Automatically approve ERC20 usage when ERC20 is needed but current allowance is not sufficient. Set this to `false` to disable this behavior. **Default: true**
 
 <CodeGroup>
 
@@ -73,6 +79,7 @@ export type PayRoyaltyOnBehalfRequest = {
   token: Address;
   amount: TokenAmountInput;
 } & WithTxOptions &
+  WithERC20Options &
   WithWipOptions;
 ```
 
