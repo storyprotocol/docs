@@ -109,7 +109,6 @@
                 "pages": [
                   "concepts/ip-asset/overview",
                   "concepts/ip-asset/ip-account",
-                  "concepts/ip-asset/ipa-metadata-standard",
                   "concepts/ip-asset/ipa-modifications"
                 ]
               },
@@ -149,8 +148,14 @@
                     ]
                   },
                   "concepts/grouping-module",
-                  "concepts/modules/view-module",
-                  "concepts/modules/how-to-create-and-register-modules"
+                  {
+                    "group": "Metadata Module",
+                    "icon": "eyes",
+                    "pages": [
+                      "concepts/metadata-module",
+                      "concepts/ip-asset/ipa-metadata-standard"
+                    ]
+                  }
                 ]
               },
               "concepts/hooks",
@@ -372,7 +377,8 @@
               {
                 "group": "Metadata",
                 "pages": [
-                  "smart-contract-reference/metadata/coremetadatamodule"
+                  "smart-contract-reference/metadata/coremetadatamodule",
+                  "smart-contract-reference/metadata/coremetadataviewmodule"
                 ]
               }
             ]
