@@ -1252,6 +1252,228 @@ Returns the total allocated reward share of the group.
 - `uint256`: The total allocated reward share of the group.
 
 
+# "CoreMetadataViewModule"
+
+The CoreMetadataViewModule is a view module that provides read-only access to core metadata of IP assets within Story. It retrieves metadata information such as metadataURI, metadataHash, NFT token URI, and registration date from the IP assets.
+
+## State Variables
+
+### name
+
+```solidity
+string public constant override name = CORE_METADATA_VIEW_MODULE_KEY
+```
+
+Returns the name of the module.
+
+### IP_ASSET_REGISTRY
+
+```solidity
+address public immutable IP_ASSET_REGISTRY
+```
+
+The address of the IP Asset Registry contract.
+
+### MODULE_REGISTRY
+
+```solidity
+address public immutable MODULE_REGISTRY
+```
+
+The address of the Module Registry contract.
+
+### coreMetadataModule
+
+```solidity
+address public coreMetadataModule
+```
+
+The address of the CoreMetadataModule contract.
+
+## Functions
+
+### constructor
+
+```solidity
+constructor(address ipAssetRegistry, address moduleRegistry)
+```
+
+Initializes the CoreMetadataViewModule contract.
+
+**Parameters:**
+
+- `ipAssetRegistry`: The address of the IP Asset Registry contract.
+- `moduleRegistry`: The address of the Module Registry contract.
+
+### updateCoreMetadataModule
+
+```solidity
+function updateCoreMetadataModule() external
+```
+
+Updates the address of the CoreMetadataModule used by this view module by retrieving it from the ModuleRegistry.
+
+### getCoreMetadata
+
+```solidity
+function getCoreMetadata(address ipId) external view returns (CoreMetadata memory)
+```
+
+Retrieves all core metadata of the IP asset.
+
+**Parameters:**
+
+- `ipId`: The address of the IP asset.
+
+**Returns:**
+
+- `CoreMetadata`: A struct containing all core metadata of the IP asset.
+
+### getMetadataURI
+
+```solidity
+function getMetadataURI(address ipId) public view returns (string memory)
+```
+
+Retrieves the metadataURI of the IP asset set by CoreMetadataModule.
+
+**Parameters:**
+
+- `ipId`: The address of the IP asset.
+
+**Returns:**
+
+- `string`: The metadataURI of the IP asset.
+
+### getMetadataHash
+
+```solidity
+function getMetadataHash(address ipId) public view returns (bytes32)
+```
+
+Retrieves the metadata hash of the IP asset set by CoreMetadataModule.
+
+**Parameters:**
+
+- `ipId`: The address of the IP asset.
+
+**Returns:**
+
+- `bytes32`: The metadata hash of the IP asset.
+
+### getRegistrationDate
+
+```solidity
+function getRegistrationDate(address ipId) public view returns (uint256)
+```
+
+Retrieves the registration date of the IP asset from IPAssetRegistry.
+
+**Parameters:**
+
+- `ipId`: The address of the IP asset.
+
+**Returns:**
+
+- `uint256`: The registration date of the IP asset.
+
+### getNftTokenURI
+
+```solidity
+function getNftTokenURI(address ipId) public view returns (string memory)
+```
+
+Retrieves the TokenURI of NFT to which the IP asset is bound, preferring the TokenURI from CoreMetadataModule if available.
+
+**Parameters:**
+
+- `ipId`: The address of the IP asset.
+
+**Returns:**
+
+- `string`: The NFT TokenURI bound to the IP asset.
+
+### getNftMetadataHash
+
+```solidity
+function getNftMetadataHash(address ipId) public view returns (bytes32)
+```
+
+Retrieves the NFT metadata hash of the IP asset set by CoreMetadataModule.
+
+**Parameters:**
+
+- `ipId`: The address of the IP asset.
+
+**Returns:**
+
+- `bytes32`: The NFT metadata hash of the IP asset.
+
+### getOwner
+
+```solidity
+function getOwner(address ipId) public view returns (address)
+```
+
+Retrieves the owner of the IP asset.
+
+**Parameters:**
+
+- `ipId`: The address of the IP asset.
+
+**Returns:**
+
+- `address`: The address of the owner of the IP asset.
+
+### getJsonString
+
+```solidity
+function getJsonString(address ipId) external view returns (string memory)
+```
+
+Generates a JSON string formatted according to the standard NFT metadata schema for the IP asset, including all relevant metadata fields. This function consolidates metadata from both IPAssetRegistry and CoreMetadataModule, with "NFT TokenURI" from CoreMetadataModule taking precedence.
+
+**Parameters:**
+
+- `ipId`: The address of the IP asset.
+
+**Returns:**
+
+- `string`: A base64-encoded JSON string representing all metadata of the IP asset.
+
+### isSupported
+
+```solidity
+function isSupported(address ipAccount) external view returns (bool)
+```
+
+Checks whether the view module is supported for the given IP account.
+
+**Parameters:**
+
+- `ipAccount`: The address of the IP account.
+
+**Returns:**
+
+- `bool`: True if the view module is supported, false otherwise.
+
+### supportsInterface
+
+```solidity
+function supportsInterface(bytes4 interfaceId) public view virtual override(BaseModule, IERC165) returns (bool)
+```
+
+Implements the IERC165 interface.
+
+**Parameters:**
+
+- `interfaceId`: The interface identifier.
+
+**Returns:**
+
+- `bool`: True if the contract supports the interface, false otherwise.
+
+
 # "CoreMetadataModule"
 
 The CoreMetadataModule manages the core metadata for IP assets within Story. It allows setting and updating metadata attributes for IP assets, with the ability to freeze metadata to prevent further changes.
@@ -5489,7 +5711,7 @@ For more information on filing a dispute on-chain, check out the [❌ Dispute Mo
 | **Associated Docs** | [License Token](/concepts/licensing-module/license-token)                                                                                                                                                                                                                                                                 | [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault)                                                                                                                                                    | [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault)                                                                                                       |
 
 
-# Grouping Module
+# 👥 Grouping Module
 
 The Grouping Module enables the creation and management of group IP Assets, supporting a royalty pool for the group.
 
@@ -5924,6 +6146,122 @@ This uses the `mintAndRegisterIpAssetWithPilTerms` method found [here](/sdk-refe
 Documentation coming soon. If you have questions in the meantime, ask in the [Builder's Discord](https://discord.gg/storybuilders).
 
 </Warning>
+
+
+# 👀 Metadata Module
+
+The Metadata Module enables the creation, management, and retrieval of metadata for IP Assets within Story. It consists of two main components: the CoreMetadataModule for writing operations and the CoreMetadataViewModule for reading operations.
+
+<CardGroup cols={2}>
+  <Card
+    title="CoreMetadataModule.sol"
+    href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/metadata/CoreMetadataModule.sol"
+    icon="scroll"
+    color="#ccb092"
+  >
+    View the smart contract for the Core Metadata Module.
+  </Card>
+  <Card
+    title="CoreMetadataViewModule.sol"
+    href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/metadata/CoreMetadataViewModule.sol"
+    icon="eye"
+    color="#92ccb0"
+  >
+    View the smart contract for the Core Metadata View Module.
+  </Card>
+</CardGroup>
+
+## Metadata Structure
+
+The metadata for an IP Asset includes:
+
+- **metadataURI**: A URI pointing to the detailed metadata of the IP Asset
+- **metadataHash**: A hash of the metadata for verification purposes
+- **nftTokenURI**: A URI pointing to the metadata of the NFT associated with the IP Asset
+- **nftMetadataHash**: A hash of the NFT metadata for verification
+- **registrationDate**: When the IP Asset was registered
+- **owner**: The current owner of the IP Asset
+
+## CoreMetadataModule (Write Operations)
+
+`CoreMetadataModule.sol` is responsible for writing and updating metadata for IP Assets. It is **stateful** and provides the following key functionalities:
+
+- Setting and updating metadata URIs for IP Assets
+- Setting and updating NFT token URIs
+- Freezing metadata to make it immutable
+- Managing metadata hashes for verification
+
+The module stores metadata in the IP Asset's storage, making it accessible to other modules and applications.
+
+### Setting Metadata
+
+To set metadata for an IP Asset, the caller must have appropriate permissions. The CoreMetadataModule provides several functions for setting metadata:
+
+- `setMetadataURI`: Sets just the IP metadataURI and its hash
+- `updateNftTokenURI`: Updates the NFT token URI and its hash
+- `setAll`: Sets all metadata attributes at once
+
+Here is an example:
+
+```solidity
+// Set the metadata URI and hash
+coreMetadataModule.setMetadataURI(
+    ipAssetAddress,
+    "https://example.com/metadata/asset123",
+    keccak256("metadata content hash")
+);
+```
+
+### Freezing Metadata
+
+The CoreMetadataModule allows IP Asset owners to freeze metadata, making it immutable. Once frozen, the metadata cannot be changed, ensuring the permanence of the IP Asset's information.
+
+To freeze metadata:
+
+```solidity
+// Make the metadata immutable
+coreMetadataModule.freezeMetadata(ipAssetAddress);
+```
+
+You can check if metadata is frozen using:
+
+```solidity
+// Check if metadata is frozen
+bool isFrozen = coreMetadataModule.isMetadataFrozen(ipAssetAddress);
+```
+
+## CoreMetadataViewModule (Read Operations)
+
+`CoreMetadataViewModule.sol` is a read-only module that provides access to the metadata stored by the CoreMetadataModule. It follows the View Module pattern and offers these key functionalities:
+
+- Retrieving metadata URIs and hashes
+- Retrieving NFT token URIs and metadata hashes
+- Generating formatted JSON strings with all metadata attributes
+- Checking registration dates and ownership information
+
+### Retrieving Metadata
+
+The CoreMetadataViewModule provides various functions to retrieve metadata:
+
+- `getCoreMetadata`: Returns all metadata in a single struct
+- `getMetadataURI`: Returns just the metadata URI
+- `getNftTokenURI`: Returns the NFT token URI
+- `getJsonString`: Returns a formatted JSON string with all metadata
+
+Here is an example:
+
+```solidity
+// Get the metadata URI
+string memory uri = coreMetadataViewModule.getMetadataURI(ipAssetAddress);
+
+// Get all metadata in one call
+CoreMetadata memory metadata = coreMetadataViewModule.getCoreMetadata(ipAssetAddress);
+
+// Get a JSON representation of all metadata
+string memory jsonMetadata = coreMetadataViewModule.getJsonString(ipAssetAddress);
+```
+
+The Metadata Module provides a robust system for managing IP Asset metadata, ensuring that important information about intellectual property is properly recorded, accessible, and can be made immutable when needed.
 
 
 # IP Modifications & Restrictions
@@ -8124,6 +8462,7 @@ There are a few important modules, created by the Story team, to be aware of:
 | [💸 Royalty Module](/concepts/royalty-module)     | Responsible for handling royalty flow between parent & child IP Assets.                |
 | [❌ Dispute Module](/concepts/dispute-module)     | Responsible for handling the dispute of wrongfully registered or misbehaved IP Assets. |
 | [👥 Grouping Module](/concepts/grouping-module)   | Responsible for handling groups of IPAs.                                               |
+| [👀 Metadata Module](/concepts/metadata-module)   | Manage and view metadata for IP Assets.                                                |
 
 ## Base Module
 
@@ -8199,6 +8538,7 @@ We already have a few core modules:
 2. [💸 Royalty Module](/concepts/royalty-module): automate revenue flow between IPs, abiding by the negotiated revenue sharing in license terms
 3. [❌ Dispute Module](/concepts/dispute-module): facilitates the disputing and flagging of IP
 4. [👥 Grouping Module](/concepts/grouping-module): allows for IPs to be grouped together
+5. [👀 Metadata Module](/concepts/metadata-module): manage and view metadata for IP Assets
 
 ## [🗂️ Registry](/concepts/registry)
 
