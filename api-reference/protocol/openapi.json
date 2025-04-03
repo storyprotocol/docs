@@ -1737,6 +1737,9 @@
           "blockTimestamp": {
             "$ref": "#/components/schemas/big.Int"
           },
+          "counterEvidenceHash": {
+            "type": "string"
+          },
           "currentTag": {
             "type": "string"
           },
@@ -1757,6 +1760,9 @@
           },
           "initiator": {
             "type": "string"
+          },
+          "liveness": {
+            "$ref": "#/components/schemas/big.Int"
           },
           "logIndex": {
             "$ref": "#/components/schemas/big.Int"
@@ -1837,6 +1843,9 @@
           },
           "licenseTermsId": {
             "type": "string"
+          },
+          "licensingConfig": {
+            "$ref": "#/components/schemas/github_com_storyprotocol_protocol-api_api_internal_models_protocolv1.LicensingConfig"
           }
         }
       },
@@ -2114,6 +2123,35 @@
             "type": "string"
           },
           "prev": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_storyprotocol_protocol-api_api_internal_models_protocolv1.LicensingConfig": {
+        "type": "object",
+        "properties": {
+          "commercialRevShare": {
+            "type": "integer"
+          },
+          "disabled": {
+            "type": "boolean"
+          },
+          "expectGroupRewardPool": {
+            "type": "string"
+          },
+          "expectMinimumGroupRewardShare": {
+            "type": "integer"
+          },
+          "hookData": {
+            "type": "string"
+          },
+          "isSet": {
+            "type": "boolean"
+          },
+          "licensingHook": {
+            "type": "string"
+          },
+          "mintingFee": {
             "type": "string"
           }
         }
@@ -2481,6 +2519,9 @@
               "blockNumber": {
                 "type": "string"
               },
+              "blockNumberLte": {
+                "type": "string"
+              },
               "id": {
                 "type": "string"
               },
@@ -2536,7 +2577,7 @@
       "github_com_storyprotocol_protocol-api_api_internal_models_protocolv2.IPGroupEdgesQueryOptions": {
         "type": "object",
         "properties": {
-          "ipAssetIds": {
+          "ipIds": {
             "type": "array",
             "items": {
               "type": "string"
@@ -2605,6 +2646,12 @@
             "items": {
               "$ref": "#/components/schemas/github_com_storyprotocol_protocol-api_api_internal_models_protocolv2.IPGroupEdge"
             }
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
           },
           "next": {
             "type": "string"
