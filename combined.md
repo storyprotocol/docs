@@ -6203,7 +6203,7 @@ To set metadata for an IP Asset, the caller must have appropriate permissions. T
 
 Here is an example:
 
-```solidity
+```solidity solidity
 // Set the metadata URI and hash
 coreMetadataModule.setMetadataURI(
     ipAssetAddress,
@@ -6218,14 +6218,14 @@ The CoreMetadataModule allows IP Asset owners to freeze metadata, making it immu
 
 To freeze metadata:
 
-```solidity
+```solidity solidity
 // Make the metadata immutable
 coreMetadataModule.freezeMetadata(ipAssetAddress);
 ```
 
 You can check if metadata is frozen using:
 
-```solidity
+```solidity solidity
 // Check if metadata is frozen
 bool isFrozen = coreMetadataModule.isMetadataFrozen(ipAssetAddress);
 ```
@@ -6250,7 +6250,7 @@ The CoreMetadataViewModule provides various functions to retrieve metadata:
 
 Here is an example:
 
-```solidity
+```solidity solidity
 // Get the metadata URI
 string memory uri = coreMetadataViewModule.getMetadataURI(ipAssetAddress);
 
