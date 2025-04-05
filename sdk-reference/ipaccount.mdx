@@ -75,7 +75,7 @@ export type IPAccountExecuteRequest = {
   ipId: Address;
   to: Address;
   value: number;
-  data: Address;
+  data: Hex;
   txOptions?: TxOptions;
 };
 ```
@@ -114,7 +114,7 @@ Parameters:
 export type IPAccountExecuteWithSigRequest = {
   ipId: Address;
   to: Address;
-  data: Address;
+  data: Hex;
   signer: Address;
   deadline: number | bigint | string;
   signature: Address;

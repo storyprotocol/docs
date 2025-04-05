@@ -28,7 +28,7 @@ Parameters:
 - `request.targetTag`: The target tag of the dispute. See [dispute tags](https://docs.story.foundation/docs/dispute-module#dispute-tags). **Example: "IMPROPER_REGISTRATION"**
 - `request.cid`: Content Identifier (CID) for the dispute evidence. This should be obtained by uploading your dispute evidence (documents, images, etc.) to IPFS. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
 - `request.liveness`: The liveness is the time window (in seconds) in which a counter dispute can be presented (30days).
-- `request.bond`: **Minimum of 0.1**. The amount of wrapper IP that the dispute initiator pays upfront into a pool. To counter that dispute the opposite party of the dispute has to place a bond of the same amount. The winner of the dispute gets the original bond back + 50% of the other party bond. The remaining 50% of the loser party bond goes to the reviewer.
+- `request.bond`: [Optional] **If not specified, it defaults to the minimum bond value**. The amount of wrapper IP that the dispute initiator pays upfront into a pool. To counter that dispute the opposite party of the dispute has to place a bond of the same amount. The winner of the dispute gets the original bond back + 50% of the other party bond. The remaining 50% of the loser party bond goes to the reviewer.
 - `request.wipOptions`: \[Optional]
   - `request.wipOptions.enableAutoWrapIp`: \[Optional]By default IP is converted to WIP if the current WIP balance does not cover the fees. Set this to `false` to disable this behavior. **Default: true**
   - `request.wipOptions.enableAutoApprove`: \[Optional]Automatically approve WIP usage when WIP is needed but current allowance is not sufficient. Set this to `false` to disable this behavior. **Default: true**
@@ -62,7 +62,7 @@ export type RaiseDisputeRequest = WithTxOptions & {
   cid: string;
   targetTag: string;
   liveness: bigint | number | string;
-  bond: bigint | number | string;
+  bond?: bigint | number | string;
   wipOptions?: {
     enableAutoWrapIp?: boolean;
     enableAutoApprove?: boolean;
@@ -91,7 +91,7 @@ Cancels an ongoing dispute
 Parameters:
 
 - `request.disputeId`: The ID of the dispute to be cancelled.
-- `request.data`: \[Optional] Additional data used in the cancellation process.
+- `request.data`: \[Optional] Additional data used in the cancellation process. **Defaults to "0x"**.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
@@ -106,7 +106,7 @@ const response = await client.dispute.cancelDispute({
 ```typescript Request Type
 export type CancelDisputeRequest = {
   disputeId: number | string | bigint;
-  data?: Address;
+  data?: Hex;
   txOptions?: TxOptions;
 };
 ```
@@ -131,7 +131,7 @@ Resolves a dispute after it has been judged
 Parameters:
 
 - `request.disputeId`: The ID of the dispute to be resolved.
-- `request.data`: The data to resolve the dispute.
+- `request.data`: The data to resolve the dispute. **Defaults to "0x"**.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
@@ -147,7 +147,7 @@ const response = await client.dispute.resolveDispute({
 ```typescript Request Type
 export type ResolveDisputeRequest = {
   disputeId: number | string | bigint;
-  data: Address;
+  data: Hex;
   txOptions?: TxOptions;
 };
 ```
