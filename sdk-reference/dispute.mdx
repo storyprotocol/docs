@@ -131,7 +131,7 @@ Resolves a dispute after it has been judged
 Parameters:
 
 - `request.disputeId`: The ID of the dispute to be resolved.
-- `request.data`: The data to resolve the dispute. **Defaults to "0x"**.
+- `request.data`: \[Optional] The data to resolve the dispute. **Defaults to "0x"**.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
@@ -147,7 +147,7 @@ const response = await client.dispute.resolveDispute({
 ```typescript Request Type
 export type ResolveDisputeRequest = {
   disputeId: number | string | bigint;
-  data: Hex;
+  data?: Hex;
   txOptions?: TxOptions;
 };
 ```
