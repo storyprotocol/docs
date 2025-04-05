@@ -9114,15 +9114,15 @@ export type AttachLicenseTermsResponse = {
 
 ### mintLicenseTokens
 
-Mints license tokens for the license terms attached to an IP.
+Mints [License Tokens](/concepts/licensing-module/license-token) that give permission to use the IP Asset based on [License Terms](/concepts/licensing-module/license-terms). The license tokens are minted to the `receiver`.
 
-The license tokens are minted to the receiver.
+Note that a license token can only be minted if the `licenseTermsId` are already attached to the IP Asset, making it a publicly available license. The IP owner can, however, mint a [private license](/concepts/licensing-module/license-token#private-licenses) by minting a license token with a `licenseTermsId` that is not attached to the IP Asset.
 
-The license terms must be attached to the IP before calling this function.
+<Warning>
 
-IP owners can mint license tokens for their IPs for arbitrary license terms without attaching the license terms to IP.
+It might require the caller pay a minting fee, depending on the license terms or configured by the IP owner. The minting fee is paid in the minting fee token specified in the license terms or configured by the IP owner. IP owners can configure the minting fee of their IPs or configure the minting fee module to determine the minting fee.
 
-It might require the caller pay the minting fee, depending on the license terms or configured by the iP owner. The minting fee is paid in the minting fee token specified in the license terms or configured by the IP owner. IP owners can configure the minting fee of their IPs or configure the minting fee module to determine the minting fee.
+</Warning>
 
 | Method              | Type                                                                        |
 | ------------------- | --------------------------------------------------------------------------- |
@@ -9941,7 +9941,7 @@ Parameters:
 - `request.targetTag`: The target tag of the dispute. See [dispute tags](https://docs.story.foundation/docs/dispute-module#dispute-tags). **Example: "IMPROPER_REGISTRATION"**
 - `request.cid`: Content Identifier (CID) for the dispute evidence. This should be obtained by uploading your dispute evidence (documents, images, etc.) to IPFS. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
 - `request.liveness`: The liveness is the time window (in seconds) in which a counter dispute can be presented (30days).
-- `request.bond`: **Minimum of 0.1**. The amount of wrapper IP that the dispute initiator pays upfront into a pool. To counter that dispute the opposite party of the dispute has to place a bond of the same amount. The winner of the dispute gets the original bond back + 50% of the other party bond. The remaining 50% of the loser party bond goes to the reviewer.
+- `request.bond`: [Optional] **If not specified, it defaults to the minimum bond value**. The amount of wrapper IP that the dispute initiator pays upfront into a pool. To counter that dispute the opposite party of the dispute has to place a bond of the same amount. The winner of the dispute gets the original bond back + 50% of the other party bond. The remaining 50% of the loser party bond goes to the reviewer.
 - `request.wipOptions`: \[Optional]
   - `request.wipOptions.enableAutoWrapIp`: \[Optional]By default IP is converted to WIP if the current WIP balance does not cover the fees. Set this to `false` to disable this behavior. **Default: true**
   - `request.wipOptions.enableAutoApprove`: \[Optional]Automatically approve WIP usage when WIP is needed but current allowance is not sufficient. Set this to `false` to disable this behavior. **Default: true**
@@ -9975,7 +9975,7 @@ export type RaiseDisputeRequest = WithTxOptions & {
   cid: string;
   targetTag: string;
   liveness: bigint | number | string;
-  bond: bigint | number | string;
+  bond?: bigint | number | string;
   wipOptions?: {
     enableAutoWrapIp?: boolean;
     enableAutoApprove?: boolean;
@@ -10004,7 +10004,7 @@ Cancels an ongoing dispute
 Parameters:
 
 - `request.disputeId`: The ID of the dispute to be cancelled.
-- `request.data`: \[Optional] Additional data used in the cancellation process.
+- `request.data`: \[Optional] Additional data used in the cancellation process. **Defaults to "0x"**.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
@@ -10019,7 +10019,7 @@ const response = await client.dispute.cancelDispute({
 ```typescript Request Type
 export type CancelDisputeRequest = {
   disputeId: number | string | bigint;
-  data?: Address;
+  data?: Hex;
   txOptions?: TxOptions;
 };
 ```
@@ -10044,7 +10044,7 @@ Resolves a dispute after it has been judged
 Parameters:
 
 - `request.disputeId`: The ID of the dispute to be resolved.
-- `request.data`: The data to resolve the dispute.
+- `request.data`: The data to resolve the dispute. **Defaults to "0x"**.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
@@ -10060,7 +10060,7 @@ const response = await client.dispute.resolveDispute({
 ```typescript Request Type
 export type ResolveDisputeRequest = {
   disputeId: number | string | bigint;
-  data: Address;
+  data: Hex;
   txOptions?: TxOptions;
 };
 ```
@@ -10268,7 +10268,7 @@ Parameters:
   - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
-- `request.deadline`: \[Optional] The deadline for the signature in milliseconds.
+- `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
@@ -10291,21 +10291,6 @@ const response = await client.ipAsset.register({
 console.log(
   `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
 );
-```
-
-```python Python
-metadata = {
-  'ip_metadata_uri': "test-uri",
-  'ip_metadata_hash': web3.to_hex(web3.keccak(text="test-ip-metadata-hash")),
-  'nft_metadata_uri': "test-uri",
-  'nft_metadata_hash': web3.to_hex(web3.keccak(text="test-nft-metadata-hash"))
-}
-
-response = story_client.IPAsset.register(
-  nft_contract="0x041B4F29183317Fd352AE57e331154b73F8a1D73",
-  token_id="12",
-  ip_metadata=metadata
-)
 ```
 
 ```typescript Request Type
@@ -10374,17 +10359,6 @@ console.log(
 );
 ```
 
-```python Python
-response = story_client.IPAsset.registerDerivative(
-  child_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
-  parent_ip_ids=["0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba"],
-  license_terms_ids=["5"],
-  max_minting_fee=0, # disabled
-  max_rts=100_000_000, # default
-  max_revenue_share=100 # default
-)
-```
-
 ```typescript Request Type
 export type RegisterDerivativeRequest = {
   txOptions?: TxOptions;
@@ -10444,14 +10418,6 @@ const response = await client.ipAsset.registerDerivativeWithLicenseTokens({
 console.log(
   `Derivative IPA linked to parent at transaction hash ${response.txHash}`
 );
-```
-
-```python Python
-response = story_client.IPAsset.registerDerivativeWithLicenseTokens(
-  child_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
-  license_token_ids=["5"],
-  max_rts=100_000_000 # default
-)
 ```
 
 ```typescript Request Type
@@ -10546,56 +10512,6 @@ console.log(`
 `);
 ```
 
-```python Python
-commercial_remix_terms = {
-  "transferable": True,
-  "royalty_policy": "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", # RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
-  "default_minting_fee": 0,
-  "expiration": 0,
-  "commercial_use": True,
-  "commercial_attribution": True,
-  "commercializer_checker": "0x0000000000000000000000000000000000000000",
-  "commercializer_checker_data": "0x0000000000000000000000000000000000000000",
-  "commercial_rev_share": 50,
-  "commercial_rev_ceiling": 0,
-  "derivatives_allowed": True,
-  "derivatives_attribution": True,
-  "derivatives_approval": False,
-  "derivatives_reciprocal": True,
-  "derivative_rev_ceiling": 0,
-  "currency": "0x1514000000000000000000000000000000000000", # $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
-  "uri": "",
-}
-
-licensing_config = {
-  "is_set": False,
-  "minting_fee": 0,
-  "licensing_hook": "0x0000000000000000000000000000000000000000",
-  "hook_data": "0x0000000000000000000000000000000000000000",
-  "commercial_rev_share": 0,
-  "disabled": False,
-  "expect_minimum_group_reward_share": 0,
-  "expect_group_reward_pool": "0x0000000000000000000000000000000000000000",
-}
-
-metadata = {
-  'ip_metadata_uri': "test-uri",
-  'ip_metadata_hash': web3.to_hex(web3.keccak(text="test-ip-metadata-hash")),
-  'nft_metadata_uri': "test-uri",
-  'nft_metadata_hash': web3.to_hex(web3.keccak(text="test-nft-metadata-hash"))
-}
-
-response = story_client.IPAsset.mintAndRegisterIpAssetWithPilTerms(
-  spg_nft_contract="0xfE265a91dBe911db06999019228a678b86C04959",
-  terms=[{
-    "terms": commercial_remix_terms,
-    "licensingConfig": licensing_config
-  }],
-  allow_duplicates=True,
-  ip_metadata=metadata
-)
-```
-
 ```typescript Request Type
 export type MintAndRegisterIpAssetWithPilTermsRequest = {
   spgNftContract: Address;
@@ -10656,7 +10572,7 @@ Parameters:
   - `request.ipMetadata.ipMetadataHash`: \[Optional] The hash of the metadata for the IP.
   - `request.ipMetadata.nftMetadataURI`: \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash`: \[Optional] The hash of the metadata for the IP NFT.
-- `request.deadline`: \[Optional] The deadline for the signature in milliseconds.
+- `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
@@ -10755,7 +10671,7 @@ Parameters:
   - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
-- `request.deadline`: \[Optional] The deadline for the signature in milliseconds.
+- `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
@@ -10791,11 +10707,6 @@ export type RegisterIpAndMakeDerivativeRequest = {
   tokenId: string | number | bigint;
   deadline?: string | number | bigint;
   derivData: DerivativeData;
-  sigMetadataAndRegister?: {
-    signer: Address;
-    deadline: bigint | string | number;
-    signature: Hex;
-  };
 } & IpMetadataAndTxOptions &
   WithWipOptions;
 
@@ -11040,7 +10951,7 @@ Parameters:
 - `request.licenseTermsData[]`: The array of license terms to be attached.
   - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
   - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/dev/packages/core-sdk/src/utils/validateLicenseConfig.ts).
-- `request.deadline`: \[Optional] The deadline for the signature in milliseconds, default is 1000s.
+- `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
@@ -11201,7 +11112,7 @@ Parameters:
   - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
-- `request.deadline`: \[Optional] The deadline for the signature in milliseconds, default is 1000ms.
+- `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Default is 1000**.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
@@ -12088,7 +11999,7 @@ export type IPAccountExecuteRequest = {
   ipId: Address;
   to: Address;
   value: number;
-  data: Address;
+  data: Hex;
   txOptions?: TxOptions;
 };
 ```
@@ -12127,7 +12038,7 @@ Parameters:
 export type IPAccountExecuteWithSigRequest = {
   ipId: Address;
   to: Address;
-  data: Address;
+  data: Hex;
   signer: Address;
   deadline: number | bigint | string;
   signature: Address;
@@ -17969,6 +17880,12 @@ Let's say that IP Asset (`ipId = 0x01`) has License Terms (`licenseTermdId = 10`
 Be mindful that some IP Assets may have license terms attached that require the user minting the license to pay a `defaultMintingFee`. You can see an example of that in the [TypeScript Tutorial](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercialCustom.ts).
 
 </Warning>
+
+<Note>
+ 
+  Note that a license token can only be minted if the `licenseTermsId` are already attached to the IP Asset, making it a publicly available license. The IP owner can, however, mint a [private license](/concepts/licensing-module/license-token#private-licenses) by minting a license token with a `licenseTermsId` that is not attached to the IP Asset.
+
+</Note>
 
 <Info>
   Associated Docs:
