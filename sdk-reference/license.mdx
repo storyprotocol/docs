@@ -77,15 +77,15 @@ export type AttachLicenseTermsResponse = {
 
 ### mintLicenseTokens
 
-Mints license tokens for the license terms attached to an IP.
+Mints [License Tokens](/concepts/licensing-module/license-token) that give permission to use the IP Asset based on [License Terms](/concepts/licensing-module/license-terms). The license tokens are minted to the `receiver`.
 
-The license tokens are minted to the receiver.
+Note that a license token can only be minted if the `licenseTermsId` are already attached to the IP Asset, making it a publicly available license. The IP owner can, however, mint a [private license](/concepts/licensing-module/license-token#private-licenses) by minting a license token with a `licenseTermsId` that is not attached to the IP Asset.
 
-The license terms must be attached to the IP before calling this function.
+<Warning>
 
-IP owners can mint license tokens for their IPs for arbitrary license terms without attaching the license terms to IP.
+It might require the caller pay a minting fee, depending on the license terms or configured by the IP owner. The minting fee is paid in the minting fee token specified in the license terms or configured by the IP owner. IP owners can configure the minting fee of their IPs or configure the minting fee module to determine the minting fee.
 
-It might require the caller pay the minting fee, depending on the license terms or configured by the iP owner. The minting fee is paid in the minting fee token specified in the license terms or configured by the IP owner. IP owners can configure the minting fee of their IPs or configure the minting fee module to determine the minting fee.
+</Warning>
 
 | Method              | Type                                                                        |
 | ------------------- | --------------------------------------------------------------------------- |
