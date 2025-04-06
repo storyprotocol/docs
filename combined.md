@@ -9131,10 +9131,10 @@ It might require the caller pay a minting fee, depending on the license terms or
 
 </Warning>
 
-<Frame caption="A diagram showing what happens when a License Token is minted.">
+<Frame>
   <img
-    src="/images/concepts/license-token-diagram.png"
-    alt="A diagram showing what happens when a License Token is minted."
+    src="/images/concepts/private-license.png"
+    alt="A diagram showing how private licenses are minted."
   />
 </Frame>
 
