@@ -8637,6 +8637,13 @@ Once License Terms are attached to an IP Asset, it becomes public so that anyone
 
 ## Private Licenses
 
+<Frame>
+  <img
+    src="/images/concepts/private-license.png"
+    alt="A diagram showing how private licenses are minted."
+  />
+</Frame>
+
 In order to mint a private License Token, the owner of a root IP Asset can issue License Tokens that have terms **not yet attached to the IP Asset itself**. It is important to also note that derivative IP Assets cannot issue private licenses because it is restricted to only issue licenses of its inherited terms.
 
 ## Transferability of the License Token
@@ -9123,6 +9130,13 @@ Note that a license token can only be minted if the `licenseTermsId` are already
 It might require the caller pay a minting fee, depending on the license terms or configured by the IP owner. The minting fee is paid in the minting fee token specified in the license terms or configured by the IP owner. IP owners can configure the minting fee of their IPs or configure the minting fee module to determine the minting fee.
 
 </Warning>
+
+<Frame caption="A diagram showing what happens when a License Token is minted.">
+  <img
+    src="/images/concepts/license-token-diagram.png"
+    alt="A diagram showing what happens when a License Token is minted."
+  />
+</Frame>
 
 | Method              | Type                                                                        |
 | ------------------- | --------------------------------------------------------------------------- |
