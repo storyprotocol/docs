@@ -53,8 +53,8 @@ struct LicensingConfig {
 
 What do some of these mean?
 
-1. `isSet` - if this is false, the license config is completely ignored
-2. `disabled` - if this is true, then no licenses can be minted and no more derivatives can be attached at all
+1. `isSet` - if this is false, the whole licensing config is completely ignored. So for example, if the licensing config has `mintingFee == 10` and `disabled == true`, but the `isSet == false`, the `mintingFee` and `disabled` will be completely ignored.
+2. `disabled` - if this is true, then no licenses can be minted and no more derivatives can be attached at all for the terms the config is attached to.
 
 Fields like the `mintingFee` and `commercialRevShare` overwrite their duplicate in the license terms themselves. **A benefit of this is that derivative IP Assets, which normally cannot change their license terms, are able to overwrite certain fields.**
 
