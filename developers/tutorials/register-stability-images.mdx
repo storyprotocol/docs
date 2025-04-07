@@ -353,7 +353,7 @@ Luckily, we can use the `mintAndRegisterIp` function to mint an NFT and register
 
 This function needs an SPG NFT Contract to mint from. For simplicity, you can use a public collection we have created for you on Aeneid testnet: `0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc`.
 
-<Accordion title="Creating your own custom ERC-721 collection" icon="info-circle">
+<Accordion title="Creating your own custom ERC-721 collection" icon="pen-circle">
   Using the public collection we provide for you is fine, but when you do this for real, you should make your own NFT Collection for your IPs. You can do this in 2 ways:
 
 1. Deploy a contract that implements the [ISPGNFT](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/interfaces/ISPGNFT.sol) interface, or use the SDK's [createNFTCollection](/sdk-reference/nftclient#createnftcollection) function (shown below) to do it for you. This will give you your own SPG NFT Collection that only you can mint from.

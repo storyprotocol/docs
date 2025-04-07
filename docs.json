@@ -543,8 +543,8 @@
     }
   },
   "logo": {
-    "light": "/logo/Storyblack.png",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png"
   },
   "navbar": {
     "links": [
