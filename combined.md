@@ -8639,7 +8639,7 @@ Once License Terms are attached to an IP Asset, it becomes public so that anyone
 
 <Frame>
   <img
-    src="/images/concepts/private-license.png"
+    src="/images/concepts/private-licenses.png"
     alt="A diagram showing how private licenses are minted."
   />
 </Frame>
@@ -9133,7 +9133,7 @@ It might require the caller pay a minting fee, depending on the license terms or
 
 <Frame>
   <img
-    src="/images/concepts/private-license.png"
+    src="/images/concepts/private-licenses.png"
     alt="A diagram showing how private licenses are minted."
   />
 </Frame>
