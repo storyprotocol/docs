@@ -11693,7 +11693,7 @@ Parameters:
 - `spg_nft_contract`: The address of the NFT collection.
 - `terms`: The array of license terms to be attached. ⚠️ **This function will fail if you pass in an empty array.**
   - `terms[].terms`: The license terms data. See the Python example below for the structure.
-  - `terms[].licensingConfig`: [Optional] The licensing configuration. See the Python example below for the structure.
+  - `terms[].licensing_config`: [Optional] The licensing configuration. See the Python example below for the structure.
 - `allow_duplicates`: [Optional] Set to true to allow minting IPs with the same NFT metadata. **Default: True**
 - `ip_metadata`: [Optional] The desired metadata for the newly minted NFT and newly registered IP.
   - `ip_metadata['ip_metadata_uri']`: [Optional] The URI of the metadata for the IP.
@@ -11748,7 +11748,7 @@ response = story_client.IPAsset.mintAndRegisterIpAssetWithPilTerms(
   spg_nft_contract="0xfE265a91dBe911db06999019228a678b86C04959",
   terms=[{
     "terms": commercial_remix_terms,
-    "licensingConfig": licensing_config
+    "licensing_config": licensing_config
   }],
   allow_duplicates=True,
   ip_metadata=metadata
@@ -11770,6 +11770,200 @@ tx_options: dict = None  # Optional: Transaction options
   "tokenId": int,  # The token ID of the minted NFT
   "txHash": str,  # The transaction hash
   "licenseTermsIds": list  # The IDs of the registered license terms
+}
+```
+
+</CodeGroup>
+
+
+# IP Account
+
+## IPAccountClient
+
+### Methods
+
+- setIpMetadata
+- execute
+- executeWithSig
+- transferErc20
+
+### setIpMetadata
+
+Sets the metadataURI for an IP asset.
+
+| Method          |
+| --------------- |
+| `setIpMetadata` |
+
+Parameters:
+
+- `ip_id`: The IP to set the metadata for.
+- `metadata_uri`: The metadataURI to set for the IP asset. Should be a URL pointing to metadata that fits the [IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard).
+- `metadata_hash`: The hash of metadata at metadataURI.
+- `tx_options`: \[Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+tx_hash = story_client.IPAccount.setIpMetadata(
+  ip_id="0x01",
+  metadata_uri="https://ipfs.io/ipfs/bafkreiardkgvkejqnnkdqp4pamkx2e5bs4lzus5trrw3hgmoa7dlbb6foe",
+  # example hash (not accurate)
+  metadata_hash="0x129f7dd802200f096221dd89d5b086e4bd3ad6eafb378a0c75e3b04fc375f997",
+)
+```
+
+```python Request Parameters
+ip_id: str  # The IP to set the metadata for
+metadata_uri: str  # The metadataURI to set for the IP asset. Should be a URL pointing to metadata that fits the [IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard)
+metadata_hash: str  # The hash of metadata at metadataURI
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "txHash": str  # The transaction hash
+}
+```
+
+</CodeGroup>
+
+### execute
+
+Executes a transaction from the IP Account.
+
+| Method    |
+| --------- |
+| `execute` |
+
+Parameters:
+
+- `ip_id`: The IP Id to get ip account.
+- `to`: The recipient of the transaction.
+- `value`: The amount of Ether to send.
+- `data`: The data to send along with the transaction.
+- `tx_options`: \[Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+response = story_client.IPAccount.execute(
+  ip_id="0x01",
+  to="0x1234567890123456789012345678901234567890",
+  value=1000000000000000000,  # 1 ETH
+  data="0x1234567890123456789012345678901234567890",
+)
+```
+
+```python Request Parameters
+ip_id: str  # The IP to set the metadata for
+to: str  # The recipient of the transaction
+value: int  # The amount of Ether to send
+data: str  # The data to send along with the transaction
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "txHash": str  # The transaction hash
+}
+```
+
+</CodeGroup>
+
+### executeWithSig
+
+Executes a transaction from the IP Account.
+
+| Method           |
+| ---------------- |
+| `executeWithSig` |
+
+Parameters:
+
+- `ip_id`: The IP to set the metadata for.
+- `to`: The recipient of the transaction.
+- `data`: The data to send along with the transaction.
+- `signer`: The signer of the transaction.
+- `deadline`: The deadline of the transaction signature.
+- `signature`: The signature of the transaction, EIP-712 encoded.
+- `value`: \[Optional] The amount of Ether to send. **Default: 0**
+- `tx_options`: \[Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+response = story_client.IPAccount.executeWithSig(
+  ip_id="0x01",
+  to="0x1234567890123456789012345678901234567890",
+  data="0x1234567890123456789012345678901234567890",
+  signer="0x1234567890123456789012345678901234567890",
+  deadline=1000000000000000000,
+  signature="0x1234567890123456789012345678901234567890",
+  value=1000000000000000000,  # 1 ETH
+)
+```
+
+```python Request Parameters
+ip_id: str  # The IP to set the metadata for
+to: str  # The recipient of the transaction
+data: str  # The data to send along with the transaction
+signer: str  # The signer of the transaction
+deadline: int  # The deadline of the transaction signature
+signature: str  # The signature of the transaction, EIP-712 encoded
+value: int = 0  # Optional: The amount of Ether to send
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "txHash": str  # The transaction hash
+}
+```
+
+</CodeGroup>
+
+### transferErc20
+
+Transfers an ERC20 token from the IP Account.
+
+| Method          |
+| --------------- |
+| `transferErc20` |
+
+Parameters:
+
+- `ip_id`: The `ipId` of the account
+- `tokens`: The token info to transfer
+  - `tokens.address`: The address of the ERC20 token including WIP and standard ERC20.
+  - `tokens.amount`: The amount of tokens to transfer
+  - `tokens.target`: The address of the recipient.
+- `tx_options`: \[Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+response = story_client.IPAccount.transferERC20(
+  ip_id="0x01",
+  tokens=[
+    {
+        "address": "0x1514000000000000000000000000000000000000", # $WIP
+        "target": "0x02",
+        "amount": 1000000  # Equivalent to 0.001 ether
+    }
+  ]
+)
+```
+
+```python Request Parameters
+ip_id: str  # The IP to set the metadata for
+tokens: list  # The token info to transfer
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "txHash": str, # The transaction hash
 }
 ```
 
@@ -12002,7 +12196,6 @@ Parameters:
 - `request.ipId`: The Ip Id to get ip account.
 - `request.to`: The recipient of the transaction.
 - `request.value`: The amount of Ether to send.
-- `request.accountAddress`: The ipId to send.
 - `request.data`: The data to send along with the transaction.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
