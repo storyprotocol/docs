@@ -209,7 +209,7 @@ Parameters:
 - `spg_nft_contract`: The address of the NFT collection.
 - `terms`: The array of license terms to be attached. ⚠️ **This function will fail if you pass in an empty array.**
   - `terms[].terms`: The license terms data. See the Python example below for the structure.
-  - `terms[].licensingConfig`: [Optional] The licensing configuration. See the Python example below for the structure.
+  - `terms[].licensing_config`: [Optional] The licensing configuration. See the Python example below for the structure.
 - `allow_duplicates`: [Optional] Set to true to allow minting IPs with the same NFT metadata. **Default: True**
 - `ip_metadata`: [Optional] The desired metadata for the newly minted NFT and newly registered IP.
   - `ip_metadata['ip_metadata_uri']`: [Optional] The URI of the metadata for the IP.
@@ -264,7 +264,7 @@ response = story_client.IPAsset.mintAndRegisterIpAssetWithPilTerms(
   spg_nft_contract="0xfE265a91dBe911db06999019228a678b86C04959",
   terms=[{
     "terms": commercial_remix_terms,
-    "licensingConfig": licensing_config
+    "licensing_config": licensing_config
   }],
   allow_duplicates=True,
   ip_metadata=metadata
