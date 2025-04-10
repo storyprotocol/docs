@@ -19614,8 +19614,20 @@ Story Network is a purpose-built layer 1 blockchain achieving the best of EVM an
   Crypto Data Live-Streamed.
 </Card>
 
-  <Card title="Zettablock" href="https://zettablock.com/" icon="house" iconColor="#3c4ff6">
-    A unified platform for open and trustfree AI development, empowering an accessible ecosystem of models and datasets.
+{" "}
+
+<Card
+  title="Zettablock"
+  href="https://zettablock.com/"
+  icon="house"
+  iconColor="#3c4ff6"
+>
+  A unified platform for open and trustfree AI development, empowering an
+  accessible ecosystem of models and datasets.
+</Card>
+
+  <Card title="Zapper" href="https://protocol.zapper.xyz/chains/story" icon="house" iconColor="#8A2BE2">
+    Zapper is a multi-chain portfolio tracker and analytics tool for DeFi.
   </Card>
 </CardGroup>
 
@@ -20649,7 +20661,7 @@ The `story` and `geth` binaries, which make up the clients required for running 
   - Latest Stable Binary (v1.0.2): [**Click here**](https://github.com/piplabs/story-geth/releases/tag/v1.0.2)
 - **`story`consensus client:**
   - Releases link: [**Click here**](https://github.com/piplabs/story/releases)
-  - Latest Stable Binary (v1.1.1): [**Click here**](https://github.com/piplabs/story/releases/tag/v1.1.0)
+  - Latest Stable Binary (v1.1.1): [**Click here**](https://github.com/piplabs/story/releases/tag/v1.1.1)
 
 # Story Node Installation Guide
 
@@ -22886,14 +22898,14 @@ Note that you will need at least 1 IP in the wallet submitting the transaction f
 To change the commission rate for your validator, you can run the following:
 
 ```
-./story valdiator update-validator-commission \
+./story validator update-validator-commission \
 		--commission-rate ${NEW_COMMISSION}
 ```
 
 ### Example Update Validator Commission
 
 ```
-./story valdiator update-validator-commission \
+./story validator update-validator-commission \
 		--commission-rate 5000
 ```
 
