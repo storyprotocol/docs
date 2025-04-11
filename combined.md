@@ -12687,6 +12687,8 @@ export type CollectAndDistributeGroupRoyaltiesResponse = {
 ### Methods
 
 - createNFTCollection
+- getMintFeeToken
+- getMintFee
 
 ### createNFTCollection
 
@@ -12765,6 +12767,46 @@ export type CreateNFTCollectionResponse = {
   encodedTxData?: EncodedTxData;
   spgNftContract?: Address; // the address of the newly created contract
 };
+```
+
+</CodeGroup>
+
+### getMintFeeToken
+
+Returns the current mint token of the collection.
+
+| Method            | Type                                            |
+| ----------------- | ----------------------------------------------- |
+| `getMintFeeToken` | `(spgNftContract: Address) => Promise<Address>` |
+
+Parameters:
+
+- `spgNftContract`: The address of the NFT contract.
+
+<CodeGroup>
+
+```typescript TypeScript
+const mintFeeToken = await client.nftClient.getMintFeeToken("0x01");
+```
+
+</CodeGroup>
+
+### getMintFee
+
+Returns the current mint fee of the collection.
+
+| Method       | Type                                           |
+| ------------ | ---------------------------------------------- |
+| `getMintFee` | `(spgNftContract: Address) => Promise<bigint>` |
+
+Parameters:
+
+- `spgNftContract`: The address of the NFT contract.
+
+<CodeGroup>
+
+```typescript TypeScript
+const mintFee = await client.nftClient.getMintFee("0x01");
 ```
 
 </CodeGroup>
