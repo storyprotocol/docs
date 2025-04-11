@@ -12142,6 +12142,18 @@ This section provides a detailed description of every function in our Python SDK
 
 </CardGroup>
 
+## Utility Clients
+
+Additional utility and extra clients:
+
+<CardGroup cols={1}>
+
+<Card title="NFT Client" icon="house" href="/sdk-reference/python/nftclient">
+  Interact with SPG NFTs using the Python SDK.
+</Card>
+
+</CardGroup>
+
 
 # WIP Client
 
@@ -12886,7 +12898,7 @@ Additional utility and extra clients:
 </Card>
 
 <Card title="NFT Client" icon="house" href="/sdk-reference/nftclient">
-  Learn how to interact with NFTs using the SDK.
+  Interact with SPG NFTs using the SDK.
 </Card>
 
 <Card title="WIP Client" icon="house" href="/sdk-reference/wip-client">
