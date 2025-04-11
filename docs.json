@@ -319,7 +319,8 @@
                 "pages": [
                   "sdk-reference/python/ipasset",
                   "sdk-reference/python/ipaccount",
-                  "sdk-reference/python/license"
+                  "sdk-reference/python/license",
+                  "sdk-reference/python/nftclient"
                 ]
               }
             ]
