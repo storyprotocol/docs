@@ -11778,7 +11778,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 # IP Account
 
-## IPAccountClient
+## IPAccount
 
 ### Methods
 
