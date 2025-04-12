@@ -11187,20 +11187,20 @@ export type CommonRegistrationResponse = {
 
 ### Methods
 
-- attachLicenseTerms
-- mintLicenseTokens
-- registerPILTerms
-- registerNonComSocialRemixingPIL
-- registerCommercialUsePIL
-- registerCommercialRemixPIL
+- attach_license_terms
+- mint_license_tokens
+- register_pil_terms
+- register_non_com_social_remixing_pil
+- register_commercial_use_pil
+- register_commercial_remix_pil
 
-### attachLicenseTerms
+### attach_license_terms
 
 Attaches license terms to an IP.
 
 | Method               |
 | -------------------- |
-| `attachLicenseTerms` |
+| `attach_license_terms` |
 
 Parameters:
 
@@ -11212,7 +11212,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-response = story_client.License.attachLicenseTerms(
+response = story_client.License.attach_license_terms(
   ip_id="0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
   license_template="0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316", # insert PILicenseTemplate from https://docs.story.foundation/docs/deployed-smart-contracts
   license_terms_id="1"
@@ -11234,7 +11234,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 </CodeGroup>
 
-### mintLicenseTokens
+### mint_license_tokens
 
 Mints license tokens for the license terms attached to an IP.
 
@@ -11248,7 +11248,7 @@ It might require the caller pay the minting fee, depending on the license terms 
 
 | Method              |
 | ------------------- |
-| `mintLicenseTokens` |
+| `mint_license_tokens` |
 
 Parameters:
 
@@ -11264,7 +11264,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-response = client.License.mintLicenseTokens(
+response = client.License.mint_license_tokens(
   licensor_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   license_template="0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316", # insert PILicenseTemplate from https://docs.story.foundation/docs/deployed-smart-contracts
   license_terms_id="1",
@@ -11295,13 +11295,13 @@ tx_options: dict = None  # Optional: Transaction options
 
 </CodeGroup>
 
-### registerPILTerms
+### register_pil_terms
 
 Registers new license terms and return the ID of the newly registered license terms.
 
 | Method             |
 | ------------------ |
-| `registerPILTerms` |
+| `register_pil_terms` |
 
 Parameters:
 
@@ -11311,7 +11311,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-response = story_client.License.registerPILTerms(
+response = story_client.License.register_pil_terms(
   transferable=False,
   royalty_policy="0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", # RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
   default_minting_fee=0,
@@ -11362,7 +11362,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 </CodeGroup>
 
-### registerNonComSocialRemixingPIL
+### register_non_com_social_remixing_pil
 
 Convenient function to register a PIL non commercial social remix license to the registry.
 
@@ -11374,7 +11374,7 @@ No reason to call this function. Non-Commercial Social Remixing terms are alread
 
 | Method                            |
 | --------------------------------- |
-| `registerNonComSocialRemixingPIL` |
+| `register_non_com_social_remixing_pil` |
 
 Parameters:
 
@@ -11383,7 +11383,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-response = story_client.License.registerNonComSocialRemixingPIL()
+response = story_client.License.register_non_com_social_remixing_pil()
 ```
 
 ```python Request Parameters
@@ -11399,13 +11399,13 @@ tx_options: dict = None  # Optional: Transaction options
 
 </CodeGroup>
 
-### registerCommercialUsePIL
+### register_commercial_use_pil
 
 Convenient function to register a PIL commercial use license to the registry.
 
 | Method                     |
 | -------------------------- |
-| `registerCommercialUsePIL` |
+| `register_commercial_use_pil` |
 
 Parameters:
 
@@ -11417,7 +11417,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-response = story_client.License.registerCommercialUsePIL(
+response = story_client.License.register_commercial_use_pil(
   currency='0x1514000000000000000000000000000000000000', # $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
   default_minting_fee=10, # 10 of the currency (using the above currency, 10 $WIP),
   royalty_policy="0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", # RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
@@ -11440,13 +11440,13 @@ tx_options: dict = None  # Optional: Transaction options
 
 </CodeGroup>
 
-### registerCommercialRemixPIL
+### register_commercial_remix_pil
 
 Convenient function to register a PIL commercial Remix license to the registry.
 
 | Method                       |
 | ---------------------------- |
-| `registerCommercialRemixPIL` |
+| `register_commercial_remix_pil` |
 
 Parameters:
 
@@ -11459,7 +11459,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-response = story_client.License.registerCommercialRemixPIL(
+response = story_client.License.register_commercial_remix_pil(
   currency='0x1514000000000000000000000000000000000000', # $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
   default_minting_fee=10, # 10 of the currency (using the above currency, 10 $WIP)
   royalty_policy="0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", # RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
@@ -11492,9 +11492,9 @@ tx_options: dict = None  # Optional: Transaction options
 ### Methods
 
 - register
-- registerDerivative
-- registerDerivativeWithLicenseTokens
-- mintAndRegisterIpAssetWithPilTerms
+- register_derivative
+- register_derivative_with_license_tokens
+- mint_and_register_ip_asset_with_pil_terms
 
 ### Navigating Around the IPAssetClient
 
@@ -11573,7 +11573,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 </CodeGroup>
 
-## registerDerivative
+## register_derivative
 
 Registers a derivative directly with parent IP's license terms, without needing license tokens, and attaches the license terms of the parent IPs to the derivative IP.
 
@@ -11585,7 +11585,7 @@ The derivative IP owner must be the caller or an authorized operator.
 
 | Method               |
 | -------------------- |
-| `registerDerivative` |
+| `register_derivative` |
 
 Parameters:
 
@@ -11600,7 +11600,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-response = story_client.IPAsset.registerDerivative(
+response = story_client.IPAsset.register_derivative(
   child_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   parent_ip_ids=["0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba"],
   license_terms_ids=["5"],
@@ -11629,7 +11629,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 </CodeGroup>
 
-## registerDerivativeWithLicenseTokens
+## register_derivative_with_license_tokens
 
 Registers a derivative with license tokens.
 
@@ -11641,7 +11641,7 @@ The caller must be the derivative IP owner or an authorized operator.
 
 | Method                                |
 | ------------------------------------- |
-| `registerDerivativeWithLicenseTokens` |
+| `register_derivative_with_license_tokens` |
 
 Parameters:
 
@@ -11653,7 +11653,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-response = story_client.IPAsset.registerDerivativeWithLicenseTokens(
+response = story_client.IPAsset.register_derivative_with_license_tokens(
   child_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   license_token_ids=["5"],
   max_rts=100_000_000 # default
@@ -11675,7 +11675,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 </CodeGroup>
 
-## mintAndRegisterIpAssetWithPilTerms
+## mint_and_register_ip_asset_with_pil_terms
 
 Mint an NFT from a collection, register it as an IP, attach metadata to the IP, and attach License Terms to the IP all in one function.
 
@@ -11686,7 +11686,7 @@ Mint an NFT from a collection, register it as an IP, attach metadata to the IP, 
 
 | Method                               |
 | ------------------------------------ |
-| `mintAndRegisterIpAssetWithPilTerms` |
+| `mint_and_register_ip_asset_with_pil_terms` |
 
 Parameters:
 
@@ -11744,7 +11744,7 @@ metadata = {
   'nft_metadata_hash': web3.to_hex(web3.keccak(text="test-nft-metadata-hash"))
 }
 
-response = story_client.IPAsset.mintAndRegisterIpAssetWithPilTerms(
+response = story_client.IPAsset.mint_and_register_ip_asset_with_pil_terms(
   spg_nft_contract="0xfE265a91dBe911db06999019228a678b86C04959",
   terms=[{
     "terms": commercial_remix_terms,
@@ -11782,18 +11782,18 @@ tx_options: dict = None  # Optional: Transaction options
 
 ### Methods
 
-- setIpMetadata
+- set_ip_metadata
 - execute
-- executeWithSig
-- transferErc20
+- execute_with_sig
+- transfer_erc20
 
-### setIpMetadata
+### set_ip_metadata
 
 Sets the metadataURI for an IP asset.
 
 | Method          |
 | --------------- |
-| `setIpMetadata` |
+| `set_ip_metadata` |
 
 Parameters:
 
@@ -11805,7 +11805,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-tx_hash = story_client.IPAccount.setIpMetadata(
+tx_hash = story_client.IPAccount.set_ip_metadata(
   ip_id="0x01",
   metadata_uri="https://ipfs.io/ipfs/bafkreiardkgvkejqnnkdqp4pamkx2e5bs4lzus5trrw3hgmoa7dlbb6foe",
   # example hash (not accurate)
@@ -11871,13 +11871,13 @@ tx_options: dict = None  # Optional: Transaction options
 
 </CodeGroup>
 
-### executeWithSig
+### execute_with_sig
 
 Executes a transaction from the IP Account.
 
 | Method           |
 | ---------------- |
-| `executeWithSig` |
+| `execute_with_sig` |
 
 Parameters:
 
@@ -11893,7 +11893,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-response = story_client.IPAccount.executeWithSig(
+response = story_client.IPAccount.execute_with_sig(
   ip_id="0x01",
   to="0x1234567890123456789012345678901234567890",
   data="0x1234567890123456789012345678901234567890",
@@ -11923,13 +11923,13 @@ tx_options: dict = None  # Optional: Transaction options
 
 </CodeGroup>
 
-### transferErc20
+### transfer_erc20
 
 Transfers an ERC20 token from the IP Account.
 
 | Method          |
 | --------------- |
-| `transferErc20` |
+| `transfer_erc20` |
 
 Parameters:
 
@@ -11976,17 +11976,17 @@ tx_options: dict = None  # Optional: Transaction options
 
 ### Methods
 
-- createNFTCollection
-- getMintFeeToken
-- getMintFee
+- create_nft_collection
+- get_mint_fee_token
+- get_mint_fee
 
-### createNFTCollection
+### create_nft_collection
 
 Creates a new SPG NFT Collection.
 
 | Method                |
 | --------------------- |
-| `createNFTCollection` |
+| `create_nft_collection` |
 
 Parameters:
 
@@ -12015,7 +12015,7 @@ Parameters:
 # You will mostly only have to do this once. Once you get your nft contract address,
 # you can use it in SPG functions.
 #
-new_collection = story_client.NFTClient.createNFTCollection(
+new_collection = story_client.NFTClient.create_nft_collection(
   name="Test NFT",
   symbol="TEST",
   is_public_minting=True,
@@ -12052,13 +12052,13 @@ tx_options: dict = None  # Optional: Transaction options dictionary
 
 </CodeGroup>
 
-### getMintFeeToken
+### get_mint_fee_token
 
 Returns the current mint fee token of the collection.
 
 | Method            |
 | ----------------- |
-| `getMintFeeToken` |
+| `get_mint_fee_token` |
 
 Parameters:
 
@@ -12067,7 +12067,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-mint_fee_token = story_client.NFTClient.getMintFeeToken("0x01")
+mint_fee_token = story_client.NFTClient.get_mint_fee_token("0x01")
 ```
 
 ```python Request Parameters
@@ -12080,13 +12080,13 @@ str  # The address of the mint fee token
 
 </CodeGroup>
 
-### getMintFee
+### get_mint_fee
 
 Returns the current mint fee of the collection.
 
 | Method       |
 | ------------ |
-| `getMintFee` |
+| `get_mint_fee` |
 
 Parameters:
 
@@ -12095,7 +12095,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-mint_fee = story_client.NFTClient.getMintFee("0x01")
+mint_fee = story_client.NFTClient.get_mint_fee("0x01")
 ```
 
 ```python Request Parameters
