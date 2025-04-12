@@ -7,18 +7,18 @@ description: IPAccount allows you to manage IP Account metadata and execute tran
 
 ### Methods
 
-- setIpMetadata
+- set_ip_metadata
 - execute
-- executeWithSig
-- transferErc20
+- execute_with_sig
+- transfer_erc20
 
-### setIpMetadata
+### set_ip_metadata
 
 Sets the metadataURI for an IP asset.
 
 | Method          |
 | --------------- |
-| `setIpMetadata` |
+| `set_ip_metadata` |
 
 Parameters:
 
@@ -30,7 +30,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-tx_hash = story_client.IPAccount.setIpMetadata(
+tx_hash = story_client.IPAccount.set_ip_metadata(
   ip_id="0x01",
   metadata_uri="https://ipfs.io/ipfs/bafkreiardkgvkejqnnkdqp4pamkx2e5bs4lzus5trrw3hgmoa7dlbb6foe",
   # example hash (not accurate)
@@ -96,13 +96,13 @@ tx_options: dict = None  # Optional: Transaction options
 
 </CodeGroup>
 
-### executeWithSig
+### execute_with_sig
 
 Executes a transaction from the IP Account.
 
 | Method           |
 | ---------------- |
-| `executeWithSig` |
+| `execute_with_sig` |
 
 Parameters:
 
@@ -118,7 +118,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-response = story_client.IPAccount.executeWithSig(
+response = story_client.IPAccount.execute_with_sig(
   ip_id="0x01",
   to="0x1234567890123456789012345678901234567890",
   data="0x1234567890123456789012345678901234567890",
@@ -148,13 +148,13 @@ tx_options: dict = None  # Optional: Transaction options
 
 </CodeGroup>
 
-### transferErc20
+### transfer_erc20
 
 Transfers an ERC20 token from the IP Account.
 
 | Method          |
 | --------------- |
-| `transferErc20` |
+| `transfer_erc20` |
 
 Parameters:
 

@@ -7,17 +7,17 @@ description: Used to mint a new SPG collection for use with Story.
 
 ### Methods
 
-- createNFTCollection
-- getMintFeeToken
-- getMintFee
+- create_nft_collection
+- get_mint_fee_token
+- get_mint_fee
 
-### createNFTCollection
+### create_nft_collection
 
 Creates a new SPG NFT Collection.
 
 | Method                |
 | --------------------- |
-| `createNFTCollection` |
+| `create_nft_collection` |
 
 Parameters:
 
@@ -46,7 +46,7 @@ Parameters:
 # You will mostly only have to do this once. Once you get your nft contract address,
 # you can use it in SPG functions.
 #
-new_collection = story_client.NFTClient.createNFTCollection(
+new_collection = story_client.NFTClient.create_nft_collection(
   name="Test NFT",
   symbol="TEST",
   is_public_minting=True,
@@ -83,13 +83,13 @@ tx_options: dict = None  # Optional: Transaction options dictionary
 
 </CodeGroup>
 
-### getMintFeeToken
+### get_mint_fee_token
 
 Returns the current mint fee token of the collection.
 
 | Method            |
 | ----------------- |
-| `getMintFeeToken` |
+| `get_mint_fee_token` |
 
 Parameters:
 
@@ -98,7 +98,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-mint_fee_token = story_client.NFTClient.getMintFeeToken("0x01")
+mint_fee_token = story_client.NFTClient.get_mint_fee_token("0x01")
 ```
 
 ```python Request Parameters
@@ -111,13 +111,13 @@ str  # The address of the mint fee token
 
 </CodeGroup>
 
-### getMintFee
+### get_mint_fee
 
 Returns the current mint fee of the collection.
 
 | Method       |
 | ------------ |
-| `getMintFee` |
+| `get_mint_fee` |
 
 Parameters:
 
@@ -126,7 +126,7 @@ Parameters:
 <CodeGroup>
 
 ```python Python
-mint_fee = story_client.NFTClient.getMintFee("0x01")
+mint_fee = story_client.NFTClient.get_mint_fee("0x01")
 ```
 
 ```python Request Parameters
