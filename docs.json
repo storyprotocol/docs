@@ -301,7 +301,7 @@
                   "sdk-reference/group",
                   "sdk-reference/permissions",
                   "sdk-reference/nftclient",
-                  "sdk-reference/wip-client"
+                  "sdk-reference/wipclient"
                 ]
               }
             ]
@@ -321,7 +321,9 @@
                   "sdk-reference/python/ipaccount",
                   "sdk-reference/python/license",
                   "sdk-reference/python/royalty",
-                  "sdk-reference/python/nftclient"
+                  "sdk-reference/python/dispute",
+                  "sdk-reference/python/nftclient",
+                  "sdk-reference/python/wipclient"
                 ]
               }
             ]
