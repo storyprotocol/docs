@@ -18,8 +18,8 @@ description: License allows you to manage license terms and tokens within Story.
 
 Attaches license terms to an IP.
 
-| Method               |
-| -------------------- |
+| Method                 |
+| ---------------------- |
 | `attach_license_terms` |
 
 Parameters:
@@ -48,7 +48,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "txHash": str
+  "tx_hash": str
 }
 ```
 
@@ -66,8 +66,8 @@ IP owners can mint license tokens for their IPs for arbitrary license terms with
 
 It might require the caller pay the minting fee, depending on the license terms or configured by the iP owner. The minting fee is paid in the minting fee token specified in the license terms or configured by the IP owner. IP owners can configure the minting fee of their IPs or configure the minting fee module to determine the minting fee.
 
-| Method              |
-| ------------------- |
+| Method                |
+| --------------------- |
 | `mint_license_tokens` |
 
 Parameters:
@@ -108,8 +108,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "licenseTokenIds": list,  # List of license token IDs
-  "txHash": str,  # The transaction hash
+  "license_token_ids": list,  # List of license token IDs
+  "tx_hash": str,  # The transaction hash
 }
 ```
 
@@ -119,8 +119,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 Registers new license terms and return the ID of the newly registered license terms.
 
-| Method             |
-| ------------------ |
+| Method               |
+| -------------------- |
 | `register_pil_terms` |
 
 Parameters:
@@ -175,8 +175,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "licenseTermsId": int,
-  "txHash": str
+  "license_terms_id": int,
+  "tx_hash": str
 }
 ```
 
@@ -192,8 +192,8 @@ No reason to call this function. Non-Commercial Social Remixing terms are alread
 
 </Warning>
 
-| Method                            |
-| --------------------------------- |
+| Method                                 |
+| -------------------------------------- |
 | `register_non_com_social_remixing_pil` |
 
 Parameters:
@@ -212,8 +212,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "licenseTermsId": int,  # The ID of the registered license terms
-  "txHash": str,  # The transaction hash
+  "license_terms_id": int,  # The ID of the registered license terms
+  "tx_hash": str,  # The transaction hash
 }
 ```
 
@@ -223,8 +223,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 Convenient function to register a PIL commercial use license to the registry.
 
-| Method                     |
-| -------------------------- |
+| Method                        |
+| ----------------------------- |
 | `register_commercial_use_pil` |
 
 Parameters:
@@ -253,8 +253,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "licenseTermsId": int,  # The ID of the registered license terms
-  "txHash": str,  # The transaction hash
+  "license_terms_id": int,  # The ID of the registered license terms
+  "tx_hash": str,  # The transaction hash
 }
 ```
 
@@ -264,8 +264,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 Convenient function to register a PIL commercial Remix license to the registry.
 
-| Method                       |
-| ---------------------------- |
+| Method                          |
+| ------------------------------- |
 | `register_commercial_remix_pil` |
 
 Parameters:
@@ -297,8 +297,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "licenseTermsId": int,  # The ID of the registered license terms
-  "txHash": str,  # The transaction hash
+  "license_terms_id": int,  # The ID of the registered license terms
+  "tx_hash": str,  # The transaction hash
 }
 ```
 

@@ -16,15 +16,15 @@ description: IPAsset allows you to create, get, and list IP Assets within Story.
 
 Because there are a lot of functions to interact with the [📜 Licensing Module](/concepts/licensing-module), we have broken them down into a helpful chart so you can identify what you're looking for, and then find the associated docs.
 
-| **Function**                                                                | **Mint an NFT** | **Register IPA** | **Create License Terms** | **Attach License Terms** | **Mint License Token** | **Register as Derivative** |
-| --------------------------------------------------------------------------- | :-------------: | :--------------: | :----------------------: | :----------------------: | :--------------------: | :------------------------: |
-| <span style={{color: "#e03130"}}>register</span>                            |                 |        ✓         |                          |                          |                        |                            |
-| <span style={{color: "#e03130"}}>mint_and_register_ip_asset_with_pil_terms</span>  |        ✓        |        ✓         |            ✓             |            ✓             |                        |                            |
-| <span style={{color: "#e03130"}}>register_derivative</span>                  |                 |                  |                          |                          |                        |             ✓              |
-| <span style={{color: "#e03130"}}>register_derivative_with_license_tokens</span> |                 |                  |                          |                          |                        |             ✓              |
-| <span style={{color: "#1971c2"}}>register_pil_terms</span>                    |                 |                  |            ✓             |                          |                        |                            |
-| <span style={{color: "#1971c2"}}>attach_license_terms</span>                  |                 |                  |                          |            ✓             |                        |                            |
-| <span style={{color: "#1971c2"}}>mint_license_tokens</span>                   |                 |                  |                          |                          |           ✓            |                            |
+| **Function**                                                                      | **Mint an NFT** | **Register IPA** | **Create License Terms** | **Attach License Terms** | **Mint License Token** | **Register as Derivative** |
+| --------------------------------------------------------------------------------- | :-------------: | :--------------: | :----------------------: | :----------------------: | :--------------------: | :------------------------: |
+| <span style={{color: "#e03130"}}>register</span>                                  |                 |        ✓         |                          |                          |                        |                            |
+| <span style={{color: "#e03130"}}>mint_and_register_ip_asset_with_pil_terms</span> |        ✓        |        ✓         |            ✓             |            ✓             |                        |                            |
+| <span style={{color: "#e03130"}}>register_derivative</span>                       |                 |                  |                          |                          |                        |             ✓              |
+| <span style={{color: "#e03130"}}>register_derivative_with_license_tokens</span>   |                 |                  |                          |                          |                        |             ✓              |
+| <span style={{color: "#1971c2"}}>register_pil_terms</span>                        |                 |                  |            ✓             |                          |                        |                            |
+| <span style={{color: "#1971c2"}}>attach_license_terms</span>                      |                 |                  |                          |            ✓             |                        |                            |
+| <span style={{color: "#1971c2"}}>mint_license_tokens</span>                       |                 |                  |                          |                          |           ✓            |                            |
 
 - <span style={{ color: "#e03130" }}>Red</span>: IPAssetClient (this page)
 - <span style={{ color: "#1971c2" }}>Blue</span>:
@@ -82,8 +82,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "ipId": str,  # The IP ID of the registered IP
-  "txHash": str  # The transaction hash
+  "ip_id": str,  # The IP ID of the registered IP
+  "tx_hash": str  # The transaction hash
 }
 ```
 
@@ -99,8 +99,8 @@ All IPs attached default license terms by default.
 
 The derivative IP owner must be the caller or an authorized operator.
 
-| Method               |
-| -------------------- |
+| Method                |
+| --------------------- |
 | `register_derivative` |
 
 Parameters:
@@ -139,7 +139,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "txHash": str  # The transaction hash
+  "tx_hash": str  # The transaction hash
 }
 ```
 
@@ -155,8 +155,8 @@ The license terms of the parent IPs issued with license tokens are attached to t
 
 The caller must be the derivative IP owner or an authorized operator.
 
-| Method                                |
-| ------------------------------------- |
+| Method                                    |
+| ----------------------------------------- |
 | `register_derivative_with_license_tokens` |
 
 Parameters:
@@ -185,7 +185,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "txHash": str  # The transaction hash
+  "tx_hash": str  # The transaction hash
 }
 ```
 
@@ -200,8 +200,8 @@ Mint an NFT from a collection, register it as an IP, attach metadata to the IP, 
   whatever is passed under `ipMetadata.nftMetadataURI`.
 </Note>
 
-| Method                               |
-| ------------------------------------ |
+| Method                                      |
+| ------------------------------------------- |
 | `mint_and_register_ip_asset_with_pil_terms` |
 
 Parameters:
@@ -282,10 +282,10 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "ipId": str,  # The IP ID of the registered IP
-  "tokenId": int,  # The token ID of the minted NFT
-  "txHash": str,  # The transaction hash
-  "licenseTermsIds": list  # The IDs of the registered license terms
+  "ip_id": str,  # The IP ID of the registered IP
+  "token_id": int,  # The token ID of the minted NFT
+  "tx_hash": str,  # The transaction hash
+  "license_terms_ids": list  # The IDs of the registered license terms
 }
 ```
 

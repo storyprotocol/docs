@@ -16,8 +16,8 @@ description: IPAccount allows you to manage IP Account metadata and execute tran
 
 Sets the metadataURI for an IP asset.
 
-| Method          |
-| --------------- |
+| Method            |
+| ----------------- |
 | `set_ip_metadata` |
 
 Parameters:
@@ -47,7 +47,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "txHash": str  # The transaction hash
+  "tx_hash": str  # The transaction hash
 }
 ```
 
@@ -90,7 +90,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "txHash": str  # The transaction hash
+  "tx_hash": str  # The transaction hash
 }
 ```
 
@@ -100,8 +100,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 Executes a transaction from the IP Account.
 
-| Method           |
-| ---------------- |
+| Method             |
+| ------------------ |
 | `execute_with_sig` |
 
 Parameters:
@@ -142,7 +142,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "txHash": str  # The transaction hash
+  "tx_hash": str  # The transaction hash
 }
 ```
 
@@ -152,8 +152,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 Transfers an ERC20 token from the IP Account.
 
-| Method          |
-| --------------- |
+| Method           |
+| ---------------- |
 | `transfer_erc20` |
 
 Parameters:
@@ -188,7 +188,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "txHash": str, # The transaction hash
+  "tx_hash": str, # The transaction hash
 }
 ```
 
