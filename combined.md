@@ -11198,8 +11198,8 @@ export type CommonRegistrationResponse = {
 
 Attaches license terms to an IP.
 
-| Method               |
-| -------------------- |
+| Method                 |
+| ---------------------- |
 | `attach_license_terms` |
 
 Parameters:
@@ -11228,7 +11228,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "txHash": str
+  "tx_hash": str
 }
 ```
 
@@ -11246,8 +11246,8 @@ IP owners can mint license tokens for their IPs for arbitrary license terms with
 
 It might require the caller pay the minting fee, depending on the license terms or configured by the iP owner. The minting fee is paid in the minting fee token specified in the license terms or configured by the IP owner. IP owners can configure the minting fee of their IPs or configure the minting fee module to determine the minting fee.
 
-| Method              |
-| ------------------- |
+| Method                |
+| --------------------- |
 | `mint_license_tokens` |
 
 Parameters:
@@ -11288,8 +11288,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "licenseTokenIds": list,  # List of license token IDs
-  "txHash": str,  # The transaction hash
+  "license_token_ids": list,  # List of license token IDs
+  "tx_hash": str,  # The transaction hash
 }
 ```
 
@@ -11299,8 +11299,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 Registers new license terms and return the ID of the newly registered license terms.
 
-| Method             |
-| ------------------ |
+| Method               |
+| -------------------- |
 | `register_pil_terms` |
 
 Parameters:
@@ -11355,8 +11355,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "licenseTermsId": int,
-  "txHash": str
+  "license_terms_id": int,
+  "tx_hash": str
 }
 ```
 
@@ -11372,8 +11372,8 @@ No reason to call this function. Non-Commercial Social Remixing terms are alread
 
 </Warning>
 
-| Method                            |
-| --------------------------------- |
+| Method                                 |
+| -------------------------------------- |
 | `register_non_com_social_remixing_pil` |
 
 Parameters:
@@ -11392,8 +11392,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "licenseTermsId": int,  # The ID of the registered license terms
-  "txHash": str,  # The transaction hash
+  "license_terms_id": int,  # The ID of the registered license terms
+  "tx_hash": str,  # The transaction hash
 }
 ```
 
@@ -11403,8 +11403,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 Convenient function to register a PIL commercial use license to the registry.
 
-| Method                     |
-| -------------------------- |
+| Method                        |
+| ----------------------------- |
 | `register_commercial_use_pil` |
 
 Parameters:
@@ -11433,8 +11433,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "licenseTermsId": int,  # The ID of the registered license terms
-  "txHash": str,  # The transaction hash
+  "license_terms_id": int,  # The ID of the registered license terms
+  "tx_hash": str,  # The transaction hash
 }
 ```
 
@@ -11444,8 +11444,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 Convenient function to register a PIL commercial Remix license to the registry.
 
-| Method                       |
-| ---------------------------- |
+| Method                          |
+| ------------------------------- |
 | `register_commercial_remix_pil` |
 
 Parameters:
@@ -11477,9 +11477,213 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "licenseTermsId": int,  # The ID of the registered license terms
-  "txHash": str,  # The transaction hash
+  "license_terms_id": int,  # The ID of the registered license terms
+  "tx_hash": str,  # The transaction hash
 }
+```
+
+</CodeGroup>
+
+
+# Royalty
+
+## Royalty
+
+### Methods
+
+- pay_royalty_on_behalf
+- claimable_revenue
+- claim_all_revenue
+- get_royalty_vault_address
+
+### pay_royalty_on_behalf
+
+Allows the function caller to pay royalties to a receiver IP asset on behalf of the payer IP Asset.
+
+| Method                  |
+| ----------------------- |
+| `pay_royalty_on_behalf` |
+
+Parameters:
+
+- `receiver_ip_id`: The ipId that receives the royalties.
+- `payer_ip_id`: The ID of the IP asset that pays the royalties.
+- `token`: The token to use to pay the royalties.
+- `amount`: The amount to pay.
+- `tx_options`: [Optional] The transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+from web3 import Web3
+
+# In this case, lets say there is a root IPA 'A' and a derivative IPA 'B'.
+# Someone wants to pay 'B' for whatever reason (they bought it, they want to tip it, etc).
+# Since the payer is not an IP Asset (rather an external user), the `payer_ip_id` can
+# be a zero address. And the receiver is, well, the receiver's ipId which is B.
+#
+# It's important to note that both 'B' and its parent 'A' will be able
+# to claim revenue from this based on the negotiated license terms
+pay_royalty = story_client.Royalty.pay_royalty_on_behalf(
+    receiver_ip_id="0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1",  # B's ipId
+    payer_ip_id="0x0000000000000000000000000000000000000000",  # zero address
+    token="0x1514000000000000000000000000000000000000",  # $WIP
+    amount=Web3.to_wei(2, 'ether'),  # 2 $WIP
+    tx_options={"wait_for_transaction": True}
+)
+print(f"Paid royalty at transaction hash {pay_royalty['tx_hash']}")
+
+# In this case, lets say there is a root IPA 'A' and a derivative IPA 'B'.
+# 'B' earns revenue off-chain, but must pay 'A' based on their negotiated license terms.
+# So 'B' pays 'A' what they are due
+pay_royalty = story_client.Royalty.pay_royalty_on_behalf(
+    receiver_ip_id="0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68",  # A's ipId
+    payer_ip_id="0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1",  # B's ipId
+    token="0x1514000000000000000000000000000000000000",  # $WIP
+    amount=Web3.to_wei(2, 'ether'),  # 2 $WIP
+    tx_options={"wait_for_transaction": True}
+)
+print(f"Paid royalty at transaction hash {pay_royalty['tx_hash']}")
+```
+
+```python Request Parameters
+receiver_ip_id: str  # The ipId that receives the royalties
+payer_ip_id: str  # The ID of the IP asset that pays the royalties
+token: str  # The token to use to pay the royalties
+amount: int  # The amount to pay
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str,  # The transaction hash
+}
+```
+
+</CodeGroup>
+
+### claimable_revenue
+
+Get total amount of revenue token claimable by a royalty token holder.
+
+| Method              |
+| ------------------- |
+| `claimable_revenue` |
+
+Parameters:
+
+- `royalty_vault_ip_id`: The id of the royalty vault.
+- `claimer`: The address of the royalty token holder.
+- `token`: The revenue token to claim.
+
+<CodeGroup>
+
+```python Python
+claimable = story_client.Royalty.claimable_revenue(
+    royalty_vault_ip_id="0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    claimer="0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    token="0x1514000000000000000000000000000000000000"  # $WIP
+)
+print(f"Claimable revenue: {claimable}")
+```
+
+```python Request Parameters
+royalty_vault_ip_id: str  # The id of the royalty vault
+claimer: str  # The address of the royalty token holder
+token: str  # The revenue token to claim
+```
+
+```python Response
+int  # The amount of revenue token claimable
+```
+
+</CodeGroup>
+
+### claim_all_revenue
+
+Claims all revenue from child IP Assets and/or from your own IP Royalty Vault.
+
+| Method              |
+| ------------------- |
+| `claim_all_revenue` |
+
+Parameters:
+
+- `ancestor_ip_id`: The address of the ancestor IP from which the revenue is being claimed.
+- `claimer`: The address of the claimer of the currency (revenue) tokens. This is normally the ipId of the ancestor IP if the IP has all royalty tokens. Otherwise, this would be the address that is holding the ancestor IP royalty tokens.
+- `child_ip_ids`: The addresses of the child IPs from which royalties are derived.
+- `royalty_policies`: The addresses of the royalty policies, where royalty_policies[i] governs the royalty flow for child_ip_ids[i].
+- `currency_tokens`: The addresses of the currency tokens in which royalties will be claimed.
+- `claim_options`: [Optional]
+  - `claim_options['auto_transfer_all_claimed_tokens_from_ip']`: [Optional] When enabled, all claimed tokens on the claimer are transferred to the wallet address if the wallet owns the IP. If the wallet is the claimer or if the claimer is not an IP owned by the wallet, then the tokens will not be transferred. Set to False to disable auto transferring claimed tokens from the claimer. **Default: True**
+
+<CodeGroup>
+
+```python Python
+claim_revenue = story_client.Royalty.claim_all_revenue(
+    # IP Asset 1's (parent) ipId
+    ancestor_ip_id="0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    # whoever owns the royalty tokens associated with IP Royalty Vault 1
+    # (most likely the associated ipId, which is IP Asset 1's ipId)
+    claimer="0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    currency_tokens=["0x1514000000000000000000000000000000000000"],  # $WIP
+    # IP Asset 2's (child) ipId
+    child_ip_ids=["0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2"],
+    # testnet address of RoyaltyPolicyLAP
+    royalty_policies=["0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E"],
+    claim_options={
+      'auto_transfer_all_claimed_tokens_from_ip': True
+    }
+)
+
+print(f"Claimed revenue: {claim_revenue['claimed_tokens']}")
+```
+
+```python Request Parameters
+ancestor_ip_id: str  # The address of the ancestor IP
+claimer: str  # The address of the claimer of the currency tokens
+child_ip_ids: list  # The addresses of the child IPs
+royalty_policies: list  # The addresses of the royalty policies
+currency_tokens: list  # The addresses of the currency tokens
+claim_options: dict = None  # Optional: Claim options
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hashes": list,  # The transaction hashes
+  "receipt": dict,  # The transaction receipt
+  "claimed_tokens": list  # List of claimed tokens with token address and amount
+}
+```
+
+</CodeGroup>
+
+### get_royalty_vault_address
+
+Get the royalty vault proxy address of given `ip_id`.
+
+| Method                      |
+| --------------------------- |
+| `get_royalty_vault_address` |
+
+Parameters:
+
+- `ip_id`: the `ipId` associated with the royalty vault.
+
+<CodeGroup>
+
+```python Python
+vault_address = story_client.Royalty.get_royalty_vault_address("0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384")
+print(f"Royalty vault address: {vault_address}")
+```
+
+```python Request Parameters
+ip_id: str  # The ipId associated with the royalty vault
+```
+
+```python Response
+str  # The royalty vault proxy address
 ```
 
 </CodeGroup>
@@ -11500,15 +11704,15 @@ tx_options: dict = None  # Optional: Transaction options
 
 Because there are a lot of functions to interact with the [📜 Licensing Module](/concepts/licensing-module), we have broken them down into a helpful chart so you can identify what you're looking for, and then find the associated docs.
 
-| **Function**                                                                | **Mint an NFT** | **Register IPA** | **Create License Terms** | **Attach License Terms** | **Mint License Token** | **Register as Derivative** |
-| --------------------------------------------------------------------------- | :-------------: | :--------------: | :----------------------: | :----------------------: | :--------------------: | :------------------------: |
-| <span style={{color: "#e03130"}}>register</span>                            |                 |        ✓         |                          |                          |                        |                            |
-| <span style={{color: "#e03130"}}>mint_and_register_ip_asset_with_pil_terms</span>  |        ✓        |        ✓         |            ✓             |            ✓             |                        |                            |
-| <span style={{color: "#e03130"}}>register_derivative</span>                  |                 |                  |                          |                          |                        |             ✓              |
-| <span style={{color: "#e03130"}}>register_derivative_with_license_tokens</span> |                 |                  |                          |                          |                        |             ✓              |
-| <span style={{color: "#1971c2"}}>register_pil_terms</span>                    |                 |                  |            ✓             |                          |                        |                            |
-| <span style={{color: "#1971c2"}}>attach_license_terms</span>                  |                 |                  |                          |            ✓             |                        |                            |
-| <span style={{color: "#1971c2"}}>mint_license_tokens</span>                   |                 |                  |                          |                          |           ✓            |                            |
+| **Function**                                                                      | **Mint an NFT** | **Register IPA** | **Create License Terms** | **Attach License Terms** | **Mint License Token** | **Register as Derivative** |
+| --------------------------------------------------------------------------------- | :-------------: | :--------------: | :----------------------: | :----------------------: | :--------------------: | :------------------------: |
+| <span style={{color: "#e03130"}}>register</span>                                  |                 |        ✓         |                          |                          |                        |                            |
+| <span style={{color: "#e03130"}}>mint_and_register_ip_asset_with_pil_terms</span> |        ✓        |        ✓         |            ✓             |            ✓             |                        |                            |
+| <span style={{color: "#e03130"}}>register_derivative</span>                       |                 |                  |                          |                          |                        |             ✓              |
+| <span style={{color: "#e03130"}}>register_derivative_with_license_tokens</span>   |                 |                  |                          |                          |                        |             ✓              |
+| <span style={{color: "#1971c2"}}>register_pil_terms</span>                        |                 |                  |            ✓             |                          |                        |                            |
+| <span style={{color: "#1971c2"}}>attach_license_terms</span>                      |                 |                  |                          |            ✓             |                        |                            |
+| <span style={{color: "#1971c2"}}>mint_license_tokens</span>                       |                 |                  |                          |                          |           ✓            |                            |
 
 - <span style={{ color: "#e03130" }}>Red</span>: IPAssetClient (this page)
 - <span style={{ color: "#1971c2" }}>Blue</span>:
@@ -11566,8 +11770,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "ipId": str,  # The IP ID of the registered IP
-  "txHash": str  # The transaction hash
+  "ip_id": str,  # The IP ID of the registered IP
+  "tx_hash": str  # The transaction hash
 }
 ```
 
@@ -11583,8 +11787,8 @@ All IPs attached default license terms by default.
 
 The derivative IP owner must be the caller or an authorized operator.
 
-| Method               |
-| -------------------- |
+| Method                |
+| --------------------- |
 | `register_derivative` |
 
 Parameters:
@@ -11623,7 +11827,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "txHash": str  # The transaction hash
+  "tx_hash": str  # The transaction hash
 }
 ```
 
@@ -11639,8 +11843,8 @@ The license terms of the parent IPs issued with license tokens are attached to t
 
 The caller must be the derivative IP owner or an authorized operator.
 
-| Method                                |
-| ------------------------------------- |
+| Method                                    |
+| ----------------------------------------- |
 | `register_derivative_with_license_tokens` |
 
 Parameters:
@@ -11669,7 +11873,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "txHash": str  # The transaction hash
+  "tx_hash": str  # The transaction hash
 }
 ```
 
@@ -11684,8 +11888,8 @@ Mint an NFT from a collection, register it as an IP, attach metadata to the IP, 
   whatever is passed under `ipMetadata.nftMetadataURI`.
 </Note>
 
-| Method                               |
-| ------------------------------------ |
+| Method                                      |
+| ------------------------------------------- |
 | `mint_and_register_ip_asset_with_pil_terms` |
 
 Parameters:
@@ -11766,10 +11970,10 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "ipId": str,  # The IP ID of the registered IP
-  "tokenId": int,  # The token ID of the minted NFT
-  "txHash": str,  # The transaction hash
-  "licenseTermsIds": list  # The IDs of the registered license terms
+  "ip_id": str,  # The IP ID of the registered IP
+  "token_id": int,  # The token ID of the minted NFT
+  "tx_hash": str,  # The transaction hash
+  "license_terms_ids": list  # The IDs of the registered license terms
 }
 ```
 
@@ -11791,8 +11995,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 Sets the metadataURI for an IP asset.
 
-| Method          |
-| --------------- |
+| Method            |
+| ----------------- |
 | `set_ip_metadata` |
 
 Parameters:
@@ -11822,7 +12026,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "txHash": str  # The transaction hash
+  "tx_hash": str  # The transaction hash
 }
 ```
 
@@ -11865,7 +12069,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "txHash": str  # The transaction hash
+  "tx_hash": str  # The transaction hash
 }
 ```
 
@@ -11875,8 +12079,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 Executes a transaction from the IP Account.
 
-| Method           |
-| ---------------- |
+| Method             |
+| ------------------ |
 | `execute_with_sig` |
 
 Parameters:
@@ -11917,7 +12121,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "txHash": str  # The transaction hash
+  "tx_hash": str  # The transaction hash
 }
 ```
 
@@ -11927,8 +12131,8 @@ tx_options: dict = None  # Optional: Transaction options
 
 Transfers an ERC20 token from the IP Account.
 
-| Method          |
-| --------------- |
+| Method           |
+| ---------------- |
 | `transfer_erc20` |
 
 Parameters:
@@ -11963,7 +12167,7 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 {
-  "txHash": str, # The transaction hash
+  "tx_hash": str, # The transaction hash
 }
 ```
 
@@ -12142,11 +12346,25 @@ This section provides a detailed description of every function in our Python SDK
 
 </CardGroup>
 
+## Royalty Module
+
+<CardGroup cols={2}>
+
+<Card
+  title="Pay & Claim Royalty"
+  icon="house"
+  href="/sdk-reference/python/royalty"
+>
+  Learn how to pay and claim royalty using the Python SDK.
+</Card>
+
+</CardGroup>
+
 ## Utility Clients
 
 Additional utility and extra clients:
 
-<CardGroup cols={1}>
+<CardGroup cols={2}>
 
 <Card title="NFT Client" icon="house" href="/sdk-reference/python/nftclient">
   Interact with SPG NFTs using the Python SDK.
