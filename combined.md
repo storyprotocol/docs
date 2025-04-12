@@ -11181,6 +11181,204 @@ export type CommonRegistrationResponse = {
 </CodeGroup>
 
 
+# WIP Client
+
+## WipClient
+
+### Methods
+
+- deposit
+- withdraw
+- approve
+- balanceOf
+- transfer
+- transferFrom
+
+### deposit
+
+Wraps the selected amount of IP to WIP. The WIP will be deposited to the wallet that transferred the IP.
+
+| Method    | Type                        |
+| --------- | --------------------------- |
+| `deposit` | `(request: DepositRequest)` |
+
+Parameters:
+
+- `request.amount`: The amount to deposit.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { parseEther } from "viem";
+
+const response = await client.wipClient.deposit({
+  amount: parseEther("10"), // 10 IP tokens
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type DepositRequest = WithTxOptions & {
+  amount: TokenAmountInput;
+};
+```
+
+</CodeGroup>
+
+### withdraw
+
+Unwraps the selected amount of WIP to IP.
+
+| Method     | Type                         |
+| ---------- | ---------------------------- |
+| `withdraw` | `(request: WithdrawRequest)` |
+
+Parameters:
+
+- `request.amount`: The amount to withdraw.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { parseEther } from "viem";
+
+const response = await client.wipClient.withdraw({
+  amount: parseEther("5"), // 5 WIP tokens
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type WithdrawRequest = WithTxOptions & {
+  amount: TokenAmountInput;
+};
+```
+
+</CodeGroup>
+
+### approve
+
+Approve a spender to use the wallet's WIP balance.
+
+| Method    | Type                        |
+| --------- | --------------------------- |
+| `approve` | `(request: ApproveRequest)` |
+
+Parameters:
+
+- `request.amount`: The amount of WIP tokens to approve.
+- `request.spender`: The address that will use the WIP tokens
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { parseEther } from "viem";
+
+const response = await client.wipClient.approve({
+  spender: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+  amount: parseEther("20"), // 20 WIP tokens
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type ApproveRequest = WithTxOptions & {
+  spender: Address;
+  amount: TokenAmountInput;
+};
+```
+
+</CodeGroup>
+
+### balanceOf
+
+Returns the balance of WIP for an address.
+
+| Method      | Type                                 |
+| ----------- | ------------------------------------ |
+| `balanceOf` | `(addr: Address) => Promise<bigint>` |
+
+Parameters:
+
+- `addr`: The address you want to check the baalnce for.
+
+### transfer
+
+Transfers `amount` of WIP to a recipient `to`.
+
+| Method     | Type                         |
+| ---------- | ---------------------------- |
+| `transfer` | `(request: TransferRequest)` |
+
+Parameters:
+
+- `request.to`: Who you're transferring to.
+- `request.amount`: The amount to transfer.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { parseEther } from "viem";
+
+const response = await client.wipClient.transfer({
+  to: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+  amount: parseEther("3"), // 3 WIP tokens
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type TransferRequest = WithTxOptions & {
+  to: Address;
+  amount: TokenAmountInput;
+};
+```
+
+</CodeGroup>
+
+### transferFrom
+
+Transfers `amount` of WIP from `from` to a recipient `to`.
+
+| Method         | Type                             |
+| -------------- | -------------------------------- |
+| `transferFrom` | `(request: TransferFromRequest)` |
+
+Parameters:
+
+- `request.to`: Who you're transferring to.
+- `request.amount`: The amount to transfer.
+- `request.from`: The address to transfer from.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { parseEther } from "viem";
+
+const response = await client.wipClient.transferFrom({
+  to: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+  amount: parseEther("2"), // 2 WIP tokens
+  from: "0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68",
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type TransferFromRequest = WithTxOptions & {
+  to: Address;
+  amount: TokenAmountInput;
+  from: Address;
+};
+```
+
+</CodeGroup>
+
+
 # License
 
 ## License
@@ -11689,6 +11887,191 @@ str  # The royalty vault proxy address
 </CodeGroup>
 
 
+# Dispute
+
+## Dispute
+
+### Methods
+
+- raise_dispute
+- cancel_dispute
+- resolve_dispute
+- tag_if_related_ip_infringed
+
+### raise_dispute
+
+Raises a dispute on a given ipId
+
+| Method          |
+| --------------- |
+| `raise_dispute` |
+
+Parameters:
+
+- `target_ip_id`: The IP ID that is the target of the dispute.
+- `target_tag`: The target tag of the dispute. See [dispute tags](https://docs.story.foundation/docs/dispute-module#dispute-tags). **Example: "IMPROPER_REGISTRATION"**
+- `cid`: Content Identifier (CID) for the dispute evidence. This should be obtained by uploading your dispute evidence (documents, images, etc.) to IPFS. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
+- `liveness`: The liveness is the time window (in seconds) in which a counter dispute can be presented (30days).
+- `bond`: The amount of wrapper IP that the dispute initiator pays upfront into a pool. To counter that dispute the opposite party of the dispute has to place a bond of the same amount. The winner of the dispute gets the original bond back + 50% of the other party bond. The remaining 50% of the loser party bond goes to the reviewer.
+- `tx_options`: [Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+from web3 import Web3
+
+response = story_client.Dispute.raise_dispute(
+    target_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    # NOTE: you must use your own CID here, because every time it is used,
+    # the protocol does not allow you to use it again
+    cid="QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR",
+    # you must pick from one of the whitelisted tags here:
+    # https://docs.story.foundation/docs/dispute-module#dispute-tags
+    target_tag="IMPROPER_REGISTRATION",
+    bond=Web3.to_wei(0.1, 'ether'),  # minimum of 0.1
+    liveness=2592000,
+    tx_options={"wait_for_transaction": True}
+)
+print(f"Dispute raised at transaction hash {response['tx_hash']}, Dispute ID: {response['dispute_id']}")
+```
+
+```python Request Parameters
+target_ip_id: str  # The IP ID that is the target of the dispute
+target_tag: str  # The target tag of the dispute
+cid: str  # Content Identifier for the dispute evidence
+liveness: int  # Time window in seconds for counter disputes
+bond: int  # Amount of wrapper IP for the dispute bond
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str,  # The transaction hash
+  "dispute_id": int  # The ID of the raised dispute
+}
+```
+
+</CodeGroup>
+
+### cancel_dispute
+
+Cancels an ongoing dispute
+
+| Method           |
+| ---------------- |
+| `cancel_dispute` |
+
+Parameters:
+
+- `dispute_id`: The ID of the dispute to be cancelled.
+- `data`: [Optional] Additional data used in the cancellation process. **Defaults to "0x"**.
+- `tx_options`: [Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+response = story_client.Dispute.cancel_dispute(
+    dispute_id=1,
+    tx_options={"wait_for_transaction": True}
+)
+print(f"Dispute cancelled at transaction hash {response['tx_hash']}")
+```
+
+```python Request Parameters
+dispute_id: int  # The ID of the dispute to be cancelled
+data: str = "0x"  # Optional: Additional data for cancellation
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str  # The transaction hash
+}
+```
+
+</CodeGroup>
+
+### resolve_dispute
+
+Resolves a dispute after it has been judged
+
+| Method            |
+| ----------------- |
+| `resolve_dispute` |
+
+Parameters:
+
+- `dispute_id`: The ID of the dispute to be resolved.
+- `data`: The data to resolve the dispute.
+- `tx_options`: [Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+response = story_client.Dispute.resolve_dispute(
+    dispute_id=1,
+    data="0x",
+    tx_options={"wait_for_transaction": True}
+)
+print(f"Dispute resolved at transaction hash {response}")
+```
+
+```python Request Parameters
+dispute_id: int  # The ID of the dispute to be resolved
+data: str # Additional data for resolution
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str  # The transaction hash
+}
+```
+
+</CodeGroup>
+
+### tag_if_related_ip_infringed
+
+Tags a derivative if a parent has been tagged with an infringement tag or a group ip if a group member has been tagged with an infringement tag.
+
+| Method                        |
+| ----------------------------- |
+| `tag_if_related_ip_infringed` |
+
+Parameters:
+
+- `infringement_tags`: An array of tags relating to the dispute
+  - `infringement_tags[]['ip_id']`: The `ip_id` to tag
+  - `infringement_tags[]['dispute_id']`: The dispute id that tagged the related infringing parent IP
+- `tx_options`: [Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+response = story_client.Dispute.tag_if_related_ip_infringed(
+  infringement_tags=[
+    {
+      "ip_id": "0xa1BaAA464716eC76A285Ef873d27f97645fE0366",
+      "dispute_id": 1
+    }
+  ],
+  tx_options={"wait_for_transaction": True}
+)
+print(f"Tagged related IP at transaction hash {response[0]}")
+```
+
+```python Request Parameters
+infringement_tags: list  # List of dictionaries containing ip_id and dispute_id
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+[str]  # An array of transaction hashes
+```
+
+</CodeGroup>
+
+
 # IP Asset
 
 ## IPAsset
@@ -11974,6 +12357,251 @@ tx_options: dict = None  # Optional: Transaction options
   "token_id": int,  # The token ID of the minted NFT
   "tx_hash": str,  # The transaction hash
   "license_terms_ids": list  # The IDs of the registered license terms
+}
+```
+
+</CodeGroup>
+
+
+# WIP
+
+## WIP
+
+### Methods
+
+- deposit
+- withdraw
+- approve
+- balance_of
+- transfer
+- transfer_from
+
+### deposit
+
+Wraps the selected amount of IP to WIP. The WIP will be deposited to the wallet that transferred the IP.
+
+| Method    |
+| --------- |
+| `deposit` |
+
+Parameters:
+
+- `amount`: The amount to deposit.
+- `tx_options`: [Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+from web3 import Web3
+
+response = story_client.WIP.deposit(
+    amount=Web3.to_wei(10, 'ether'),  # 10 IP tokens
+    tx_options={"wait_for_transaction": True}
+)
+print(f"Deposited IP to WIP at transaction hash {response['tx_hash']}")
+```
+
+```python Request Parameters
+amount: int  # The amount to deposit
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str  # The transaction hash
+}
+```
+
+</CodeGroup>
+
+### withdraw
+
+Unwraps the selected amount of WIP to IP.
+
+| Method     |
+| ---------- |
+| `withdraw` |
+
+Parameters:
+
+- `amount`: The amount to withdraw.
+- `tx_options`: [Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+from web3 import Web3
+
+response = story_client.WIP.withdraw(
+    amount=Web3.to_wei(5, 'ether'),  # 5 WIP tokens
+    tx_options={"wait_for_transaction": True}
+)
+print(f"Withdrew WIP to IP at transaction hash {response['tx_hash']}")
+```
+
+```python Request Parameters
+amount: int  # The amount to withdraw
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str  # The transaction hash
+}
+```
+
+</CodeGroup>
+
+### approve
+
+Approve a spender to use the wallet's WIP balance.
+
+| Method    |
+| --------- |
+| `approve` |
+
+Parameters:
+
+- `amount`: The amount of WIP tokens to approve.
+- `spender`: The address that will use the WIP tokens.
+- `tx_options`: [Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+from web3 import Web3
+
+response = story_client.WIP.approve(
+    spender="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    amount=Web3.to_wei(20, 'ether'),  # 20 WIP tokens
+    tx_options={"wait_for_transaction": True}
+)
+print(f"Approved WIP spending at transaction hash {response['tx_hash']}")
+```
+
+```python Request Parameters
+spender: str  # The address that will use the WIP tokens
+amount: int  # The amount of WIP tokens to approve
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str  # The transaction hash
+}
+```
+
+</CodeGroup>
+
+### balance_of
+
+Returns the balance of WIP for an address.
+
+| Method       |
+| ------------ |
+| `balance_of` |
+
+Parameters:
+
+- `address`: The address you want to check the balance for.
+
+<CodeGroup>
+
+```python Python
+balance = story_client.WIP.balance_of("0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba")
+print(f"WIP balance: {balance}")
+```
+
+```python Request Parameters
+address: str  # The address to check the balance for
+```
+
+```python Response
+int  # The WIP balance of the address
+```
+
+</CodeGroup>
+
+### transfer
+
+Transfers `amount` of WIP to a recipient `to`.
+
+| Method     |
+| ---------- |
+| `transfer` |
+
+Parameters:
+
+- `to`: Who you're transferring to.
+- `amount`: The amount to transfer.
+- `tx_options`: [Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+from web3 import Web3
+
+response = story_client.WIP.transfer(
+    to="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    amount=Web3.to_wei(3, 'ether'),  # 3 WIP tokens
+    tx_options={"wait_for_transaction": True}
+)
+print(f"Transferred WIP at transaction hash {response['tx_hash']}")
+```
+
+```python Request Parameters
+to: str  # The recipient address
+amount: int  # The amount to transfer
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str  # The transaction hash
+}
+```
+
+</CodeGroup>
+
+### transfer_from
+
+Transfers `amount` of WIP from `from` to a recipient `to`.
+
+| Method          |
+| --------------- |
+| `transfer_from` |
+
+Parameters:
+
+- `to`: Who you're transferring to.
+- `amount`: The amount to transfer.
+- `from_address`: The address to transfer from.
+- `tx_options`: [Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+from web3 import Web3
+
+response = story_client.WIP.transfer_from(
+    to="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    amount=Web3.to_wei(2, 'ether'),  # 2 WIP tokens
+    from_address="0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68",
+    tx_options={"wait_for_transaction": True}
+)
+print(f"Transferred WIP from another account at transaction hash {response['tx_hash']}")
+```
+
+```python Request Parameters
+to: str  # The recipient address
+amount: int  # The amount to transfer
+from_address: str  # The address to transfer from
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str  # The transaction hash
 }
 ```
 
@@ -12371,135 +12999,6 @@ Additional utility and extra clients:
 </Card>
 
 </CardGroup>
-
-
-# WIP Client
-
-## WipClient
-
-### Methods
-
-- deposit
-- withdraw
-- approve
-- balanceOf
-- transfer
-- transferFrom
-
-### deposit
-
-Wraps the selected amount of IP to WIP. The WIP will be deposited to the wallet that transferred the IP.
-
-| Method    | Type                        |
-| --------- | --------------------------- |
-| `deposit` | `(request: DepositRequest)` |
-
-Parameters:
-
-- `request.amount`: The amount to deposit.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
-
-```typescript Request Type
-export type DepositRequest = WithTxOptions & {
-  amount: TokenAmountInput;
-};
-```
-
-### withdraw
-
-Unwraps the selected amount of WIP to IP.
-
-| Method     | Type                         |
-| ---------- | ---------------------------- |
-| `withdraw` | `(request: WithdrawRequest)` |
-
-Parameters:
-
-- `request.amount`: The amount to withdraw.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
-
-```typescript Request Type
-export type WithdrawRequest = WithTxOptions & {
-  amount: TokenAmountInput;
-};
-```
-
-### approve
-
-Approve a spender to use the wallet's WIP balance.
-
-| Method    | Type                        |
-| --------- | --------------------------- |
-| `approve` | `(request: ApproveRequest)` |
-
-Parameters:
-
-- `request.amount`: The amount of WIP tokens to approve.
-- `request.spender`: The address that will use the WIP tokens
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
-
-```typescript Request Type
-export type ApproveRequest = WithTxOptions & {
-  spender: Address;
-  amount: TokenAmountInput;
-};
-```
-
-### balanceOf
-
-Returns the balance of WIP for an address.
-
-| Method      | Type                                 |
-| ----------- | ------------------------------------ |
-| `balanceOf` | `(addr: Address) => Promise<bigint>` |
-
-Parameters:
-
-- `addr`: The address you want to check the baalnce for.
-
-### transfer
-
-Transfers `amount` of WIP to a recipient `to`.
-
-| Method     | Type                         |
-| ---------- | ---------------------------- |
-| `transfer` | `(request: TransferRequest)` |
-
-Parameters:
-
-- `request.to`: Who you're transferring to.
-- `request.amount`: The amount to transfer.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
-
-```typescript Request Type
-export type TransferRequest = WithTxOptions & {
-  to: Address;
-  amount: TokenAmountInput;
-};
-```
-
-### transferFrom
-
-Transfers `amount` of WIP from `from` to a recipient `to`.
-
-| Method         | Type                             |
-| -------------- | -------------------------------- |
-| `transferFrom` | `(request: TransferFromRequest)` |
-
-Parameters:
-
-- `request.to`: Who you're transferring to.
-- `request.amount`: The amount to transfer.
-- `request.from`: The address to transfer from.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
-
-```typescript Request Type
-export type TransferFromRequest = WithTxOptions & {
-  to: Address;
-  amount: TokenAmountInput;
-  from: Address;
-};
-```
 
 
 # IP Account
