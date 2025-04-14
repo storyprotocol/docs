@@ -7345,11 +7345,11 @@ const nonCommercialSocialRemix = {
 | Territory                         | No restrictions                                                             |
 | Channels of Distribution          | No Restriction                                                              |
 | Attribution                       | True                                                                        |
-| Content Standards                 | No Restriction                                                              |
+| Content Standards                 | No-Hate, Suitable-for-All-Ages, No-Drugs-or-Weapons, No-Pornography         |
 | Sublicensable                     | False                                                                       |
-| AI Learning Models                | True                                                                        |
+| AI Learning Models                | False                                                                       |
 | Restriction on Cross-Platform Use | False                                                                       |
-| Governing Law                     | California                                                                  |
+| Governing Law                     | California, USA                                                             |
 | Alternative Dispute Resolution    | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
 | Additional License Parameters     | None                                                                        |
 
@@ -7427,11 +7427,11 @@ const commercialUse = {
 | Territory                         | No restrictions                                                             |
 | Channels of Distribution          | No Restriction                                                              |
 | Attribution                       | True                                                                        |
-| Content Standards                 | No Restriction                                                              |
+| Content Standards                 | No-Hate, Suitable-for-All-Ages, No-Drugs-or-Weapons, No-Pornography         |
 | Sublicensable                     | False                                                                       |
-| AI Learning Models                | True                                                                        |
+| AI Learning Models                | False                                                                       |
 | Restriction on Cross-Platform Use | False                                                                       |
-| Governing Law                     | California                                                                  |
+| Governing Law                     | California, USA                                                             |
 | Alternative Dispute Resolution    | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
 | Additional License Parameters     | None                                                                        |
 
@@ -7514,11 +7514,11 @@ const commercialRemix = {
 | Territory                         | No restrictions                                                             |
 | Channels of Distribution          | No Restriction                                                              |
 | Attribution                       | True                                                                        |
-| Content Standards                 | No Restriction                                                              |
+| Content Standards                 | No-Hate, Suitable-for-All-Ages, No-Drugs-or-Weapons, No-Pornography         |
 | Sublicensable                     | False                                                                       |
-| AI Learning Models                | True                                                                        |
+| AI Learning Models                | False                                                                       |
 | Restriction on Cross-Platform Use | False                                                                       |
-| Governing Law                     | California                                                                  |
+| Governing Law                     | California, USA                                                             |
 | Alternative Dispute Resolution    | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
 | Additional License Parameters     | None                                                                        |
 
@@ -7597,11 +7597,11 @@ const creativeCommonsAttribution = {
 | Territory                         | No restrictions                                                             |
 | Channels of Distribution          | No Restriction                                                              |
 | Attribution                       | True                                                                        |
-| Content Standards                 | No Restriction                                                              |
+| Content Standards                 | No-Hate, Suitable-for-All-Ages, No-Drugs-or-Weapons, No-Pornography         |
 | Sublicensable                     | False                                                                       |
 | AI Learning Models                | True                                                                        |
 | Restriction on Cross-Platform Use | False                                                                       |
-| Governing Law                     | California                                                                  |
+| Governing Law                     | California, USA                                                             |
 | Alternative Dispute Resolution    | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
 | Additional License Parameters     | None                                                                        |
 
