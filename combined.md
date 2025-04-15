@@ -10408,7 +10408,7 @@ Parameters:
 - `request.allowDuplicates`: \[Optional] Set to true to allow minting IPs with the same NFT metadata. **Default: true**
 - `request.licenseTermsData[]`: The array of license terms to be attached. ⚠️ **This function will fail if you pass in an empty array.**
   - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
-  - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/dev/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+  - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
 - `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
   - `request.ipMetadata.ipMetadataURI`: \[Optional] The URI of the metadata for the IP.
   - `request.ipMetadata.ipMetadataHash`: \[Optional] The hash of the metadata for the IP.
@@ -10517,7 +10517,7 @@ Parameters:
 - `request.tokenId`: The ID of the NFT.
 - `request.licenseTermsData[]`: The array of license terms to be attached. ⚠️ **This function will fail if you pass in an empty array.**
   - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
-  - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/dev/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+  - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
 - `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
   - `request.ipMetadata.ipMetadataURI`: \[Optional] The URI of the metadata for the IP.
   - `request.ipMetadata.ipMetadataHash`: \[Optional] The hash of the metadata for the IP.
@@ -10901,7 +10901,7 @@ Parameters:
 - `request.ipId`: The ID of the IP.
 - `request.licenseTermsData[]`: The array of license terms to be attached.
   - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
-  - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/dev/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+  - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
@@ -13247,7 +13247,7 @@ Parameters:
 - `request.maxAllowedRevShare`: The maximum reward share percentage that can be allocated to each member IP.
 - `request.licenseData`: The data of the license and its configuration to be attached to the new group IP.
   - `request.licenseData.licenseTermsId`: The ID of the registered license terms that will be attached to the new group IP.
-  - `request.licenseData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/dev/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+  - `request.licenseData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
   - `request.licenseData.licenseTemplate`: \[Optional] The address of the license template to be attached to the new group IP, default value is Programmable IP License.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
