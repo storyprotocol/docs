@@ -1,0 +1,49 @@
+---
+title: 라이선스 조건
+description: 다른 사람들이 귀하의 IP와 상호작용할 수 있는 방법을 정의하는
+  라이선스 템플릿의 특정 값 조합
+---
+
+Story에서 IP를 등록할 때, IP에 라이선스 조건을 첨부할 수 있습니다. 이는 [📜 라이선싱 모듈](/concepts/licensing-module/overview)에 의해 온체인에서 시행되고, [❌ 분쟁 모듈](/concepts/dispute-module/overview)에 의해 이의제기가 가능하며, 최악의 경우 전통적인 방식을 통해 법원에서 오프체인으로 집행될 수 있는 실제 법적 구속력이 있는 조건입니다.
+
+여기에는 또한 상업적 사용에 대한 조건이 포함되어 있으며, 이는 [💸 로열티 모듈](/concepts/royalty-module/overview)이 어떻게 시행될 것인지를 설명합니다 (예: "수익의 50%를 부모 IP와 공유해야 함").
+
+<CardGroup cols={1}>
+  <Card title="Example License Terms" href="/concepts/programmable-ip-license/pil-flavors" icon="ice-cream">
+    "플레이버"라고도 알려진 PIL 라이선스 조건의 인기 있는 조합들을 확인해보세요.
+  </Card>
+</CardGroup>
+
+더 구체적으로, 라이선스 조건은 [라이선스 템플릿](/concepts/licensing-module/license-template)의 특정 값 조합입니다. 실제로 **여러** 라이선스 조건(변형)이 각 라이선스 템플릿에 대해 존재할 수 있고 존재할 것입니다. 라이선스 템플릿이 많은 라이선스 조건 변형을 생성한다고 생각하면 됩니다.
+
+<Frame>
+  <img src="/images/concepts/license-terms-diagram.png" alt="License Terms Diagram" />
+</Frame>
+
+일단 등록되면, **라이선스 조건은 변경할 수 없습니다 - 조작하거나 수정할 수 없으며**, 이는 해당 조건을 생성한 라이선스 템플릿에도 적용됩니다.
+
+또한, 라이선스 조건은 그들이 유래한 라이선스 템플릿 내에서 고유한 숫자 ID를 가집니다. 이는 라이선스 조건을 재사용 가능하게 만들어, 누군가가 특정 값 세트로 라이선스 조건을 생성하면 한 번만 생성되면 되고 다른 사람들도 사용할 수 있습니다.
+
+예를 들어, [Programmable IP License (PIL💊)](/concepts/programmable-ip-license/overview)의 특정 조건 값 세트, 예를 들어 비상업적 사용 + 파생물 허용 + 무료 민팅과 같은 것은 관련 ID를 가진 고유한 라이선스 조건을 정의합니다.
+
+## IP 자산에 첨부된 라이선스 조건
+
+루트 IP 자산의 소유자는 다른 사용자들이 이 IP 자산의 파생물을 만들기 위해 해당 조건의 라이선스 토큰을 민팅할 수 있다는 것을 알리기 위해 라이선스 조건을 첨부할 수 있습니다. **라이선스 조건이 IP 자산에 첨부되면, 이제 "공개"로 간주되며 누구나 해당 조건을 사용하여 라이선스 토큰을 민팅할 수 있습니다.**
+
+<Frame>
+  <img src="/images/concepts/license-terms-attach-diagram.png" alt="License Terms Attached to IP Asset" />
+</Frame>
+
+## 상속된 라이선스 조건
+
+반면에, 파생 IP 자산은 부모 IP 자산으로부터 라이선스 조건을 상속받습니다. 이는 IP 자산이 파생물로 등록될 때, 라이선스 토큰을 소각하고 관련 라이선스 조건을 상속받는다는 것을 의미합니다. **이 파생물의 소유자는 새로운 라이선스 조건을 설정할 수 없습니다.**
+
+<Note>
+  아마도 이런 의문이 들 수 있습니다: "내 파생물에 새로운 라이선스 조건을 설정할 수 없다면, 그것은 또한 민팅 수수료를 변경하거나 더 많은 파생물을 허용하지 않는 것도 불가능하다는 의미인가요?"
+
+  다행히도, 이를 해결할 방법이 있습니다! 파생 IP에서 라이선스 조건을 변경할 수는 없지만, [라이선스 설정을 활용하여 특별한 동작을 구현](/concepts/licensing-module/license-config)할 수 있습니다.
+</Note>
+
+## 만료
+
+라이선스 조건은 만료`expiration` 시간을 지원합니다. 라이선스 조건이 만료되면, 해당 라이선스를 따르는 모든 파생물은 더 이상 수익을 창출하거나 추가 파생물을 만들 수 없게 됩니다. IP 자산이 여러 부모의 파생물인 경우, 두 부모 중 가장 빠른 만료 시간에 도달하면 만료됩니다.

@@ -1,0 +1,324 @@
+---
+title: RoyaltyPolicyLAP
+---
+
+RoyaltyPolicyLAP(유동적 절대 비율) 계약은 유동적 절대 비율 메커니즘을 사용하여 주어진 IP 자산에 대한 로열티 분배 로직을 정의합니다. IP 자산과 그 조상들 간의 로열티 관계를 관리하여 적절한 로열티 금고로 수익 토큰을 이전할 수 있게 합니다.
+
+## 상태 변수
+
+### RoyaltyPolicyLAPStorage
+
+```solidity
+struct RoyaltyPolicyLAPStorage {
+    mapping(address ipId => uint32) royaltyStackLAP;
+    mapping(address ipId => mapping(address ancestorIpId => uint32)) ancestorPercentLAP;
+    mapping(address ipId => mapping(address ancestorIpId => mapping(address token => uint256))) transferredTokenLAP;
+}
+```
+
+RoyaltyPolicyLAP의 저장소 구조는 다음을 포함합니다:
+
+* `royaltyStackLAP`: LAP 로열티 정책에 대해 모든 조상들에게 지불해야 할 로열티 비율의 합
+* `ancestorPercentLAP`: LAP 로열티 정책에 대한 IP 자산과 주어진 조상 간의 로열티 비율
+* `transferredTokenLAP`: LAP를 통해 자손 IP로부터 금고로 이전된 총 생애 수익 토큰
+
+### IP\_GRAPH
+
+```solidity
+address public constant IP_GRAPH = address(0x0101)
+```
+
+IP들 간의 관계를 추적하는 IP Graph 프리컴파일 계약의 주소입니다.
+
+### ROYALTY\_MODULE
+
+```solidity
+IRoyaltyModule public immutable ROYALTY_MODULE
+```
+
+Royalty Module 계약의 주소입니다.
+
+### IP\_GRAPH\_ACL
+
+```solidity
+IPGraphACL public immutable IP_GRAPH_ACL
+```
+
+IP Graph 접근 제어 목록 계약의 주소입니다.
+
+## 함수
+
+### constructor
+
+```solidity
+constructor(address royaltyModule, address ipGraphAcl)
+```
+
+RoyaltyPolicyLAP 계약의 생성자입니다.
+
+**Parameters:**
+
+* `royaltyModule`: RoyaltyModule 주소
+* `ipGraphAcl`: IPGraphACL 주소
+
+### initialize
+
+```solidity
+function initialize(address accessManager) external initializer
+```
+
+이 구현 계약의 초기화 함수입니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 계약의 주소입니다.
+
+### onLicenseMinting
+
+```solidity
+function onLicenseMinting(
+    address ipId,
+    uint32 licensePercent,
+    bytes calldata
+) external nonReentrant onlyRoyaltyModule
+```
+
+라이센스 민팅 시 로열티 관련 로직을 실행합니다.
+
+**Parameters:**
+
+* `ipId`: 라이센스가 민팅되는 ipId(라이센서)
+* `licensePercent`: 민팅되는 라이센스의 라이센스 비율
+
+### onLinkToParents
+
+```solidity
+function onLinkToParents(
+    address ipId,
+    address[] calldata parentIpIds,
+    address[] memory licenseRoyaltyPolicies,
+    uint32[] calldata licensesPercent,
+    bytes calldata
+) external nonReentrant onlyRoyaltyModule returns (uint32 newRoyaltyStackLAP)
+```
+
+부모에 연결할 때 로열티 관련 로직을 실행합니다.
+
+**Parameters:**
+
+* `ipId`: 부모에 연결되는 자식 ipId
+* `parentIpIds`: 자식 ipId가 연결되는 부모 ipId들
+* `licenseRoyaltyPolicies`: 라이센스의 로열티 정책들
+* `licensesPercent`: 민팅되는 라이센스의 라이센스 비율
+
+**Returns:**
+
+* `newRoyaltyStackLAP`: LAP 로열티 정책에 대한 자식 ipId의 로열티 스택
+
+### transferToVault
+
+```solidity
+function transferToVault(
+    address ipId,
+    address ancestorIpId,
+    address token
+) external whenNotPaused returns (uint256)
+```
+
+LAP 로열티 정책을 통해 청구 가능한 수익 토큰의 금액을 금고로 이전합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `ancestorIpId`: IP 자산의 조상 ipId
+* `token`: 이전할 토큰 주소
+
+**Returns:**
+
+* 이전된 수익 토큰의 금액
+
+### getPolicyRtsRequiredToLink
+
+```solidity
+function getPolicyRtsRequiredToLink(address ipId, uint32 licensePercent) external view returns (uint32)
+```
+
+자식을 주어진 IP 자산에 연결하는 데 필요한 로열티 토큰의 양을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `licensePercent`: 라이센스의 비율
+
+**Returns:**
+
+* 자식을 주어진 IP 자산에 연결하는 데 필요한 로열티 토큰의 양(LAP의 경우 항상 0)
+
+### getPolicyRoyaltyStack
+
+```solidity
+function getPolicyRoyaltyStack(address ipId) external view returns (uint32)
+```
+
+주어진 IP 자산에 대한 LAP 로열티 스택을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티 스택을 가져올 ipId
+
+**Returns:**
+
+* LAP 로열티 정책에 대해 모든 조상에게 지급될 로열티 비율의 합
+
+### getPolicyRoyalty
+
+```solidity
+function getPolicyRoyalty(address ipId, address ancestorIpId) external returns (uint32)
+```
+
+LAP를 통한 IP 자산과 그 조상들 간의 로열티 비율을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티를 가져올 ipId
+* `ancestorIpId`: 로열티를 가져올 조상 ipId
+
+**Returns:**
+
+* LAP를 통한 IP 자산과 그 조상들 간의 로열티 비율
+
+### getTransferredTokens
+
+```solidity
+function getTransferredTokens(address ipId, address ancestorIpId, address token) external view returns (uint256)
+```
+
+LAP를 통해 하위 IP로부터 볼트로 이전된 총 평생 수익 토큰을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `ancestorIpId`: IP 자산의 조상 ipId
+* `token`: 이전할 토큰 주소
+
+**Returns:**
+
+* LAP를 통해 하위 IP로부터 볼트로 이전된 총 평생 수익 토큰
+
+### isSupportGroup
+
+```solidity
+function isSupportGroup() external view returns (bool)
+```
+
+로열티 정책이 그룹 작업을 지원하는지 여부를 반환합니다.
+
+**Returns:**
+
+* False (LAP 로열티 정책은 그룹 작업을 지원하지 않음)
+
+## 내부 함수
+
+### \_getRoyaltyStackLAP
+
+```solidity
+function _getRoyaltyStackLAP(address ipId) internal returns (uint32)
+```
+
+LAP 로열티 정책에 대한 주어진 IP 자산의 로열티 스택을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티 스택을 가져올 ipId
+
+**Returns:**
+
+* LAP 로열티 정책에 대한 주어진 IP 자산의 로열티 스택
+
+### \_setRoyaltyLAP
+
+```solidity
+function _setRoyaltyLAP(address ipId, address parentIpId, uint32 royalty) internal
+```
+
+IP 자산과 그 조상 간의 주어진 링크에 대한 LAP 로열티를 설정합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티를 설정할 ipId
+* `parentIpId`: 로열티를 설정할 부모 ipId
+* `royalty`: LAP 라이선스 로열티 비율
+
+### \_getRoyaltyLAP
+
+```solidity
+function _getRoyaltyLAP(address ipId, address ancestorIpId) internal returns (uint32)
+```
+
+로열티 정책 LAP를 통한 IP 자산과 그 조상 간의 로열티 비율을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티를 가져올 ipId
+* `ancestorIpId`: 로열티를 가져올 조상 ipId
+
+**Returns:**
+
+* 로열티 정책 LAP를 통한 IP 자산과 그 조상 간의 로열티 비율
+
+### \_getRoyaltyPolicyLAPStorage
+
+```solidity
+function _getRoyaltyPolicyLAPStorage() private pure returns (RoyaltyPolicyLAPStorage storage $)
+```
+
+RoyaltyPolicyLAP의 스토리지 구조체를 반환합니다.
+
+**Returns:**
+
+* RoyaltyPolicyLAP의 스토리지 구조
+
+### \_authorizeUpgrade
+
+```solidity
+function _authorizeUpgrade(address newImplementation) internal override restricted
+```
+
+UUPSUpgradeable에 따라 업그레이드를 승인하는 훅입니다.
+
+**Parameters:**
+
+* `newImplementation`: 새로운 구현의 주소
+
+## 이벤트
+
+### RevenueTransferredToVault
+
+```solidity
+event RevenueTransferredToVault(address ipId, address ancestorIpId, address token, uint256 amount)
+```
+
+수익 토큰이 볼트로 이전될 때 발생하는 이벤트입니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `ancestorIpId`: IP 자산의 조상 ipId
+* `token`: 이전된 토큰 주소
+* `amount`: 이전된 토큰의 양
+
+## 보안 고려사항
+
+RoyaltyPolicyLAP 컨트랙트는 다음과 같은 여러 보안 조치를 구현합니다:
+
+1. **접근 제어**: 다음과 같은 함수들 `onLicenseMinting` 및 `onLinkToParents` 는 오직 `onlyRoyaltyModule` 수정자를 통해 Royalty Module에 의해서만 호출될 수 있습니다.
+
+2. **재진입 보호**: `nonReentrant` 수정자는 재진입 공격을 방지하기 위해 토큰 이전을 처리하는 함수에 사용됩니다.
+
+3. **일시 중지 기능**: 컨트랙트는 비상 상황에서 `whenNotPaused` 수정자를 사용하여 일시 중지될 수 있습니다.
+
+4. **안전한 토큰 이전**: 컨트랙트는 안전한 토큰 이전을 보장하기 위해 OpenZeppelin의 SafeERC20 라이브러리를 사용합니다.
+
+5. **업그레이드 가능성**: 컨트랙트는 UUPS 패턴을 사용하여 업그레이드가 가능하며, 업그레이드 권한은 프로토콜 관리자로 제한됩니다.
+
+6. **입력값 검증**: 계약은 입력값을 검증하고 동일한 IP 간의 전송을 방지하는 등의 엣지 케이스를 확인합니다.

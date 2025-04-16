@@ -1,0 +1,88 @@
+---
+title: 노드 업그레이드
+description: Story 노드 클라이언트 업그레이드 가이드
+---
+
+세 가지 유형의 업그레이드가 있습니다
+
+1. Story geth 클라이언트 업그레이드
+2. Story 클라이언트 수동 업그레이드
+3. Cosmovisor로 업그레이드 예약
+
+### Story geth 클라이언트 업그레이드
+
+```bash
+# Stop the services
+sudo systemctl stop story
+sudo systemctl stop story-geth
+
+# Download the new binary
+wget ${STORY_GETH_BINARY_URL}
+sudo mv ./geth-linux-amd64 story-geth
+sudo chmod +x story-geth
+sudo mv ./story-geth $HOME/go/bin/story-geth
+source $HOME/.bashrc
+
+# Restart the service
+sudo systemctl start story-geth
+sudo systemctl start story
+```
+
+### Story 클라이언트 수동 업그레이드
+
+```bash
+# Stop the service
+sudo systemctl stop story
+
+# Download the new binary
+wget ${STORY_BINARY_URL}
+sudo mv story-linux-amd64 story
+sudo chmod +x story
+sudo mv ./story $HOME/go/bin/story
+
+# Schedule the update
+sudo systemctl start story
+```
+
+### Cosmovisor로 업그레이드 예약
+
+다음 단계는 Cosmovisor를 사용하여 업그레이드를 예약하는 방법을 설명합니다:
+
+1. 업그레이드 디렉토리를 생성하고 새 바이너리 다운로드
+
+```bash
+# Download the new binary
+wget ${STORY_BINARY_URL}
+
+# Schedule the upgrade
+source $HOME/.bash_profile
+cosmovisor add-upgrade ${UPGRADE_NAME} ${UPGRADE_PATH} \
+  --force \
+  --upgrade-height ${UPGRADE_HEIGHT}
+```
+
+2. 업그레이드 구성 확인
+
+```bash
+# Check the upgrade info
+cat $HOME/.story/data/upgrade-info.json
+```
+
+upgrade-info.json은 다음과 같이 표시되어야 합니다:
+
+```json
+{
+  "name": "v1.0.0",
+  "time": "2025-02-05T12:00:00Z",
+  "height": 858000
+}
+```
+
+3. 업그레이드 모니터링
+
+```bash
+# Watch the node logs for the upgrade
+journalctl -u story -f -o cat
+```
+
+Note: Cosmovisor will automatically handle the binary switch once the specified block height is reached. Before the upgrade, confirm that your node is fully synced and has enough disk space available.

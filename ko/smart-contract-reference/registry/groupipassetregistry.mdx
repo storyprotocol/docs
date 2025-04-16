@@ -1,0 +1,191 @@
+---
+title: GroupIPAssetRegistry
+---
+
+GroupIPAssetRegistry는 그룹 멤버와 보상 풀을 포함한 Group IP Assets (IPA)의 등록과 추적을 관리합니다. 그룹 등록, 그룹 멤버십 관리, 그룹 보상 풀 처리를 위한 기능을 제공합니다.
+
+## 상태 변수
+
+### MAX\_GROUP\_SIZE
+
+```solidity
+uint256 public constant MAX_GROUP_SIZE = 1000
+```
+
+그룹에서 허용되는 최대 멤버 수입니다.
+
+### GROUPING\_MODULE
+
+```solidity
+IGroupingModule public immutable GROUPING_MODULE
+```
+
+프로토콜 전체의 Grouping Module 주소입니다.
+
+## 함수
+
+### registerGroup
+
+```solidity
+function registerGroup(
+    address groupNft,
+    uint256 groupNftId,
+    address rewardPool,
+    address registerFeePayer
+) external onlyGroupingModule whenNotPaused returns (address groupId)
+```
+
+Group IPA를 등록합니다.
+
+**Parameters:**
+
+* `groupNft`: 그룹 NFT의 주소.
+* `groupNftId`: 그룹 NFT의 ID.
+* `rewardPool`: 그룹 리워드 풀의 주소.
+* `registerFeePayer`: 등록 수수료를 지불하는 계정의 주소.
+
+**Returns:**
+
+* `groupId`: 새로 등록된 Group IPA의 주소.
+
+### whitelistGroupRewardPool
+
+```solidity
+function whitelistGroupRewardPool(address rewardPool, bool allowed) external onlyGroupingModule whenNotPaused
+```
+
+그룹 리워드 풀을 화이트리스트에 등록합니다.
+
+**Parameters:**
+
+* `rewardPool`: 그룹 리워드 풀의 주소.
+* `allowed`: 그룹 리워드 풀이 화이트리스트에 등록되었는지 여부.
+
+### addGroupMember
+
+```solidity
+function addGroupMember(address groupId, address[] calldata ipIds) external onlyGroupingModule whenNotPaused
+```
+
+Group IPA에 멤버를 추가합니다.
+
+**Parameters:**
+
+* `groupId`: Group IPA의 주소.
+* `ipIds`: Group IPA에 추가할 IP들의 주소.
+
+### removeGroupMember
+
+```solidity
+function removeGroupMember(address groupId, address[] calldata ipIds) external onlyGroupingModule whenNotPaused
+```
+
+Group IPA에서 멤버를 제거합니다.
+
+**Parameters:**
+
+* `groupId`: Group IPA의 주소.
+* `ipIds`: Group IPA에서 제거할 IP들의 주소.
+
+### isRegisteredGroup
+
+```solidity
+function isRegisteredGroup(address groupId) external view returns (bool)
+```
+
+ID를 기반으로 그룹 IPA가 등록되었는지 확인합니다.
+
+**Parameters:**
+
+* `groupId`: Group IPA의 주소.
+
+**Returns:**
+
+* `isRegistered`: Group IPA가 프로토콜에 등록되었는지 여부.
+
+### getGroupRewardPool
+
+```solidity
+function getGroupRewardPool(address groupId) external view returns (address)
+```
+
+Group IPA의 그룹 리워드 풀을 조회합니다.
+
+**Parameters:**
+
+* `groupId`: Group IPA의 주소.
+
+**Returns:**
+
+* `rewardPool`: 그룹 리워드 풀의 주소.
+
+### isWhitelistedGroupRewardPool
+
+```solidity
+function isWhitelistedGroupRewardPool(address rewardPool) external view returns (bool isWhitelisted)
+```
+
+그룹 리워드 풀이 화이트리스트에 등록되었는지 확인합니다.
+
+**Parameters:**
+
+* `rewardPool`: 그룹 리워드 풀의 주소.
+
+**Returns:**
+
+* `isWhitelisted`: 그룹 리워드 풀이 화이트리스트에 등록되었는지 여부.
+
+### getGroupMembers
+
+```solidity
+function getGroupMembers(
+    address groupId,
+    uint256 startIndex,
+    uint256 size
+) external view returns (address[] memory results)
+```
+
+Group IPA의 그룹 멤버들을 조회합니다.
+
+**Parameters:**
+
+* `groupId`: Group IPA의 주소.
+* `startIndex`: 조회할 그룹 멤버들의 시작 인덱스.
+* `size`: 조회할 그룹 멤버들의 크기.
+
+**Returns:**
+
+* `results`: 그룹 멤버들의 주소.
+
+### containsIp
+
+```solidity
+function containsIp(address groupId, address ipId) external view returns (bool)
+```
+
+IP가 Group IPA의 멤버인지 확인합니다.
+
+**Parameters:**
+
+* `groupId`: Group IPA의 주소.
+* `ipId`: IP의 주소.
+
+**Returns:**
+
+* `isMember`: IP가 Group IPA의 멤버인지 여부.
+
+### totalMembers
+
+```solidity
+function totalMembers(address groupId) external view returns (uint256)
+```
+
+Group IPA의 전체 멤버 수를 조회합니다.
+
+**Parameters:**
+
+* `groupId`: Group IPA의 주소.
+
+**Returns:**
+
+* `totalMembers`: Group IPA의 전체 멤버 수.

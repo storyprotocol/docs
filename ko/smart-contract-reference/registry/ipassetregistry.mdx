@@ -1,0 +1,183 @@
+---
+title: IPAssetRegistry
+---
+
+IPAssetRegistry는 Story에 등록된 모든 IP에 대한 신뢰할 수 있는 소스 역할을 합니다. IP는 컨트랙트 주소, 토큰 ID, 체인 ID로 식별되며, 이는 모든 NFT가 IP로 개념화될 수 있음을 의미합니다. IP가 프로토콜에 등록되면 메타데이터 속성을 위한 IP 리졸버와 프로토콜 인증을 위한 IP 계정을 참조하는 해당 IP 자산이 생성됩니다.
+
+## 상태 변수
+
+### totalSupply
+
+```solidity
+uint256 totalSupply
+```
+
+프로토콜에 등록된 IP 자산의 총 수입니다.
+
+### treasury
+
+```solidity
+address treasury
+```
+
+등록 수수료를 받는 금고의 주소입니다.
+
+### feeToken
+
+```solidity
+address feeToken
+```
+
+등록 수수료를 지불하는 데 사용되는 토큰의 주소입니다.
+
+### feeAmount
+
+```solidity
+uint96 feeAmount
+```
+
+등록 수수료의 금액입니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) public initializer
+```
+
+IPAssetRegistry 컨트랙트를 초기화합니다.
+
+**Parameters:**
+
+* `accessManager`: 접근 관리자의 주소입니다.
+
+### register
+
+```solidity
+function register(
+    uint256 chainid,
+    address tokenContract,
+    uint256 tokenId
+) external whenNotPaused returns (address id)
+```
+
+NFT를 IP 자산으로 등록하고 이에 대한 IP 계정을 생성합니다. IP가 이미 등록되어 있다면 IP 주소를 반환합니다.
+
+**Parameters:**
+
+* `chainid`: IP NFT가 있는 체인의 식별자입니다.
+* `tokenContract`: NFT의 주소입니다.
+* `tokenId`: NFT의 토큰 식별자입니다.
+
+**Returns:**
+
+* `id`: 새로 등록된 IP의 주소입니다.
+
+### setRegistrationFee
+
+```solidity
+function setRegistrationFee(address treasury, address feeToken, uint96 feeAmount) external restricted
+```
+
+IP 자산의 등록 수수료를 설정합니다.
+
+**Parameters:**
+
+* `treasury`: 수수료를 받을 금고의 주소입니다.
+* `feeToken`: 수수료를 지불하는 데 사용되는 토큰의 주소입니다.
+* `feeAmount`: 수수료의 금액입니다.
+
+### upgradeIPAccountImpl
+
+```solidity
+function upgradeIPAccountImpl(address newIpAccountImpl) external restricted
+```
+
+IP 계정 구현을 업그레이드합니다.
+
+**Parameters:**
+
+* `newIpAccountImpl`: 새로운 IP 계정 구현의 주소입니다.
+
+### ipId
+
+```solidity
+function ipId(uint256 chainId, address tokenContract, uint256 tokenId) public view returns (address)
+```
+
+IP NFT와 연관된 정식 IP 식별자를 가져옵니다. 이는 바인딩된 IP 계정의 주소와 동일합니다.
+
+**Parameters:**
+
+* `chainId`: IP가 있는 체인의 식별자입니다.
+* `tokenContract`: IP의 주소입니다.
+* `tokenId`: IP의 토큰 식별자입니다.
+
+**Returns:**
+
+* `ipId`: IP의 정식 주소 식별자입니다.
+
+### isRegistered
+
+```solidity
+function isRegistered(address id) external view returns (bool)
+```
+
+ID를 기반으로 IP가 등록되었는지 확인합니다.
+
+**Parameters:**
+
+* `id`: IP의 정식 식별자입니다.
+
+**Returns:**
+
+* `isRegistered`: IP가 프로토콜에 등록되었는지 여부입니다.
+
+### totalSupply
+
+```solidity
+function totalSupply() external view returns (uint256)
+```
+
+프로토콜에 등록된 IP 자산의 총 수를 가져옵니다.
+
+**Returns:**
+
+* `uint256`: 등록된 IP 자산의 총 수입니다.
+
+### getTreasury
+
+```solidity
+function getTreasury() external view returns (address)
+```
+
+IP 자산의 금고 주소를 검색합니다.
+
+**Returns:**
+
+* `treasury`: 금고의 주소입니다.
+
+### getFeeToken
+
+```solidity
+function getFeeToken() external view returns (address)
+```
+
+IP 자산의 등록 수수료 토큰을 검색합니다.
+
+**Returns:**
+
+* `feeToken`: 수수료를 지불하는 데 사용되는 토큰의 주소입니다.
+
+### getFeeAmount
+
+```solidity
+function getFeeAmount() external view returns (uint96)
+```
+
+IP 자산의 등록 수수료 금액을 검색합니다.
+
+**Returns:**
+
+* `feeAmount`: 수수료의 금액입니다.

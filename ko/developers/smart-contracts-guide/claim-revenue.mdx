@@ -1,0 +1,232 @@
+---
+title: 수익 지불 및 청구
+description: Solidity에서 IP 자산에 대한 지불과 수익 청구 방법을 알아보세요.
+---
+
+<Card title="Completed Code" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/5_Royalty.t.sol" icon="thumbs-up">
+  완성된 코드를 끝까지 따라가보세요.
+</Card>
+
+이 섹션에서는 IP 자산에 대한 지불 방법을 보여줍니다. 이를 수행하는 데는 몇 가지 이유가 있습니다:
+
+1. 단순히 IP에 "팁"을 주고 싶은 경우
+2. 상위 IP와의 라이선스 약관에 따라 일정 비율의 지불금을 전달해야 하는 경우
+
+두 시나리오 모두 아래의 `payRoyaltyOnBehalf` 함수를 사용합니다. 이 경우 [Royalty Module](/concepts/royalty-module/overview)이 자동으로 지불 받는 IPA와 특정 `commercialRevShare`을 협상한 상위 IP 자산들이 자신들의 몫을 청구할 수 있도록 다양한 지불 흐름을 처리합니다.
+
+## 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 완료하기 [자체 프로젝트 설정](/developers/smart-contracts-guide/setup)
+2. 기본적인 [Royalty Module](/concepts/royalty-module/overview)
+3. 이 예제가 작동하도록 하기 위해 상업적 수익 공유가 포함된 라이선스 약관이 있는 자식 IPA와 부모 IPA
+
+## 시작하기 전에
+
+IP Asset를 다음을 사용하여 지불할 수 있습니다 `payRoyaltyOnBehalf` 함수를 사용하여 [Royalty Module](/concepts/royalty-module/overview).
+
+IP Asset를 다음으로 지불하게 됩니다 [MockERC20](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E). 일반적으로는 \$WIP로 지불하지만, 테스트를 위해 토큰을 발행해야 하므로 MockERC20을 사용할 것입니다.
+
+다음 시나리오를 이해하기 쉽도록, 부모 IP Asset가 자식 IP Asset와 50% `commercialRevShare`를 협상했다고 가정해봅시다.
+
+### 화이트리스트에 등록된 수익 토큰
+
+우리 프로토콜에서 화이트리스트에 등록된 토큰만 지불("수익") 토큰으로 사용할 수 있습니다. MockERC20이 그 중 하나입니다. 해당 목록을 보려면 [here](/developers/deployed-smart-contracts#whitelisted-revenue-tokens)를 확인하세요.
+
+## IP Asset 지불하기
+
+다음과 같이 IP Asset에 지불할 수 있습니다:
+
+```solidity Solidity
+ROYALTY_MODULE.payRoyaltyOnBehalf(childIpId, address(0), address(MERC20), 10);
+```
+
+이것은 10 \$MERC20을 `childIpId`의 [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault)로 전송합니다. 여기서 자식이 수익을 청구할 수 있습니다. 다음 섹션에서 이것이 작동하는 버전을 보게 될 것입니다.
+
+<Warning>
+  **Important: Approving the Royalty Module**
+
+  를 호출하기 전에 `payRoyaltyOnBehalf`로열티 모듈이 귀하를 대신하여 토큰을 사용할 수 있도록 승인해야 합니다. 아래 섹션에서 우리가 `MERC20.approve(address(ROYALTY_MODULE), 10);`를 호출하는 것을 보게 될 것입니다. 그렇지 않으면 작동하지 않습니다.
+</Warning>
+
+## 수익 청구하기
+
+지불이 이루어지면 결국 IP Asset의 [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault)에 도달합니다. 여기서 해당 IP Asset의 IP Royalty Vault에 대한 수익 지분 %를 나타내는 Royalty Token을 소유한 사람에게 청구/이전됩니다.
+
+IP Account(즉, [IP Asset](/concepts/ip-asset/overview)를 나타내는 스마트 컨트랙트)는 처음 등록될 때 Royalty Token의 100%를 보유합니다. 따라서 일반적으로 대부분의 Royalty Token을 보유하고 있습니다.
+
+작동하는 것을 보고 결과를 확인하기 위해 `test/5_Royalty.t.sol` 아래에 테스트 파일을 만들어보겠습니다:
+
+<Note>
+  **컨트랙트 주소**
+
+  Story 컨트랙트의 주소를 미리 입력해두었습니다. 하지만 다음에서도 주소를 찾을 수 있습니다: [Deployed Smart Contracts](/developers/deployed-smart-contracts)
+</Note>
+
+```solidity test/5_Royalty.t.sol
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.26;
+
+import { Test } from "forge-std/Test.sol";
+// for testing purposes only
+import { MockIPGraph } from "@storyprotocol/test/mocks/MockIPGraph.sol";
+import { IPAssetRegistry } from "@storyprotocol/core/registries/IPAssetRegistry.sol";
+import { LicenseRegistry } from "@storyprotocol/core/registries/LicenseRegistry.sol";
+import { PILicenseTemplate } from "@storyprotocol/core/modules/licensing/PILicenseTemplate.sol";
+import { RoyaltyPolicyLAP } from "@storyprotocol/core/modules/royalty/policies/LAP/RoyaltyPolicyLAP.sol";
+import { PILFlavors } from "@storyprotocol/core/lib/PILFlavors.sol";
+import { PILTerms } from "@storyprotocol/core/interfaces/modules/licensing/IPILicenseTemplate.sol";
+import { LicensingModule } from "@storyprotocol/core/modules/licensing/LicensingModule.sol";
+import { LicenseToken } from "@storyprotocol/core/LicenseToken.sol";
+import { RoyaltyWorkflows } from "@storyprotocol/periphery/workflows/RoyaltyWorkflows.sol";
+import { RoyaltyModule } from "@storyprotocol/core/modules/royalty/RoyaltyModule.sol";
+import { MockERC20 } from "@storyprotocol/test/mocks/token/MockERC20.sol";
+
+import { SimpleNFT } from "../src/mocks/SimpleNFT.sol";
+
+// Run this test:
+// forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/5_Royalty.t.sol
+contract RoyaltyTest is Test {
+    address internal alice = address(0xa11ce);
+    address internal bob = address(0xb0b);
+
+    // For addresses, see https://docs.story.foundation/developers/deployed-smart-contracts
+    // Protocol Core - IPAssetRegistry
+    IPAssetRegistry internal IP_ASSET_REGISTRY = IPAssetRegistry(0x77319B4031e6eF1250907aa00018B8B1c67a244b);
+    // Protocol Core - LicenseRegistry
+    LicenseRegistry internal LICENSE_REGISTRY = LicenseRegistry(0x529a750E02d8E2f15649c13D69a465286a780e24);
+    // Protocol Core - LicensingModule
+    LicensingModule internal LICENSING_MODULE = LicensingModule(0x04fbd8a2e56dd85CFD5500A4A4DfA955B9f1dE6f);
+    // Protocol Core - PILicenseTemplate
+    PILicenseTemplate internal PIL_TEMPLATE = PILicenseTemplate(0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316);
+    // Protocol Core - RoyaltyPolicyLAP
+    RoyaltyPolicyLAP internal ROYALTY_POLICY_LAP = RoyaltyPolicyLAP(0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E);
+    // Protocol Core - LicenseToken
+    LicenseToken internal LICENSE_TOKEN = LicenseToken(0xFe3838BFb30B34170F00030B52eA4893d8aAC6bC);
+    // Protocol Core - RoyaltyModule
+    RoyaltyModule internal ROYALTY_MODULE = RoyaltyModule(0xD2f60c40fEbccf6311f8B47c4f2Ec6b040400086);
+    // Protocol Periphery - RoyaltyWorkflows
+    RoyaltyWorkflows internal ROYALTY_WORKFLOWS = RoyaltyWorkflows(0x9515faE61E0c0447C6AC6dEe5628A2097aFE1890);
+    // Mock - MERC20
+    MockERC20 internal MERC20 = MockERC20(0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E);
+
+    SimpleNFT public SIMPLE_NFT;
+    uint256 public tokenId;
+    address public ipId;
+    uint256 public licenseTermsId;
+    uint256 public startLicenseTokenId;
+    address public childIpId;
+
+    function setUp() public {
+        // this is only for testing purposes
+        // due to our IPGraph precompile not being
+        // deployed on the fork
+        vm.etch(address(0x0101), address(new MockIPGraph()).code);
+
+        SIMPLE_NFT = new SimpleNFT("Simple IP NFT", "SIM");
+        tokenId = SIMPLE_NFT.mint(alice);
+        ipId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), tokenId);
+
+        licenseTermsId = PIL_TEMPLATE.registerLicenseTerms(
+            PILFlavors.commercialRemix({
+                mintingFee: 0,
+                commercialRevShare: 10 * 10 ** 6, // 10%
+                royaltyPolicy: address(ROYALTY_POLICY_LAP),
+                currencyToken: address(MERC20)
+            })
+        );
+
+        vm.prank(alice);
+        LICENSING_MODULE.attachLicenseTerms(ipId, address(PIL_TEMPLATE), licenseTermsId);
+        startLicenseTokenId = LICENSING_MODULE.mintLicenseTokens({
+            licensorIpId: ipId,
+            licenseTemplate: address(PIL_TEMPLATE),
+            licenseTermsId: licenseTermsId,
+            amount: 2,
+            receiver: bob,
+            royaltyContext: "", // for PIL, royaltyContext is empty string
+            maxMintingFee: 0,
+            maxRevenueShare: 0
+        });
+
+        // Registers a child IP (owned by Bob) as a derivative of Alice's IP.
+        uint256 childTokenId = SIMPLE_NFT.mint(bob);
+        childIpId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), childTokenId);
+
+        uint256[] memory licenseTokenIds = new uint256[](1);
+        licenseTokenIds[0] = startLicenseTokenId;
+
+        vm.prank(bob);
+        LICENSING_MODULE.registerDerivativeWithLicenseTokens({
+            childIpId: childIpId,
+            licenseTokenIds: licenseTokenIds,
+            royaltyContext: "", // empty for PIL
+            maxRts: 0
+        });
+    }
+
+    /// @notice Pays MERC20 to Bob's IP. Some of this MERC20 is then claimable
+    /// by Alice's IP.
+    /// @dev In this case, this contract will act as the 3rd party paying MERC20
+    /// to Bob (the child IP).
+    function test_claimAllRevenue() public {
+        // ADMIN SETUP
+        // We mint 100 MERC20 to this contract so it has some money to pay.
+        MERC20.mint(address(this), 100);
+        // We have to approve the Royalty Module to spend MERC20 on our behalf, which
+        // it will do using `payRoyaltyOnBehalf`.
+        MERC20.approve(address(ROYALTY_MODULE), 10);
+
+        // This contract pays 10 MERC20 to Bob's IP.
+        ROYALTY_MODULE.payRoyaltyOnBehalf(childIpId, address(0), address(MERC20), 10);
+
+        // Now that Bob's IP has been paid, Alice can claim her share (1 MERC20, which
+        // is 10% as specified in the license terms)
+        address[] memory childIpIds = new address[](1);
+        address[] memory royaltyPolicies = new address[](1);
+        address[] memory currencyTokens = new address[](1);
+        childIpIds[0] = childIpId;
+        royaltyPolicies[0] = address(ROYALTY_POLICY_LAP);
+        currencyTokens[0] = address(MERC20);
+
+        uint256[] memory amountsClaimed = ROYALTY_WORKFLOWS.claimAllRevenue({
+            ancestorIpId: ipId,
+            claimer: ipId,
+            childIpIds: childIpIds,
+            royaltyPolicies: royaltyPolicies,
+            currencyTokens: currencyTokens
+        });
+
+        // Check that 1 MERC20 was claimed by Alice's IP Account
+        assertEq(amountsClaimed[0], 1);
+        // Check that Alice's IP Account now has 1 MERC20 in its balance.
+        assertEq(MERC20.balanceOf(ipId), 1);
+        // Check that Bob's IP now has 9 MERC20 in its Royalty Vault, which it
+        // can claim to its IP Account at a later point if he wants.
+        assertEq(MERC20.balanceOf(ROYALTY_MODULE.ipRoyaltyVaults(childIpId)), 9);
+    }
+}
+```
+
+## 코드를 테스트해보세요!
+
+실행하세요 `forge build`. 모든 것이 성공적이라면, 명령이 성공적으로 컴파일될 것입니다.
+
+다음 명령을 실행하여 테스트를 실행하세요:
+
+```bash
+forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/5_Royalty.t.sol
+```
+
+## IP 분쟁 제기
+
+축하합니다, [Royalty Module](/concepts/royalty-module/overview)을 사용하여 수익을 청구했습니다!
+
+<Card title="Completed Code" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/5_Royalty.t.sol" icon="thumbs-up">
+  완성된 코드를 끝까지 따라가보세요.
+</Card>
+
+만약 IP Asset이 자신의 지분을 지불하지 않는다면 어떻게 될까요? 다음 페이지에서 다룰 온체인 IP 분쟁을 제기할 수 있습니다.
+
+<Warning>곧 공개됩니다!</Warning>

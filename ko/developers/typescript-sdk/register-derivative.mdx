@@ -1,0 +1,124 @@
+---
+title: 파생작 등록하기
+description: TypeScript에서 다른 IP 자산의 자식으로 파생작/리믹스 IP 자산을 등록하는 방법을 알아보세요.
+---
+
+<CardGroup cols={1}>
+  <Card title="Completed Code" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts" icon="thumbs-up">
+    이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다룹니다.
+  </Card>
+</CardGroup>
+
+이 섹션에서는 IP 자산을 다른 자산의 파생작으로 등록하는 방법을 보여줍니다.
+
+### 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 다음을 완료하세요 [TypeScript SDK 설정](/developers/typescript-sdk/setup)
+
+## 1. 시작하기 전에
+
+IP 자산을 다른 자산의 파생작으로 등록하는 방법은 여러 가지가 있습니다. 아래에서 어떤 함수를 사용해야 하는지 파악하는 데 도움을 드리겠습니다.
+
+<Note>
+  **잘 모르시나요?** 가장 쉬운 방법을 기준으로 어떤 SDK 함수를 사용할지 결정하는 것이 좋습니다. 하지만 잘 모르시겠다면, 다음 섹션으로 계속 진행하시면 됩니다.
+</Note>
+
+<Tip>
+  참고로 이것이 혼란스러울 수 있다는 것을 알고 있으며, 곧 SDK를 업데이트하여 이 모든 것을 1개의 간단한 함수로 통합할 예정입니다. :)
+</Tip>
+
+사용할 수 있는 [라이선스 토큰](/concepts/licensing-module/license-token)이 이미 있나요?
+
+* ✅ 예: 파생 IP 자산이 이미 등록되어 있나요?
+  * ✅ 예: [registerDerivativeWithLicenseTokens](/sdk-reference/ipasset#registerderivativewithlicensetokens)
+  * ❌ 아니요: 자체 NFT 컨트랙트가 있거나 이미 발행된 NFT가 있나요?
+    * ✅ 예: [registerIpAndMakeDerivativeWithLicenseTokens](/sdk-reference/ipasset#registeripandmakederivativewithlicensetokens)
+    * ❌ 아니요: [mintAndRegisterIpAndMakeDerivativeWithLicenseTokens](/sdk-reference/ipasset#mintandregisteripandmakederivativewithlicensetokens)
+* ❌ 아니요: 파생 IP 자산이 이미 등록되어 있나요?
+  * ✅ 예: [registerDerivative](/sdk-reference/ipasset#registerderivative)
+  * ❌ 아니요: 자체 NFT 컨트랙트가 있거나 이미 발행된 NFT가 있나요?
+    * ✅ 예: [registerDerivativeIp](/sdk-reference/ipasset#registerderivativeip)
+    * ❌ 아니요: [mintAndRegisterIpAndMakeDerivative](/sdk-reference/ipasset#mintandregisteripandmakederivative)
+
+### 1a. 필요하지 않은데 라이선스 토큰을 사용하는 이유는 무엇인가요?
+
+몇 가지 경우가 있습니다 **라이선스 토큰이 필요합니다** 파생작을 등록하기 위해서는:
+
+* 라이선스 토큰에는 비공개 라이선스 조건이 포함되어 있어서, 소유자가 수동으로 발행한 라이선스 토큰을 보유한 경우에만 파생작으로 등록할 수 있습니다. 자세한 내용은 [여기](/concepts/licensing-module/license-token#private-licenses).
+* 라이선스 토큰(NFT)을 발행하는 데는 `mintingFee` 비용이 들고, 마켓플레이스에서 더 저렴한 가격에 구매할 수 있었습니다. 그렇다면 더 비싼 `defaultMintingFee`.
+
+## 2. 파생작 등록
+
+<Note>
+  **이것은 단순한 예시입니다**. 위의 조사를 바탕으로 가장 적합한 파생 함수를 찾아내시기 바랍니다. 하지만 잘 모르겠고 하나의 해결책을 단계별로 알아보고 싶다면, 다음 부분이 도움이 될 것입니다.
+</Note>
+
+우리는 ❌ 라이선스 토큰이 없고, ❌ 파생 IP가 아직 등록되지 않았으며, ❌ 자체 NFT 계약이나 이미 발행된 NFT가 없다고 가정하겠습니다.
+
+**다음의 1-4단계를 따르세요** [IP 자산 등록](/developers/typescript-sdk/register-ip-asset). SPG NFT 컬렉션이 이미 있다면 4단계는 건너뛸 수 있습니다. 그런 다음 여기로 돌아오세요.
+
+코드를 다음과 같이 수정하세요...
+
+1. 대신 `mintAndRegisterIp`, 사용 `mintAndRegisterIpAndMakeDerivative`
+2. 추가 `derivData` 필드, 여기서:
+   * `parentIpIds` 는 `ipIds` 파생작이 되고자 하는 부모의 입니다. **NOTE: Once you become a derivative, you cannot add more parents**
+   * `licenseTermIds` 는 등록하고자 하는 라이선스 조건의 배열입니다. 이는 파생작이 준수해야 하는 조건들입니다
+
+이제 다음과 같이 함수를 호출할 수 있습니다:
+
+<Info>
+  관련 문서:
+  [ipAsset.mintAndRegisterIpAndMakeDerivative](/sdk-reference/ipasset#mintandregisteripandmakederivative)
+</Info>
+
+```typescript main.ts
+import { IpMetadata, DerivativeData } from "@story-protocol/core-sdk";
+import { client } from "./utils";
+import { uploadJSONToIPFS } from "./uploadToIpfs";
+import { createHash } from "crypto";
+import { Address } from "viem";
+
+async function main() {
+  // previous code here ...
+
+  const derivData: DerivativeData = {
+    // TODO: insert the parent's ipId
+    parentIpIds: [PARENT_IP_ID],
+    // TODO: insert the licenseTermsId attached to parent IpId
+    licenseTermsIds: [LICENSE_TERMS_ID],
+  };
+
+  const response = await client.ipAsset.mintAndRegisterIpAndMakeDerivative({
+    // TODO: insert your NFT contract address created by the SPG
+    spgNftContract: SPG_NFT_CONTRACT_ADDRESS as Address,
+    derivData,
+    ipMetadata: {
+      ipMetadataURI: `https://ipfs.io/ipfs/${ipIpfsHash}`,
+      ipMetadataHash: `0x${ipHash}`,
+      nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsHash}`,
+      nftMetadataHash: `0x${nftHash}`,
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}, Token ID: ${response.tokenId}`
+  );
+}
+```
+
+## 3. 완성된 코드 보기
+
+축하합니다, 파생 IP 자산을 등록하셨습니다!
+
+<CardGroup cols={1}>
+  <Card title="Completed Code" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts" icon="thumbs-up">
+    이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다루고 있습니다.
+  </Card>
+</CardGroup>
+
+## 4. 지불 및 수익 청구
+
+이제 부모-자식 IP 관계가 설정되었으므로, 라이선스 조건에 따른 지불과 자동화된 수익 공유를 살펴볼 수 있습니다. 이는 다음 페이지에서 다루도록 하겠습니다.

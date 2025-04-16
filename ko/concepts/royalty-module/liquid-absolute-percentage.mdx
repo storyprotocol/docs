@@ -1,0 +1,71 @@
+---
+title: Liquid Absolute Percentage (LAP)
+description: 유동적 절대 퍼센티지 로열티 정책이 어떻게 작동하는지 알아보세요.
+---
+
+<Accordion title="Skip the Read - 1 Minute Summary" icon="circle-info">
+  예시를 들어보겠습니다: IP 자산 ('C')는 'B'의 자식이고, 'B'는 'A'의 자식으로, A▶️B▶️C와 같은 구조입니다. 'A'는 모든 후손이 수익의 5%를 자신과 공유해야 한다고 명시합니다. 반면 'B'는 모든 후손이 수익의 10%를 자신과 공유해야 한다고 명시합니다.
+
+  좋습니다. 두 가지 (독립적인) 일반적인 시나리오에서 어떤 일이 일어나는지 살펴보겠습니다:
+
+  1. **라이선스 발행** - 'C'가 'B'로부터 100 WIP 비용의 라이선스를 발행합니다. 'C'가 라이선스를 발행하기 위해 'B'에게 100 WIP를 지불할 때, 'A'는 B로부터 5 WIP를 청구합니다. 결과적으로 'B'는 95 WIP만 받게 됩니다.
+  2. **직접 팁 주기** - 'C'는 매우 잘 쓰여진 만화책입니다. 누군가가 이를 매우 좋아해서 'C'에게 100 WIP를 팁으로 줍니다. 'A'는 'C'로부터 5 WIP를 청구합니다. 'B'는 'C'로부터 10 WIP를 청구합니다. 결과적으로 'C'는 85 WIP만 받게 됩니다.
+</Accordion>
+
+유동적 절대 퍼센티지(LAP)는 각 부모 IP 자산이 파생 체인에 있는 모든 하위 IP 자산들이 라이선스 계약에 정의된 대로 자신의 금전적 이익에서 공유해야 할 최소 로열티 비율을 선택할 수 있도록 정의합니다.
+
+<CardGroup cols={1}>
+  <Card title="RoyaltyPolicyLAP.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/royalty/policies/LAP/RoyaltyPolicyLAP.sol" icon="scroll" color="#ccb092">
+    LAP 로열티 정책의 스마트 컨트랙트를 확인하세요.
+  </Card>
+</CardGroup>
+
+## 전제 조건
+
+계속하기 전에 [IP 로열티 볼트](/concepts/royalty-module/ip-royalty-vault) 용어를 읽어보시기 바랍니다.
+
+이 페이지의 라이선스 로열티 %는 PIL 조건의 `commercialRevShare`와 동일한 값입니다.
+
+## 로열티 지불 및 청구 흐름
+
+아래 이미지에서 IPA 1과 IPA 2는 IPA 3의 조상이기 때문에 IPA 3이 창출하는 수익에 대한 경제적 권리를 %로 가집니다. 아래 파생 체인을 이해하기 위한 주요 참고사항:
+
+* 라이선스 로열티 비율 - 이 비율은 사용자가 선택하며, LAP 규칙에 따라 다른 사용자가 자신의 IPA를 리믹스하도록 허용하는 대가로 원하는 비율을 의미합니다.
+* 로열티 스택 - IPA가 모든 조상에게 지불해야 하는 수익입니다. LAP 로열티 스택 = 부모의 로열티 스택 합계 + 각 부모와 연결하는 데 사용된 라이선스 비율의 합계
+  * IPA 2의 로열티 스택 = IPA 1의 로열티 스택 + IPA 1과 2 사이의 라이선스 로열티 % = 0% + 5% = 5%
+  * IPA 3의 로열티 스택 = IPA 2의 로열티 스택 + IPA 2와 3 사이의 라이선스 로열티 % = 5% + 10% = 15%
+* 로열티 토큰은 볼트가 배포될 때 처음에 IPA로 흐릅니다. 로열티 토큰은 다른 주소로 이전될 수 있으며, 이전 후에는 향후 발생하는 모든 로열티 유입이 RT를 보유하고 있는 새로운 주소에 의해 청구될 수 있습니다.
+
+<Frame>
+  <img src="/images/concepts/lap-0.png" alt="Royalty Payment Flow" />
+</Frame>
+
+이제 새로운 IP 자산 4가 IP 자산 3의 파생작으로 파생 체인에 참여하려는 시나리오를 상상해보겠습니다. 아래는 예시 흐름 순서입니다:
+
+1. IP Asset 4는 부모 IPA 3에게 1M WIP의 로열티를 지불합니다`payRoyaltyOnBehalf`. 로열티 프로세스는 라이선스 발행 수수료이든 다른 로열티 지불이든 동일하며 - 차이점은 라이선스 발행 수수료는`payLicenseMintingFee`을 통해 이루어지며 파생물 생성 시 필수적이라는 것입니다. 지불이 이루어지면 IPA 3 로열티 스택 %에 해당하는 지분이 로열티 정책 컨트랙트로 전송되고 나머지 금액은 IPA 3 금고로 전송됩니다.
+
+<Frame>
+  <img src="/images/concepts/lap-1.png" alt="Payment Distribution" />
+</Frame>
+
+2. 각 조상은`transferToVault`을 로열티 정책 컨트랙트에서 호출하여 각 조상이 특정 자손으로부터 청구할 권리가 있는 금액을 받을 수 있습니다. 자금은 조상의 IP 로열티 금고로 이동됩니다.
+   1. 100k WIP가 IP 로열티 금고 2로 이전되는데, 이는 모든 IPA 2 자손 수익의 10%에 대한 권리가 있기 때문입니다
+   2. 50k WIP가 IP 로열티 금고 1로 이전되는데, 이는 모든 IPA 2 자손 수익의 5%에 대한 권리가 있기 때문입니다
+
+<Frame>
+  <img src="/images/concepts/lap-2.png" alt="Transfer to Vault" />
+</Frame>
+
+3. 청구 흐름의 마지막 단계에서, 모든 로열티 토큰 보유자 주소는`claimRevenueOnBehalfByTokenBatch`/`claimRevenueOnBehalf`(비금고 청구자의 경우) 또는`claimRevenueByTokenBatchAsSelf`(청구자가 IP 로열티 금고인 경우)를 호출하여 수익 토큰을 청구할 수 있습니다. 현재 예시에서:
+
+   1. 50k WIP가 100% RT1을 보유한 IPA 1에게 청구됩니다
+   2. 100k WIP가 100% RT2를 보유한 IPA 2에게 청구됩니다
+   3. 850k WIP가 100% RT3를 보유한 IPA 3에 의해 청구됩니다
+
+<Note>
+  스마트 컨트랙트, IPA, 또는 EOA와 관계없이 모든 로열티 토큰 보유자 주소가 청구할 수 있습니다.
+</Note>
+
+<Frame>
+  <img src="/images/concepts/lap-3.png" alt="Claiming Revenue" />
+</Frame>

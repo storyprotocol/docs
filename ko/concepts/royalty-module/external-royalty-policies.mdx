@@ -1,0 +1,92 @@
+---
+title: External Royalty Policies
+description: 특정 사용 사례를 위해 생성할 수 있는 맞춤형 로열티 정책에 대해 알아보세요
+---
+
+실제 세계에서 관찰되는 것처럼 로열티 분배 규칙에는 많은 종류와 변형이 있을 수 있습니다. 온체인에서도 같은 것을 기대할 수 있습니다. 사용 사례에 고유하고 특정한 로열티 규칙이 필요할 때마다, 해당 규칙 세트를 **External Royalty Policy**로 등록할 수 있습니다.
+
+## 1. External Royalty Policy란 무엇인가요?
+
+다음과 같은 뷰 함수를 정의하는 특정 인터페이스를 상속하는 스마트 계약입니다: `IExternalRoyaltyPolicy`, 아래의 view 함수를 정의합니다:
+
+<CardGroup cols={1}>
+  <Card title="IExternalRoyaltyPolicy.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/interfaces/modules/royalty/policies/IExternalRoyaltyPolicy.sol" icon="scroll" color="#ccb092">
+    외부 로열티 정책을 위한 스마트 계약을 확인하세요.
+  </Card>
+</CardGroup>
+
+```solidity IExternalRoyaltyPolicy.sol
+/// @notice Returns the amount of royalty tokens required to link a child to a given IP asset
+/// @param ipId The ipId of the IP asset
+/// @param licensePercent The percentage of the license
+/// @return The amount of royalty tokens required to link a child to a given IP asset
+function getPolicyRtsRequiredToLink(address ipId, uint32 licensePercent) external view returns (uint32);
+```
+
+스마트 계약을 개발한 후 위의 인터페이스를 상속하도록 하고 `registerExternalRoyaltyPolicy` 함수를 호출하여 [RoyaltyModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/royalty/RoyaltyModule.sol)에서 새로운 External Royalty Policy를 등록할 수 있습니다.
+
+## 2. 어떻게 작동하나요?
+
+"Policy X"라고 불리는 새로운 External Royalty Policy의 예시를 따라가 보겠습니다.
+
+### External Royalty Policy는 사용자가 선택합니다
+
+IPA 소유자는 IP가 리믹스될 수 있도록 허용할 로열티 정책을 결정합니다. LAP, LRP 및 기타 External Royalty Policy와 같은 다양한 로열티 규칙 옵션 중에서 선택할 수 있습니다. 사용자가 "Policy X"로 라이선스 토큰을 발행하기로 결정했다고 가정해보겠습니다. 그 후, IP2가 IP1을 리믹스하고 IP3가 IP2를 리믹스하여 아래 이미지와 같은 상황이 됩니다:
+
+<Frame>
+  <img src="/images/concepts/ep-0.png" alt="External Royalty Policy Example" />
+</Frame>
+
+리믹스가 발생할 때마다 - 부모와 파생물 사이의 연결에는 2개의 데이터 포인트가 연관됩니다:
+
+1. 로열티 정책 주소
+   1. 예시에서는 "Policy X" 주소
+2. 부모가 파생물에게 요구하는 로열티 토큰의 비율. 이 비율은 사용되는 로열티 정책에 따라 다른 의미를 가질 수 있습니다 - 예를 들어, 상대적 비율, 절대적 비율, 특정 규칙에 따라 조정된 비율 등이 될 수 있습니다.
+   1. IP1과 IP2 사이의 10%
+   2. IP2와 IP3 사이의 50%
+
+### External Royalty Policy는 사용자의 IP로부터 로열티 토큰을 받습니다
+
+예시를 따라가보면, 각 리믹스가 이루어지고 `onLinkToParents` 함수가 [RoyaltyModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/royalty/RoyaltyModule.sol)에서 호출될 때, `getPolicyRtsRequiredToLink` 함수가 "Policy X" 주소에서 호출됩니다.
+
+```solidity IExternalRoyaltyPolic.sol
+/// @notice Returns the amount of royalty tokens required to link a child to a given IP asset
+/// @param ipId The ipId of the IP asset
+/// @param licensePercent The percentage of the license
+/// @return The amount of royalty tokens required to link a child to a given IP asset
+function getPolicyRtsRequiredToLink(address ipId, uint32 licensePercent) external view returns (uint32);
+```
+
+이는 연결이 이루어지기 위해 로열티 정책이 파생물의 로열티 토큰에서 요구하는 비율을 반환해야 합니다. 해당 로열티 토큰의 지분은 "Policy X" 계약으로 전송됩니다. 예시의 경우:
+
+* "Policy X"는 RT2 토큰 공급량의 3%를 받아 사용자 기반에 재분배할 수 있습니다. IP1 소유자는 10%를 원했지만 - 예시를 위해 가정해보면 - "Policy X"의 특정 사용 사례와 맞춤 로직으로 인해, IP2 소유자는 IP를 홍보할 매우 큰 유통 네트워크를 보유하고 있어 플랫폼에서 특별한 지위를 부여받아 부모 IP에게 제공해야 하는 지분 비율에서 70% 할인을 받습니다. 따라서 라이선스 비율이 지정한 10%를 제공하는 대신 3%만 제공합니다.
+* "Policy X"는 RT3 토큰 공급량의 50%를 받아 사용자 기반에 재분배할 수 있습니다.
+
+<Frame>
+  <img src="/images/concepts/ep-1.png" alt="Royalty Token Distribution" />
+</Frame>
+
+### External Royalty Policy는 맞춤 규칙에 따라 사용자에게 가치를 재분배합니다
+
+External Royalty Policy가 사용자에게 가치를 재분배하는 방법에는 두 가지가 있습니다:
+
+1. 로열티 토큰을 사용자에게 직접 전송
+2. 로열티 토큰을 External Royalty Policy 계약에 보관하고 사용자가 해당 계약을 통해 수익 토큰을 청구
+
+"Policy X"의 맥락에서 두 가지 방법을 살펴보겠습니다. "Policy X"가 받은 RT3 토큰 공급량의 50% 중 - 40%는 "Policy X" 계약에 보관되고 10%는 조상 로열티 금고(IP1)로 전송된다고 가정해보겠습니다.
+
+<Frame>
+  <img src="/images/concepts/ep-2.png" alt="Royalty Token Redistribution" />
+</Frame>
+
+이제 IP3에 100만의 지불이 이루어졌다고 상상해보겠습니다 - 흐름의 예시는 다음과 같습니다:
+
+<Frame>
+  <img src="/images/concepts/ep-3.png" alt="Payment Flow Example" />
+</Frame>
+
+IP3 로열티 금고로의 100만 WIP 유입에서:
+
+* 50만 WIP는 RT3 토큰 공급량의 50%를 보유한 IP Account 3이 청구
+* 10만 WIP는 RT3 토큰 공급량의 10%를 보유한 IP1 로열티 금고가 `claimByTokenBatchAsSelf` 함수를 통해 청구
+* 40만 WIP는 RT3 토큰 공급량의 40%를 보유한 "Policy X"가 청구합니다. 이 금액은 "Policy X" 맞춤 계약에 따라 y%와 z%를 정의하는 특정 규칙에 따라 사용자들에게 추가로 분배됩니다.

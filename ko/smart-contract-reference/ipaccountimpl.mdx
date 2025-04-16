@@ -1,0 +1,344 @@
+---
+title: IPAccountImpl
+---
+
+IPAccountImpl 컨트랙트는 토큰 바운드 계정에 대한 ERC-6551 표준을 따르는 Story의 IP 계정 구현입니다. IP 자산이 다른 자산을 소유하고 관리하며, 트랜잭션을 실행하고, 권한이 부여된 방식으로 다른 컨트랙트와 상호작용할 수 있는 기능을 제공합니다.
+
+## 상태 변수
+
+### ACCESS\_CONTROLLER
+
+```solidity
+address public immutable ACCESS_CONTROLLER
+```
+
+권한 확인에 사용되는 AccessController 컨트랙트의 주소입니다. 이는 불변이며 생성 시 설정됩니다.
+
+## 상속
+
+IPAccountImpl은 다음을 상속받습니다:
+
+* ERC6551: Base implementation of the ERC-6551 standard
+* IPAccountStorage: Storage contract for IP Account data
+* IIPAccount: Interface for IP Account functionality
+
+## 함수
+
+### constructor
+
+```solidity
+constructor(
+    address accessController,
+    address ipAssetRegistry,
+    address licenseRegistry,
+    address moduleRegistry
+)
+```
+
+새로운 IPAccountImpl 컨트랙트 인스턴스를 생성합니다.
+
+**Parameters:**
+
+* `accessController`: 권한 확인에 사용될 AccessController 컨트랙트의 주소
+* `ipAssetRegistry`: IP 자산 레지스트리의 주소
+* `licenseRegistry`: 라이선스 레지스트리의 주소
+* `moduleRegistry`: 모듈 레지스트리의 주소
+
+### supportsInterface
+
+```solidity
+function supportsInterface(bytes4 interfaceId) public view returns (bool)
+```
+
+컨트랙트가 특정 인터페이스를 지원하는지 확인합니다.
+
+**Parameters:**
+
+* `interfaceId`: ERC-165에 명시된 인터페이스 식별자
+
+**Returns:**
+
+* 컨트랙트가 인터페이스를 지원하는지 여부를 나타내는 불리언
+
+### token
+
+```solidity
+function token() public view returns (uint256, address, uint256)
+```
+
+계정을 소유한 대체 불가능 토큰의 식별자를 반환합니다.
+
+**Returns:**
+
+* `chainId`: 토큰이 존재하는 체인의 EIP-155 ID
+* `tokenContract`: 토큰의 컨트랙트 주소
+* `tokenId`: 토큰의 ID
+
+### isValidSigner
+
+```solidity
+function isValidSigner(address signer, bytes calldata data) public view returns (bytes4 result)
+```
+
+서명자가 IP 계정을 대신하여 특정 작업을 실행할 수 있는 유효한 서명자인지 확인합니다.
+
+**Parameters:**
+
+* `signer`: 확인할 서명자
+* `data`: 확인할 데이터, 다음과 같이 인코딩됨 `abi.encode(address to, bytes calldata)`
+
+**Returns:**
+
+* 서명자가 유효한 경우 함수 선택자, 그렇지 않으면 0
+
+### isValidSigner
+
+```solidity
+function isValidSigner(address signer, address to, bytes calldata data) public view returns (bool)
+```
+
+AccessController 권한 시스템을 통해 주어진 데이터와 수신자에 대해 서명자가 유효한지 확인합니다.
+
+**Parameters:**
+
+* `signer`: 확인할 서명자
+* `to`: 트랜잭션의 수신자
+* `data`: 확인할 콜데이터
+
+**Returns:**
+
+* 서명자가 유효한지 여부를 나타내는 불리언
+
+### owner
+
+```solidity
+function owner() public view returns (address)
+```
+
+IP 계정의 소유자를 반환합니다.
+
+**Returns:**
+
+* 소유자의 주소
+
+### state
+
+```solidity
+function state() public view returns (bytes32 result)
+```
+
+트랜잭션 순서를 위한 IP 계정의 내부 논스를 반환합니다.
+
+**Returns:**
+
+* 계정의 현재 상태(논스)
+
+### updateStateForValidSigner
+
+```solidity
+function updateStateForValidSigner(address signer, address to, bytes calldata data) external
+```
+
+주어진 데이터와 수신자에 대해 서명자가 유효한 경우 IP 계정의 상태를 업데이트합니다.
+
+**Parameters:**
+
+* `signer`: 확인할 서명자
+* `to`: 트랜잭션의 수신자
+* `data`: 확인할 콜데이터
+
+### executeWithSig
+
+```solidity
+function executeWithSig(
+    address to,
+    uint256 value,
+    bytes calldata data,
+    address signer,
+    uint256 deadline,
+    bytes calldata signature
+) external payable returns (bytes memory result)
+```
+
+서명자를 대신하여 IP 계정에서 트랜잭션을 실행합니다.
+
+**Parameters:**
+
+* `to`: 트랜잭션의 수신자
+* `value`: 전송할 이더 양
+* `data`: 트랜잭션과 함께 전송할 데이터
+* `signer`: 트랜잭션의 서명자
+* `deadline`: 트랜잭션 서명의 마감 시간
+* `signature`: EIP-712로 인코딩된 트랜잭션의 서명
+
+**Returns:**
+
+* 트랜잭션의 반환 데이터
+
+### execute
+
+```solidity
+function execute(address to, uint256 value, bytes calldata data) external payable returns (bytes memory result)
+```
+
+IP 계정에서 트랜잭션을 실행합니다.
+
+**Parameters:**
+
+* `to`: 트랜잭션의 수신자
+* `value`: 전송할 이더 금액
+* `data`: 트랜잭션과 함께 전송할 데이터
+
+**Returns:**
+
+* 트랜잭션의 반환 데이터
+
+### execute
+
+```solidity
+function execute(
+    address to,
+    uint256 value,
+    bytes calldata data,
+    uint8 operation
+) public payable returns (bytes memory result)
+```
+
+지정된 작업 유형으로 IP Account에서 트랜잭션을 실행합니다.
+
+**Parameters:**
+
+* `to`: 트랜잭션의 수신자
+* `value`: 전송할 이더 금액
+* `data`: 트랜잭션과 함께 전송할 데이터
+* `operation`: 수행할 작업 유형, 0 - CALL만 지원됨
+
+**Returns:**
+
+* 트랜잭션의 반환 데이터
+
+### executeBatch
+
+```solidity
+function executeBatch(
+    Call[] calldata calls,
+    uint8 operation
+) public payable returns (bytes[] memory results)
+```
+
+IP Account에서 일괄 트랜잭션을 실행합니다.
+
+**Parameters:**
+
+* `calls`: 실행할 호출 배열
+* `operation`: 수행할 작업 유형, 0 - CALL만 지원됨
+
+**Returns:**
+
+* 트랜잭션들의 반환 데이터
+
+### isValidSignature
+
+```solidity
+function isValidSignature(bytes32 hash, bytes calldata signature) public view returns (bytes4 result)
+```
+
+IP Account에서는 ERC1271 서명 검증이 비활성화되어 있습니다.
+
+**Parameters:**
+
+* `hash`: 서명될 데이터의 해시
+* `signature`: 검증할 서명
+
+**Returns:**
+
+* 항상 0xffffffff를 반환 (비활성화됨)
+
+## 이벤트
+
+### Executed
+
+```solidity
+event Executed(address to, uint256 value, bytes data, bytes32 state)
+```
+
+IP Account에서 트랜잭션이 실행될 때 발생하는 이벤트입니다.
+
+**Parameters:**
+
+* `to`: 트랜잭션의 수신자
+* `value`: 전송된 이더 금액
+* `data`: 트랜잭션과 함께 전송된 데이터
+* `state`: 계정의 새로운 상태 (nonce)
+
+### ExecutedWithSig
+
+```solidity
+event ExecutedWithSig(address to, uint256 value, bytes data, bytes32 state, uint256 deadline, address signer, bytes signature)
+```
+
+서명자를 대신하여 IP Account에서 트랜잭션이 실행될 때 발생하는 이벤트입니다.
+
+**Parameters:**
+
+* `to`: 트랜잭션의 수신자
+* `value`: 전송된 이더 금액
+* `data`: 트랜잭션과 함께 전송된 데이터
+* `state`: 계정의 새로운 상태 (nonce)
+* `deadline`: 트랜잭션 서명의 마감 시간
+* `signer`: 트랜잭션의 서명자
+* `signature`: 트랜잭션의 서명
+
+## 보안 고려사항
+
+IPAccountImpl 컨트랙트는 여러 보안 조치를 구현합니다:
+
+1. **권한 시스템**: 다양한 서명자와 작업에 대한 권한을 관리하기 위해 AccessController를 사용합니다.
+
+2. **서명 검증**: 안전한 트랜잭션 승인을 위해 EIP-712 타입 데이터 서명을 구현합니다.
+
+3. **마감 시간 확인**: 재생 공격을 방지하기 위해 트랜잭션 마감 시간을 포함합니다.
+
+4. **Nonce 관리**: 트랜잭션 재생을 방지하기 위해 상태(nonce) 시스템을 사용합니다.
+
+5. **입력 검증**: 입력을 검증하고 잘못된 작업 방지와 같은 엣지 케이스를 확인합니다.
+
+6. **서명 가변성 보호**: 서명 가변성 공격에 대한 보호를 포함합니다.
+
+7. **제한된 작업**: 보안상의 이유로 CALL 작업(0)만 지원하여 잠재적으로 위험한 작업을 제한합니다.
+
+8. **업그레이드 비활성화**: 컨트랙트의 불변성을 보장하기 위해 UUPS 업그레이드를 비활성화합니다.
+
+## 사용 예시
+
+### 트랜잭션 실행하기
+
+IP 자산 소유자는 자신의 IP Account를 통해 트랜잭션을 실행할 수 있습니다:
+
+```solidity
+// Assuming 'ipAccount' is an instance of IPAccountImpl
+ipAccount.execute(
+    targetContract,
+    0, // No ETH sent
+    abi.encodeWithSignature("someFunction(uint256)", 123)
+);
+```
+
+### 서명으로 실행하기
+
+허가된 서명자는 IP Account를 대신하여 트랜잭션을 실행할 수 있습니다:
+
+```solidity
+// Generate signature off-chain
+bytes signature = signEIP712Message(...);
+
+// Execute transaction
+ipAccount.executeWithSig(
+    targetContract,
+    0, // No ETH sent
+    abi.encodeWithSignature("someFunction(uint256)", 123),
+    signer,
+    deadline,
+    signature
+);
+```

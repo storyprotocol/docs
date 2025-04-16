@@ -1,0 +1,17 @@
+---
+title: 노드 아키텍처
+sidebarTitle: 개요
+description: Story의 모듈형 블록체인 아키텍처 개요
+---
+
+Story는 Cosmos SDK와 CometBFT를 사용하여 빠른 블록 시간과 원샷 완결성을 달성하는 EVM 완전 호환 목적 기반 모듈형 블록체인입니다. Story 노드는 두 개의 클라이언트로 구성됩니다:`story-geth` 실행 클라이언트(EL)와 `story` 합의 클라이언트(CL)입니다. 이 클라이언트들은 [Engine API 인터페이스](/network/node-architecture/engine-api)를 통해 [Ethereum](https://hackmd.io/@danielrachi/engine_api)이 정의한 방식으로 통신합니다.
+
+`story-geth`는 Geth 클라이언트의 포크로, [IPGraph Precompile](/network/node-architecture/precompile)과 [RIP-7212](https://github.com/ethereum/RIPs/blob/master/RIPS/rip-7212.md) 프리컴파일이 추가되었습니다. 이는 이더리움 가상 머신(EVM)과 완전한 호환성을 유지하고 모든 이더리움 JSON-RPC 메소드를 지원하면서 트랜잭션 실행, 브로드캐스팅 및 상태 저장을 처리합니다.
+
+`story`는 Cosmos SDK와 CometBFT를 기반으로 구축되었습니다. Cosmos SDK는 블록체인 애플리케이션을 구축하기 위한 모듈식 프레임워크를 제공하여 새로운 모듈과 기능을 원활하게 통합하고 네트워크를 쉽게 확장하고 커스터마이즈할 수 있게 합니다.`story` 클라이언트는 Engine API 통합과 새로운 스테이킹 메커니즘을 지원하기 위한 업그레이드와 추가 Cosmos SDK 모듈을 도입합니다. CometBFT는 고성능, 확장 가능하며 안전한 합의 엔진으로, Cosmos 생태계 내에서 광범위하게 테스트되었습니다. CometBFT와 Cosmos SDK는 ABCI++ 인터페이스를 통해 통신합니다(ABCI++ 스펙 링크).
+
+<img src="/images/network/node-architecture.png" />
+
+<Warning>
+  사용하지 마세요 `RANDAO` 의사 난수 생성에는 대신 온체인 VRF(Pyth 또는 Gelato)를 사용하세요. 현재, `RANDAO` 값은 부모 블록 해시로 설정되어 있어 X-1 블록에 대해서는 무작위가 아닙니다.
+</Warning>

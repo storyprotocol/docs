@@ -1,0 +1,26 @@
+---
+title: 릴리스 노트
+description: Story 실행 및 합의 클라이언트 소프트웨어 릴리스에 대한 정보
+---
+
+이 페이지는 story 실행 및 합의 클라이언트 소프트웨어 릴리스 정보를 제공합니다. 실행 클라이언트 릴리스는 다음에서 찾을 수 있습니다 [story-geth](https://github.com/piplabs/story-geth/releases) 저장소, 그리고 합의 클라이언트 릴리스는 [story](https://github.com/piplabs/story/releases) 저장소에서 확인할 수 있습니다.
+
+### 프로덕션 릴리스
+
+일반적으로 네 가지 유형의 릴리스가 있습니다:
+
+* Major: It requires hardfork upgrade with a predefined upgrade height. Node operators need to upgrade before or on the height. The release will increase minor version number.
+* Minor: It doesn't require hardfork upgrade. Node operators are required to upgrade binaries as soon as possible. The release will increase patch version number.
+* Fix: It is an urgent fix. Node operators are required to upgrade binaries as soon as possible. The release will increase minor version or patch version number.
+* Optional: It is an optional fix. Node operators can upgrade binaries based on needs. The release will increase patch version number.
+
+각 릴리스에는 새로운 기능이나 수정 사항 목록을 설명하는 릴리스 노트가 포함되어 있습니다. 릴리스된 소프트웨어 바이너리도 릴리스 노트에 첨부되어 있습니다. 현재 네 가지 유형의 시스템을 지원하는 바이너리를 제공합니다: darwin-amd64, darwin-arm64, linux-amd64, linux-arm64. 릴리스 노트의 커밋 해시를 사용하여 바이너리를 직접 빌드할 수도 있습니다.
+
+### 릴리스 항목
+
+메인넷과 Aeneid 테스트넷의 노드를 실행하려면 다음 릴리스 매트릭스를 참조하세요.
+
+| 네트워크   | story-geth | story  |
+| ------ | ---------- | ------ |
+| 메인넷    | v1.0.1     | v1.1.0 |
+| Aeneid | v1.0.1     | v1.1.0 |

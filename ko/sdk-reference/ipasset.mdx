@@ -1,0 +1,935 @@
+---
+title: IP Asset
+description: IPAssetClient를 사용하여 Story 내에서 IP Asset을 생성, 조회 및 나열할 수 있습니다.
+---
+
+## IPAssetClient
+
+### 메소드
+
+* register
+* registerDerivative
+* registerDerivativeWithLicenseTokens
+* mintAndRegisterIpAssetWithPilTerms
+* registerIpAndAttachPilTerms
+* registerDerivativeIp
+* mintAndRegisterIpAndMakeDerivative
+* mintAndRegisterIp
+* registerPilTermsAndAttach
+* mintAndRegisterIpAndMakeDerivativeWithLicenseTokens
+* registerIpAndMakeDerivativeWithLicenseTokens
+
+### IPAssetClient 둘러보기
+
+라이선싱 모듈과 상호작용하는 많은 함수들이 있기 때문에 [📜 Licensing Module](/concepts/licensing-module), 찾고자 하는 것을 식별하고 관련 문서를 찾을 수 있도록 도움이 되는 차트로 정리했습니다.
+
+| **함수**                                                                                      | **NFT 발행** | **IPA 등록** | **라이선스 조건 생성** | **라이선스 조건 첨부** | **라이선스 토큰 발행** | **파생작으로 등록** |
+| ------------------------------------------------------------------------------------------- | :--------: | :--------: | :------------: | :------------: | :------------: | :----------: |
+| <span style={{color: "#e03130"}}>register</span>                                            |            |      ✓     |                |                |                |              |
+| <span style={{color: "#e03130"}}>mintAndRegisterIp</span>                                   |      ✓     |      ✓     |                |                |                |              |
+| <span style={{color: "#e03130"}}>registerIpAndAttachPilTerms</span>                         |            |      ✓     |        ✓       |        ✓       |                |              |
+| <span style={{color: "#e03130"}}>mintAndRegisterIpAssetWithPilTerms</span>                  |      ✓     |      ✓     |        ✓       |        ✓       |                |              |
+| <span style={{color: "#e03130"}}>registerDerivativeIp</span>                                |            |      ✓     |                |                |                |       ✓      |
+| <span style={{color: "#e03130"}}>mintAndRegisterIpAndMakeDerivativeWithLicenseTokens</span> |      ✓     |      ✓     |                |                |                |       ✓      |
+| <span style={{color: "#e03130"}}>registerIpAndMakeDerivativeWithLicenseTokens</span>        |            |      ✓     |                |                |                |       ✓      |
+| <span style={{color: "#e03130"}}>mintAndRegisterIpAndMakeDerivative</span>                  |      ✓     |      ✓     |                |                |                |       ✓      |
+| <span style={{color: "#e03130"}}>registerDerivative</span>                                  |            |            |                |                |                |       ✓      |
+| <span style={{color: "#e03130"}}>registerDerivativeWithLicenseTokens</span>                 |            |            |                |                |                |       ✓      |
+| <span style={{color: "#e03130"}}>registerPilTermsAndAttach</span>                           |            |            |        ✓       |        ✓       |                |              |
+| <span style={{color: "#1971c2"}}>registerPILTerms</span>                                    |            |            |        ✓       |                |                |              |
+| <span style={{color: "#1971c2"}}>attachLicenseTerms</span>                                  |            |            |                |        ✓       |                |              |
+| <span style={{color: "#1971c2"}}>mintLicenseTokens</span>                                   |            |            |                |                |        ✓       |              |
+
+* <span style={{ color: "#e03130" }}>빨간색</span>: IPAssetClient (현재 페이지)
+* <span style={{ color: "#1971c2" }}>파란색</span>:
+  [LicenseClient](/sdk-reference/license)
+
+## register
+
+NFT를 IP로 등록하고 해당하는 [🧩 IP Asset](/concepts/ip-asset)을 생성합니다. 주어진 NFT가 이미 등록되어 있다면, 이 함수는 기존의 `ipId`을 반환합니다.
+
+<Note title="NFT Metadata">
+  이 함수는 또한 기본 NFT의 `tokenUri`을 아래에 전달된 값으로 설정합니다 `ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메소드        | 타입                                                          |
+| ---------- | ----------------------------------------------------------- |
+| `register` | `(request: RegisterRequest) => Promise<RegisterIpResponse>` |
+
+Parameters:
+
+* `request.nftContract`: NFT의 주소.
+* `request.tokenId`: NFT의 토큰 식별자.
+* `request.ipMetadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택사항] IP NFT의 메타데이터 해시.
+* `request.deadline`: \[선택사항] 서명의 만료 시간(밀리초). **기본값은 1000**입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { toHex } from "viem";
+
+  const response = await client.ipAsset.register({
+    nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73",
+    tokenId: "12",
+    ipMetadata: {
+      ipMetadataURI: "test-uri",
+      ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+      nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      nftMetadataURI: "test-nft-uri",
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterRequest = {
+    nftContract: Address;
+    tokenId: string | number | bigint;
+    deadline?: string | number | bigint;
+  } & IpMetadataAndTxOptions;
+  ```
+
+  ```typescript Response Type
+  export type RegisterIpResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+    ipId?: Address;
+  };
+  ```
+</CodeGroup>
+
+## batchRegister
+
+NFT를 IP로 일괄 등록하여 해당하는 IP 기록을 생성합니다.
+
+| 메소드             | 타입                                                                  |
+| --------------- | ------------------------------------------------------------------- |
+| `batchRegister` | `(request: BatchRegisterRequest) => Promise<BatchRegisterResponse>` |
+
+## registerDerivative
+
+라이선스 토큰 없이 부모 IP의 라이선스 조건으로 직접 파생작을 등록하고, 부모 IP의 라이선스 조건을 파생 IP에 첨부합니다.
+
+이 함수를 호출하기 전에 라이선스 조건이 부모 IP에 첨부되어 있어야 합니다.
+
+모든 IP에는 기본적으로 기본 라이선스 조건이 첨부됩니다.
+
+파생 IP 소유자는 호출자이거나 승인된 운영자여야 합니다.
+
+| 메서드                  | 타입                                                                            |
+| -------------------- | ----------------------------------------------------------------------------- |
+| `registerDerivative` | `(request: RegisterDerivativeRequest) => Promise<RegisterDerivativeResponse>` |
+
+Parameters:
+
+* `request.childIpId`: 파생 IP ID.
+* `request.licenseTermsIds`: 이 파생 IP의 생성을 승인하는 라이선스 조건 ID의 배열. 각 ID는 위치상으로 `parentIpIds` 배열의 상위 IP와 일대일로 매핑되어야 합니다. Story는 각 지정된 라이선스 조건이 해당 상위 IP에 대한 파생 등록을 허용하는지 온체인에서 확인합니다. 배열의 길이가 일치하지 않거나 조건이 파생 생성을 허용하지 않는 경우 트랜잭션이 실패합니다.
+* `request.parentIpIds`: 이 파생물이 생성되는 상위 IP ID의 배열. 각 상위 IP는 `licenseTermsIds` 배열의 동일한 인덱스에 지정된 해당 라이선스 조건이 파생 관계를 승인해야 합니다.
+* `request.licenseTemplate`: \[선택사항] 연결에 사용될 라이선스 템플릿의 주소. 현재는 [PIL](/concepts/programmable-ip-license)
+* `request.maxMintingFee`: \[선택사항] 호출자가 지불하고자 하는 최대 발행 수수료. 0으로 설정하면 제한이 없습니다.**Default: 0**
+* `request.maxRevenueShare`: \[선택사항] 자식이 파생물로 등록할 때 자식과 부모 간에 합의된 최대 수익 공유 비율. 0에서 100 사이여야 합니다.**Default: 100**
+* `request.maxRts`: \[선택사항] 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다.**Default: 100\_000\_000**
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  const response = await client.ipAsset.registerDerivative({
+    childIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    parentIpIds: ["0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba"],
+    licenseTermsIds: ["5"],
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Derivative IPA linked to parent at transaction hash ${response.txHash}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterDerivativeRequest = {
+    txOptions?: TxOptions;
+    childIpId: Address;
+  } & DerivativeData &
+    WithWipOptions;
+
+  export type DerivativeData = {
+    parentIpIds: Address[];
+    licenseTermsIds: bigint[] | string[] | number[];
+    maxMintingFee: bigint | string | number;
+    maxRts: number | string;
+    maxRevenueShare: number | string;
+    licenseTemplate?: Address;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterDerivativeResponse = {
+    txHash?: Hex;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+## registerDerivativeWithLicenseTokens
+
+라이선스 토큰으로 파생물을 등록합니다.
+
+파생 IP는 상위 IP의 라이선스 조건에서 발행된 라이선스 토큰으로 등록됩니다.
+
+라이선스 토큰으로 발행된 상위 IP의 라이선스 조건이 파생 IP에 첨부됩니다.
+
+호출자는 파생 IP 소유자이거나 승인된 운영자여야 합니다.
+
+| 메서드                                   | 타입                                                                                                              |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `registerDerivativeWithLicenseTokens` | `(request: RegisterDerivativeWithLicenseTokensRequest) => Promise<RegisterDerivativeWithLicenseTokensResponse>` |
+
+Parameters:
+
+* `request.childIpId`: 파생 IP ID.
+* `request.licenseTokenIds`: 라이선스 토큰의 ID.
+* `request.maxRts`: 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다. **단순화를 위한 권장값: 100\_000\_000**
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  const response = await client.ipAsset.registerDerivativeWithLicenseTokens({
+    childIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    licenseTokenIds: ["5"], // array of license ids relevant to the creation of the derivative, minted from the parent IPA
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Derivative IPA linked to parent at transaction hash ${response.txHash}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterDerivativeWithLicenseTokensRequest = {
+    childIpId: Address;
+    licenseTokenIds: string[] | bigint[] | number[];
+    maxRts: number | string;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterDerivativeWithLicenseTokensResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+## mintAndRegisterIpAssetWithPilTerms
+
+컬렉션에서 NFT를 발행하고, IP로 등록하고, IP에 메타데이터를 첨부하고, IP에 라이선스 조건을 첨부하는 모든 작업을 하나의 함수로 수행합니다.
+
+<Note>
+  이 함수는 또한 기본 NFT의 `tokenUri`을 다음에 전달된 값으로 설정합니다 `ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메서드                                  | 타입                                                                                                            |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `mintAndRegisterIpAssetWithPilTerms` | `(request: MintAndRegisterIpAssetWithPilTermsRequest) => Promise<MintAndRegisterIpAssetWithPilTermsResponse>` |
+
+Parameters:
+
+* `request.spgNftContract`: NFT 컬렉션의 주소.
+* `request.allowDuplicates`: \[선택사항] 동일한 NFT 메타데이터로 IP 발행을 허용하려면 true로 설정하세요.**Default: true**
+* `request.licenseTermsData[]`: 첨부할 라이선스 조건 배열. ⚠️ **빈 배열을 전달하면 이 함수는 실패합니다.**
+  * `request.licenseTermsData.terms`: 다음을 참조하세요 [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
+  * `request.licenseTermsData.licensingConfig`: \[선택사항] 다음을 참조하세요 [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). 제공되지 않으면 [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+* `request.ipMetadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP의 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI`: \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash`: \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI`: \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash`: \[선택사항] IP NFT의 메타데이터 해시.
+* `request.recipient`: \[선택사항] 발행된 NFT를 받을 수신자의 주소.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { LicenseTerms } from "@story-protocol/core-sdk";
+  import { zeroAddress } from "viem";
+
+  const commercialRemixTerms: LicenseTerms = {
+    transferable: true,
+    royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    defaultMintingFee: 0n,
+    expiration: 0n,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: zeroAddress,
+    commercialRevShare: 50, // can claim 50% of derivative revenue
+    commercialRevCeiling: 0n,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0n,
+    currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    uri: "",
+  };
+
+  const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
+    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+    licenseTermsData: [{ terms: commercialRemixTerms }],
+    // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+    ipMetadata: {
+      ipMetadataURI: "test-uri",
+      ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+      nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      nftMetadataURI: "test-nft-uri",
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(`
+    Token ID: ${response.tokenId}, 
+    IPA ID: ${response.ipId}, 
+    License Terms ID: ${response.licenseTermsId}
+  `);
+  ```
+
+  ```typescript Request Type
+  export type MintAndRegisterIpAssetWithPilTermsRequest = {
+    spgNftContract: Address;
+    allowDuplicates: boolean;
+    licenseTermsData: LicenseTermsData<
+      RegisterPILTermsRequest,
+      LicensingConfig
+    >[];
+    recipient?: Address;
+    royaltyPolicyAddress?: Address;
+  } & IpMetadataAndTxOptions &
+    WithWipOptions;
+  ```
+
+  ```typescript Response Type
+  export type MintAndRegisterIpAssetWithPilTermsResponse = {
+    txHash?: Hex;
+    encodedTxData?: EncodedTxData;
+    ipId?: Address;
+    tokenId?: bigint;
+    receipt?: TransactionReceipt;
+    licenseTermsIds?: bigint[];
+  };
+  ```
+</CodeGroup>
+
+## batchMintAndRegisterIpAssetWithPilTerms
+
+컬렉션에서 NFT를 일괄 발행하고 IP로 등록합니다.
+
+| 메서드                                       | 타입                                                                                                                      |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `batchMintAndRegisterIpAssetWithPilTerms` | `(request: BatchMintAndRegisterIpAssetWithPilTermsRequest) => Promise<BatchMintAndRegisterIpAssetWithPilTermsResponse>` |
+
+## registerIpAndAttachPilTerms
+
+주어진 NFT를 IP로 등록하고, IP에 메타데이터를 첨부하고, IP에 라이선스 조건을 첨부하는 모든 작업을 하나의 함수로 수행합니다.
+
+<Note>
+  이 함수는 또한 기본 NFT의 `tokenUri`을 다음에 전달된 값으로 설정합니다 `ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메서드                           | 타입                                                                                              |
+| ----------------------------- | ----------------------------------------------------------------------------------------------- |
+| `registerIpAndAttachPilTerms` | `(request: RegisterIpAndAttachPilTermsRequest) => Promise<RegisterIpAndAttachPilTermsResponse>` |
+
+Parameters:
+
+* `request.nftContract`: NFT 컬렉션의 주소.
+* `request.tokenId`: NFT의 ID.
+* `request.licenseTermsData[]`: 첨부할 라이선스 조건 배열. ⚠️ **빈 배열을 전달하면 이 함수는 실패합니다.**
+  * `request.licenseTermsData.terms`: 다음을 참조하세요 [LicenseTerms 타입](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
+  * `request.licenseTermsData.licensingConfig`: \[선택사항] 다음을 참조하세요 [LicensingConfig 타입](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). 제공되지 않은 경우 [여기](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts)에 표시된 기본값이 사용됩니다.
+* `request.ipMetadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI`: \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash`: \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI`: \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash`: \[선택사항] IP NFT의 메타데이터 해시.
+* `request.deadline`: \[선택사항] 서명의 유효기간(밀리초). **기본값은 1000**.
+* `request.txOptions`: \[선택사항] 트랜잭션 [옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { LicenseTerms } from "@story-protocol/core-sdk";
+  import { toHex, zeroAddress } from "viem";
+
+  const commercialRemixTerms: LicenseTerms = {
+    transferable: true,
+    royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    defaultMintingFee: 0n,
+    expiration: 0n,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: zeroAddress,
+    commercialRevShare: 50, // can claim 50% of derivative revenue
+    commercialRevCeiling: 0n,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0n,
+    currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    uri: "",
+  };
+
+  const response = await client.ipAsset.registerIpAndAttachPilTerms({
+    nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73",
+    tokenId: "12",
+    licenseTermsData: [{ terms: commercialRemixTerms }],
+    ipMetadata: {
+      ipMetadataURI: "test-uri",
+      ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+      nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      nftMetadataURI: "test-nft-uri",
+    },
+    txOptions: { waitForTransaction: true },
+  });
+  console.log(
+    `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterIpAndAttachPilTermsRequest = {
+    nftContract: Address;
+    tokenId: bigint | string | number;
+    licenseTermsData: LicenseTermsData<
+      RegisterPILTermsRequest,
+      LicensingConfig
+    >[];
+    deadline?: bigint | number | string;
+  } & IpMetadataAndTxOptions;
+  ```
+
+  ```typescript Response Type
+  export type RegisterIpAndAttachPilTermsResponse = {
+    txHash?: Hex;
+    encodedTxData?: EncodedTxData;
+    ipId?: Address;
+    licenseTermsIds?: bigint[];
+    tokenId?: bigint;
+  };
+  ```
+</CodeGroup>
+
+## registerDerivativeIp
+
+라이선스 토큰을 사용하지 않고 NFT를 IP로 등록하고 다른 IP 자산의 파생물로 연결합니다.
+
+<Note>
+  이 함수는 기본 NFT의 `tokenUri`를 다음에 전달된 값으로 설정합니다 `ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메서드                    | 타입                                                                                              |
+| ---------------------- | ----------------------------------------------------------------------------------------------- |
+| `registerDerivativeIp` | `(request: RegisterIpAndMakeDerivativeRequest) => Promise<RegisterIpAndMakeDerivativeResponse>` |
+
+Parameters:
+
+* `request.nftContract`: NFT 컬렉션의 주소.
+* `request.tokenId`: NFT의 ID.
+* `request.derivData`: registerDerivative에 사용될 파생 데이터.
+  * `request.derivData.parentIpIds`: 등록된 파생 IP를 연결할 부모 IP의 ID들.
+  * `request.derivData.licenseTermsIds`: 연결에 사용될 라이선스 조건의 ID들.
+  * `request.derivData.maxMintingFee`: \[선택사항] 호출자가 지불하고자 하는 최대 발행 수수료. 0으로 설정하면 제한이 없습니다. **Default: 0**
+  * `request.derivData.maxRevenueShare`: \[선택사항] 자식이 파생물로 등록할 때 자식과 부모 간에 합의된 최대 수익 공유 비율. 0에서 100 사이여야 합니다. **Default: 100**
+  * `request.derivData.maxRts`: \[선택사항] 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다. **Default: 100\_000\_000**
+  * `request.derivData.licenseTemplate`: \[선택사항] 연결에 사용될 라이선스 템플릿의 주소. 현재는 [PIL](/concepts/programmable-ip-license)
+* `request.ipMetadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택사항] IP NFT의 메타데이터 해시.
+* `request.deadline`: \[선택사항] 서명의 유효기간(밀리초). **기본값은 1000**.
+* `request.txOptions`: \[선택사항] 트랜잭션 [옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { toHex } from "viem";
+
+  const response = await client.ipAsset.registerDerivativeIp({
+    nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73", // your NFT contract address
+    tokenId: "127",
+    derivData: {
+      parentIpIds: ["0xd142822Dc1674154EaF4DDF38bbF7EF8f0D8ECe4"],
+      licenseTermsIds: ["1"],
+    },
+    // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+    ipMetadata: {
+      ipMetadataURI: "test-uri",
+      ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+      nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      nftMetadataURI: "test-nft-uri",
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterIpAndMakeDerivativeRequest = {
+    nftContract: Address;
+    tokenId: string | number | bigint;
+    deadline?: string | number | bigint;
+    derivData: DerivativeData;
+  } & IpMetadataAndTxOptions &
+    WithWipOptions;
+
+  export type DerivativeData = {
+    parentIpIds: Address[];
+    licenseTermsIds: bigint[] | string[] | number[];
+    /**
+     * The maximum minting fee that the caller is willing to pay. if set to 0 then no limit.
+     * @default 0
+     */
+    maxMintingFee?: bigint | string | number;
+    /**
+     * The maximum number of royalty tokens that can be distributed to the external royalty policies (max: 100,000,000).
+     * @default 100_000_000
+     */
+    maxRts?: number | string;
+    /**
+     * The maximum revenue share percentage allowed for minting the License Tokens. Must be between 0 and 100 (where 100% represents 100_000_000).
+     * @default 100
+     */
+    maxRevenueShare?: number | string;
+    licenseTemplate?: Address;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterIpAndMakeDerivativeResponse = {
+    txHash?: Hex;
+    encodedTxData?: EncodedTxData;
+    ipId?: Address;
+    tokenId?: bigint;
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+## batchRegisterDerivative
+
+부모 IP의 라이선스 조건으로 파생물을 일괄 등록합니다.
+
+| 메서드                       | 타입                                                                                      |
+| ------------------------- | --------------------------------------------------------------------------------------- |
+| `batchRegisterDerivative` | `(request: BatchRegisterDerivativeRequest) => Promise<BatchRegisterDerivativeResponse>` |
+
+## mintAndRegisterIpAndMakeDerivative
+
+컬렉션에서 NFT를 발행하고 라이선스 토큰 없이 파생 IP로 등록합니다.
+
+<Note>
+  이 함수는 기본 NFT의 `tokenUri`를 다음에 전달된 값으로 설정합니다 `ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메서드                                  | 타입                                                                                                            |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `mintAndRegisterIpAndMakeDerivative` | `(request: MintAndRegisterIpAndMakeDerivativeRequest) => Promise<MintAndRegisterIpAndMakeDerivativeResponse>` |
+
+Parameters:
+
+* `request.spgNftContract`: NFT 컬렉션의 주소.
+* `request.allowDuplicates`: \[선택사항] 동일한 NFT 메타데이터로 IP를 발행할 수 있도록 하려면 true로 설정하세요. **Default: true**
+* `request.derivData`: registerDerivative에 사용될 파생 데이터.
+  * `request.derivData.parentIpIds`: 등록된 파생 IP를 연결할 부모 IP의 ID들.
+  * `request.derivData.licenseTermsIds`: 연결에 사용될 라이선스 조건의 ID들.
+  * `request.derivData.maxMintingFee`: \[선택사항] 호출자가 지불하고자 하는 최대 발행 수수료. 0으로 설정하면 제한이 없습니다. **Default: 0**
+  * `request.derivData.maxRevenueShare`: \[선택사항] 자식이 파생물로 등록할 때 자식과 부모 간에 합의된 최대 수익 공유 비율. 0에서 100 사이여야 합니다. **Default: 100**
+  * `request.derivData.maxRts`: \[선택사항] 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다. **Default: 100\_000\_000**
+  * `request.derivData.licenseTemplate`: \[선택사항] 연결에 사용될 라이선스 템플릿의 주소. 현재는 [PIL](/concepts/programmable-ip-license)
+* `request.ipMetadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택사항] IP NFT의 메타데이터 해시.
+* `request.recipient`: \[선택사항] 발행된 NFT를 받을 수신자의 주소, 기본값은 귀하의 지갑 주소입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { toHex } from "viem";
+
+  const response = await client.ipAsset.mintAndRegisterIpAndMakeDerivative({
+    // an NFT contract address created by the SPG
+    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+    derivData: {
+      parentIpIds: ["0xd142822Dc1674154EaF4DDF38bbF7EF8f0D8ECe4"],
+      licenseTermsIds: ["1"],
+    },
+    // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+    ipMetadata: {
+      ipMetadataURI: "test-uri",
+      ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+      nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      nftMetadataURI: "test-nft-uri",
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}, Token ID: ${response.tokenId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type MintAndRegisterIpAndMakeDerivativeRequest = {
+    spgNftContract: Address;
+    derivData: DerivativeData;
+    recipient?: Address;
+    allowDuplicates: boolean;
+  } & IpMetadataAndTxOptions &
+    WithWipOptions;
+
+  export type DerivativeData = {
+    parentIpIds: Address[];
+    licenseTermsIds: bigint[] | string[] | number[];
+    /**
+     * The maximum minting fee that the caller is willing to pay. if set to 0 then no limit.
+     * @default 0
+     */
+    maxMintingFee?: bigint | string | number;
+    /**
+     * The maximum number of royalty tokens that can be distributed to the external royalty policies (max: 100,000,000).
+     * @default 100_000_000
+     */
+    maxRts?: number | string;
+    /**
+     * The maximum revenue share percentage allowed for minting the License Tokens. Must be between 0 and 100 (where 100% represents 100_000_000).
+     * @default 100
+     */
+    maxRevenueShare?: number | string;
+    licenseTemplate?: Address;
+  };
+  ```
+
+  ```typescript Response Type
+  export type MintAndRegisterIpAndMakeDerivativeResponse = {
+    encodedTxData?: EncodedTxData;
+  } & CommonRegistrationResponse;
+
+  export type CommonRegistrationResponse = {
+    txHash?: Hex;
+    ipId?: Address;
+    tokenId?: bigint;
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+## batchMintAndRegisterIpAndMakeDerivative
+
+라이선스 토큰 없이 컬렉션에서 NFT를 일괄 민팅하고 파생 IP로 등록합니다.
+
+| 메서드                                       | 타입                                                                                                                      |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `batchMintAndRegisterIpAndMakeDerivative` | `(request: BatchMintAndRegisterIpAndMakeDerivativeRequest) => Promise<BatchMintAndRegisterIpAndMakeDerivativeResponse>` |
+
+## mintAndRegisterIp
+
+SPGNFT 컬렉션에서 NFT를 민팅하고 메타데이터와 함께 IP로 등록합니다.
+
+<Note>
+  이 함수는 또한 기본 NFT의`tokenUri`를 다음에 전달된 값으로 설정합니다`ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메서드                 | 타입                                                                   |
+| ------------------- | -------------------------------------------------------------------- |
+| `mintAndRegisterIp` | `(request: MintAndRegisterIpRequest) => Promise<RegisterIpResponse>` |
+
+Parameters:
+
+* `request.spgNftContract`: NFT 컬렉션의 주소.
+* `request.allowDuplicates`: \[선택사항] 동일한 NFT 메타데이터로 IP 민팅을 허용하려면 true로 설정하세요.**Default: true**
+* `request.recipient`: \[선택사항] 민팅된 NFT를 받을 수신자의 주소, 기본값은 사용자의 지갑 주소입니다.
+* `request.ipMetadata`: \[선택사항] 새로 민팅될 NFT와 새로 등록될 IP의 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택사항] IP NFT의 메타데이터 해시.
+* `request.txOptions`: \[선택사항] 트랜잭션[옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { toHex, Address, zeroAddress } from "viem";
+
+  const response = await client.ipAsset.mintAndRegisterIp({
+    // an NFT contract address created by the SPG
+    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+    // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+    ipMetadata: {
+      ipMetadataURI: "test-uri",
+      ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+      nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      nftMetadataURI: "test-nft-uri",
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Completed at transaction hash ${response.txHash}, NFT Token ID: ${response.tokenId}, IPA ID: ${response.ipId}, License Terms ID: ${response.licenseTermsId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type MintAndRegisterIpRequest = {
+    spgNftContract: Address;
+    recipient?: Address;
+    allowDuplicates: boolean;
+  } & IpMetadataAndTxOptions &
+    WithWipOptions;
+  ```
+
+  ```typescript Response Type
+  export type RegisterIpResponse = {
+    encodedTxData?: EncodedTxData;
+  } & CommonRegistrationResponse;
+
+  export type CommonRegistrationResponse = {
+    txHash?: Hex;
+    ipId?: Address;
+    tokenId?: bigint;
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+## registerPilTermsAndAttach
+
+프로그래머블 IP 라이선스 약관을 등록(미등록 상태인 경우)하고 IP에 연결합니다.
+
+| 메서드                         | 타입                                                                                          |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| `registerPilTermsAndAttach` | `(request: RegisterPilTermsAndAttachRequest) => Promise<RegisterPilTermsAndAttachResponse>` |
+
+Parameters:
+
+* `request.ipId`: IP의 ID.
+* `request.licenseTermsData[]`: 연결될 라이선스 약관의 배열.
+  * `request.licenseTermsData.terms`: 참조:[LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
+  * `request.licenseTermsData.licensingConfig`: \[선택사항] 참조:[LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). 제공되지 않은 경우, 다음에 표시된 것과 같이 기본값이 사용됩니다[here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+* `request.deadline`: \[선택사항] 서명의 마감 시간(밀리초).**기본값은 1000**.
+* `request.txOptions`: \[선택사항] 트랜잭션[옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { LicenseTerms } from "@story-protocol/core-sdk";
+  import { zeroAddress } from "viem";
+
+  const commercialRemixTerms: LicenseTerms = {
+    transferable: true,
+    royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    defaultMintingFee: 0n,
+    expiration: 0n,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: zeroAddress,
+    commercialRevShare: 50, // can claim 50% of derivative revenue
+    commercialRevCeiling: 0n,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0n,
+    currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    uri: "",
+  };
+
+  const response = await client.ipAsset.registerPilTermsAndAttach({
+    ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+    licenseTermsData: [{ terms: commercialRemixTerms }],
+    txOptions: { waitForTransaction: true },
+  });
+  console.log(`License Terms ${response.licenseTermsId} attached to IP Asset.`);
+  ```
+
+  ```typescript Request Type
+  export type RegisterPilTermsAndAttachRequest = {
+    ipId: Address;
+    licenseTermsData: LicenseTermsData<
+      RegisterPILTermsRequest,
+      LicensingConfig
+    >[];
+    deadline?: string | number | bigint;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterPilTermsAndAttachResponse = {
+    txHash?: Hex;
+    encodedTxData?: EncodedTxData;
+    licenseTermsIds?: bigint[];
+  };
+  ```
+</CodeGroup>
+
+## mintAndRegisterIpAndMakeDerivativeWithLicenseTokens
+
+컬렉션에서 NFT를 민팅하고 라이선스 토큰을 사용하여 파생 IP로 등록합니다
+
+<Note>
+  이 함수는 또한 기본 NFT의`tokenUri`를 다음에 전달된 값으로 설정합니다`ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메서드                                                   | 타입                                                                                                     |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `mintAndRegisterIpAndMakeDerivativeWithLicenseTokens` | `(request: MintAndRegisterIpAndMakeDerivativeWithLicenseTokensRequest) => Promise<RegisterIpResponse>` |
+
+Parameters:
+
+* `request.spgNftContract`: NFT 컬렉션의 주소.
+* `request.allowDuplicates`: \[선택사항] 동일한 NFT 메타데이터로 IP 민팅을 허용하려면 true로 설정하세요.**Default: true**
+* `request.maxRts`: 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다.**단순화를 위한 권장값: 100\_000\_000**
+* `request.licenseTokenIds`: IP를 상위 IP에 연결하기 위해 소각될 라이선스 토큰의 ID.
+* `request.ipMetadata`: \[선택사항] 새로 민팅될 NFT와 새로 등록될 IP의 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택사항] IP NFT의 메타데이터 해시.
+* `request.recipient`: \[선택사항] 민팅된 NFT를 받을 주소, 기본값은 사용자의 지갑 주소입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션[옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { toHex } from "viem";
+
+  const response =
+    await client.ipAsset.mintAndRegisterIpAndMakeDerivativeWithLicenseTokens({
+      spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc", // your SPG NFT contract address
+      licenseTokenIds: ["10"],
+      // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+      ipMetadata: {
+        ipMetadataURI: "test-uri",
+        ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+        nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+        nftMetadataURI: "test-nft-uri",
+      },
+      maxRts: 100_000_000, // default
+      txOptions: { waitForTransaction: true },
+    });
+
+  console.log(
+    `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}, Token ID: ${response.tokenId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type MintAndRegisterIpAndMakeDerivativeWithLicenseTokensRequest = {
+    spgNftContract: Address;
+    licenseTokenIds: string[] | bigint[] | number[];
+    recipient?: Address;
+    maxRts: number | string;
+    allowDuplicates: boolean;
+  } & IpMetadataAndTxOptions &
+    WithWipOptions;
+  ```
+
+  ```typescript Response Type
+  export type RegisterIpResponse = {
+    encodedTxData?: EncodedTxData;
+  } & CommonRegistrationResponse;
+
+  export type CommonRegistrationResponse = {
+    txHash?: Hex;
+    ipId?: Address;
+    tokenId?: bigint;
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+## registerIpAndMakeDerivativeWithLicenseTokens
+
+주어진 NFT를 라이선스 토큰을 사용하여 파생 IP로 등록합니다.
+
+<Note>
+  이 함수는 또한 기본 NFT의`tokenUri`를 다음에 전달된 값으로 설정합니다`ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메서드                                            | 타입                                                                                              |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `registerIpAndMakeDerivativeWithLicenseTokens` | `(request: RegisterIpAndMakeDerivativeWithLicenseTokensRequest) => Promise<RegisterIpResponse>` |
+
+Parameters:
+
+* `request.nftContract`: NFT 컬렉션의 주소.
+* `request.tokenId`: NFT의 ID.
+* `request.maxRts`: 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다.**단순화를 위한 권장값: 100\_000\_000**
+* `request.licenseTokenIds`: IP를 상위 IP에 연결하기 위해 소각될 라이선스 토큰의 ID.
+* `request.ipMetadata`: \[선택사항] 새로 민팅될 NFT와 새로 등록될 IP의 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택사항] IP NFT의 메타데이터 해시.
+* `request.deadline`: \[선택사항] 서명의 기한(밀리초 단위).**기본값은 1000**.
+* `request.txOptions`: \[선택사항] 트랜잭션[옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { toHex } from "viem";
+
+  const response =
+    await client.ipAsset.registerIpAndMakeDerivativeWithLicenseTokens({
+      nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73", // your NFT contract address
+      tokenId: "127",
+      licenseTokenIds: ["10"],
+      // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+      ipMetadata: {
+        ipMetadataURI: "test-uri",
+        ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+        nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+        nftMetadataURI: "test-nft-uri",
+      },
+      txOptions: { waitForTransaction: true },
+    });
+
+  console.log(
+    `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterIpAndMakeDerivativeWithLicenseTokensRequest = {
+    nftContract: Address;
+    tokenId: string | number | bigint;
+    licenseTokenIds: string[] | bigint[] | number[];
+    deadline?: string | number | bigint;
+    maxRts: number | string;
+  } & IpMetadataAndTxOptions &
+    WithWipOptions;
+  ```
+
+  ```typescript Response Type
+  export type RegisterIpResponse = {
+    encodedTxData?: EncodedTxData;
+  } & CommonRegistrationResponse;
+
+  export type CommonRegistrationResponse = {
+    txHash?: Hex;
+    ipId?: Address;
+    tokenId?: bigint;
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>

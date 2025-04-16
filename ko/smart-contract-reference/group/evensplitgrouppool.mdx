@@ -1,0 +1,267 @@
+---
+title: EvenSplitGroupPool
+---
+
+EvenSplitGroupPool은 IGroupRewardPool 인터페이스를 구현하고 그룹 내 IP 멤버들 간의 보상 분배를 관리하는 컨트랙트입니다. 모든 멤버들 간에 공정하게 보상을 분배하기 위해 균등 분할 메커니즘을 사용합니다.
+
+## 상태 변수
+
+### ROYALTY\_MODULE
+
+```solidity
+IRoyaltyModule public immutable ROYALTY_MODULE
+```
+
+프로토콜 전반의 로열티 모듈 주소.
+
+### GROUPING\_MODULE
+
+```solidity
+IGroupingModule public immutable GROUPING_MODULE
+```
+
+프로토콜 전반의 그룹핑 모듈 주소.
+
+### GROUP\_IP\_ASSET\_REGISTRY
+
+```solidity
+IGroupIPAssetRegistry public immutable GROUP_IP_ASSET_REGISTRY
+```
+
+프로토콜 전반의 그룹 IP 자산 레지스트리 주소.
+
+### MAX\_GROUP\_SIZE
+
+```solidity
+uint32 public constant MAX_GROUP_SIZE = 1_000
+```
+
+그룹에서 허용되는 최대 IP 멤버 수.
+
+### GroupInfo
+
+```solidity
+struct GroupInfo {
+    address token;
+    uint32 totalMembers;
+    uint128 pendingBalance;
+    uint128 accRewardPerIp;
+    uint256 averageRewardShare;
+}
+```
+
+GroupInfo에 대한 저장 구조:
+
+* `token`: 그룹 IP에 첨부된 라이선스 조건에 의해 정의된 그룹의 보상 토큰
+* `totalMembers`: 그룹 내 IP의 총 개수
+* `pendingBalance`: accRewardPerIp에 추가될 대기 중인 잔액
+* `accRewardPerIp`: IP당 누적 보상, MAX\_GROUP\_SIZE를 곱한 값
+* `averageRewardShare`: IP당 평균 보상 지분, 더 높은 최소 지분으로 새로운 IP가 참여할 때만 증가
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) public initializer
+```
+
+EvenSplitGroupPool 컨트랙트를 초기화합니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 컨트랙트의 주소
+
+### addIp
+
+```solidity
+function addIp(
+    address groupId,
+    address ipId,
+    uint256 minimumGroupRewardShare
+) external onlyGroupingModule returns (uint256 totalGroupRewardShare)
+```
+
+그룹 풀에 IP를 추가합니다. GroupingModule만이 이 함수를 호출할 수 있습니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID
+* `ipId`: IP ID
+* `minimumGroupRewardShare`: IP가 그룹에 추가되기 위해 기대하는 최소 그룹 보상 지분
+
+**Returns:**
+
+* `totalGroupRewardShare`: IP 추가 후 총 그룹 보상 지분
+
+### removeIp
+
+```solidity
+function removeIp(address groupId, address ipId) external onlyGroupingModule
+```
+
+그룹 풀에서 IP를 제거합니다. GroupingModule만이 이 함수를 호출할 수 있습니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID
+* `ipId`: IP ID
+
+### depositReward
+
+```solidity
+function depositReward(address groupId, address token, uint256 amount) external onlyGroupingModule
+```
+
+그룹 풀에 직접 보상을 예치합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID
+* `token`: 보상 토큰
+* `amount`: 보상 금액
+
+### getAvailableReward
+
+```solidity
+function getAvailableReward(
+    address groupId,
+    address token,
+    address[] calldata ipIds
+) external view returns (uint256[] memory)
+```
+
+그룹 내 각 IP에 대한 보상을 반환합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID
+* `token`: 보상 토큰
+* `ipIds`: IP ID들
+
+**Returns:**
+
+* `uint256[] memory`: 각 IP에 대한 보상
+
+### distributeRewards
+
+```solidity
+function distributeRewards(
+    address groupId,
+    address token,
+    address[] calldata ipIds
+) external whenNotPaused onlyGroupingModule returns (uint256[] memory rewards)
+```
+
+풀 내 주어진 IP 계정들에게 보상을 분배합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID
+* `token`: 보상 토큰들
+* `ipIds`: IP ID들
+
+**Returns:**
+
+* `rewards`: 각 IP에 분배된 보상 금액을 포함하는 배열
+
+### getTotalIps
+
+```solidity
+function getTotalIps(address groupId) external view returns (uint256)
+```
+
+그룹 내 IP의 총 개수를 반환합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID
+
+**Returns:**
+
+* `uint256`: 그룹 내 IP의 총 개수
+
+### getIpAddedTime
+
+```solidity
+function getIpAddedTime(address groupId, address ipId) external view returns (uint256)
+```
+
+IP가 그룹에 추가된 타임스탬프를 반환합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID
+* `ipId`: IP ID
+
+**Returns:**
+
+* `uint256`: IP가 그룹에 추가된 타임스탬프
+
+### getIpRewardDebt
+
+```solidity
+function getIpRewardDebt(address groupId, address token, address ipId) external view returns (uint256)
+```
+
+그룹 내 IP의 보상 부채를 반환합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID
+* `token`: 보상 토큰
+* `ipId`: IP ID
+
+**Returns:**
+
+* `uint256`: IP의 보상 부채
+
+### isIPAdded
+
+```solidity
+function isIPAdded(address groupId, address ipId) external view returns (bool)
+```
+
+IP가 그룹에 추가되었는지 확인합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID
+* `ipId`: IP ID
+
+**Returns:**
+
+* `bool`: IP가 그룹에 추가된 경우 true, 그렇지 않으면 false
+
+### getMinimumRewardShare
+
+```solidity
+function getMinimumRewardShare(address groupId, address ipId) external view returns (uint256)
+```
+
+그룹 내 IP의 최소 보상 지분을 반환합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID
+* `ipId`: IP ID
+
+**Returns:**
+
+* `uint256`: IP의 최소 보상 지분
+
+### getTotalAllocatedRewardShare
+
+```solidity
+function getTotalAllocatedRewardShare(address groupId) external view returns (uint256)
+```
+
+그룹의 총 할당된 보상 지분을 반환합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID
+
+**Returns:**
+
+* `uint256`: 그룹의 총 할당된 보상 지분
