@@ -14733,7 +14733,7 @@ In this guide, we will show you how to setup the Story smart contract developmen
 1. Run `foundryup` to automatically install the latest stable version of the precompiled binaries: forge, cast, anvil, and chisel
 2. Run the following command in a new directory: `forge init`. This will create a `foundry.toml` and example project files in the project root. By default, forge init will also initialize a new git repository.
 3. Initialize a new yarn project: `yarn init`. Alternatively, you can use `npm init` or `pnpm init`.
-4. Open up your `foundry.toml` file and replace it with this:
+4. Open up your root-level `foundry.toml` file (located in the top directory of your project) and replace it with this:
 
 ```toml
 [profile.default]
