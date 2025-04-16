@@ -1,0 +1,701 @@
+---
+title: Story에서 이미지 파인튜닝하기
+description: FLUX 파인튜닝 API를 사용하여 이미지를 파인튜닝하고
+  TypeScript로 Story에 출력물을 등록하는 방법을 배워보세요.
+---
+
+<CardGroup cols={1}>
+  <Card title="Completed Code" href="https://github.com/jacob-tucker/finetune-story-flux" icon="thumbs-up">
+    이 튜토리얼의 완성된 코드를 확인하세요.
+  </Card>
+</CardGroup>
+
+이 튜토리얼에서는 FLUX 파인튜닝 API를 사용하여 Story의 마스코트 "Ippy"의 여러 이미지를 가져와서 AI 모델을 파인튜닝하여 프롬프트와 함께 비슷한 이미지를 생성합니다. 그런 다음 Story에서 출력물을 수익화하고 IP를 보호할 것입니다.
+
+<Note>
+  **이 튜토리얼은 TypeScript로 작성되었습니다**
+
+  이 튜토리얼의 1-3단계는 다음을 기반으로 합니다 [FLUX Finetuning Beta Guide](https://docs.bfl.ml/finetuning/), Python으로 API를 호출하는 예제가 포함되어 있지만 TypeScript로 다시 작성했습니다.
+</Note>
+
+## 설명
+
+생성형 텍스트-투-이미지 모델은 종종 창작자의 고유한 비전을 완전히 포착하지 못하고, 특정 객체, 브랜드 또는 시각적 스타일에 대한 지식이 불충분합니다. FLUX Pro 파인튜닝 API를 사용하면 창작자가 기존 이미지를 사용하여 AI를 파인튜닝하여 프롬프트와 함께 유사한 이미지를 생성할 수 있습니다.
+
+이미지가 생성되면 IP를 성장시키고, 수익화하고, 보호하기 위해 Story에 IP로 등록할 것입니다.
+
+## 0. 시작하기 전에
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 설치해야 할 것: [Node.js](https://nodejs.org/en/download) 와 [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm). 이전에 코딩을 해보셨다면 이미 설치되어 있을 것입니다.
+2. Story Network Testnet 지갑의 개인 키를 다음에 추가하세요 `.env` file:
+
+```yaml .env
+WALLET_PRIVATE_KEY=
+```
+
+3. 다음으로 이동: [Pinata](https://pinata.cloud/) 에서 새로운 API 키를 생성하세요. JWT를 다음에 추가하세요 `.env` file:
+
+```yaml .env
+PINATA_JWT=
+```
+
+4. 다음으로 이동: [BFL](https://api.us1.bfl.ai/auth/profile) 에서 새로운 API 키를 생성하세요. 새 키를 다음에 추가하세요 `.env` file:
+
+<Warning>
+  **BFL 크레딧**
+
+  이미지를 생성하려면 BFL 크레딧이 필요합니다. 계정을 방금 만드셨다면 크레딧을 구매하셔야 합니다 [here](https://api.us1.bfl.ai/auth/profile).
+
+  각 API 엔드포인트의 가격은 다음에서 확인할 수 있습니다 [here](https://docs.bfl.ml/pricing/).
+</Warning>
+
+```yaml .env
+BFL_API_KEY=
+```
+
+5. 선호하는 Story RPC URL을 다음에 추가하세요 `.env` 파일. 우리가 제공하는 기본 공개 URL을 사용하시면 됩니다:
+
+```yaml .env
+RPC_PROVIDER_URL=https://aeneid.storyrpc.io
+```
+
+6. 의존성 설치:
+
+```bash Terminal
+npm install @story-protocol/core-sdk axios pinata-web3 viem
+```
+
+## 1. 학습 데이터 컴파일
+
+파인튜닝을 생성하려면 입력 학습 데이터가 필요합니다!
+
+1. 프로젝트에 다음 이름의 폴더를 만드세요 `images`. 해당 폴더에 파인튜닝 학습에 사용할 이미지들을 추가하세요. *지원되는 형식: JPG, JPEG, PNG, WebP. 5개 이상의 이미지를 사용하는 것을 권장합니다.*
+2. 텍스트 설명 추가 (선택사항): 같은 폴더에 이미지에 대한 설명이 포함된 텍스트 파일을 만드세요. 텍스트 파일은 해당 이미지와 동일한 이름을 가져야 합니다. *Example: if your image is "sample.jpg", create "sample.txt"*
+3. 폴더를 ZIP 파일로 압축하세요. 이름은 다음과 같아야 합니다 `images.zip`
+
+## 2. 파인튜닝 생성
+
+입력 이미지와 유사한 스타일의 이미지를 생성하려면 **finetune**을 생성해야 합니다. 파인튜닝은 입력 이미지를 모두 알고 있는 AI로, 새로운 이미지를 생성할 수 있습니다.
+
+FLUX의 `/v1/finetune` API 경로를 호출하는 함수를 만들어봅시다. `flux` 폴더를 만들고, 그 안에 다음 이름의 파일을 추가하세요 `requestFinetuning.ts` 그리고 다음 코드를 추가하세요:
+
+<Note>
+  **공식 문서**
+
+  페이로드의 각 매개변수가 무엇인지 알아보려면 공식 `/v1/finetune` API 문서를 [here](https://api.us1.bfl.ai/scalar#tag/tasks/POST/v1/finetune)에서 확인하세요.
+</Note>
+
+```typescript flux/requestFinetuning.ts
+import axios from "axios";
+import fs from "fs";
+
+interface FinetunePayload {
+  finetune_comment: string;
+  trigger_word: string;
+  file_data: string;
+  iterations: number;
+  mode: string;
+  learning_rate: number;
+  captioning: boolean;
+  priority: string;
+  lora_rank: number;
+  finetune_type: string;
+}
+
+export async function requestFinetuning(
+  zipPath: string,
+  finetuneComment: string,
+  triggerWord = "TOK",
+  mode = "general",
+  iterations = 300,
+  learningRate = 0.00001,
+  captioning = true,
+  priority = "quality",
+  finetuneType = "full",
+  loraRank = 32
+) {
+  if (!fs.existsSync(zipPath)) {
+    throw new Error(`ZIP file not found at ${zipPath}`);
+  }
+
+  const modes = ["character", "product", "style", "general"];
+  if (!modes.includes(mode)) {
+    throw new Error(`Invalid mode. Must be one of: ${modes.join(", ")}`);
+  }
+
+  const fileData = fs.readFileSync(zipPath);
+  const encodedZip = Buffer.from(fileData).toString("base64");
+
+  const url = "https://api.us1.bfl.ai/v1/finetune";
+  const headers = {
+    "Content-Type": "application/json",
+    "X-Key": process.env.BFL_API_KEY,
+  };
+
+  const payload: FinetunePayload = {
+    finetune_comment: finetuneComment,
+    trigger_word: triggerWord,
+    file_data: encodedZip,
+    iterations,
+    mode,
+    learning_rate: learningRate,
+    captioning,
+    priority,
+    lora_rank: loraRank,
+    finetune_type: finetuneType,
+  };
+
+  try {
+    const response = await axios.post(url, payload, { headers });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Finetune request failed: ${error}`);
+  }
+}
+```
+
+다음으로 `train.ts` 파일을 만들고 `requestFinetuning` 함수를 호출하세요:
+
+<Warning>
+  **Warning: This is expensive!**
+
+  새로운 파인튜닝을 생성하는 것은 비용이 많이 듭니다. 이 튜토리얼을 작성하는 시점에서 $2-$6 정도입니다. "FLUX PRO FINETUNE: TRAINING" 섹션을 다음에서 확인해주세요 [pricing page](https://docs.bfl.ml/pricing/).
+</Warning>
+
+```typescript train.ts
+import { requestFinetuning } from "./flux/requestFinetuning";
+
+async function main() {
+  const response = await requestFinetuning("./images.zip", "ippy-finetune");
+  console.log(response);
+}
+
+main();
+```
+
+다음과 같은 내용이 로그에 출력될 것입니다:
+
+```json
+{
+  "finetune_id": "6fc5e628-6f56-48ec-93cb-c6a6b22bf5a"
+}
+```
+
+이것이 당신의 `finetune_id`이며, 다음 단계에서 이미지를 생성하는 데 사용될 것입니다.
+
+## 3. 파인튜닝 대기
+
+파인튜닝된 모델로 이미지를 생성하기 전에 FLUX의 학습이 완료될 때까지 기다려야 합니다!
+
+우리의 `flux` 폴더에서 다음 이름의 파일을 생성하세요 `finetune-progress.ts` 그리고 다음 코드를 추가하세요:
+
+<Note>
+  **공식 문서**
+
+  페이로드의 각 매개변수가 무엇인지 알아보려면 공식 `/v1/get_result` API 문서를 [여기서](https://api.us1.bfl.ai/scalar#tag/utility/GET/v1/get_result) 확인하세요.
+</Note>
+
+```typescript flux/finetuneProgress.ts
+import axios from "axios";
+
+export async function finetuneProgress(finetuneId: string) {
+  const url = "https://api.us1.bfl.ai/v1/get_result";
+  const headers = {
+    "Content-Type": "application/json",
+    "X-Key": process.env.BFL_API_KEY,
+  };
+  try {
+    const response = await axios.get(url, {
+      headers,
+      params: { id: finetuneId },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Finetune progress failed: ${error}`);
+  }
+}
+```
+
+다음으로, 파일을 생성하고 `finetune-progress.ts` 그리고 방금 만든 `finetuneProgress` 함수를 호출하세요:
+
+```typescript finetune-progress.ts
+import { finetuneProgress } from "./flux/finetuneProgress";
+
+// input your finetune_id here
+const FINETUNE_ID = "";
+
+async function main() {
+  const progress = await finetuneProgress(FINETUNE_ID);
+  console.log(progress);
+}
+
+main();
+```
+
+다음과 같은 로그가 출력될 것입니다:
+
+```json
+{
+  "id": "023a1507-369e-46e0-bd6d-1f3446d7d5f2",
+  "status": "Pending",
+  "result": null,
+  "progress": null
+}
+```
+
+보시다시피 상태가 아직 대기 중입니다. 다음 단계로 진행하기 전에 학습이 '준비됨' 상태가 될 때까지 기다려야 합니다.
+
+## 4. 추론 실행
+
+<Warning>
+  **Warning: This costs money.**
+
+  매우 저렴하지만 추론을 실행하는 데는 비용이 들며, 이 튜토리얼을 작성하는 시점에서 \$0.06-0.07 정도입니다. [가격 페이지](https://docs.bfl.ml/pricing/)의 "FLUX PRO FINETUNE: INFERENCE" 섹션을 검토해주세요.
+</Warning>
+
+이제 파인튜닝을 학습했으니 모델을 사용하여 이미지를 생성할 것입니다. "추론 실행"은 단순히 우리의 새로운 모델(해당 `finetune_id`로 식별됨)을 사용하여 새로운 이미지를 생성하는 것을 의미합니다.
+
+사용할 수 있는 여러 추론 엔드포인트가 있으며, 각각 [자체 가격](https://docs.bfl.ml/pricing/)이 있습니다 (페이지 하단에서 확인 가능). 이 튜토리얼에서는 `/v1/flux-pro-1.1-ultra-finetuned` 엔드포인트를 사용할 것이며, 이는 [여기](https://api.us1.bfl.ai/scalar#tag/tasks/POST/v1/flux-pro-1.1-ultra-finetuned)에 문서화되어 있습니다.
+
+우리의 `flux` 폴더에서 `finetuneInference.ts` 파일을 생성하고 다음 코드를 추가하세요:
+
+<Note>
+  **공식 문서**
+
+  페이로드의 각 매개변수가 무엇인지 알아보려면 공식 `/v1/flux-pro-1.1-ultra-finetuned` API 문서를 [여기](https://api.us1.bfl.ai/scalar#tag/tasks/POST/v1/flux-pro-1.1-ultra-finetuned)에서 확인하세요.
+</Note>
+
+```typescript flux/finetineInference.ts
+import axios from "axios";
+
+export async function finetuneInference(
+  finetuneId: string,
+  prompt: string,
+  finetuneStrength = 1.2,
+  endpoint = "flux-pro-1.1-ultra-finetuned",
+  additionalParams: Record<string, any> = {}
+) {
+  const url = `https://api.us1.bfl.ai/v1/${endpoint}`;
+  const headers = {
+    "Content-Type": "application/json",
+    "X-Key": process.env.BFL_API_KEY,
+  };
+
+  const payload = {
+    finetune_id: finetuneId,
+    finetune_strength: finetuneStrength,
+    prompt,
+    ...additionalParams,
+  };
+
+  try {
+    const response = await axios.post(url, payload, { headers });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Finetune inference failed: ${error}`);
+  }
+}
+```
+
+다음으로, 파일을 생성하고 `inference.ts` 그리고 방금 만든 `finetuneInference` 함수를 호출하세요. 첫 번째 매개변수는 위 스크립트를 실행해서 얻은 `finetune_id`이어야 하며, 두 번째 매개변수는 새 이미지를 생성하기 위한 프롬프트입니다.
+
+```typescript inference.ts
+import { finetuneInference } from "./flux/finetuneInference";
+
+// input your finetune_id here
+const FINETUNE_ID = "";
+// add your prompt here
+const PROMPT = "A picture of Ippy being really happy.";
+
+async function main() {
+  const inference = await finetuneInference(FINETUNE_ID, PROMPT);
+  console.log(inference);
+}
+
+main();
+```
+
+다음과 같은 로그가 출력될 것입니다:
+
+```json
+{
+  "id": "023a1507-369e-46e0-bd6d-1f3446d7d5f2",
+  "status": "Pending",
+  "result": null,
+  "progress": null
+}
+```
+
+보시다시피 상태가 아직 대기 중입니다. 이미지를 보려면 생성이 완료될 때까지 기다려야 합니다. 이를 위해 새로운 추론이 준비되었는지 확인하고 세부 정보를 볼 수 있는 함수가 필요합니다.
+
+우리의 `flux` 폴더에서 다음 이름의 파일을 생성하세요 `getInference.ts` 그리고 다음 코드를 추가하세요:
+
+<Note>
+  **공식 문서**
+
+  페이로드의 각 매개변수가 무엇인지 알아보려면 공식 `/v1/get_result` API 문서를 [여기](https://api.us1.bfl.ai/scalar#tag/utility/GET/v1/get_result)에서 확인하세요.
+</Note>
+
+```typescript flux/getInference.ts
+import axios from "axios";
+
+export async function getInference(id: string) {
+  const url = "https://api.us1.bfl.ai/v1/get_result";
+  const headers = {
+    "Content-Type": "application/json",
+    "X-Key": process.env.BFL_API_KEY,
+  };
+
+  try {
+    const response = await axios.get(url, { headers, params: { id } });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Inference retrieval failed: ${error}`);
+  }
+}
+```
+
+우리의 `inference.ts` 파일로 돌아가서, 추론이 준비될 때까지 계속해서 가져오는 루프를 추가해보겠습니다. 준비가 되면 새 이미지를 볼 수 있습니다.
+
+```typescript inference.ts
+import { finetuneInference } from "./flux/finetuneInference";
+import { getInference } from "./flux/getInference";
+
+// input your finetune_id here
+const FINETUNE_ID = "";
+// add your prompt here
+const PROMPT = "A picture of Ippy being really happy.";
+
+async function main() {
+  const inference = await finetuneInference(FINETUNE_ID, PROMPT);
+
+  let inferenceData = await getInference(inference.id);
+  while (inferenceData.status != "Ready") {
+    console.log("Waiting for inference to complete...");
+    // wait 5 seconds
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    // fetch the inference again
+    inferenceData = await getInference(inference.id);
+  }
+  // now the inference data is ready
+  console.log(inferenceData);
+}
+
+main();
+```
+
+루프가 완료되면 최종 로그는 다음과 같을 것입니다:
+
+```json
+{
+  "id": "023a1507-369e-46e0-bd6d-1f3446d7d5f2",
+  "status": "Ready",
+  "result": {
+    "sample": "https://delivery-us1.bfl.ai/results/746585f8d1b341f3a8735ababa563ac1/sample.jpeg?se=2025-01-16T19%3A50%3A11Z&sp=r&sv=2024-11-04&sr=b&rsct=image/jpeg&sig=pPtWnntLqc49hfNnGPgTf4BzS6MZcBgHayrYkKe%2BZIc%3D",
+    "prompt": "A picture of Ippy being really happy."
+  },
+  "progress": null
+}
+```
+
+브라우저에 `sample`를 붙여넣어 최종 결과를 확인할 수 있습니다! 이미지는 결국 사라질 수 있으니 반드시 저장해두세요.
+
+## 5. Story Config 설정
+
+다음으로 이 이미지를 Story에 [IP Asset](/concepts/ip-asset)으로 등록하여 IP를 수익화하고 라이선스를 부여할 것입니다. `story` 폴더를 생성하고 `utils.ts` 파일을 추가하세요. 여기에 Story Config를 설정하기 위한 다음 코드를 추가하세요:
+
+<Info>
+  관련 문서: [TypeScript SDK 설정](/developers/typescript-sdk/setup)
+</Info>
+
+```typescript story/utils.ts
+import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
+import { http } from "viem";
+import { privateKeyToAccount, Address, Account } from "viem/accounts";
+
+const privateKey: Address = `0x${process.env.WALLET_PRIVATE_KEY}`;
+export const account: Account = privateKeyToAccount(privateKey);
+
+const config: StoryConfig = {
+  account: account,
+  transport: http(process.env.RPC_PROVIDER_URL),
+  chainId: "aeneid",
+};
+export const client = StoryClient.newClient(config);
+```
+
+## 6. 추론을 IPFS에 업로드
+
+이제 새로운 추론을 만들었으니, 이미지 `sample` 파일을 IPFS에 직접 저장해야 합니다. 샘플은 임시적이기 때문입니다.
+
+새로운 `pinata` 폴더에서 `uploadToIpfs.ts` 파일을 생성하고 이미지를 업로드하고 세부 정보를 가져오는 함수를 만드세요:
+
+```typescript pinata/uploadToIpfs.ts
+import { PinataSDK } from "pinata-web3";
+
+const pinata = new PinataSDK({
+  pinataJwt: process.env.PINATA_JWT,
+});
+
+export async function uploadImageAndGetDetails(
+  imageUrl: string
+): Promise<{ ipfsCid: string; contentType: string; contentHash: string }> {
+  try {
+    const response = await axios.get(imageUrl, {
+      responseType: "arraybuffer",
+      validateStatus: (status) => status === 200,
+    });
+
+    const contentType = response.headers["content-type"];
+    if (!contentType?.startsWith("image/")) {
+      throw new Error("URL does not point to an image");
+    }
+
+    const extension = contentType.split("/")[1];
+    const filename = `${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2)}.${extension}`;
+
+    const buffer = Buffer.from(response.data);
+    const contentHash =
+      "0x" + createHash("sha256").update(buffer).digest("hex");
+    const file = new File([buffer], filename, { type: contentType });
+
+    const { IpfsHash } = await pinata.upload.file(file);
+    return { ipfsCid: IpfsHash, contentType, contentHash };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(`Failed to fetch image: ${error.message}`);
+    }
+    throw error;
+  }
+}
+```
+
+이제 다음 단계에서 이 함수를 사용할 것입니다.
+
+## 7. IP 메타데이터 설정
+
+귀하의`story` 폴더에서 `registerIp.ts` 파일을 생성하세요.
+
+다음의 [IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard) 를 확인하고 아래와 같이 IP에 대한 메타데이터를 구성하세요:
+
+```typescript story/registerIp.ts
+import { client, account } from "./utils";
+import { uploadImageAndGetDetails } from "../pinata/uploadToIpfs";
+
+export async function registerIp(inference) {
+  const { ipfsCid, contentType, contentHash } = await uploadImageAndGetDetails(
+    inference.result.sample
+  );
+
+  // Docs: https://docs.story.foundation/concepts/ip-asset/ipa-metadata-standard
+  const ipMetadata = {
+    title: "Happy Ippy",
+    description:
+      "An image of Ippy being really happy, generated by FLUX's 1.1 [pro] ultra Finetune",
+    image: `https://ipfs.io/ipfs/${ipfsCid}`,
+    imageHash: contentHash,
+    mediaUrl: `https://ipfs.io/ipfs/${ipfsCid}`,
+    mediaHash: contentHash,
+    mediaType: contentType,
+    creators: [
+      {
+        name: "Jacob Tucker",
+        contributionPercent: 100,
+        address: account.address,
+      },
+    ],
+  };
+}
+```
+
+## 8. NFT 메타데이터 설정
+
+다음의 `registerIp.ts` 파일에서 다음의 [OpenSea ERC-721 Standard](https://docs.opensea.io/docs/metadata-standards)를 따르는 NFT 메타데이터를 구성하세요.
+
+```typescript story/registerIp.ts
+import { client, account } from "./utils";
+import { uploadImageAndGetDetails } from "../pinata/uploadToIpfs";
+
+export async function registerIp(inference) {
+  // previous code here...
+
+  // Docs: https://docs.opensea.io/docs/metadata-standards
+  const nftMetadata = {
+    name: "Ippy Ownership NFT",
+    description:
+      "This NFT represents ownership of the Happy Ippy image generated by FLUX's 1.1 [pro] ultra Finetune",
+    image: `https://ipfs.io/ipfs/${ipfsCid}`,
+    attributes: [
+      {
+        key: "Model",
+        value: "FLUX 1.1 [pro] ultra Finetune",
+      },
+      {
+        key: "Prompt",
+        value: "A picture of Ippy being really happy.",
+      },
+    ],
+  };
+}
+```
+
+## 9. IP와 NFT 메타데이터를 IPFS에 업로드
+
+다음의 `pinata` 폴더에서 IP와 NFT 메타데이터 객체를 IPFS에 업로드하는 함수를 생성하세요:
+
+```typescript pinata/uploadToIpfs.ts
+// previous code here ...
+
+export async function uploadJSONToIPFS(jsonMetadata: any): Promise<string> {
+  const { IpfsHash } = await pinata.upload.json(jsonMetadata);
+  return IpfsHash;
+}
+```
+
+아래와 같이 해당 함수를 사용하여 메타데이터를 업로드할 수 있습니다:
+
+```typescript story/registerIp.ts
+import { client, account } from "./utils";
+import {
+  uploadImageAndGetDetails,
+  uploadJSONToIPFS,
+} from "../pinata/uploadToIpfs";
+import { createHash } from "crypto";
+
+export async function registerIp(inference) {
+  // previous code here...
+
+  const ipIpfsHash = await uploadJSONToIPFS(ipMetadata);
+  const ipHash = createHash("sha256")
+    .update(JSON.stringify(ipMetadata))
+    .digest("hex");
+  const nftIpfsHash = await uploadJSONToIPFS(nftMetadata);
+  const nftHash = createHash("sha256")
+    .update(JSON.stringify(nftMetadata))
+    .digest("hex");
+}
+```
+
+## 10. NFT를 IP Asset으로 등록
+
+다음으로 NFT를 발행하고 [IP Asset](/concepts/ip-asset)으로 등록하고 [License Terms](/concepts/licensing-module/license-terms)를 설정한 다음 NFT와 IP 메타데이터를 모두 설정할 것입니다.
+
+다행히도 `mintAndRegisterIp` 함수를 사용하여 동일한 트랜잭션에서 NFT를 발행하고 IP Asset으로 등록할 수 있습니다.
+
+이 함수는 발행할 SPG NFT 컨트랙트가 필요합니다. 간단히 하기 위해 Aeneid 테스트넷에서 제공하는 공개 컬렉션을 사용할 수 있습니다: `0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc`.
+
+<Accordion title="Creating your own custom ERC-721 collection" icon="pen-circle">
+  우리가 제공하는 공개 컬렉션을 사용하는 것은 괜찮지만, 실제로 이를 수행할 때는 IP를 위한 자체 NFT 컬렉션을 만들어야 합니다. 이를 수행하는 방법에는 2가지가 있습니다:
+
+  1. 다음을 구현하는 컨트랙트를 배포하세요 [ISPGNFT](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/interfaces/ISPGNFT.sol) 인터페이스, 또는 SDK의 [createNFTCollection](/sdk-reference/nftclient#createnftcollection) 함수(아래 참조)를 사용하여 대신 수행하세요. 이렇게 하면 귀하만이 발행할 수 있는 자체 SPG NFT 컬렉션을 얻을 수 있습니다.
+
+     ```typescript createSpgNftCollection.ts
+     import { zeroAddress } from "viem";
+     import { client } from "./utils";
+
+     async function createSpgNftCollection() {
+       const newCollection = await client.nftClient.createNFTCollection({
+         name: "Test NFTs",
+         symbol: "TEST",
+         isPublicMinting: false,
+         mintOpen: true,
+         mintFeeRecipient: zeroAddress,
+         contractURI: "",
+         txOptions: { waitForTransaction: true },
+       });
+
+       console.log(
+         `New SPG NFT collection created at transaction hash ${newCollection.txHash}`
+       );
+       console.log(`NFT contract address: ${newCollection.spgNftContract}`);
+     }
+
+     createSpgNftCollection();
+     ```
+
+  2. 자체 ERC-721 NFT 컬렉션을 생성하고 [register](/sdk-reference/ipasset#register) 함수를 사용하세요 - `nftContract` 및 `tokenId` - *대신* 다음 `mintAndRegisterIp` 함수를 사용하세요. 작동하는 코드 예제는 [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/registerCustom.ts)에서 확인할 수 있습니다. 이는 **이미 자체 로직이 있는 커스텀 NFT 컨트랙트가 있거나 IP 자체가 NFT인 경우에 유용합니다.**
+</Accordion>
+
+<Info>
+  관련 문서:
+  [ipAsset.mintAndRegisterIp](/sdk-reference/ipasset#mintandregisterip)
+</Info>
+
+```typescript story/registerIp.ts
+import { client, account } from "./utils";
+import {
+  uploadImageAndGetDetails,
+  uploadJSONToIPFS,
+} from "../pinata/uploadToIpfs";
+import { createHash } from "crypto";
+import { Address } from "viem";
+
+export async function registerIp(inference) {
+  // previous code here ...
+
+  const response = await client.ipAsset.mintAndRegisterIp({
+    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+    ipMetadata: {
+      ipMetadataURI: `https://ipfs.io/ipfs/${ipIpfsHash}`,
+      ipMetadataHash: `0x${ipHash}`,
+      nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsHash}`,
+      nftMetadataHash: `0x${nftHash}`,
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  console.log(
+    `View on the explorer: https://aeneid.explorer.story.foundation/ipa/${response.ipId}`
+  );
+}
+```
+
+## 11. 추론 등록
+
+이제 우리의 `registerIp` 함수를 완성했으니 우리의 `inference.ts` file:
+
+```typescript inference.ts
+import { finetuneInference } from "./flux/finetuneInference";
+import { getInference } from "./flux/getInference";
+import { registerIp } from "./story/registerIp";
+
+const FINETUNE_ID = "";
+const PROMPT = "A picture of Ippy being really happy.";
+
+async function main() {
+  const inference = await finetuneInference(FINETUNE_ID, PROMPT);
+
+  let inferenceData = await getInference(inference.id);
+  while (inferenceData.status != "Ready") {
+    console.log("Waiting for inference to complete...");
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    inferenceData = await getInference(inference.id);
+  }
+  // now the inference data is ready
+  console.log(inferenceData);
+
+  // add the function here
+  await registerIp(inferenceData);
+}
+
+main();
+```
+
+## 12. 완료!
+
+<CardGroup cols={2}>
+  <Card title="Completed Code" href="https://github.com/jacob-tucker/finetune-story-flux" icon="thumbs-up">
+    이 튜토리얼의 완성된 코드를 확인하세요.
+  </Card>
+
+  <Card title="Learn More" href="/developers/tutorials" icon="book-open">
+    문서에서 더 많은 튜토리얼을 살펴보세요
+  </Card>
+</CardGroup>

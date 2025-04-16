@@ -1,0 +1,482 @@
+---
+title: License
+description: LicenseClient를 사용하여 Story 내의 라이선스 조건과 토큰을 관리할 수 있습니다.
+---
+
+## LicenseClient
+
+### 메소드
+
+* attachLicenseTerms
+* mintLicenseTokens
+* registerPILTerms
+* registerNonComSocialRemixingPIL
+* registerCommercialUsePIL
+* registerCommercialRemixPIL
+* getLicenseTerms
+
+### attachLicenseTerms
+
+IP에 라이선스 조건을 첨부합니다.
+
+| 메소드                  | 타입                                                                   |
+| -------------------- | -------------------------------------------------------------------- |
+| `attachLicenseTerms` | `(request: AttachLicenseTermsRequest) => AttachLicenseTermsResponse` |
+
+Parameters:
+
+* `request.ipId`: 라이선스 조건이 첨부될 IP의 주소.
+* `request.licenseTemplate`: 라이선스 템플릿의 주소.
+* `request.licenseTermsId`: 라이선스 조건의 ID.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  const response = await client.license.attachLicenseTerms({
+    licenseTermsId: "1",
+    ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+    txOptions: { waitForTransaction: true },
+  });
+
+  if (response.success) {
+    console.log(
+      `Attached License Terms to IPA at transaction hash ${response.txHash}.`
+    );
+  } else {
+    console.log(`License Terms already attached to this IPA.`);
+  }
+  ```
+
+  ```typescript Request Type
+  export type AttachLicenseTermsRequest = {
+    ipId: Address;
+    licenseTermsId: string | number | bigint;
+    licenseTemplate?: Address;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type AttachLicenseTermsResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+    success?: boolean;
+  };
+  ```
+</CodeGroup>
+
+### mintLicenseTokens
+
+License Tokens를 발행하여 License Terms에 기반한 IP Asset 사용 권한을 부여합니다. 라이선스 토큰은 에게 발행됩니다.[라이선스 토큰](/concepts/licensing-module/license-token) IP Asset을 사용할 수 있는 권한을 부여하는 [라이선스 조건](/concepts/licensing-module/license-terms). 라이선스 토큰은 다음으로 발행됩니다 `receiver`.
+
+라이선스 토큰은 License Terms가 IP Asset에 이미 첨부되어 있어 공개적으로 사용 가능한 라이선스인 경우에만 발행될 수 있습니다. 하지만 IP 소유자는 IP Asset에 첨부되지 않은 License Terms로 라이선스 토큰을 발행하여 private license를 만들 수 있습니다.`licenseTermsId` 이미 IP Asset에 연결되어 있어 공개적으로 사용 가능한 라이선스가 됩니다. 하지만 IP 소유자는 [비공개 라이선스](/concepts/licensing-module/license-token#private-licenses)를 발행할 수 있으며 이는 `licenseTermsId` IP Asset에 연결되지 않은 라이선스 토큰을 발행함으로써 가능합니다.
+
+<Warning>
+  라이선스 조건이나 IP 소유자의 설정에 따라 발행 수수료가 필요할 수 있습니다. 발행 수수료는 라이선스 조건에 명시되거나 IP 소유자가 설정한 발행 수수료 토큰으로 지불됩니다. IP 소유자는 자신의 IP의 발행 수수료를 설정하거나 발행 수수료 모듈을 설정하여 발행 수수료를 결정할 수 있습니다.
+</Warning>
+
+<Frame>
+  <img src="/images/concepts/private-licenses.png" alt="A diagram showing how private licenses are minted." />
+</Frame>
+
+| 메소드                 | 타입                                                                          |
+| ------------------- | --------------------------------------------------------------------------- |
+| `mintLicenseTokens` | `(request: MintLicenseTokensRequest) => Promise<MintLicenseTokensResponse>` |
+
+Parameters:
+
+* `request.licensorIpId`: 라이선스 제공자 IP ID.
+* `request.licenseTemplate`: 라이선스 템플릿의 주소.
+* `request.licenseTermsId`: 라이선스 템플릿 내의 라이선스 조건 ID.
+* `request.amount`: 발행할 라이선스 토큰의 수량.
+* `request.receiver`: 수신자의 주소.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  const response = await client.license.mintLicenseTokens({
+    licenseTermsId: "1",
+    licensorIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    receiver: "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955", // optional
+    amount: 1,
+    maxMintingFee: BigInt(0), // disabled
+    maxRevenueShare: 100, // default
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `License Token minted at transaction hash ${response.txHash}, License IDs: ${response.licenseTokenIds}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type MintLicenseTokensRequest = {
+    licensorIpId: Address;
+    licenseTermsId: string | number | bigint;
+    licenseTemplate?: Address;
+    maxMintingFee: bigint | string | number;
+    maxRevenueShare: number | string;
+    amount?: number | string | bigint;
+    receiver?: Address;
+  } & WithTxOptions &
+    WithWipOptions;
+  ```
+
+  ```typescript Response Type
+  export type MintLicenseTokensResponse = {
+    licenseTokenIds?: bigint[];
+    receipt?: TransactionReceipt;
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### registerPILTerms
+
+새로운 라이선스 조건을 등록하고 새로 등록된 라이선스 조건의 ID를 반환합니다.
+
+| 메소드                | 타입                                                                   |
+| ------------------ | -------------------------------------------------------------------- |
+| `registerPILTerms` | `(request: RegisterPILTermsRequest) => Promise<RegisterPILResponse>` |
+
+Parameters:
+
+* 예상 매개변수: 여기에 모든 예상 매개변수를 나열하는 대신 이 파일의 타입을 참조하세요. 이들은 모두 PIL Terms에서 가져옵니다.`LicenseTerms` 유형은 [이](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts) 파일에 있습니다. 이들은 모두 [PIL Terms](/concepts/programmable-ip-license/pil-terms)에서 가져온 것입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { LicenseTerms } from "@story-protocol/core-sdk";
+  import { zeroAddress } from "viem";
+
+  const licenseTerms: LicenseTerms = {
+    transferable: false,
+    royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    defaultMintingFee: 0n,
+    expiration: 0n,
+    commercialUse: false,
+    commercialAttribution: false,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: "0x",
+    commercialRevShare: 10, // 10%
+    commercialRevCeiling: 0n,
+    derivativesAllowed: true,
+    derivativesAttribution: false,
+    derivativesApproval: false,
+    derivativesReciprocal: false,
+    derivativeRevCeiling: 0n,
+    currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    uri: "",
+  };
+
+  const response = await client.license.registerPILTerms({
+    ...licenseTerms,
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterPILTermsRequest = Omit<
+    LicenseTerms,
+    | "defaultMintingFee"
+    | "expiration"
+    | "commercialRevCeiling"
+    | "derivativeRevCeiling"
+  > & {
+    defaultMintingFee: bigint | string | number;
+    expiration: bigint | string | number;
+    commercialRevCeiling: bigint | string | number;
+    derivativeRevCeiling: bigint | string | number;
+    txOptions?: TxOptions;
+  };
+
+  export type LicenseTerms = {
+    /*Indicates whether the license is transferable or not.*/
+    transferable: boolean;
+    /*The address of the royalty policy contract which required to StoryProtocol in advance.*/
+    royaltyPolicy: Address;
+    /*The default minting fee to be paid when minting a license.*/
+    defaultMintingFee: bigint;
+    /*The expiration period of the license.*/
+    expiration: bigint;
+    /*Indicates whether the work can be used commercially or not.*/
+    commercialUse: boolean;
+    /*Whether attribution is required when reproducing the work commercially or not.*/
+    commercialAttribution: boolean;
+    /*Commercializers that are allowed to commercially exploit the work. If zero address, then no restrictions is enforced.*/
+    commercializerChecker: Address;
+    /*The data to be passed to the commercializer checker contract.*/
+    commercializerCheckerData: Address;
+    /**Percentage of revenue that must be shared with the licensor. Must be from 0-100.*/
+    commercialRevShare: number;
+    /*The maximum revenue that can be generated from the commercial use of the work.*/
+    commercialRevCeiling: bigint;
+    /*Indicates whether the licensee can create derivatives of his work or not.*/
+    derivativesAllowed: boolean;
+    /*Indicates whether attribution is required for derivatives of the work or not.*/
+    derivativesAttribution: boolean;
+    /*Indicates whether the licensor must approve derivatives of the work before they can be linked to the licensor IP ID or not.*/
+    derivativesApproval: boolean;
+    /*Indicates whether the licensee must license derivatives of the work under the same terms or not.*/
+    derivativesReciprocal: boolean;
+    /*The maximum revenue that can be generated from the derivative use of the work.*/
+    derivativeRevCeiling: bigint;
+    /*The ERC20 token to be used to pay the minting fee. the token must be registered in story protocol.*/
+    currency: Address;
+    /*The URI of the license terms, which can be used to fetch the offchain license terms.*/
+    uri: string;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterPILResponse = {
+    licenseTermsId?: bigint;
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### registerNonComSocialRemixingPIL
+
+레지스트리에 PIL 비상업적 소셜 리믹스 라이선스를 등록하는 편리한 함수입니다.
+
+<Warning>
+  이 함수를 호출할 필요가 없습니다. 비상업적 소셜 리믹스 조건은 이미 우리 프로토콜에 등록되어 있습니다. 다시 등록할 필요가 없습니다.`licenseTermdId = 1` 우리 프로토콜에 있습니다. 이들을 다시 등록할 필요가 없습니다.
+</Warning>
+
+| 메소드                               | 타입                                                                                   |
+| --------------------------------- | ------------------------------------------------------------------------------------ |
+| `registerNonComSocialRemixingPIL` | `(request?: RegisterNonComSocialRemixingPILRequest) => Promise<RegisterPILResponse>` |
+
+Parameters:
+
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  const response = await client.license.registerNonComSocialRemixingPIL({
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterNonComSocialRemixingPILRequest = {
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterPILResponse = {
+    licenseTermsId?: bigint;
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### registerCommercialUsePIL
+
+레지스트리에 PIL 상업적 사용 라이선스를 등록하는 편리한 함수입니다.
+
+| 메소드                        | 타입                                                                           |
+| -------------------------- | ---------------------------------------------------------------------------- |
+| `registerCommercialUsePIL` | `(request: RegisterCommercialUsePILRequest) => Promise<RegisterPILResponse>` |
+
+Parameters:
+
+* `request.defaultMintingFee`: 라이선스 발행 시 지불해야 하는 수수료.
+* `request.currency`: 발행 수수료 지불에 사용될 ERC20 토큰으로, Story 프로토콜에 등록되어 있어야 합니다.
+* `request.royaltyPolicyAddress`: \[선택사항] 로열티 정책 계약의 주소, 기본값은 LAP입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const commercialUseParams = {
+    currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    defaultMintingFee: parseEther("1"), // 1 $WIP
+    royaltyPolicyAddress: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  };
+
+  const response = await client.license.registerCommercialUsePIL({
+    ...commercialUseParams,
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterCommercialUsePILRequest = {
+    defaultMintingFee: string | number | bigint;
+    currency: Address;
+    royaltyPolicyAddress?: Address;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterPILResponse = {
+    licenseTermsId?: bigint;
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### registerCommercialRemixPIL
+
+레지스트리에 PIL 상업적 리믹스 라이선스를 등록하는 편리한 함수입니다.
+
+| 메소드                          | 타입                                                                             |
+| ---------------------------- | ------------------------------------------------------------------------------ |
+| `registerCommercialRemixPIL` | `(request: RegisterCommercialRemixPILRequest) => Promise<RegisterPILResponse>` |
+
+Parameters:
+
+* `request.defaultMintingFee`: 라이선스 발행 시 지불해야 하는 수수료.
+* `request.commercialRevShare`: 라이선스 제공자와 공유해야 하는 수익의 비율.
+* `request.currency`: 발행 수수료 지불에 사용될 ERC20 토큰으로, Story 프로토콜에 등록되어 있어야 합니다.
+* `request.royaltyPolicyAddress`: \[선택사항] 로열티 정책 계약의 주소, 기본값은 LAP입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const commercialRemixParams = {
+    currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    defaultMintingFee: parseEther("1"), // 1 $WIP
+    royaltyPolicyAddress: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    commercialRevShare: 10, // 10%
+  };
+
+  const response = await client.license.registerCommercialRemixPIL({
+    ...commercialRemixParams,
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterCommercialRemixPILRequest = {
+    defaultMintingFee: string | number | bigint;
+    commercialRevShare: number;
+    currency: Address;
+    royaltyPolicyAddress?: Address;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterPILResponse = {
+    licenseTermsId?: bigint;
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### getLicenseTerms
+
+주어진 ID의 라이선스 약관을 가져옵니다.
+
+| 메소드               | 타입                                   |           |                                                       |
+| :---------------- | :----------------------------------- | :-------- | :---------------------------------------------------- |
+| `getLicenseTerms` | \`(selectedLicenseTermsId: string \\ | number \\ | bigint) => PiLicenseTemplateGetLicenseTermsResponse\` |
+
+Parameters:
+
+* `selectedLicenseTermsId`: 라이선스 약관의 ID.
+
+```typescript Response Type
+export type PiLicenseTemplateGetLicenseTermsResponse = {
+  terms: {
+    transferable: boolean;
+    royaltyPolicy: Address;
+    defaultMintingFee: bigint;
+    expiration: bigint;
+    commercialUse: boolean;
+    commercialAttribution: boolean;
+    commercializerChecker: Address;
+    commercializerCheckerData: Hex;
+    commercialRevShare: number;
+    commercialRevCeiling: bigint;
+    derivativesAllowed: boolean;
+    derivativesAttribution: boolean;
+    derivativesApproval: boolean;
+    derivativesReciprocal: boolean;
+    derivativeRevCeiling: bigint;
+    currency: Address;
+    uri: string;
+  };
+};
+```
+
+### predictMintingLicenseFee
+
+주어진 IP와 라이선스 약관에 대한 민팅 라이선스 수수료를 사전 계산합니다. 이 함수는 라이선스 토큰을 민팅하기 전에 민팅 라이선스 수수료를 계산하는 데 사용할 수 있습니다.
+
+| 메소드                        | 타입                                                                                              |
+| -------------------------- | ----------------------------------------------------------------------------------------------- |
+| `predictMintingLicenseFee` | `(request: PredictMintingLicenseFeeRequest) => LicensingModulePredictMintingLicenseFeeResponse` |
+
+Parameters:
+
+* `request.licensorIpId`: 라이선스 제공자의 IP ID.
+* `request.licenseTermsId`: 라이선스 약관의 ID.
+* `request.amount`: 민팅할 라이선스 토큰의 수량.
+* `request.licenseTemplate`: \[선택사항] 라이선스 템플릿의 주소, 기본값은 Programmable IP License입니다.
+* `request.receiver`: \[선택사항] 수신자의 주소, 기본값은 귀하의 지갑 주소입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type LicensingModulePredictMintingLicenseFeeResponse = {
+  currencyToken: Address;
+  tokenAmount: bigint;
+};
+```
+
+### setLicensingConfig
+
+IP의 특정 라이선스 약관에 대한 라이선싱 구성을 설정합니다.
+
+| 메소드                  | 타입                                                                   |
+| -------------------- | -------------------------------------------------------------------- |
+| `setLicensingConfig` | `(request: SetLicensingConfigRequest) => SetLicensingConfigResponse` |
+
+Parameters:
+
+* `request.ipId`: 구성이 설정되는 IP의 주소.
+* `request.licenseTermsId`: 라이선스 템플릿 내의 라이선스 약관 ID.
+* `request.licenseTemplate`: 사용된 라이선스 템플릿의 주소, 지정되지 않은 경우 구성이 모든 라이선스에 적용됩니다.
+* `request.licensingConfig`: 라이선스에 대한 라이선싱 구성.
+  * `request.licensingConfig.isSet`: 구성이 설정되었는지 여부.
+  * `request.licensingConfig.mintingFee`: 라이선스 토큰 민팅 시 지불해야 할 민팅 수수료.
+  * `request.licensingConfig.hookData`: 라이선싱 훅에서 사용할 데이터.
+  * `request.licensingConfig.licensingHook`: 라이선싱 모듈의 훅 컨트랙트 주소, 없는 경우 address(0).
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type SetLicensingConfigResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
+};
+```

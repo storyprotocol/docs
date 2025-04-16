@@ -1,0 +1,53 @@
+---
+title: 🧱 Modules
+sidebarTitle: Overview
+description: IP 자산에 대해 작업을 수행하는 독립형 컨트랙트에 대해 알아보기
+---
+
+모듈은 [`IModule` 인터페이스](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/interfaces/modules/base/IModule.sol)를 준수하는 독립형 컨트랙트입니다. 이러한 모듈들은 IP의 데이터/상태를 변경하거나 IP에 대한 작업을 수행하는 데 중요한 역할을 합니다.
+
+## 기존 모듈
+
+Story 팀이 만든 알아야 할 중요한 모듈들이 있습니다:
+
+| 모듈                                                | 설명                                                |
+| ------------------------------------------------- | ------------------------------------------------- |
+| [📜 Licensing Module](/concepts/licensing-module) | IP 자산에 라이선스를 정의하고 첨부하는 역할을 담당합니다.                 |
+| [💸 Royalty Module](/concepts/royalty-module)     | 부모와 자식 IP 자산 간의 로열티 흐름을 처리하는 역할을 담당합니다.           |
+| [❌ Dispute Module](/concepts/dispute-module)      | 잘못 등록되거나 부적절하게 행동하는 IP 자산에 대한 분쟁을 처리하는 역할을 담당합니다. |
+| [👥 Grouping Module](/concepts/grouping-module)   | IPA 그룹을 처리하는 역할을 담당합니다.                           |
+| [👀 Metadata Module](/concepts/metadata-module)   | IP 자산의 메타데이터를 관리하고 확인합니다.                         |
+
+## Base Module
+
+Base Module은 Story에 등록된 모든 모듈에 대한 필수 기능의 표준 세트를 제공합니다. Story에 모듈을 만들고 등록하고자 하는 사람은 누구나 Base Module을 상속하고 재정의해야 합니다.
+
+<Note>
+  스마트 컨트랙트를 [여기](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/BaseModule.sol)에서 확인하세요.
+</Note>
+
+### 주요 기능
+
+#### 단순성과 유연성
+
+BaseModule은 의도적으로 단순하고 일반화되어 있습니다. 인터페이스 감지에 중요한 ERC165 인터페이스만 구현합니다. 이러한 설계 선택은 Story 내에서 더 구체적인 모듈을 개발할 때 최대한의 유연성을 제공합니다.
+
+#### ERC165 인터페이스 구현
+
+ERC165 인터페이스를 구현함으로써, BaseModule은 다른 컨트랙트가 특정 인터페이스를 지원하는지 쿼리할 수 있게 합니다. 이 기능은 Story 생태계 내외의 호환성과 상호운용성을 보장하는 데 필수적입니다.
+
+```solidity
+abstract contract BaseModule is ERC165, IModule {
+    ...
+}
+```
+
+#### `supportsInterface` 함수
+
+BaseModule의 주요 함수는 `supportsInterface`로, ERC165의 `supportsInterface` 메소드를 재정의합니다. 이 함수는 컨트랙트가 자체 `IModule` 인터페이스와 상속할 수 있는 다른 인터페이스에 대한 지원을 선언할 수 있게 하는 인터페이스 감지에 중요합니다.
+
+```solidity
+function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
+    return interfaceId == type(IModule).interfaceId || super.supportsInterface(interfaceId);
+}
+```

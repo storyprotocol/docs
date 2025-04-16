@@ -1,0 +1,325 @@
+---
+title: IPRoyaltyVault
+---
+
+IPRoyaltyVault 컨트랙트는 주어진 IP에 대한 로열티와 수익 토큰의 청구를 관리합니다. 이는 토큰 보유자가 스냅샷을 기반으로 수익 토큰의 지분을 청구하고, 선조가 로열티 토큰을 수집할 수 있도록 합니다.
+
+## 상태 변수
+
+### ipId
+
+```solidity
+address ipId
+```
+
+이 로열티 금고가 속한 IP ID.
+
+### tokens
+
+```solidity
+EnumerableSet.AddressSet tokens
+```
+
+금고 내의 수익 토큰 집합.
+
+### unclaimedRoyaltyTokens
+
+```solidity
+uint32 unclaimedRoyaltyTokens
+```
+
+청구되지 않은 로열티 토큰의 양.
+
+### lastSnapshotTimestamp
+
+```solidity
+uint256 lastSnapshotTimestamp
+```
+
+마지막 스냅샷의 타임스탬프.
+
+### ancestorsVaultAmount
+
+```solidity
+mapping(address token => uint256 amount) ancestorsVaultAmount
+```
+
+선조 금고의 금액에 대한 토큰 주소 매핑.
+
+### isCollectedByAncestor
+
+```solidity
+mapping(address ancestorIpId => bool isCollected) isCollectedByAncestor
+```
+
+선조가 로열티 토큰을 수집했는지 여부를 나타냅니다.
+
+### claimVaultAmount
+
+```solidity
+mapping(address token => uint256 amount) claimVaultAmount
+```
+
+청구 금고의 금액에 대한 토큰 주소 매핑.
+
+### claimableAtSnapshot
+
+```solidity
+mapping(uint256 snapshotId => mapping(address token => uint256 amount)) claimableAtSnapshot
+```
+
+해당 스냅샷에서 청구 가능한 금액에 대한 스냅샷 ID와 토큰 주소 매핑.
+
+### unclaimedAtSnapshot
+
+```solidity
+mapping(uint256 snapshotId => uint32 amount) unclaimedAtSnapshot
+```
+
+해당 스냅샷에서 청구되지 않은 토큰 양에 대한 스냅샷 ID 매핑.
+
+### isClaimedAtSnapshot
+
+```solidity
+mapping(uint256 snapshotId => mapping(address claimer => mapping(address token => bool isClaimed))) isClaimedAtSnapshot
+```
+
+청구자가 특정 스냅샷에서 토큰을 청구했는지 여부를 나타냅니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(
+    string memory name,
+    string memory symbol,
+    uint256 totalSupply,
+    uint32 royaltyStack,
+    address ipId_
+) external initializer
+```
+
+이 구현 컨트랙트의 초기화 함수.
+
+**Parameters:**
+
+* `name`: 로열티 토큰의 이름.
+* `symbol`: 로열티 토큰의 심볼.
+* `totalSupply`: 로열티 토큰의 총 공급량.
+* `royaltyStack`: IP 자산의 로열티 스택.
+* `ipId_`: 이 로열티 금고가 속한 IP ID.
+
+### addIpRoyaltyVaultTokens
+
+```solidity
+function addIpRoyaltyVaultTokens(address token) external nonReentrant whenNotPaused returns (bool)
+```
+
+로열티 금고에 토큰을 추가합니다.
+
+**Parameters:**
+
+* `token`: 추가할 토큰 주소입니다.
+
+**Returns:**
+
+* `isAdded`: 토큰이 추가되었으면 true, 이미 볼트에 있었다면 false를 반환합니다.
+
+### snapshot
+
+```solidity
+function snapshot() external whenNotPaused returns (uint256)
+```
+
+청구 가능한 수익과 로열티 토큰 금액의 스냅샷을 생성합니다.
+
+**Returns:**
+
+* `snapshotId`: 스냅샷의 ID입니다.
+
+### claimRevenueToken
+
+```solidity
+function claimRevenueToken(uint256[] calldata snapshotIds, address token) external nonReentrant whenNotPaused
+```
+
+토큰 보유자가 수익 토큰의 지분을 청구할 수 있도록 합니다.
+
+**Parameters:**
+
+* `snapshotIds`: 청구할 스냅샷 ID들입니다.
+* `token`: 청구할 수익 토큰입니다.
+
+### collectRoyaltyTokens
+
+```solidity
+function collectRoyaltyTokens(address ancestorIpId) external nonReentrant whenNotPaused
+```
+
+선조가 로열티 토큰과 발생한 수익 토큰을 청구할 수 있도록 합니다.
+
+**Parameters:**
+
+* `ancestorIpId`: 로열티 토큰이 속한 선조의 IP ID입니다.
+
+### ipId
+
+```solidity
+function ipId() external view returns (address)
+```
+
+이 로열티 볼트가 속한 IP ID를 반환합니다.
+
+**Returns:**
+
+* IP ID 주소입니다.
+
+### unclaimedRoyaltyTokens
+
+```solidity
+function unclaimedRoyaltyTokens() external view returns (uint32)
+```
+
+청구되지 않은 로열티 토큰의 양을 반환합니다.
+
+**Returns:**
+
+* 청구되지 않은 로열티 토큰의 양입니다.
+
+### lastSnapshotTimestamp
+
+```solidity
+function lastSnapshotTimestamp() external view returns (uint256)
+```
+
+마지막 스냅샷 타임스탬프를 반환합니다.
+
+**Returns:**
+
+* 마지막 스냅샷 타임스탬프입니다.
+
+### ancestorsVaultAmount
+
+```solidity
+function ancestorsVaultAmount(address token) external view returns (uint256)
+```
+
+선조 볼트에 있는 수익 토큰의 양을 반환합니다.
+
+**Parameters:**
+
+* `token`: 수익 토큰의 주소입니다.
+
+**Returns:**
+
+* 선조 볼트에 있는 수익 토큰의 양입니다.
+
+### isCollectedByAncestor
+
+```solidity
+function isCollectedByAncestor(address ancestorIpId) external view returns (bool)
+```
+
+선조가 로열티 토큰을 수집했는지 여부를 나타냅니다.
+
+**Parameters:**
+
+* `ancestorIpId`: 선조의 IP ID 주소입니다.
+
+**Returns:**
+
+* 선조가 로열티 토큰을 수집했다면 true입니다.
+
+### claimVaultAmount
+
+```solidity
+function claimVaultAmount(address token) external view returns (uint256)
+```
+
+청구 볼트에 있는 수익 토큰의 양을 반환합니다.
+
+**Parameters:**
+
+* `token`: 수익 토큰의 주소입니다.
+
+**Returns:**
+
+* 청구 볼트에 있는 수익 토큰의 양입니다.
+
+### claimableAtSnapshot
+
+```solidity
+function claimableAtSnapshot(uint256 snapshotId, address token) external view returns (uint256)
+```
+
+주어진 스냅샷에서 청구 가능한 수익 토큰의 양을 반환합니다.
+
+**Parameters:**
+
+* `snapshotId`: 스냅샷 ID입니다.
+* `token`: 수익 토큰의 주소입니다.
+
+**Returns:**
+
+* 스냅샷에서 청구 가능한 수익 토큰의 양입니다.
+
+### unclaimedAtSnapshot
+
+```solidity
+function unclaimedAtSnapshot(uint256 snapshotId) external view returns (uint32)
+```
+
+스냅샷에서 청구되지 않은 수익 토큰의 양을 반환합니다.
+
+**Parameters:**
+
+* `snapshotId`: 스냅샷 ID입니다.
+
+**Returns:**
+
+* 스냅샷에서 청구되지 않은 수익 토큰의 양입니다.
+
+### isClaimedAtSnapshot
+
+```solidity
+function isClaimedAtSnapshot(uint256 snapshotId, address claimer, address token) external view returns (bool)
+```
+
+청구자가 주어진 스냅샷에서 수익 토큰을 청구했는지 여부를 나타냅니다.
+
+**Parameters:**
+
+* `snapshotId`: 스냅샷 ID입니다.
+* `claimer`: 청구자의 주소입니다.
+* `token`: 수익 토큰의 주소입니다.
+
+**Returns:**
+
+* 청구자가 스냅샷에서 수익 토큰을 청구했다면 true입니다.
+
+### tokens
+
+```solidity
+function tokens() external view returns (address[] memory)
+```
+
+볼트에 있는 수익 토큰 목록을 반환합니다.
+
+**Returns:**
+
+* 수익 토큰 주소의 배열입니다.
+
+## 보안 고려사항
+
+IPRoyaltyVault 컨트랙트는 여러 보안 조치를 구현합니다:
+
+1. **접근 제어**: 토큰 추가, 스냅샷 생성, 토큰 청구 기능은 적절한 수정자로 보호됩니다.
+
+2. **재진입 보호**: `nonReentrant` 수정자는 재진입 공격을 방지하기 위해 토큰 전송을 처리하는 함수에 사용됩니다.
+
+3. **일시 중지 기능**: 컨트랙트는 비상 상황에서 `whenNotPaused` 수정자를 사용하여 일시 중지될 수 있습니다.
+
+4. **스냅샷 메커니즘**: 컨트랙트는 특정 시점의 보유량을 기준으로 수익 토큰의 공정한 분배를 보장하기 위해 스냅샷 메커니즘을 사용합니다.
+
+5. **청구 검증**: 컨트랙트는 동일한 주소에서 중복 청구를 방지하기 위해 청구된 토큰을 추적합니다.

@@ -1,0 +1,232 @@
+---
+title: Group
+description: GroupClient를 사용하여 그룹을 생성하고 IP 자산을 추가할 수 있습니다.
+---
+
+## GroupClient
+
+### 메서드
+
+* registerGroup
+* mintAndRegisterIpAndAttachLicenseAndAddToGroup
+* registerIpAndAttachLicenseAndAddToGroup
+* registerGroupAndAttachLicense
+* registerGroupAndAttachLicenseAndAddIps
+* collectAndDistributeGroupRoyalties
+
+### registerGroup
+
+그룹 IPA를 등록합니다.
+
+| 메서드             | 타입                                                                  |
+| --------------- | ------------------------------------------------------------------- |
+| `registerGroup` | `(request: RegisterGroupRequest) => Promise<RegisterGroupResponse>` |
+
+Parameters:
+
+* `request.groupPool`: 그룹 내 IP 풀 간의 로열티 분배 방식을 지정하는 주소.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type RegisterGroupResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  groupId?: Address;
+};
+```
+
+### mintAndRegisterIpAndAttachLicenseAndAddToGroup
+
+SPGNFT 컬렉션에서 NFT를 민팅하고, 메타데이터와 함께 IP로 등록하고, 등록된 IP에 라이선스 조건을 첨부하고, 그룹 IP에 추가합니다.
+
+| 메서드                                              | 타입                                                                                                                                    |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `mintAndRegisterIpAndAttachLicenseAndAddToGroup` | `(request: MintAndRegisterIpAndAttachLicenseAndAddToGroupRequest) => Promise<MintAndRegisterIpAndAttachLicenseAndAddToGroupResponse>` |
+
+Parameters:
+
+* `request.nftContract`: NFT 컬렉션의 주소.
+* `request.groupId`: 새로 등록된 IP를 추가할 그룹 IP의 ID.
+* `request.licenseTermsId`: 새 IP에 첨부될 등록된 라이선스 조건의 ID.
+* `request.recipient`: \[선택사항] 민팅된 NFT의 수신자 주소, 기본값은 사용자의 지갑 주소입니다.
+* `request.licenseTemplate`: \[선택사항] 새 그룹 IP에 첨부될 라이선스 템플릿의 주소, 기본값은 Programmable IP License입니다.
+* `request.deadline`: \[선택사항] 서명의 마감 시간(밀리초), 기본값은 1000ms입니다.
+* `request.ipMetadata`: \[선택사항] 새로 민팅된 NFT와 새로 등록된 IP의 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택사항] IP NFT의 메타데이터 해시.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type MintAndRegisterIpAndAttachLicenseAndAddToGroupResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  ipId?: Address;
+  tokenId?: bigint;
+};
+```
+
+### registerIpAndAttachLicenseAndAddToGroup
+
+NFT를 메타데이터와 함께 IP로 등록하고, 등록된 IP에 라이선스 조건을 첨부하고, 그룹 IP에 추가합니다.
+
+| 메서드                                       | 타입                                                                                                                      |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `registerIpAndAttachLicenseAndAddToGroup` | `(request: RegisterIpAndAttachLicenseAndAddToGroupRequest) => Promise<RegisterIpAndAttachLicenseAndAddToGroupResponse>` |
+
+Parameters:
+
+* `request.spgNftContract`: NFT 컬렉션의 주소.
+* `request.tokenId`: NFT의 ID.
+* `request.groupId`: 새로 등록된 IP를 추가할 그룹 IP의 ID.
+* `request.licenseTermsId`: 새 IP에 첨부될 등록된 라이선스 조건의 ID.
+* `request.licenseTemplate`: \[선택사항] 새 그룹 IP에 첨부될 라이선스 템플릿의 주소, 기본값은 Programmable IP License입니다.
+* `request.deadline`: \[선택사항] 서명의 마감 시간(밀리초), 기본값은 1000ms입니다.
+* `request.ipMetadata`: \[선택사항] 새로 민팅된 NFT와 새로 등록된 IP의 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택사항] IP NFT의 메타데이터 해시.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type RegisterIpAndAttachLicenseAndAddToGroupResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  ipId?: Address;
+  tokenId?: bigint;
+};
+```
+
+### registerGroupAndAttachLicense
+
+그룹 보상 풀이 있는 그룹 IP를 등록하고 그룹 IP에 라이선스 조건을 첨부합니다.
+
+| 메서드                             | 타입                                                                                                  |
+| ------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `registerGroupAndAttachLicense` | `(request: RegisterGroupAndAttachLicenseRequest) => Promise<RegisterGroupAndAttachLicenseResponse>` |
+
+Parameters:
+
+* `request.groupPool`: 그룹 내 IP 풀 간의 로열티 분배 방식을 지정하는 주소.
+* `request.licenseTermsId`: 새 그룹 IP에 첨부될 등록된 라이선스 조건의 ID.
+* `request.licenseTemplate`: \[선택사항] 새 그룹 IP에 첨부될 라이선스 템플릿의 주소, 기본값은 Programmable IP License입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type RegisterGroupAndAttachLicenseResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  groupId?: Address;
+};
+```
+
+### registerGroupAndAttachLicenseAndAddIps
+
+그룹 보상 풀이 있는 그룹 IP를 등록하고, 그룹 IP에 라이선스 조건을 첨부하고, 개별 IP들을 그룹 IP에 추가합니다.
+
+| 메서드                                      | 타입                                                                                                                    |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `registerGroupAndAttachLicenseAndAddIps` | `(request: RegisterGroupAndAttachLicenseAndAddIpsRequest) => Promise<RegisterGroupAndAttachLicenseAndAddIpsResponse>` |
+
+Parameters:
+
+* `request.ipIds`: 그룹에 추가될 IP들의 IP ID.
+* `request.groupPool`: 그룹 내 IP 풀 간의 로열티 분배 방식을 지정하는 주소.
+* `request.maxAllowedRevShare`: 각 멤버 IP에 할당될 수 있는 최대 보상 공유 비율.
+* `request.licenseData`: 새 그룹 IP에 첨부될 라이선스와 그 구성 데이터.
+  * `request.licenseData.licenseTermsId`: 새 그룹 IP에 첨부될 등록된 라이선스 약관의 ID입니다.
+  * `request.licenseData.licensingConfig`: \[선택사항] 다음을 참조하세요 [LicensingConfig 타입](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). 제공되지 않은 경우, [여기](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts)에 표시된 기본값이 사용됩니다.
+  * `request.licenseData.licenseTemplate`: \[선택사항] 새 그룹 IP에 첨부될 라이선스 템플릿의 주소입니다. 기본값은 프로그래머블 IP 라이선스입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  const response =
+    await client.groupClient.registerGroupAndAttachLicenseAndAddIps({
+      groupPool: "0xf96f2c30b41Cb6e0290de43C8528ae83d4f33F89", // EvenSplitGroupPool from https://docs.story.foundation/docs/deployed-smart-contracts
+      maxAllowedRewardShare: 5,
+      ipIds: ["0x01"],
+      licenseData: {
+        licenseTermsId: "5",
+      },
+      txOptions: { waitForTransaction: true },
+    });
+  ```
+
+  ```typescript Request Type
+  export type RegisterGroupAndAttachLicenseAndAddIpsRequest = {
+    groupPool: Address;
+    ipIds: Address[];
+    licenseData: LicenseData;
+    maxAllowedRewardShare: number | string;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterGroupAndAttachLicenseAndAddIpsResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+    groupId?: Address;
+  };
+  ```
+</CodeGroup>
+
+### collectAndDistributeGroupRoyalties
+
+전체 그룹의 로열티를 수집하고 각 멤버 IP의 로열티 금고에 보상을 분배합니다.
+
+| 메소드                                  | 타입                                                                                                            |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `collectAndDistributeGroupRoyalties` | `(request: CollectAndDistributeGroupRoyaltiesRequest) => Promise<CollectAndDistributeGroupRoyaltiesResponse>` |
+
+Parameters:
+
+* `request.groupIpId`: 그룹의 IP ID입니다.
+* `request.currencyTokens`: 청구할 통화(수익) 토큰의 주소들입니다.
+* `request.memberIpIds`: 보상을 분배할 멤버 IP들의 ID입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+  const response = await client.groupClient.collectAndDistributeGroupRoyalties({
+    groupIpId: "0x01",
+    currencyTokens: [WIP_TOKEN_ADDRESS],
+    memberIpIds: ["0x02"],
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type CollectAndDistributeGroupRoyaltiesRequest = {
+    groupIpId: Address;
+    currencyTokens: Address[];
+    memberIpIds: Address[];
+    txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+  };
+  ```
+
+  ```typescript Response Type
+  export type CollectAndDistributeGroupRoyaltiesResponse = {
+    txHash: Hash;
+    receipts?: TransactionReceipt[];
+    collectedRoyalties?: Omit<
+      GroupingModuleCollectedRoyaltiesToGroupPoolEvent,
+      "pool"
+    >[];
+    royaltiesDistributed?: {
+      ipId: Address;
+      amount: bigint;
+      token: Address;
+      /**
+       * Amount after the fee to the royalty module treasury.
+       */
+      amountAfterFee: bigint;
+    }[];
+  };
+  ```
+</CodeGroup>

@@ -1,0 +1,89 @@
+---
+title: IP Royalty Vault
+description: IP 자산의 수익을 관리하는 IP 로열티 볼트에 대해 알아보기
+---
+
+<Accordion title="Skip the Read - 1 Minute Summary" icon="circle-info">
+  IP 로열티 볼트는 IP 자산과 관련된 모든 금전적 유입을 위한 풀입니다.
+
+  모든 IP 자산에는 100,000,000개의 로열티 토큰이 연결되어 있으며, 각 토큰은 해당 IPA 수익의 0.000001%에 대한 권리를 나타냅니다 (*"Revenue Tokens"*) 풀에 저장됩니다.
+
+  Revenue Tokens는 지불에 사용되는 ERC-20 토큰입니다 (예: WIP). 이러한 토큰들은 프로토콜에 의해 화이트리스트에 등록되어야 사용할 수 있습니다.
+</Accordion>
+
+각 IP 자산에는 IP 로열티 볼트가 있으며, 이는 IP 자산의 상업적 탐색이나 라이선스 발행으로부터 발생하는 모든 금전적 유입을 위한 풀 역할을 합니다. 로열티 토큰(아래 정의)을 보유한 사람은 누구나 이 풀에서 자신의 몫을 청구할 권리가 있습니다.
+
+<CardGroup cols={1}>
+  <Card title="IPRoyaltyVault.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/royalty/policies/IpRoyaltyVault.sol" icon="scroll" color="#ccb092">
+    IP 로열티 볼트의 스마트 컨트랙트를 확인하세요.
+  </Card>
+</CardGroup>
+
+## 토큰 용어
+
+1. **로열티 토큰**: IP 로열티 볼트 컨트랙트는 각 IP 자산의 로열티 토큰을 위한 ERC-20 컨트랙트이기도 합니다. 이는 IP 자산의 IP 로열티 볼트 주소가 로열티 토큰의 ERC-20 토큰 주소이기도 하다는 것을 의미합니다. 각 IP 자산에는 100,000,000개의 로열티 토큰이 연결되어 있으며, 각 토큰은 해당 수익의 0.000001%를 나타냅니다. 이러한 로열티 토큰의 보유자는 관련 IP 로열티 볼트에 있는 Revenue Tokens(아래 정의)를 청구할 수 있습니다.
+2. **Revenue Tokens**: 이것들은 지불에 사용되는 토큰입니다 (예: WIP). 로열티 토큰은 Revenue Tokens를 청구하는 데 사용될 수 있습니다. 화이트리스팅에 대해 아래에서 자세히 알아보세요 ⤵️
+
+### 화이트리스트에 등록된 Revenue Tokens
+
+ERC-20 토큰이 Revenue Token으로 사용되기 위해서는 우리 프로토콜의 [RoyaltyModule.sol contract](https://github.com/storyprotocol/protocol-core-v1/blob/e339f0671c9172a6699537285e32aa45d4c1b57b/contracts/modules/royalty/RoyaltyModule.sol#L50)에 화이트리스트로 등록되어야 합니다. 다음은 화이트리스트에 등록된 토큰들입니다:
+
+<Tabs>
+  <Tab title="Aeneid Testnet">
+    | 토큰     | 컨트랙트 주소                                      | 탐색기                                                                                         | 발행                                                                                                                    |
+    | :----- | :------------------------------------------- | :------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------- |
+    | WIP    | `0x1514000000000000000000000000000000000000` | [여기서 보기 ↗️](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000) | N/A                                                                                                                   |
+    | MERC20 | `0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E` | [여기서 보기 ↗️](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E) | [발행 ↗️](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E?tab=write_contract#0x40c10f19) |
+  </Tab>
+
+  <Tab title="Mainnet">
+    | 토큰  | 컨트랙트 주소                                      | 탐색기                                                                                         | 발행  |
+    | :-- | :------------------------------------------- | :------------------------------------------------------------------------------------------ | :-- |
+    | WIP | `0x1514000000000000000000000000000000000000` | [여기서 보기 ↗️](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000) | N/A |
+  </Tab>
+</Tabs>
+
+## 로열티 토큰은 어떻게 얻을 수 있나요?
+
+IP 자산이 수익을 받으면 해당 IP 로열티 볼트에 예치됩니다. 이 볼트에서 수익을 청구하려면 관련 로열티 토큰을 보유해야 합니다. 주소가 특정 IP 자산의 로열티 토큰을 보유하게 되면, 해당 주소는 IP 로열티 볼트에서 받은 모든 미래의 Revenue Token(화이트리스트에 등록된)의 해당 비율(보유한 로열티 토큰의 총 공급량 대비 %)을 받을 자격이 있습니다.
+
+IP 로열티 볼트 배포를 트리거하고 초기 로열티 토큰 분배를 하는 두 가지 방법이 있습니다 - 둘 중 먼저 발생하는 것:
+
+1. IP에서 처음으로 라이선스 토큰이 발행될 때: 관련 IP 계정(부모 IP 계정)이 로열티 토큰의 100%를 받습니다
+2. IP가 파생작으로 등록될 때: 관련 IP 계정(자식 IP 계정)이 로열티 토큰의 100%를 받은 다음, 라이선스 조건에 따라 조상들에게 x%를 분배합니다
+
+로열티 토큰은 ERC-20이므로 다른 토큰처럼 전송될 수 있습니다. 따라서 IP 계정은 이를 다른 사람에게 보내거나 2차 시장에서 판매할 수도 있습니다.
+
+## 수익 흐름
+
+이 섹션에서는 지불 시점부터 로열티 토큰 보유자가 청구하기까지의 수익 흐름을 설명하는 데 도움이 될 것입니다. 설명을 위해 [Liquid Absolute Percentage (LAP)](/concepts/royalty-module/liquid-absolute-percentage)의 예시를 사용하겠지만, 모든 로열티 정책에 대해 동일합니다.
+
+IPA4가 IPA3에게 1M WIP를 팁으로 주는 시나리오를 상상해보세요 `payRoyaltyOnBehalf`.
+
+1. Revenue Tokens는 로열티 모듈 컨트랙트로 흐릅니다. 이 컨트랙트는 수신 IPA의 **royalty stack**에 따라 토큰을 분할합니다. 이 경우, IPA3는 15%의 로열티 스택을 가지고 있어서, 850k 토큰이 IP 로열티 볼트 3으로 흐르고, 150k 토큰이 LAP 컨트랙트로 흐릅니다.
+
+<Frame>
+  <img src="/images/concepts/lap-1.png" alt="Revenue Flow Step 1" />
+</Frame>
+
+<br />
+
+2. LAP 컨트랙트는 `transferToVault`를 호출하여 조상들에게 지불금을 분리합니다. 이 경우, IPA2는 100k(IPA3 수익의 10%)를 받을 자격이 있고 IPA1은 50k(IPA3 수익의 5%)를 받을 자격이 있습니다.
+
+<Frame>
+  <img src="/images/concepts/lap-2.png" alt="Revenue Flow Step 2" />
+</Frame>
+
+<br />
+
+3. 이제 Revenue Tokens가 IP 로열티 볼트에 있으므로, 관련 로열티 토큰 보유자들이 볼트에서 청구할 수 있습니다. Revenue Tokens는 로열티 토큰을 보유한 사람에게 청구된다는 것을 기억하세요. 가장 일반적인 경우, 로열티 토큰은 원래 발생한 IP 계정에 있습니다. 청구하려면 다음 중 하나를 호출해야 합니다 `claimRevenueOnBehalfByTokenBatch` 또는 `claimRevenueOnBehalf`.
+
+<Frame>
+  <img src="/images/concepts/lap-3.png" alt="Revenue Flow Step 3" />
+</Frame>
+
+### 외부 로열티 정책
+
+수익 토큰은 다음 함수들을 통해 한 금고에서 다른 금고로 이동할 수 있습니다 `claimByTokenBatchAsSelf` 위치한 `IpRoyaltyVault.sol` 계약에서. 이를 위해서는 수익 토큰을 청구하는 금고가 청구 대상 금고의 로열티 토큰을 소유하고 있어야 합니다. 이는 외부 로열티 정책과 함께 사용할 때 특히 유용할 수 있습니다.
+
+금고는 동일한 파생 체인에 속한 다른 금고에서만 청구할 수 있습니다. 금고가 IP의 로열티 토큰을 소유하고 있지만 해당 IP의 조상이 아닌 경우, 해당 로열티 토큰으로 보상을 청구할 수 없습니다.

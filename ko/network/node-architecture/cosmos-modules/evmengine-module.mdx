@@ -1,0 +1,184 @@
+---
+title: evmengine
+description: 합의 계층과 실행 계층 간의 통신을 용이하게 하는 모듈
+---
+
+## 개요
+
+이 문서는 내부`x/evmengine` Story 블록체인의 모듈을 명시합니다.
+
+Story Network는 이더리움처럼 합의와 실행 클라이언트를 분리하므로, 합의 클라이언트(CL)와 실행 클라이언트(EL)는 네트워크 동기화, 적절한 EVM 블록 제안, 그리고 CL에서 EVM이 트리거한 EL 작업 실행을 위해 통신해야 합니다.
+
+이 모듈은 CL과 EL 사이의 모든 통신을 [Engine API](/network/node-architecture/engine-api)를 사용하여 스테이킹과 업그레이드부터 CL과 EL의 블록 생성 및 합의 구동까지 용이하게 합니다.
+
+## 목차
+
+1. **[상태](#state)**
+2. **[제안 준비](#prepare-proposal)**
+3. **[제안 처리](#process-proposal)**
+4. **[최종화 후](#post-finalize)**
+5. **[메시지](#messages)**
+6. **[UBI](#ubi)**
+7. **[업그레이드](#upgrades)**
+
+## 상태
+
+### 빌드 지연
+
+Type: `time.Duration`
+
+빌드 지연은 `PrepareProposal` ABCI2 호출 시작부터 [Engine API](/network/node-architecture/engine-api)를 통해 EL로부터 다음 EVM 블록 데이터를 가져오기까지의 대기 시간을 결정합니다. 현재 제안자에게만 적용됩니다. 노드가 사전에 낙관적으로 구축된 블록을 가지고 있다면, 빌드 지연은 사용되지 않습니다.
+
+### 낙관적 빌드
+
+Type: `bool`
+
+true인 경우 블록의 낙관적 빌드를 활성화합니다. 노드는 현재 블록에서 자신이 다음 제안자임을 확인하면 결정론적으로 다음 블록을 빌드합니다. 낙관적 빌드는 ABCI2의 `FinalizeBlock` 직후에 다음 EVM 블록 데이터(다음 CL 블록용)를 요청하면서 시작됩니다.
+
+### 헤드 테이블
+
+Type: `ExecutionHeadTable`
+
+헤드 테이블은 다른 검증인들로부터 받은 EVM 블록의 부분 검증에 사용될 최신 실행 헤드 데이터를 저장합니다. 체인이 초기화될 때, 실행 헤드는 `genesis.json`에서 로드된 제네시스 실행 해시로 채워집니다.
+
+다음의 실행 헤드가 테이블에 저장됩니다.
+
+```protobuf protobuf
+message ExecutionHead {
+  option (cosmos.orm.v1.table) = {
+    id: 1;
+    primary_key: { fields: "id", auto_increment: true }
+  };
+
+  uint64 id               = 1; // Auto-incremented ID (always and only 1).
+  uint64 created_height   = 2; // Consensus chain height this execution block was created in.
+  uint64 block_height     = 3; // Execution block height.
+  bytes  block_hash       = 4; // Execution block hash.
+  uint64 block_time       = 5; // Execution block time.
+}
+```
+
+### 업그레이드 컨트랙트
+
+Type: `*bindings.UpgradeEntrypoint`
+
+업그레이드 컨트랙트는 EL로부터 업그레이드 관련 이벤트를 필터링하고 파싱하는 데 사용됩니다.
+
+### UBI 컨트랙트
+
+Type: `*bindings.UBIPool`
+
+UBI 컨트랙트는 EL로부터 UBI 관련 이벤트를 필터링하고 파싱하는 데 사용됩니다.
+
+### 가변 페이로드
+
+Type: struct
+
+가변 페이로드는 낙관적 빌드가 활성화된 경우 낙관적으로 구축된 블록을 저장합니다.
+
+#### 제네시스 상태
+
+이 모듈의 `GenesisState`는 이전에 내보낸 높이에서 체인을 초기화하는 데 필요한 상태를 정의합니다.
+
+```protobuf protobuf
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message Params {
+  bytes execution_block_hash = 1 [
+    (gogoproto.moretags) = "yaml:\"execution_block_hash\""
+  ];
+}
+```
+
+## 제안 준비
+
+각 블록마다, 노드가 제안자인 경우 ABCI2가 `PrepareProposal`를 트리거하며 이는
+
+1. [evmstaking](/network/node-architecture/cosmos-modules/evmstaking-module) 모듈에서 스테이킹 및 보상 인출을 로드합니다.
+2. 유효한 EVM 블록을 구축합니다.
+   * 낙관적 빌드의 경우: 낙관적으로 구축된 블록을 로드합니다.
+   * Non-optimistic: requests and retrieves an EVM block from EL.
+3. 이전/부모 블록의 EVM 로그를 수집합니다.
+4. 구축된 `MsgExecutionPayload` EVM 블록과 이전 EVM 로그로 조립합니다.
+5. 조립된 `MsgExecutionPayload` 데이터를 포함하는 트랜잭션을 반환합니다.
+
+이 CL 블록은 그 후 모든 다른 검증인들에게 전파됩니다.
+
+## 제안 처리
+
+각 블록마다, 노드가 제안자가 아닌 검증인인 경우 ABCI2가 `ProcessProposal`를 수신된 커밋과 함께 트리거합니다(정상적인 경우 `MsgExecutionPayload` 데이터의 트랜잭션이어야 함).
+
+노드는 먼저 수신된 커밋이 2/3 이상의 투표가 커밋된 하나의 트랜잭션만 포함하고 있는지 검증합니다. 그런 다음 노드는 하나의 트랜잭션에 하나의 언마샬된`MsgExecutionPayload` 데이터만 포함되어 있는지 검증합니다. 마지막으로 노드는 수신된 데이터를 처리하고 네트워크에 제안 수락을 브로드캐스트합니다. 검증이나 처리가 실패하면 노드는 제안을 거부합니다.
+
+더 구체적으로, 노드는 수신된`MsgExecutionPayload` 데이터를 다음과 같이 처리합니다:
+
+1. 수신된`MsgExecutionPayload`의 필드를 검증합니다 ([Messages](#msgexecutionpayload)에 설명됨).
+2. 로컬 스테이크 및 리워드 출금과 수신된 출금 데이터를 비교합니다.
+3. Engine API를 통해 수신된 실행 페이로드를 EL에 푸시하고 페이로드 검증을 기다립니다.
+4. 실행 페이로드의 블록 해시로 EL forkchoice를 업데이트합니다.
+5. 스테이킹 이벤트를[evmstaking](/network/node-architecture/cosmos-modules/evmstaking-module) 모듈을 사용하여 처리합니다.
+6. 업그레이드 이벤트를 처리합니다.
+7. 실행 헤드를 실행 페이로드(최종 블록)로 업데이트합니다.
+
+## 최종화 후
+
+낙관적 빌딩이 활성화된 경우,`PostFinalize`는 즉시`FinalizeBlock` 이후에 커스텀 ABCI 콜백을 통해 설정됩니다. 이 과정에서 노드는 evmstaking 모듈에서 스테이킹 및 리워드 큐를 확인하고, 현재 실행 헤드 위에 새로운 실행 페이로드를 빌드합니다. 다음 블록의`PrepareProposal` 단계에서 사용될 낙관적 블록을 설정하고 forkchoice 업데이트의 응답을 반환합니다.
+
+## Messages
+
+이 섹션에서는 evmengine 메시지의 처리와 상태에 대한 해당 업데이트에 대해 설명합니다. 각 메시지에 의해 지정된 모든 생성/수정된 상태 객체는 상태 섹션 내에 정의되어 있습니다.
+
+### MsgExecutionPayload
+
+```protobuf protobuf
+message MsgExecutionPayload {
+  option (cosmos.msg.v1.signer) = "authority";
+  string            authority           = 1;
+  bytes             execution_payload   = 2;
+  repeated EVMEvent prev_payload_events = 3;
+}
+
+message EVMEvent {
+  bytes          address = 1;
+  repeated bytes topics  = 2;
+  bytes          data    = 3;
+  bytes          tx_hash = 4;
+}
+```
+
+이 메시지는 다음과 같은 경우 실패할 것으로 예상됩니다:
+
+* 권한이 유효하지 않은 경우 (evmengine 권한이 아님)
+* 실행 페이로드가[ExecutableData](https://github.com/piplabs/story/blob/c38b80c13579d3df7174ea10c3368ef0692f52da/client/x/evmengine/types/executable_data.go#L17-L35)로 언마샬링하는데 실패하는 경우 (잘못된 필드와 같은 이유로)
+* 실행 페이로드의 블록 번호가 CL 헤드의 블록 번호 + 1과 일치하지 않는 경우
+* 실행 페이로드의 블록 부모 해시가 CL 헤드의 해시와 일치하지 않는 경우
+* 실행 페이로드의 타임스탬프가 유효하지 않은 경우
+* 실행 페이로드의 RANDAO가 CL 헤드의 해시(즉, 부모 해시)와 일치하지 않는 경우
+* 실행 페이로드의`Withdrawals`,`BlobGasUsed`, 그리고`ExcessBlobGas` 필드가 nil인 경우
+* 실행 페이로드의`Withdrawals` 카운트가 로컬 노드의 디큐된 스테이크 및 리워드 출금의 합계와 일치하지 않는 경우
+
+메시지는 이전 블록의 이벤트를 포함해야 하며, 이는 현재 CL 블록에서 처리됩니다(다시 말해, EL 블록 n-1의 실행 이벤트는 CL 블록 n에서 처리됩니다). 향후 메시지는`prev_payload_events`를 제거하고[Engine API](/network/node-architecture/engine-api)를 사용하여 현재 최종화된 EL 블록의 이벤트를 가져올 것입니다.
+
+또한 EVM 이벤트는 EL에서 생성된 순서대로 CL에서 처리됩니다.
+
+## UBI
+
+모든 UBI 관련 변경사항은 EVM 실행 레이어의 표준 UBI 컨트랙트에서 트리거되어야 합니다. 이 모듈은 CL에서 이러한 트리거의 실행 처리를 담당합니다. 자세한 내용은[밸리데이터를 위한 UBI](/network/tokenomics-staking#ubi-for-validators)
+
+### UBI 분배 설정
+
+The`UBIPool` 컨트랙트는 UBI 분배 설정 이벤트를 발생시키며, 이는 모듈에 의해 파싱되어 distribution 모듈의 UBI 퍼센티지를 설정합니다.
+
+## 업그레이드
+
+모든 체인 업그레이드 관련 로직은 EVM 실행 레이어의 표준 업그레이드 컨트랙트에서 트리거되어야 합니다. 이 모듈은 CL에서 이러한 트리거의 실행 처리를 담당합니다.
+
+### 소프트웨어 업그레이드
+
+이 `UpgradeEntrypoint` 컨트랙트는 소프트웨어 업그레이드 이벤트를 발생시키며, 이는 모듈에 의해 파싱되어 주어진 바이너리 이름에 대해 주어진 높이에서 업그레이드를 예약합니다. 현재 모든 업그레이드는 포크를 통하거나 소프트웨어 업그레이드 이벤트를 통해 설정되어야 합니다. 후자의 프로세스는 멀티시그로 제어되는 프로세스이며, 향후 투표 기반 프로세스로 전환될 예정입니다.
+
+### 업그레이드 취소
+
+소프트웨어 업그레이드와 유사하게, 모듈은 이전 블록의 EVM 로그에서 업그레이드 취소 이벤트를 처리하고 기존 업그레이드 계획을 제거합니다.

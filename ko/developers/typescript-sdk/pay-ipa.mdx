@@ -1,0 +1,122 @@
+---
+title: IPA 지불하기
+description: TypeScript에서 IP 자산을 지불하는 방법을 알아보세요.
+---
+
+<CardGroup cols={1}>
+  <Card title="Completed Code" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts" icon="thumbs-up">
+    이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다룹니다.
+  </Card>
+</CardGroup>
+
+이 섹션에서는 IP 자산을 지불하는 방법을 보여줍니다. 이렇게 하는 데는 몇 가지 이유가 있습니다:
+
+1. 단순히 IP에 "팁"을 주고 싶은 경우
+2. 상위 IP와의 라이선스 조건에 따라 일정 비율의 지불금을 전달해야 하는 경우
+
+두 시나리오 모두 아래의`payRoyaltyOnBehalf` 함수를 사용합니다. 이 경우 [Royalty Module](/concepts/royalty-module)이 자동으로 다양한 지불 흐름을 처리하여 지불되는 IPA와 특정`commercialRevShare`을 협상한 상위 IP 자산이 자신의 몫을 청구할 수 있도록 합니다.
+
+### 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 완료하기 [TypeScript SDK Setup](/developers/typescript-sdk/setup)
+2. 기본적인 이해가 필요한 [Royalty Module](/concepts/royalty-module)
+
+## 시작하기 전에
+
+IP 자산을 지불하기 위해 `payRoyaltyOnBehalf` 함수를 사용할 수 있습니다.
+
+IP 자산에 [\$WIP](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000)로 지불하게 됩니&#xB2E4;**. \$WIP가 충분하지 않은 경우, 함수가 자동으로 동등한 양의 \$IP를 \$WIP로 래핑합니다.** 둘 다 충분하지 않은 경우 실패하게 됩니다.
+
+다음 시나리오를 이해하기 쉽도록, 상위 IP 자산이 자식 IP 자산과 50%의 `commercialRevShare`을 협상했다고 가정해 보겠습니다.
+
+### 화이트리스트에 등록된 수익 토큰
+
+우리 프로토콜에서 화이트리스트에 등록된 토큰만 지불("수익") 토큰으로 사용할 수 있습니다. \$WIP는 그러한 토큰 중 하나입니다. 해당 목록을 보려면 [here](/developers/deployed-smart-contracts#whitelisted-revenue-tokens)를 확인하세요.
+
+<Tip>
+  IP 자산 지불을 테스트하고 싶다면, 테스트를 위해 자유롭게 발행할 수 있는 화이트리스트에 등록된 수익 토큰이 필요할 것입니다. 우리는 [MockERC20](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E?tab=write_contract#0x40c10f19)을 Aeneid 테스트넷에서 제공하고 있으며, 이를 발행하고 지불에 사용할 수 있습니다. 준비가 되면 \$WIP를 사용해야 합니다.
+</Tip>
+
+## 시나리오 #1: IP 자산에 팁 주기
+
+이 시나리오에서는 멋진 IP 자산에 2 \$WIP를 지불하고 싶은 외부 제3자 사용자입니다. 아래 함수를 호출할 때, `payerIpId`를 제로 주소로 설정해야 합니다. IP 자산을 대신하여 지불하는 것이 아니기 때문입니다. 또한, `amount`를 2로 설정합니다.
+
+<Info>
+  관련 문서:
+
+  [royalty.payRoyaltyOnBehalf](/sdk-reference/royalty#payroyaltyonbehalf)
+</Info>
+
+```typescript main.ts
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+// you should already have a client set up (prerequisite)
+import { client } from "./utils";
+import { zeroAddress, parseEther } from "viem";
+
+async function main() {
+  const payRoyalty = await client.royalty.payRoyaltyOnBehalf({
+    receiverIpId: "0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1", // the ip you're paying
+    payerIpId: zeroAddress,
+    token: WIP_TOKEN_ADDRESS,
+    amount: parseEther("2"), // 2 $WIP
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
+}
+
+main();
+```
+
+지불하려는 IP 자산이 파생작이라고 가정해 보겠습니다. 그리고 상위 작품과의 기존 라이선스 조건에 50%의 `commercialRevShare`가 명시되어 있어, 수익의 50%(2\*0.5 = 1)가 자동으로 [Royalty Module](/concepts/royalty-module)덕분에 상위 작품이 청구할 수 있게 되어, 상위와 하위 IP 자산 모두 1 \$WIP씩 얻게 됩니다. 이에 대해서는 다음 페이지에서 다루겠습니다.
+
+## 시나리오 #2: 지분 지불하기
+
+이 시나리오에서는 파생 IP 자산이 오프체인에서 2 USD를 벌었다고 가정해 보겠습니다. 파생작이 상위 IP 자산에게 수익의 50%를 지불해야 하므로, 오프체인에서 1 USD를 지급하고 끝낼 수도 있습니다. 또는 온체인에서 상위 작품에게 1 USD에 상당하는 금액을 보낼 수 있습니다 *(이 예시에서는 1 \$WIP = 1 USD라고 가정하겠습니다)*.
+
+<Info>
+  관련 문서:
+
+  [royalty.payRoyaltyOnBehalf](/sdk-reference/royalty#payroyaltyonbehalf)
+</Info>
+
+```typescript main.ts
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+// you should already have a client set up (prerequisite)
+import { client } from "./utils";
+import { parseEther } from "viem";
+
+async function main() {
+  const payRoyalty = await client.royalty.payRoyaltyOnBehalf({
+    receiverIpId: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2", // parentIpId
+    payerIpId: "0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1", // childIpId
+    token: WIP_TOKEN_ADDRESS,
+    amount: parseEther("1"), // 1 $WIP
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
+}
+
+main();
+```
+
+### 복잡한 로열티 그래프
+
+자식 작품이 오프체인에서 1,000 USD를 벌었고, 각 상위 작품마다 다른 복잡한 라이선스 조건을 가진 거대한 조상 트리에 연결되어 있다고 가정해 보겠습니다. 이 시나리오에서는 각 상위 작품에 대한 개별 지불금을 계산할 수 없습니다. 대신, *자신에게* 번 금액을 지불하면 [Royalty Module](/concepts/royalty-module)이 지불을 자동화하여 각 조상이 자신의 몫을 받을 수 있도록 합니다.
+
+## 완성된 코드 보기
+
+축하합니다, 온체인에서 IP 자산에 지불하셨습니다!
+
+<CardGroup cols={1}>
+  <Card title="Completed Code" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts" icon="thumbs-up">
+    이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다룹니다.
+  </Card>
+</CardGroup>
+
+## 수익 청구하기
+
+이제 수익을 지불했으니, 이를 청구하는 방법을 배워야 합니다! 다음 페이지에서 다루도록 하겠습니다.

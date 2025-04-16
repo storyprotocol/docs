@@ -1,0 +1,18 @@
+---
+title: Overview
+description: 우리의 스마트 컨트랙트의 모든 기능에 대한 자세한 설명
+---
+
+<CardGroup cols={2}>
+  <Card title="Step-by-Step Guide" icon="house" href="/developers/smart-contracts-guide">
+    스마트 컨트랙트 가이드와 함께하는 일련의 튜토리얼을 통해 우리의 스마트 컨트랙트를 배워보세요.
+  </Card>
+
+  <Card title="Deployed Protocol Addresses" icon="gear" href="/developers/deployed-smart-contracts">
+    배포된 모든 프로토콜 주소는 **testnet**과 **mainnet**에 있습니다.
+  </Card>
+</CardGroup>
+
+<Warning>
+  사용하지 마세요 `RANDAO` 의사 난수 생성을 위해서는 대신 온체인 VRF(Pyth 또는 Gelato)를 사용하세요. 현재, `RANDAO` 값은 부모 블록 해시로 설정되어 X-1 블록에 대해서는 무작위가 아닙니다.
+</Warning>

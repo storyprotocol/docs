@@ -1,0 +1,74 @@
+---
+title: Gelato
+description: Gelato Network은 주요 블록체인에서 스마트 컨트랙트 실행을 자동화합니다. 제품에는 탈중앙화 자동화, Web3 Functions, 가스리스 트랜잭션, 그리고 안전하고 검증 가능한 무작위성을 위한 Gelato VRF가 포함됩니다.
+---
+
+# VRF
+
+Gelato VRF는 Drand라는 탈중앙화되고 신뢰할 수 있는 난수 소스를 활용하여 블록체인 애플리케이션을 위한 검증 가능한 무작위성을 제공합니다. 개발자들이 입증 가능하고 변조 방지된 진정한 무작위 값을 받을 수 있도록 보장합니다.
+
+Gelato의 [문서](https://docs.gelato.network/web3-services/vrf) 가이드를 참조하여 가격 피드로 애플리케이션을 통합하세요.
+
+## 스마트 컨트랙트
+
+### Functions 및 VRF
+
+#### Mainnet
+
+##### [EIP173Proxy.sol](https://www.storyscan.io/address/0xafd37d0558255aA687167560cd3AaeEa75c2841E)
+
+```
+0xafd37d0558255aA687167560cd3AaeEa75c2841E
+```
+
+##### [Automate.sol](https://www.storyscan.io/address/0xab2c44495F5F954149b94C750ca20B64ea60B51c)
+
+```
+0xab2c44495F5F954149b94C750ca20B64ea60B51c
+```
+
+### Relays
+
+#### Mainnet
+
+##### GelatoRelay
+
+릴레이 방식: `callWithSyncFee`
+
+###### EIP173Proxy.sol
+
+```
+0xcd565435e0d2109feFde337a66491541Df0D1420
+```
+
+#####
+
+###### GelatoRelay.sol
+
+```
+0xA75983F686999843804a2ECC0E93C35d39a4F750
+```
+
+##### GelatoRelayERC2771.sol
+
+릴레이 방식: `callWithSyncFeeERC2771`
+
+```
+0x8aCE64CEA52b409F930f60B516F65197faD4B056
+```
+
+##### GelatoRelayConcurrentERC2771.sol
+
+릴레이 방식: `callWithSyncFeeERC2771` 및 `isConcurrent: true`
+
+```
+0xc7739c195618D314C08E8626C98f8573E4E43634
+```
+
+##### GelatoRelay1BalanceERC2771.sol
+
+릴레이 방식: `sponsoredCallERC2771`
+
+```
+0x61F2976610970AFeDc1d83229e1E21bdc3D5cbE4
+```

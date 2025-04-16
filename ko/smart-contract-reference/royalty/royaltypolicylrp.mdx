@@ -1,0 +1,347 @@
+---
+title: RoyaltyPolicyLRP
+---
+
+RoyaltyPolicyLRP(유동적 상대 비율) 컨트랙트는 유동적 상대 비율 메커니즘을 사용하여 주어진 IP 자산에 대한 로열티 분배 로직을 정의합니다. IP 자산과 그 조상들 간의 로열티 관계를 관리하여 적절한 로열티 금고로 수익 토큰을 이전할 수 있게 합니다.
+
+## 상태 변수
+
+### RoyaltyPolicyLRPStorage
+
+```solidity
+struct RoyaltyPolicyLRPStorage {
+    mapping(address ipId => uint32) royaltyStackLRP;
+    mapping(address ipId => mapping(address ancestorIpId => uint32)) ancestorPercentLRP;
+    mapping(address ipId => mapping(address ancestorIpId => mapping(address token => uint256))) transferredTokenLRP;
+}
+```
+
+RoyaltyPolicyLRP의 저장소 구조는 다음을 포함합니다:
+
+* `royaltyStackLRP`: LRP 로열티 정책에 대해 모든 조상들에게 지급될 로열티 비율의 합
+* `ancestorPercentLRP`: LRP 로열티 정책에 대한 IP 자산과 주어진 조상 간의 로열티 비율
+* `transferredTokenLRP`: LRP를 통해 자손 IP로부터 금고로 이전된 총 누적 수익 토큰
+
+### IP\_GRAPH
+
+```solidity
+address public constant IP_GRAPH = address(0x0101)
+```
+
+IP들 간의 관계를 추적하는 IP Graph 프리컴파일 컨트랙트의 주소입니다.
+
+### ROYALTY\_MODULE
+
+```solidity
+IRoyaltyModule public immutable ROYALTY_MODULE
+```
+
+Royalty Module 컨트랙트의 주소입니다.
+
+### ROYALTY\_POLICY\_LAP
+
+```solidity
+IGraphAwareRoyaltyPolicy public immutable ROYALTY_POLICY_LAP
+```
+
+RoyaltyPolicyLAP 컨트랙트의 주소입니다.
+
+### IP\_GRAPH\_ACL
+
+```solidity
+IPGraphACL public immutable IP_GRAPH_ACL
+```
+
+IP Graph 접근 제어 목록 컨트랙트의 주소입니다.
+
+## 함수
+
+### constructor
+
+```solidity
+constructor(address royaltyModule, address royaltyPolicyLAP, address ipGraphAcl)
+```
+
+RoyaltyPolicyLRP 컨트랙트의 생성자입니다.
+
+**Parameters:**
+
+* `royaltyModule`: RoyaltyModule 주소
+* `royaltyPolicyLAP`: RoyaltyPolicyLAP 주소
+* `ipGraphAcl`: IPGraphACL 주소
+
+### initialize
+
+```solidity
+function initialize(address accessManager) external initializer
+```
+
+이 구현 컨트랙트의 초기화 함수입니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 컨트랙트의 주소입니다.
+
+### onLicenseMinting
+
+```solidity
+function onLicenseMinting(
+    address ipId,
+    uint32 licensePercent,
+    bytes calldata
+) external nonReentrant onlyRoyaltyModule
+```
+
+라이선스 발행 시 로열티 관련 로직을 실행합니다.
+
+**Parameters:**
+
+* `ipId`: 라이선스가 발행되는 ipId (라이센서)
+* `licensePercent`: 발행되는 라이선스의 비율
+
+### onLinkToParents
+
+```solidity
+function onLinkToParents(
+    address ipId,
+    address[] calldata parentIpIds,
+    address[] memory licenseRoyaltyPolicies,
+    uint32[] calldata licensesPercent,
+    bytes calldata
+) external nonReentrant onlyRoyaltyModule returns (uint32 newRoyaltyStackLRP)
+```
+
+부모와 연결 시 로열티 관련 로직을 실행합니다.
+
+**Parameters:**
+
+* `ipId`: 부모와 연결되는 자식 ipId
+* `parentIpIds`: 자식 ipId가 연결되는 부모 ipId들
+* `licenseRoyaltyPolicies`: 라이선스의 로열티 정책들
+* `licensesPercent`: 발행되는 라이선스의 비율
+
+**Returns:**
+
+* `newRoyaltyStackLRP`: LRP 로열티 정책에 대한 자식 ipId의 로열티 스택
+
+### transferToVault
+
+```solidity
+function transferToVault(
+    address ipId,
+    address ancestorIpId,
+    address token
+) external whenNotPaused returns (uint256)
+```
+
+LRP 로열티 정책을 통해 청구 가능한 수익 토큰의 금액을 금고로 이전합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `ancestorIpId`: IP 자산의 조상 ipId
+* `token`: 이전할 토큰 주소
+
+**Returns:**
+
+* 이전된 수익 토큰의 금액
+
+### getPolicyRtsRequiredToLink
+
+```solidity
+function getPolicyRtsRequiredToLink(address ipId, uint32 licensePercent) external view returns (uint32)
+```
+
+자식을 주어진 IP 자산에 연결하는 데 필요한 로열티 토큰의 양을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `licensePercent`: 라이선스의 비율
+
+**Returns:**
+
+* 자식을 주어진 IP 자산에 연결하는 데 필요한 로열티 토큰의 양 (LRP의 경우 항상 0)
+
+### getPolicyRoyaltyStack
+
+```solidity
+function getPolicyRoyaltyStack(address ipId) external view returns (uint32)
+```
+
+주어진 IP 자산에 대한 LRP 로열티 스택을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티 스택을 가져올 ipId
+
+**Returns:**
+
+* LRP 로열티 정책에 대해 모든 조상들에게 지급될 로열티 비율의 합
+
+### getPolicyRoyalty
+
+```solidity
+function getPolicyRoyalty(address ipId, address ancestorIpId) external returns (uint32)
+```
+
+LRP를 통한 IP 자산과 그 조상들 간의 로열티 비율을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티를 가져올 ipId
+* `ancestorIpId`: 로열티를 가져올 조상 ipId
+
+**Returns:**
+
+* LRP를 통한 IP 자산과 그 조상들 간의 로열티 비율
+
+### getTransferredTokens
+
+```solidity
+function getTransferredTokens(address ipId, address ancestorIpId, address token) external view returns (uint256)
+```
+
+LRP를 통해 자손 IP로부터 금고로 이전된 총 누적 수익 토큰을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `ancestorIpId`: IP 자산의 조상 ipId
+* `token`: 전송할 토큰 주소
+
+**Returns:**
+
+* LRP를 통해 파생 IP에서 볼트로 전송된 총 평생 수익 토큰
+
+### isSupportGroup
+
+```solidity
+function isSupportGroup() external view returns (bool)
+```
+
+로열티 정책이 그룹과 함께 작동하는 것을 지원하는지 여부를 반환합니다.
+
+**Returns:**
+
+* 참 (LRP 로열티 정책은 그룹과 함께 작동하는 것을 지원함)
+
+## 내부 함수
+
+### \_getRoyaltyStackLRP
+
+```solidity
+function _getRoyaltyStackLRP(address ipId) internal returns (uint32)
+```
+
+LRP 로열티 정책에 대한 주어진 IP 자산의 로열티 스택을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티 스택을 가져올 ipId
+
+**Returns:**
+
+* LRP 로열티 정책에 대한 주어진 IP 자산의 로열티 스택
+
+### \_setRoyaltyLRP
+
+```solidity
+function _setRoyaltyLRP(address ipId, address parentIpId, uint32 royalty) internal
+```
+
+IP 자산과 그 조상 간의 주어진 링크에 대한 LRP 로열티를 설정합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티를 설정할 ipId
+* `parentIpId`: 로열티를 설정할 부모 ipId
+* `royalty`: LRP 라이선스 로열티 비율
+
+### \_getRoyaltyLRP
+
+```solidity
+function _getRoyaltyLRP(address ipId, address ancestorIpId) internal returns (uint32)
+```
+
+로열티 정책 LRP를 통한 IP 자산과 그 조상 간의 로열티 비율을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티를 가져올 ipId
+* `ancestorIpId`: 로열티를 가져올 조상 ipId
+
+**Returns:**
+
+* 로열티 정책 LRP를 통한 IP 자산과 그 조상 간의 로열티 비율
+
+### \_getRoyaltyPolicyLRPStorage
+
+```solidity
+function _getRoyaltyPolicyLRPStorage() private pure returns (RoyaltyPolicyLRPStorage storage $)
+```
+
+RoyaltyPolicyLRP의 저장소 구조체를 반환합니다.
+
+**Returns:**
+
+* RoyaltyPolicyLRP의 저장소 구조
+
+### \_authorizeUpgrade
+
+```solidity
+function _authorizeUpgrade(address newImplementation) internal override restricted
+```
+
+UUPSUpgradeable에 따라 업그레이드를 승인하는 훅입니다.
+
+**Parameters:**
+
+* `newImplementation`: 새로운 구현의 주소
+
+## 이벤트
+
+### RevenueTransferredToVault
+
+```solidity
+event RevenueTransferredToVault(address ipId, address ancestorIpId, address token, uint256 amount)
+```
+
+수익 토큰이 볼트로 전송될 때 발생하는 이벤트입니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `ancestorIpId`: IP 자산의 조상 ipId
+* `token`: 전송된 토큰 주소
+* `amount`: 전송된 토큰의 양
+
+## 보안 고려사항
+
+RoyaltyPolicyLRP 컨트랙트는 여러 보안 조치를 구현합니다:
+
+1. **접근 제어**: 다음과 같은 함수들 `onLicenseMinting` 및 `onLinkToParents` 는 `onlyRoyaltyModule` 수정자를 통해 로열티 모듈에서만 호출될 수 있습니다.
+
+2. **재진입 보호**: `nonReentrant` 수정자는 재진입 공격을 방지하기 위해 토큰 전송을 처리하는 함수에 사용됩니다.
+
+3. **일시 중지 기능**: 컨트랙트는 `whenNotPaused` 수정자를 사용하여 긴급 상황에서 일시 중지될 수 있습니다.
+
+4. **안전한 토큰 전송**: 컨트랙트는 안전한 토큰 전송을 보장하기 위해 OpenZeppelin의 SafeERC20 라이브러리를 사용합니다.
+
+5. **업그레이드 가능성**: 컨트랙트는 UUPS 패턴을 사용하여 업그레이드가 가능하며, 업그레이드 권한은 프로토콜 관리자로 제한됩니다.
+
+6. **입력 검증**: 컨트랙트는 동일한 IP 간의 전송을 방지하는 등의 엣지 케이스를 확인하고 입력을 검증합니다.
+
+## 로열티 희석 고려사항
+
+LRP(Liquid Relative Percentage) 로열티 정책은 각 리믹스된 IP가 직접적인 파생물에서 생성된 수익의 일정 비율을 받을 수 있게 합니다. 그러나 두 IP 사이에 더 많은 파생물이 생성됨에 따라 발생할 수 있는 로열티의 희석을 이해하는 것이 중요합니다.
+
+이러한 희석은 더 많은 층의 파생물이 추가됨에 따라 원본 IP 창작자의 수익을 감소시킬 수 있습니다. 예를 들어:
+
+1. 창작자 1 - IP1을 등록하고, 10%의 LRP 라이선스를 발행하여 창작자 2에게 판매합니다.
+2. 창작자 2 - IP1의 파생물로 IP2를 등록하고 자신을 위해 20%의 LRP 라이선스를 발행합니다.
+3. 크리에이터 2 - IP2의 파생작으로 IP3를 등록하고 시장에서 IP3를 상업적으로 홍보합니다.
+
+크리에이터 1의 수익은 IP3의 20% 로열티 중 10%만 받게 되어 실질적인 로열티가 2%로 희석됩니다. 만약 크리에이터 2가 대신 IP2를 홍보했다면, 크리에이터 1은 직접 10%를 받아 이러한 희석을 피할 수 있었을 것입니다.
+
+반면에 LAP(Liquid Absolute Percentage) 로열티 정책은 모든 파생 IP에 대해 고정 비율을 적용하여 원작자를 희석으로부터 보호합니다.

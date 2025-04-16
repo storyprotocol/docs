@@ -1,0 +1,105 @@
+---
+title: UMA 중재 정책
+description: UMA의 낙관적 오라클을 사용한 분쟁 해결 메커니즘
+---
+
+<Note>
+  UMA의 분쟁 해결 방식에 대한 자세한 정보는 [그들의 웹사이트를](https://uma.xyz/) 방문하세요.
+</Note>
+
+이 중재 정책은 UMA의 낙관적 오라클을 사용하여 분쟁을 검증하는 분쟁 해결 메커니즘입니다. 아래에서 UMA 분쟁 처리 과정이 어떻게 작동하는지에 대한 개요를 공유합니다.
+
+## 스마트 컨트랙트 흐름도
+
+<img src="/images/concepts/uma-1.png" alt="UMA Arbitration Flow" />
+
+<Steps>
+  <Step title="Raise Dispute">
+    IP 자산에 대한 분쟁을 시작하는 첫 번째 단계는 `raiseDispute` 함수를 [DisputeModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/dispute/DisputeModule.sol)에서 호출하는 것입니다. 이 함수는 차례로 `assertTruth` UMA의 `OptimisticOracleV3.sol`. 분쟁을 시작하려면 분쟁 개시자는 선택한 통화에 대해 UMA가 정의한 최소 보증금 이상의 보증금을 제출해야 합니다. 이 보증금은 오라클이 분쟁이 검증 가능하게 올바르지 않다고 판단할 경우 손실됩니다.
+
+    <Note>
+      UMA는 IP 가격 변동에 따라 IP 보증금 크기를 조정할 것입니다. 현재 보증금 크기를 얻는 올바른 방법은 `getMinimumBond()` 에서
+      `OptimisticOracleV3.sol` (OOV3)를 통해, 우리의 [aeneid
+      testnet](https://aeneid.storyscan.io/address/0xABac6a158431edED06EE6cba37eDE8779F599eE4?tab=read_write_contract#0x4360af3d)
+
+      그리고
+      [mainnet](https://www.storyscan.io/address/0x8EF424F90C6BC1b98153A09c0Cac5072545793e8?tab=read_write_contract#0x4360af3d).
+    </Note>
+
+    이 단계 이후, 분쟁은 다른 사용자들이 반박/이의제기할 수 있도록 "공개"됩니다. 반박/이의제기가 없는 경우, UMA 규칙에 따라 IP가 침해하는 것으로 간주됩니다.
+
+    ```sol DisputeModule.sol
+    /// @notice Raises a dispute on a given ipId
+    /// @param targetIpId The ipId that is the target of the dispute
+    /// @param disputeEvidenceHash The hash pointing to the dispute evidence - this could be an IPFS CID 				converted to a bytes32 hash. This is the document with the proof that UMA reviewers will potentially read
+    /// @param targetTag The target tag of the dispute
+    /// @param data The data to initialize the policy - here you can do abi.encode of liveness, token address 	and bond amount
+    /// @return disputeId The id of the newly raised dispute
+    function raiseDispute(
+     address targetIpId,
+     bytes32 disputeEvidenceHash,
+     bytes32 targetTag,
+     bytes calldata data
+    ) external returns (uint256 disputeId);
+    ```
+  </Step>
+
+  <Step title="(Optional) Dispute Assertion / Counter Dispute / Make Appeal">
+    이후 `raiseDispute` 호출 이후에는 "활성" 기간이라고 불리는 시간이 있으며, 이 기간 동안 반박 분쟁/이의제기를 제출할 수 있습니다. 활성 기간은 두 부분으로 나뉩니다: (i) IP 소유자만이 반박 분쟁/이의제기를 할 수 있는 첫 번째 부분과 (ii) 모든 주소가 반박 분쟁/이의제기를 할 수 있는 두 번째 부분 - 이는 `disputeAssertion` 을 `ArbitrationPolicyUMA.sol`에서 호출하여 수행할 수 있습니다. 분쟁을 반박하려면 호출자는 분쟁을 제기할 때 분쟁 개시자가 사용한 것과 동일한 금액과 통화의 보증금을 제출해야 합니다. 원래 분쟁이 오라클에 의해 검증 가능하게 올바르다고 판단될 경우 이 보증금은 손실됩니다.
+
+    이 단계 이후, 분쟁은 상향 조정되어 외부 당사자인 UMA가 검토하게 됩니다.
+
+    ```sol ArbitrationPolicyUMA.sol
+    /// @notice Allows the IP that was targeted with a dispute to dispute the assertion while providing counter evidence
+    /// @param assertionId The identifier of the assertion that was disputed
+    /// @param counterEvidenceHash The hash of the counter evidence
+    function disputeAssertion(bytes32 assertionId, bytes32 counterEvidenceHash) external;
+
+    /// @notice Returns the assertion id for a given dispute id
+    /// @param disputeId The dispute id
+    function disputeIdToAssertionId(uint256 disputeId) external view returns (bytes32);
+    ```
+  </Step>
+
+  <Step title="(If step 2 happened) UMA Reviewers Judge the Dispute">
+    UMA 검토자들이 분쟁을 판단합니다. 이 단계에서 사용자는 UMA 검토자들이 분쟁 판결을 내릴 때까지 기다리기만 하면 됩니다. 이 단계는 48-96시간이 소요될 수 있습니다.
+  </Step>
+
+  <Step title="Settle Assertion">
+    이 단계는 UMA가 `settleAssertion`를 호출하는 봇을 실행하여 분쟁에서 승리한 주소로 보증금을 다시 분배하므로 자동으로 이루어질 것으로 예상됩니다.
+
+    1. 만약 아무도 반박 분쟁을 제출하지 않았다면, 활성 기간이 끝났을 때 모든 주소가 `settleAssertion` UMA의 `OptimisticOracleV3.sol`.
+    2. 만약 누군가가 활성 기간이 끝나기 전에 반박 분쟁/이의제기를 제출했다면, 분쟁은 UMA 검토자들에게 상향 조정되어 IP가 침해인지 아닌지에 대한 판단과 결정을 내리게 됩니다. 결정이 내려진 후에는 모든 주소가 `settleAssertion` UMA의 `OptimisticOracleV3.sol`.
+  </Step>
+</Steps>
+
+## 분쟁 증거 제출 가이드라인
+
+분쟁을 제기하거나 반박 분쟁을 할 때, 양 당사자는 분쟁 증거를 제출할 수 있습니다. 분쟁 증거란 오라클 참여자들이 분쟁에 대한 판단을 내리기 위해 사용하고 읽을 텍스트 문서를 말합니다.
+
+### 입증 책임
+
+UMA 중재 정책이 적용되는 모든 분쟁에서, 입증 책임은 분쟁을 제기하는 당사자에게 있습니다. 이는 분쟁 제기자가 합리적인 의심을 넘어서는 분쟁을 입증하기 위해 명확하고, 설득력 있으며, 검증 가능한 증거를 제공해야 함을 의미합니다. 이러한 높은 기준을 충족하지 못하는 분쟁은 반박될 수 있으며, 분쟁 제기 당사자는 보증금을 잃게 됩니다.
+
+### 문서 특성
+
+<Warning>
+  이 프로세스는 아직 실험 단계이므로, 증거를 제출해야 하는 내용/형식에 대한 반복과 미세 조정이 예상됩니다.
+</Warning>
+
+모든 문서는 다음과 같은 특성을 가져야 합니다:
+
+* 텍스트 문서여야 합니다. 필요한 경우 이미지나 비디오를 포함할 수 있습니다.
+
+* IPFS에 업로드되어야 합니다.
+
+* 검토자가 분쟁 증거 문서를 검토하는 데 1시간 이상 걸리지 않아야 합니다 - 검토자의 시간은 제한되어 있으며, 검토하는 데 너무 많은 시간이 걸릴 경우 증거가 무효로 간주될 수 있습니다. 분쟁을 해결하기 위해 최선의 노력을 기울일 것이지만, 분쟁 증거가 유효하도록 하려면 간결하게 유지해 주시기 바랍니다.
+
+분쟁 태그의 유형에 따라, 아래 표의 "분쟁 증거 내용"도 증거에 포함해야 합니다:
+
+| 분쟁 태그                                                                                                                                                                                 | 분쟁 증거 내용                                                                                                                            | 분쟁 검토 프로세스 (인간 검토자 지침)                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `IMPROPER_REGISTRATION`                                                                                                                                                               | A. 분쟁 대상 IP에 의해 침해되고 있는 기존 IP의 전시 또는 포인터<br /><br />B. 침해 IP보다 이른 날짜에 기존 IP가 공개적으로 전시되었다는 증거(온체인 또는 오프체인) 및/또는 이를 확인하는 방법/장소에 대한 지침 | 1. 입력 A를 사용하여 기존 IP가 분쟁 대상 IP와 동일하거나 매우 유사한지 확인<br /> - 1픽셀 차이가 있는 미키 마우스는 침해입니다<br /> - 새로운 모자를 쓴 미키 마우스는 적절한 라이선스가 있는 원본 미키 마우스의 파생작이 아닌 한 침해입니다<br />2. 입력 B를 사용하여 기존 IP의 등록 날짜 확인<br />3. 분쟁 대상 IP가 더 늦은 등록일을 가지고 있는지 확인<br />4. 분쟁 대상 IP가 기존 IP의 파생물이 아닌지 확인<br /><br /> |
+| `IMPROPER_USAGE`<br /><br />예시 (비완전적):<br />영역,<br />유통 채널,<br />만료,<br />취소 불가능,<br />저작자 표시,<br />파생물,<br />파생물 생성 제한,<br />상업적 사용,<br />서브라이선스 가능,<br />양도 불가능,<br />크로스 플랫폼 사용 제한 | A. 위반된 PIL 조항<br /><br />B. 위반 사항 설명<br /><br />C. 위반 증거                                                                            | 1. 입력 A를 사용하여 PIL 라이선스 공식 문서에서 관련 PIL 조항 설명 읽기<br />2. 입력 B를 사용하여 위반 설명 읽기<br />3. 입력 C를 사용하여 가능한 경우 관련 플랫폼에서 확인하여 제시된 증거의 진실성 판단<br /><br />                                                                                                                                 |
+| `IMPROPER_PAYMENT`                                                                                                                                                                    | A. 분쟁 대상 IP가 로열티 금고 및/또는 선조에게 공유했어야 하지만 공유하지 않은 각 지불에 대한 설명<br /><br />B. 로열티로 적절히 공유되지 않은 지불에 대한 증거                                | 1. 입력 A와 B를 사용하여 가능한 경우 관련 플랫폼에서 확인하여 지불 증거의 진실성 확인<br />2. 지불 증거가 실제로 확인된 경우, 블록체인 탐색기에서 확인하여 온체인 지불이 실제로 이루어지지 않았는지 확인. 지불은 RoyaltyModule.sol 스마트 계약의 payRoyaltyOnBehalf() 함수를 호출하여 이루어져야 함. 또한, 로열티 지불은 소유자/IP가 해당 자본을 최초로 받은 시점으로부터 15일 이내에 이루어져야 함.<br /><br />          |
+| `CONTENT_STANDARDS_VIOLATION`<br /><br />혐오 금지,<br />전연령 적합,<br />마약 또는 무기 금지,<br />음란물 금지                                                                                            | A. 위반된 콘텐츠 표준 항목<br /><br />B. 위반 사항 설명<br /><br />C. 위반 증거                                                                         | 1. 입력 A를 사용하여 PIL의 공식 콘텐츠 표준 섹션에서 관련 콘텐츠 표준 설명 읽기<br />2. 입력 B를 사용하여 위반 설명 읽기<br />3. 입력 C를 사용하여 가능한 경우 관련 플랫폼에서 확인하여 제시된 증거의 진실성 판단<br /><br />                                                                                                                              |

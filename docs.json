@@ -1,555 +1,24 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
+  "$schema": "https://mintlify.com/docs.json",
   "name": "Story Documentation",
   "colors": {
     "primary": "#09ACFF",
     "light": "#A1D1FF",
     "dark": "#066DA1"
   },
-  "appearance": {
-    "default": "light"
-  },
-  "favicon": "/favicon.png",
-  "navigation": {
-    "tabs": [
-      {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": [
-              "introduction",
-              "explain-like-im-five",
-              "quickstart",
-              {
-                "group": "For AI Agents",
-                "icon": "robot",
-                "pages": [
-                  "ai-agents/overview",
-                  "ai-agents/using-cursor-with-story",
-                  "ai-agents/implementing-atcpip"
-                ]
-              },
-              "faq"
-            ]
-          },
-          {
-            "group": "Story Network",
-            "pages": [
-              "network/overview",
-              {
-                "group": "Node Architecture",
-                "icon": "excavator",
-                "pages": [
-                  "network/node-architecture/overview",
-                  "network/node-architecture/engine-api",
-                  {
-                    "group": "Cosmos Modules",
-                    "pages": [
-                      "network/node-architecture/cosmos-modules/cosmos-module-overview",
-                      "network/node-architecture/cosmos-modules/evmengine-module",
-                      "network/node-architecture/cosmos-modules/evmstaking-module",
-                      "network/node-architecture/cosmos-modules/mint-module",
-                      "network/node-architecture/cosmos-modules/staking-module"
-                    ]
-                  },
-                  "network/node-architecture/precompile"
-                ]
-              },
-              {
-                "group": "Network Information",
-                "icon": "globe",
-                "pages": [
-                  "network/network-info/overview",
-                  "network/network-info/mainnet",
-                  "network/network-info/aeneid",
-                  "network/network-info/localnet"
-                ]
-              },
-              {
-                "group": "Operating a Node",
-                "icon": "computer",
-                "pages": [
-                  "network/operating-a-node/node-setup-mainnet",
-                  "network/operating-a-node/operate-your-node",
-                  "network/operating-a-node/node-upgrade",
-                  "network/operating-a-node/release-notes"
-                ]
-              },
-              "network/become-a-validator",
-              "network/tokenomics-staking",
-              "network/infrastructure-partners",
-              {
-                "group": "Additional Resources",
-                "icon": "book",
-                "pages": [
-                  "network/more/additional-resources",
-                  "network/more/troubleshooting",
-                  {
-                    "group": "Oracles",
-                    "pages": [
-                      "network/more/oracle/gelato",
-                      "network/more/oracle/pyth",
-                      "network/more/oracle/redstone"
-                    ]
-                  },
-                  "network/more/multisig"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Protocol Concepts",
-            "pages": [
-              "concepts/overview",
-              {
-                "group": "IP Asset",
-                "icon": "puzzle",
-                "pages": [
-                  "concepts/ip-asset/overview",
-                  "concepts/ip-asset/ip-account",
-                  "concepts/ip-asset/ipa-modifications"
-                ]
-              },
-              {
-                "group": "Modules",
-                "icon": "block-brick",
-                "pages": [
-                  "concepts/modules/overview",
-                  {
-                    "group": "Licensing Module",
-                    "icon": "scroll",
-                    "pages": [
-                      "concepts/licensing-module/overview",
-                      "concepts/licensing-module/license-template",
-                      "concepts/licensing-module/license-terms",
-                      "concepts/licensing-module/license-token",
-                      "concepts/licensing-module/license-config"
-                    ]
-                  },
-                  {
-                    "group": "Royalty Module",
-                    "icon": "sack-dollar",
-                    "pages": [
-                      "concepts/royalty-module/overview",
-                      "concepts/royalty-module/ip-royalty-vault",
-                      "concepts/royalty-module/liquid-absolute-percentage",
-                      "concepts/royalty-module/liquid-relative-percentage",
-                      "concepts/royalty-module/external-royalty-policies"
-                    ]
-                  },
-                  {
-                    "group": "Dispute Module",
-                    "icon": "x",
-                    "pages": [
-                      "concepts/dispute-module/overview",
-                      "concepts/dispute-module/uma-arbitration-policy"
-                    ]
-                  },
-                  "concepts/grouping-module",
-                  {
-                    "group": "Metadata Module",
-                    "icon": "eyes",
-                    "pages": [
-                      "concepts/metadata-module",
-                      "concepts/ip-asset/ipa-metadata-standard"
-                    ]
-                  }
-                ]
-              },
-              "concepts/hooks",
-              {
-                "group": "Registry",
-                "icon": "folders",
-                "pages": [
-                  "concepts/registry/overview",
-                  "concepts/registry/ip-asset-registry",
-                  "concepts/registry/group-ip-asset-registry",
-                  "concepts/registry/license-registry",
-                  "concepts/registry/module-registry"
-                ]
-              },
-              "concepts/access-controller",
-              {
-                "group": "SPG (Periphery)",
-                "icon": "box-open",
-                "pages": [
-                  "concepts/spg/overview",
-                  "concepts/spg/batch-spg-function-calls"
-                ]
-              },
-              "concepts/story-attestation-service",
-              "concepts/faq"
-            ]
-          },
-          {
-            "group": "Programmable IP License",
-            "pages": [
-              "concepts/programmable-ip-license/overview",
-              "concepts/programmable-ip-license/pil-terms",
-              "concepts/programmable-ip-license/pil-flavors",
-              "concepts/programmable-ip-license/how-does-story-protect-ip"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Developers",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": [
-              "developers/overview",
-              "developers/deployed-smart-contracts",
-              "developers/releases"
-            ]
-          },
-          {
-            "group": "Integration Guides",
-            "pages": [
-              {
-                "group": "TypeScript SDK",
-                "icon": "screwdriver-wrench",
-                "pages": [
-                  "developers/typescript-sdk/overview",
-                  "developers/typescript-sdk/setup",
-                  "developers/typescript-sdk/register-ip-asset",
-                  "developers/typescript-sdk/attach-terms",
-                  "developers/typescript-sdk/mint-license",
-                  "developers/typescript-sdk/register-derivative",
-                  "developers/typescript-sdk/pay-ipa",
-                  "developers/typescript-sdk/claim-revenue",
-                  "developers/typescript-sdk/raise-dispute"
-                ]
-              },
-              {
-                "group": "React SDK",
-                "icon": "atom",
-                "pages": [
-                  "developers/react-guide/overview",
-                  "developers/react-guide/setup",
-                  {
-                    "group": "Wallet Providers",
-                    "pages": [
-                      "developers/react-guide/wallet-providers/dynamic-setup",
-                      "developers/react-guide/wallet-providers/rainbowkit-setup",
-                      "developers/react-guide/wallet-providers/reown-setup",
-                      "developers/react-guide/wallet-providers/tomo-setup"
-                    ]
-                  },
-                  "developers/react-guide/using-the-sdk-in-react"
-                ]
-              },
-              {
-                "group": "Python",
-                "icon": "snake",
-                "pages": []
-              },
-              {
-                "group": "Smart Contracts",
-                "icon": "scroll",
-                "pages": [
-                  "developers/smart-contracts-guide/overview",
-                  "developers/smart-contracts-guide/setup",
-                  "developers/smart-contracts-guide/register-ip-asset",
-                  "developers/smart-contracts-guide/register-terms",
-                  "developers/smart-contracts-guide/attach-terms",
-                  "developers/smart-contracts-guide/mint-license",
-                  "developers/smart-contracts-guide/register-derivative",
-                  "developers/smart-contracts-guide/claim-revenue",
-                  "developers/smart-contracts-guide/example"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Tutorials",
-            "pages": [
-              "developers/tutorials/overview",
-              "developers/tutorials/finetune-images",
-              "developers/tutorials/protect-dalle-ai-generated-images",
-              "developers/tutorials/register-stability-images",
-              "developers/tutorials/how-to-register-ip-on-story",
-              "developers/tutorials/how-to-register-music-on-story",
-              "developers/tutorials/how-to-tip-an-ip",
-              "developers/tutorials/case-study-register-derivative-ippy",
-              "developers/tutorials/privy-tutorial"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "SDK Reference",
-        "dropdowns": [
-          {
-            "dropdown": "TypeScript",
-            "icon": "screwdriver-wrench",
-            "groups": [
-              {
-                "group": "Get Started",
-                "pages": ["sdk-reference/overview"]
-              },
-              {
-                "group": "SDK Reference",
-                "pages": [
-                  "sdk-reference/ipasset",
-                  "sdk-reference/ipaccount",
-                  "sdk-reference/license",
-                  "sdk-reference/royalty",
-                  "sdk-reference/dispute",
-                  "sdk-reference/group",
-                  "sdk-reference/permissions",
-                  "sdk-reference/nftclient",
-                  "sdk-reference/wipclient"
-                ]
-              }
-            ]
-          },
-          {
-            "dropdown": "Python",
-            "icon": "python",
-            "groups": [
-              {
-                "group": "Get Started",
-                "pages": ["sdk-reference/python/overview"]
-              },
-              {
-                "group": "SDK Reference",
-                "pages": [
-                  "sdk-reference/python/ipasset",
-                  "sdk-reference/python/ipaccount",
-                  "sdk-reference/python/license",
-                  "sdk-reference/python/royalty",
-                  "sdk-reference/python/dispute",
-                  "sdk-reference/python/nftclient",
-                  "sdk-reference/python/wipclient"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Smart Contract Reference",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": ["smart-contract-reference/overview"]
-          },
-          {
-            "group": "Smart Contract Reference",
-            "pages": [
-              "smart-contract-reference/ipaccountimpl",
-              {
-                "group": "Licensing",
-                "pages": [
-                  "smart-contract-reference/license/licensingmodule",
-                  "smart-contract-reference/license/pilicensetemplate",
-                  "smart-contract-reference/license/licensetoken"
-                ]
-              },
-              {
-                "group": "Royalty",
-                "pages": [
-                  "smart-contract-reference/royalty/royaltymodule",
-                  "smart-contract-reference/royalty/iproyaltyvault",
-                  "smart-contract-reference/royalty/royaltypolicylap",
-                  "smart-contract-reference/royalty/royaltypolicylrp"
-                ]
-              },
-              {
-                "group": "Dispute",
-                "pages": ["smart-contract-reference/dispute/disputemodule"]
-              },
-              {
-                "group": "Registry",
-                "pages": [
-                  "smart-contract-reference/registry/ipassetregistry",
-                  "smart-contract-reference/registry/ipaccountregistry",
-                  "smart-contract-reference/registry/groupipassetregistry",
-                  "smart-contract-reference/registry/licenseregistry",
-                  "smart-contract-reference/registry/moduleregistry"
-                ]
-              },
-              {
-                "group": "Group",
-                "pages": [
-                  "smart-contract-reference/group/groupingmodule",
-                  "smart-contract-reference/group/evensplitgrouppool"
-                ]
-              },
-              {
-                "group": "Metadata",
-                "pages": [
-                  "smart-contract-reference/metadata/coremetadatamodule",
-                  "smart-contract-reference/metadata/coremetadataviewmodule"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API Reference",
-        "dropdowns": [
-          {
-            "dropdown": "Protocol API",
-            "icon": "link",
-            "groups": [
-              {
-                "group": "Protocol API Overview",
-                "pages": [
-                  "api-reference/protocol/introduction",
-                  "api-reference/blockscout-api"
-                ]
-              },
-              {
-                "group": "IPAssets",
-                "pages": [
-                  "api-reference/protocol/ipassets/list-ipassets",
-                  "api-reference/protocol/ipassets/list-ip-edges",
-                  "api-reference/protocol/ipassets/get-an-ipasset",
-                  "api-reference/protocol/ipassets/get-metadata-for-an-ipasset"
-                ]
-              },
-              {
-                "group": "Collections",
-                "pages": [
-                  "api-reference/protocol/collections/list-collections",
-                  "api-reference/protocol/collections/get-an-collection"
-                ]
-              },
-              {
-                "group": "IPLicenseTerms",
-                "pages": [
-                  "api-reference/protocol/iplicenseterms/list-detailed-ip-license-term",
-                  "api-reference/protocol/iplicenseterms/list-iplicenseterms",
-                  "api-reference/protocol/iplicenseterms/get-ip-license-terms-for-an-ip"
-                ]
-              },
-              {
-                "group": "Disputes",
-                "pages": [
-                  "api-reference/protocol/disputes/list-disputes",
-                  "api-reference/protocol/disputes/get-a-dispute"
-                ]
-              },
-              {
-                "group": "IPGroup",
-                "pages": [
-                  "api-reference/protocol/ipgroup/list-a-ipgroups-edges",
-                  "api-reference/protocol/ipgroup/list-ip-groups"
-                ]
-              },
-              {
-                "group": "Licenses",
-                "pages": [
-                  "api-reference/protocol/licenses/list-licensemintingfeepays",
-                  "api-reference/protocol/licenses/get-a-licensemintingfeepay"
-                ]
-              },
-              {
-                "group": "LicenseTemplates",
-                "pages": [
-                  "api-reference/protocol/licensetemplates/list-licensetemplates",
-                  "api-reference/protocol/licensetemplates/get-a-licensetemplate"
-                ]
-              },
-              {
-                "group": "LicenseTerms",
-                "pages": [
-                  "api-reference/protocol/licenseterms/list-licenseterms",
-                  "api-reference/protocol/licenseterms/get-a-licenseterm"
-                ]
-              },
-              {
-                "group": "LicenseTokens",
-                "pages": [
-                  "api-reference/protocol/licensetokens/list-licensetokens",
-                  "api-reference/protocol/licensetokens/get-an-licensetoken"
-                ]
-              },
-              {
-                "group": "Modules",
-                "pages": [
-                  "api-reference/protocol/modules/list-modules",
-                  "api-reference/protocol/modules/get-a-module"
-                ]
-              },
-              {
-                "group": "Permissions",
-                "pages": [
-                  "api-reference/protocol/permissions/list-permissions",
-                  "api-reference/protocol/permissions/get-a-permission"
-                ]
-              },
-              {
-                "group": "Royalties",
-                "pages": [
-                  "api-reference/protocol/royalties/list-royaltypays",
-                  "api-reference/protocol/royalties/get-a-royaltypay"
-                ]
-              },
-              {
-                "group": "Transactions",
-                "pages": [
-                  "api-reference/protocol/transactions/list-transactions",
-                  "api-reference/protocol/transactions/list-latest-transactions",
-                  "api-reference/protocol/transactions/get-a-transaction"
-                ]
-              }
-            ]
-          },
-          {
-            "dropdown": "Consensus Client API",
-            "icon": "circle-nodes",
-            "groups": [
-              {
-                "group": "Consensus Client API Overview",
-                "pages": ["api-reference/consensus-client/introduction"]
-              },
-              {
-                "group": "Endpoints",
-                "openapi": "api-reference/consensus-client/consensus-client-api.json"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Governance",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": ["governance"]
-          }
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Learn",
-          "href": "https://learn.story.foundation",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Help & Support",
-          "href": "https://discord.gg/storybuilders",
-          "icon": "discord"
-        },
-        {
-          "anchor": "Network Status",
-          "href": "https://status.story.foundation",
-          "icon": "check"
-        }
-      ]
-    }
-  },
   "logo": {
     "light": "/logo/light.png",
     "dark": "/logo/dark.png"
+  },
+  "favicon": "/favicon.png",
+  "api": {
+    "mdx": {
+      "server": "https://api.storyapis.com"
+    }
+  },
+  "appearance": {
+    "default": "light"
   },
   "navbar": {
     "links": [
@@ -564,16 +33,854 @@
       "href": "https://docs.story.foundation/quickstart"
     }
   },
+  "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Learn",
+          "icon": "book-open-cover",
+          "href": "https://learn.story.foundation"
+        },
+        {
+          "anchor": "Help & Support",
+          "icon": "discord",
+          "href": "https://discord.gg/storybuilders"
+        },
+        {
+          "anchor": "Network Status",
+          "icon": "check",
+          "href": "https://status.story.foundation"
+        }
+      ]
+    },
+    "languages": [
+      {
+        "language": "en",
+        "tabs": [
+          {
+            "tab": "Guides",
+            "groups": [
+              {
+                "group": "Get Started",
+                "pages": [
+                  "introduction",
+                  "explain-like-im-five",
+                  "quickstart",
+                  {
+                    "group": "For AI Agents",
+                    "icon": "robot",
+                    "pages": [
+                      "ai-agents/overview",
+                      "ai-agents/using-cursor-with-story",
+                      "ai-agents/implementing-atcpip"
+                    ]
+                  },
+                  "faq"
+                ]
+              },
+              {
+                "group": "Story Network",
+                "pages": [
+                  "network/overview",
+                  {
+                    "group": "Node Architecture",
+                    "icon": "excavator",
+                    "pages": [
+                      "network/node-architecture/overview",
+                      "network/node-architecture/engine-api",
+                      {
+                        "group": "Cosmos Modules",
+                        "pages": [
+                          "network/node-architecture/cosmos-modules/cosmos-module-overview",
+                          "network/node-architecture/cosmos-modules/evmengine-module",
+                          "network/node-architecture/cosmos-modules/evmstaking-module",
+                          "network/node-architecture/cosmos-modules/mint-module",
+                          "network/node-architecture/cosmos-modules/staking-module"
+                        ]
+                      },
+                      "network/node-architecture/precompile"
+                    ]
+                  },
+                  {
+                    "group": "Network Information",
+                    "icon": "globe",
+                    "pages": [
+                      "network/network-info/overview",
+                      "network/network-info/mainnet",
+                      "network/network-info/aeneid",
+                      "network/network-info/localnet"
+                    ]
+                  },
+                  {
+                    "group": "Operating a Node",
+                    "icon": "computer",
+                    "pages": [
+                      "network/operating-a-node/node-setup-mainnet",
+                      "network/operating-a-node/operate-your-node",
+                      "network/operating-a-node/node-upgrade",
+                      "network/operating-a-node/release-notes"
+                    ]
+                  },
+                  "network/become-a-validator",
+                  "network/tokenomics-staking",
+                  "network/infrastructure-partners",
+                  {
+                    "group": "Additional Resources",
+                    "icon": "book",
+                    "pages": [
+                      "network/more/additional-resources",
+                      "network/more/troubleshooting",
+                      {
+                        "group": "Oracles",
+                        "pages": [
+                          "network/more/oracle/gelato",
+                          "network/more/oracle/pyth",
+                          "network/more/oracle/redstone"
+                        ]
+                      },
+                      "network/more/multisig"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Protocol Concepts",
+                "pages": [
+                  "concepts/overview",
+                  {
+                    "group": "IP Asset",
+                    "icon": "puzzle",
+                    "pages": [
+                      "concepts/ip-asset/overview",
+                      "concepts/ip-asset/ip-account",
+                      "concepts/ip-asset/ipa-modifications"
+                    ]
+                  },
+                  {
+                    "group": "Modules",
+                    "icon": "block-brick",
+                    "pages": [
+                      "concepts/modules/overview",
+                      {
+                        "group": "Licensing Module",
+                        "icon": "scroll",
+                        "pages": [
+                          "concepts/licensing-module/overview",
+                          "concepts/licensing-module/license-template",
+                          "concepts/licensing-module/license-terms",
+                          "concepts/licensing-module/license-token",
+                          "concepts/licensing-module/license-config"
+                        ]
+                      },
+                      {
+                        "group": "Royalty Module",
+                        "icon": "sack-dollar",
+                        "pages": [
+                          "concepts/royalty-module/overview",
+                          "concepts/royalty-module/ip-royalty-vault",
+                          "concepts/royalty-module/liquid-absolute-percentage",
+                          "concepts/royalty-module/liquid-relative-percentage",
+                          "concepts/royalty-module/external-royalty-policies"
+                        ]
+                      },
+                      {
+                        "group": "Dispute Module",
+                        "icon": "x",
+                        "pages": [
+                          "concepts/dispute-module/overview",
+                          "concepts/dispute-module/uma-arbitration-policy"
+                        ]
+                      },
+                      "concepts/grouping-module",
+                      {
+                        "group": "Metadata Module",
+                        "icon": "eyes",
+                        "pages": [
+                          "concepts/metadata-module",
+                          "concepts/ip-asset/ipa-metadata-standard"
+                        ]
+                      }
+                    ]
+                  },
+                  "concepts/hooks",
+                  {
+                    "group": "Registry",
+                    "icon": "folders",
+                    "pages": [
+                      "concepts/registry/overview",
+                      "concepts/registry/ip-asset-registry",
+                      "concepts/registry/group-ip-asset-registry",
+                      "concepts/registry/license-registry",
+                      "concepts/registry/module-registry"
+                    ]
+                  },
+                  "concepts/access-controller",
+                  {
+                    "group": "SPG (Periphery)",
+                    "icon": "box-open",
+                    "pages": [
+                      "concepts/spg/overview",
+                      "concepts/spg/batch-spg-function-calls"
+                    ]
+                  },
+                  "concepts/story-attestation-service",
+                  "concepts/faq"
+                ]
+              },
+              {
+                "group": "Programmable IP License",
+                "pages": [
+                  "concepts/programmable-ip-license/overview",
+                  "concepts/programmable-ip-license/pil-terms",
+                  "concepts/programmable-ip-license/pil-flavors",
+                  "concepts/programmable-ip-license/how-does-story-protect-ip"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Developers",
+            "groups": [
+              {
+                "group": "Get Started",
+                "pages": [
+                  "developers/overview",
+                  "developers/deployed-smart-contracts",
+                  "developers/releases"
+                ]
+              },
+              {
+                "group": "Integration Guides",
+                "pages": [
+                  {
+                    "group": "TypeScript SDK",
+                    "icon": "screwdriver-wrench",
+                    "pages": [
+                      "developers/typescript-sdk/overview",
+                      "developers/typescript-sdk/setup",
+                      "developers/typescript-sdk/register-ip-asset",
+                      "developers/typescript-sdk/attach-terms",
+                      "developers/typescript-sdk/mint-license",
+                      "developers/typescript-sdk/register-derivative",
+                      "developers/typescript-sdk/pay-ipa",
+                      "developers/typescript-sdk/claim-revenue",
+                      "developers/typescript-sdk/raise-dispute"
+                    ]
+                  },
+                  {
+                    "group": "React SDK",
+                    "icon": "atom",
+                    "pages": [
+                      "developers/react-guide/overview",
+                      "developers/react-guide/setup",
+                      {
+                        "group": "Wallet Providers",
+                        "pages": [
+                          "developers/react-guide/wallet-providers/dynamic-setup",
+                          "developers/react-guide/wallet-providers/rainbowkit-setup",
+                          "developers/react-guide/wallet-providers/reown-setup",
+                          "developers/react-guide/wallet-providers/tomo-setup"
+                        ]
+                      },
+                      "developers/react-guide/using-the-sdk-in-react"
+                    ]
+                  },
+                  {
+                    "group": "Python",
+                    "icon": "snake",
+                    "pages": []
+                  },
+                  {
+                    "group": "Smart Contracts",
+                    "icon": "scroll",
+                    "pages": [
+                      "developers/smart-contracts-guide/overview",
+                      "developers/smart-contracts-guide/setup",
+                      "developers/smart-contracts-guide/register-ip-asset",
+                      "developers/smart-contracts-guide/register-terms",
+                      "developers/smart-contracts-guide/attach-terms",
+                      "developers/smart-contracts-guide/mint-license",
+                      "developers/smart-contracts-guide/register-derivative",
+                      "developers/smart-contracts-guide/claim-revenue",
+                      "developers/smart-contracts-guide/example"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Tutorials",
+                "pages": [
+                  "developers/tutorials/overview",
+                  "developers/tutorials/finetune-images",
+                  "developers/tutorials/protect-dalle-ai-generated-images",
+                  "developers/tutorials/register-stability-images",
+                  "developers/tutorials/how-to-register-ip-on-story",
+                  "developers/tutorials/how-to-register-music-on-story",
+                  "developers/tutorials/how-to-tip-an-ip",
+                  "developers/tutorials/case-study-register-derivative-ippy",
+                  "developers/tutorials/privy-tutorial"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "SDK Reference",
+            "dropdowns": [
+              {
+                "dropdown": "TypeScript",
+                "icon": "screwdriver-wrench",
+                "groups": [
+                  {
+                    "group": "Get Started",
+                    "pages": [
+                      "sdk-reference/overview"
+                    ]
+                  },
+                  {
+                    "group": "SDK Reference",
+                    "pages": [
+                      "sdk-reference/ipasset",
+                      "sdk-reference/ipaccount",
+                      "sdk-reference/license",
+                      "sdk-reference/royalty",
+                      "sdk-reference/dispute",
+                      "sdk-reference/group",
+                      "sdk-reference/permissions",
+                      "sdk-reference/nftclient",
+                      "sdk-reference/wipclient"
+                    ]
+                  }
+                ]
+              },
+              {
+                "dropdown": "Python",
+                "icon": "python",
+                "groups": [
+                  {
+                    "group": "Get Started",
+                    "pages": [
+                      "sdk-reference/python/overview"
+                    ]
+                  },
+                  {
+                    "group": "SDK Reference",
+                    "pages": [
+                      "sdk-reference/python/ipasset",
+                      "sdk-reference/python/ipaccount",
+                      "sdk-reference/python/license",
+                      "sdk-reference/python/royalty",
+                      "sdk-reference/python/dispute",
+                      "sdk-reference/python/nftclient",
+                      "sdk-reference/python/wipclient"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Smart Contract Reference",
+            "groups": [
+              {
+                "group": "Get Started",
+                "pages": [
+                  "smart-contract-reference/overview"
+                ]
+              },
+              {
+                "group": "Smart Contract Reference",
+                "pages": [
+                  "smart-contract-reference/ipaccountimpl",
+                  {
+                    "group": "Licensing",
+                    "pages": [
+                      "smart-contract-reference/license/licensingmodule",
+                      "smart-contract-reference/license/pilicensetemplate",
+                      "smart-contract-reference/license/licensetoken"
+                    ]
+                  },
+                  {
+                    "group": "Royalty",
+                    "pages": [
+                      "smart-contract-reference/royalty/royaltymodule",
+                      "smart-contract-reference/royalty/iproyaltyvault",
+                      "smart-contract-reference/royalty/royaltypolicylap",
+                      "smart-contract-reference/royalty/royaltypolicylrp"
+                    ]
+                  },
+                  {
+                    "group": "Dispute",
+                    "pages": [
+                      "smart-contract-reference/dispute/disputemodule"
+                    ]
+                  },
+                  {
+                    "group": "Registry",
+                    "pages": [
+                      "smart-contract-reference/registry/ipassetregistry",
+                      "smart-contract-reference/registry/ipaccountregistry",
+                      "smart-contract-reference/registry/groupipassetregistry",
+                      "smart-contract-reference/registry/licenseregistry",
+                      "smart-contract-reference/registry/moduleregistry"
+                    ]
+                  },
+                  {
+                    "group": "Group",
+                    "pages": [
+                      "smart-contract-reference/group/groupingmodule",
+                      "smart-contract-reference/group/evensplitgrouppool"
+                    ]
+                  },
+                  {
+                    "group": "Metadata",
+                    "pages": [
+                      "smart-contract-reference/metadata/coremetadatamodule",
+                      "smart-contract-reference/metadata/coremetadataviewmodule"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "API Reference",
+            "dropdowns": [
+              {
+                "dropdown": "Protocol API",
+                "icon": "link",
+                "groups": [
+                  {
+                    "group": "Protocol API Overview",
+                    "pages": [
+                      "api-reference/protocol/introduction",
+                      "api-reference/blockscout-api"
+                    ]
+                  },
+                  {
+                    "group": "IPAssets",
+                    "pages": [
+                      "api-reference/protocol/ipassets/list-ipassets",
+                      "api-reference/protocol/ipassets/list-ip-edges",
+                      "api-reference/protocol/ipassets/get-an-ipasset",
+                      "api-reference/protocol/ipassets/get-metadata-for-an-ipasset"
+                    ]
+                  },
+                  {
+                    "group": "Collections",
+                    "pages": [
+                      "api-reference/protocol/collections/list-collections",
+                      "api-reference/protocol/collections/get-an-collection"
+                    ]
+                  },
+                  {
+                    "group": "IPLicenseTerms",
+                    "pages": [
+                      "api-reference/protocol/iplicenseterms/list-detailed-ip-license-term",
+                      "api-reference/protocol/iplicenseterms/list-iplicenseterms",
+                      "api-reference/protocol/iplicenseterms/get-ip-license-terms-for-an-ip"
+                    ]
+                  },
+                  {
+                    "group": "Disputes",
+                    "pages": [
+                      "api-reference/protocol/disputes/list-disputes",
+                      "api-reference/protocol/disputes/get-a-dispute"
+                    ]
+                  },
+                  {
+                    "group": "IPGroup",
+                    "pages": [
+                      "api-reference/protocol/ipgroup/list-a-ipgroups-edges",
+                      "api-reference/protocol/ipgroup/list-ip-groups"
+                    ]
+                  },
+                  {
+                    "group": "Licenses",
+                    "pages": [
+                      "api-reference/protocol/licenses/list-licensemintingfeepays",
+                      "api-reference/protocol/licenses/get-a-licensemintingfeepay"
+                    ]
+                  },
+                  {
+                    "group": "LicenseTemplates",
+                    "pages": [
+                      "api-reference/protocol/licensetemplates/list-licensetemplates",
+                      "api-reference/protocol/licensetemplates/get-a-licensetemplate"
+                    ]
+                  },
+                  {
+                    "group": "LicenseTerms",
+                    "pages": [
+                      "api-reference/protocol/licenseterms/list-licenseterms",
+                      "api-reference/protocol/licenseterms/get-a-licenseterm"
+                    ]
+                  },
+                  {
+                    "group": "LicenseTokens",
+                    "pages": [
+                      "api-reference/protocol/licensetokens/list-licensetokens",
+                      "api-reference/protocol/licensetokens/get-an-licensetoken"
+                    ]
+                  },
+                  {
+                    "group": "Modules",
+                    "pages": [
+                      "api-reference/protocol/modules/list-modules",
+                      "api-reference/protocol/modules/get-a-module"
+                    ]
+                  },
+                  {
+                    "group": "Permissions",
+                    "pages": [
+                      "api-reference/protocol/permissions/list-permissions",
+                      "api-reference/protocol/permissions/get-a-permission"
+                    ]
+                  },
+                  {
+                    "group": "Royalties",
+                    "pages": [
+                      "api-reference/protocol/royalties/list-royaltypays",
+                      "api-reference/protocol/royalties/get-a-royaltypay"
+                    ]
+                  },
+                  {
+                    "group": "Transactions",
+                    "pages": [
+                      "api-reference/protocol/transactions/list-transactions",
+                      "api-reference/protocol/transactions/list-latest-transactions",
+                      "api-reference/protocol/transactions/get-a-transaction"
+                    ]
+                  }
+                ]
+              },
+              {
+                "dropdown": "Consensus Client API",
+                "icon": "circle-nodes",
+                "groups": [
+                  {
+                    "group": "Consensus Client API Overview",
+                    "pages": [
+                      "api-reference/consensus-client/introduction"
+                    ]
+                  },
+                  {
+                    "group": "Endpoints",
+                    "openapi": "api-reference/consensus-client/consensus-client-api.json"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Governance",
+            "groups": [
+              {
+                "group": "Get Started",
+                "pages": [
+                  "governance"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "language": "ko",
+        "tabs": [
+          {
+            "tab": "Guides",
+            "groups": [
+              {
+                "group": "Get Started",
+                "pages": [
+                  "ko/introduction",
+                  "ko/explain-like-im-five",
+                  "ko/quickstart",
+                  "ko/faq"
+                ]
+              },
+              {
+                "group": "Story Network",
+                "pages": [
+                  "ko/network/overview",
+                  "ko/network/become-a-validator",
+                  "ko/network/tokenomics-staking",
+                  "ko/network/infrastructure-partners"
+                ]
+              },
+              {
+                "group": "Protocol Concepts",
+                "pages": [
+                  "ko/concepts/overview",
+                  "ko/concepts/hooks",
+                  "ko/concepts/access-controller",
+                  "ko/concepts/story-attestation-service",
+                  "ko/concepts/faq"
+                ]
+              },
+              {
+                "group": "Programmable IP License",
+                "pages": [
+                  "ko/concepts/programmable-ip-license/overview",
+                  "ko/concepts/programmable-ip-license/pil-terms",
+                  "ko/concepts/programmable-ip-license/pil-flavors",
+                  "ko/concepts/programmable-ip-license/how-does-story-protect-ip"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Developers",
+            "groups": [
+              {
+                "group": "Get Started",
+                "pages": [
+                  "ko/developers/overview",
+                  "ko/developers/deployed-smart-contracts",
+                  "ko/developers/releases"
+                ]
+              },
+              {
+                "group": "Integration Guides",
+                "pages": []
+              },
+              {
+                "group": "Tutorials",
+                "pages": [
+                  "ko/developers/tutorials/overview",
+                  "ko/developers/tutorials/finetune-images",
+                  "ko/developers/tutorials/protect-dalle-ai-generated-images",
+                  "ko/developers/tutorials/register-stability-images",
+                  "ko/developers/tutorials/how-to-register-ip-on-story",
+                  "ko/developers/tutorials/how-to-register-music-on-story",
+                  "ko/developers/tutorials/how-to-tip-an-ip",
+                  "ko/developers/tutorials/case-study-register-derivative-ippy",
+                  "ko/developers/tutorials/privy-tutorial"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "SDK Reference",
+            "dropdowns": [
+              {
+                "dropdown": "TypeScript",
+                "icon": "screwdriver-wrench",
+                "groups": [
+                  {
+                    "group": "Get Started",
+                    "pages": [
+                      "ko/sdk-reference/overview"
+                    ]
+                  },
+                  {
+                    "group": "SDK Reference",
+                    "pages": [
+                      "ko/sdk-reference/ipasset",
+                      "ko/sdk-reference/ipaccount",
+                      "ko/sdk-reference/license",
+                      "ko/sdk-reference/royalty",
+                      "ko/sdk-reference/dispute",
+                      "ko/sdk-reference/group",
+                      "ko/sdk-reference/permissions",
+                      "ko/sdk-reference/nftclient",
+                      "ko/sdk-reference/wipclient"
+                    ]
+                  }
+                ]
+              },
+              {
+                "dropdown": "Python",
+                "icon": "python",
+                "groups": [
+                  {
+                    "group": "Get Started",
+                    "pages": [
+                      "ko/sdk-reference/python/overview"
+                    ]
+                  },
+                  {
+                    "group": "SDK Reference",
+                    "pages": [
+                      "ko/sdk-reference/python/ipasset",
+                      "ko/sdk-reference/python/ipaccount",
+                      "ko/sdk-reference/python/license",
+                      "ko/sdk-reference/python/royalty",
+                      "ko/sdk-reference/python/dispute",
+                      "ko/sdk-reference/python/nftclient",
+                      "ko/sdk-reference/python/wipclient"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Smart Contract Reference",
+            "groups": [
+              {
+                "group": "Get Started",
+                "pages": [
+                  "ko/smart-contract-reference/overview"
+                ]
+              },
+              {
+                "group": "Smart Contract Reference",
+                "pages": [
+                  "ko/smart-contract-reference/ipaccountimpl"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "API Reference",
+            "dropdowns": [
+              {
+                "dropdown": "Protocol API",
+                "icon": "link",
+                "groups": [
+                  {
+                    "group": "Protocol API Overview",
+                    "pages": [
+                      "ko/api-reference/protocol/introduction",
+                      "ko/api-reference/blockscout-api"
+                    ]
+                  },
+                  {
+                    "group": "IPAssets",
+                    "pages": [
+                      "ko/api-reference/protocol/ipassets/list-ipassets",
+                      "ko/api-reference/protocol/ipassets/list-ip-edges",
+                      "ko/api-reference/protocol/ipassets/get-an-ipasset",
+                      "ko/api-reference/protocol/ipassets/get-metadata-for-an-ipasset"
+                    ]
+                  },
+                  {
+                    "group": "Collections",
+                    "pages": [
+                      "ko/api-reference/protocol/collections/list-collections",
+                      "ko/api-reference/protocol/collections/get-an-collection"
+                    ]
+                  },
+                  {
+                    "group": "IPLicenseTerms",
+                    "pages": [
+                      "ko/api-reference/protocol/iplicenseterms/list-detailed-ip-license-term",
+                      "ko/api-reference/protocol/iplicenseterms/list-iplicenseterms",
+                      "ko/api-reference/protocol/iplicenseterms/get-ip-license-terms-for-an-ip"
+                    ]
+                  },
+                  {
+                    "group": "Disputes",
+                    "pages": [
+                      "ko/api-reference/protocol/disputes/list-disputes",
+                      "ko/api-reference/protocol/disputes/get-a-dispute"
+                    ]
+                  },
+                  {
+                    "group": "IPGroup",
+                    "pages": [
+                      "ko/api-reference/protocol/ipgroup/list-a-ipgroups-edges",
+                      "ko/api-reference/protocol/ipgroup/list-ip-groups"
+                    ]
+                  },
+                  {
+                    "group": "Licenses",
+                    "pages": [
+                      "ko/api-reference/protocol/licenses/list-licensemintingfeepays",
+                      "ko/api-reference/protocol/licenses/get-a-licensemintingfeepay"
+                    ]
+                  },
+                  {
+                    "group": "LicenseTemplates",
+                    "pages": [
+                      "ko/api-reference/protocol/licensetemplates/list-licensetemplates",
+                      "ko/api-reference/protocol/licensetemplates/get-a-licensetemplate"
+                    ]
+                  },
+                  {
+                    "group": "LicenseTerms",
+                    "pages": [
+                      "ko/api-reference/protocol/licenseterms/list-licenseterms",
+                      "ko/api-reference/protocol/licenseterms/get-a-licenseterm"
+                    ]
+                  },
+                  {
+                    "group": "LicenseTokens",
+                    "pages": [
+                      "ko/api-reference/protocol/licensetokens/list-licensetokens",
+                      "ko/api-reference/protocol/licensetokens/get-an-licensetoken"
+                    ]
+                  },
+                  {
+                    "group": "Modules",
+                    "pages": [
+                      "ko/api-reference/protocol/modules/list-modules",
+                      "ko/api-reference/protocol/modules/get-a-module"
+                    ]
+                  },
+                  {
+                    "group": "Permissions",
+                    "pages": [
+                      "ko/api-reference/protocol/permissions/list-permissions",
+                      "ko/api-reference/protocol/permissions/get-a-permission"
+                    ]
+                  },
+                  {
+                    "group": "Royalties",
+                    "pages": [
+                      "ko/api-reference/protocol/royalties/list-royaltypays",
+                      "ko/api-reference/protocol/royalties/get-a-royaltypay"
+                    ]
+                  },
+                  {
+                    "group": "Transactions",
+                    "pages": [
+                      "ko/api-reference/protocol/transactions/list-transactions",
+                      "ko/api-reference/protocol/transactions/list-latest-transactions",
+                      "ko/api-reference/protocol/transactions/get-a-transaction"
+                    ]
+                  }
+                ]
+              },
+              {
+                "dropdown": "Consensus Client API",
+                "icon": "circle-nodes",
+                "groups": [
+                  {
+                    "group": "Consensus Client API Overview",
+                    "pages": [
+                      "ko/api-reference/consensus-client/introduction"
+                    ]
+                  },
+                  {
+                    "group": "Endpoints",
+                    "openapi": "api-reference/consensus-client/consensus-client-api.json"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Governance",
+            "groups": [
+              {
+                "group": "Get Started",
+                "pages": [
+                  "ko/governance"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "footer": {
     "socials": {
       "x": "https://x.com/StoryProtocol",
       "github": "https://github.com/storyprotocol",
       "website": "https://story.foundation"
-    }
-  },
-  "api": {
-    "mdx": {
-      "server": "https://api.storyapis.com"
     }
   },
   "redirects": [
@@ -1023,6 +1330,11 @@
     }
   ],
   "contextual": {
-    "options": ["copy", "view", "chatgpt", "claude"]
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude"
+    ]
   }
 }

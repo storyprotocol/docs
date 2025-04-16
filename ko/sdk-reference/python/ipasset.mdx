@@ -1,0 +1,282 @@
+---
+title: IP Asset
+description: IPAsset은 Story 내에서 IP 자산을 생성, 조회 및 나열할 수 있게 해줍니다.
+---
+
+## IPAsset
+
+### 메소드
+
+* register
+* register\_derivative
+* register\_derivative\_with\_license\_tokens
+* mint\_and\_register\_ip\_asset\_with\_pil\_terms
+
+### IPAssetClient 둘러보기
+
+라이선싱 모듈과 상호 작용하는 많은 함수들이 있기 때문에 [📜 Licensing Module](/concepts/licensing-module), 찾고자 하는 것을 식별하고 관련 문서를 찾을 수 있도록 도움이 되는 차트로 정리했습니다.
+
+| **함수**                                                                                   | **NFT 민팅** | **IPA 등록** | **라이선스 조건 생성** | **라이선스 조건 첨부** | **라이선스 토큰 민팅** | **파생작으로 등록** |
+| ---------------------------------------------------------------------------------------- | :--------: | :--------: | :------------: | :------------: | :------------: | :----------: |
+| <span style={{color: "#e03130"}}>register</span>                                         |            |      ✓     |                |                |                |              |
+| <span style={{color: "#e03130"}}>mint\_and\_register\_ip\_asset\_with\_pil\_terms</span> |      ✓     |      ✓     |        ✓       |        ✓       |                |              |
+| <span style={{color: "#e03130"}}>register\_derivative</span>                             |            |            |                |                |                |       ✓      |
+| <span style={{color: "#e03130"}}>register\_derivative\_with\_license\_tokens</span>      |            |            |                |                |                |       ✓      |
+| <span style={{color: "#1971c2"}}>register\_pil\_terms</span>                             |            |            |        ✓       |                |                |              |
+| <span style={{color: "#1971c2"}}>attach\_license\_terms</span>                           |            |            |                |        ✓       |                |              |
+| <span style={{color: "#1971c2"}}>mint\_license\_tokens</span>                            |            |            |                |                |        ✓       |              |
+
+* <span style={{ color: "#e03130" }}>빨간색</span>: IPAssetClient (현재 페이지)
+* <span style={{ color: "#1971c2" }}>Blue</span>:
+  [LicenseClient](/sdk-reference/python/license)
+
+## register
+
+NFT를 IP로 등록하고 해당하는 [🧩 IP Asset](/concepts/ip-asset)을 생성합니다. 주어진 NFT가 이미 등록되어 있는 경우, 이 함수는 기존의 `ipId`을 반환합니다.
+
+<Note title="NFT Metadata">
+  이 함수는 또한 기본 NFT의 `tokenUri`을 다음에 전달된 값으로 설정합니다 `ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메소드        |
+| ---------- |
+| `register` |
+
+Parameters:
+
+* `nft_contract`: NFT의 주소.
+* `token_id`: NFT의 토큰 식별자.
+* `ip_metadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP의 원하는 메타데이터.
+  * `ip_metadata['ip_metadata_uri']`: \[선택사항] IP의 메타데이터 URI.
+  * `ip_metadata['ip_metadata_hash']`: \[선택사항] IP의 메타데이터 해시.
+  * `ip_metadata['nft_metadata_uri']`: \[선택사항] NFT의 메타데이터 URI.
+  * `ip_metadata['nft_metadata_hash']`: \[선택사항] IP NFT의 메타데이터 해시.
+* `deadline`: \[선택사항] 서명의 마감 시간(밀리초).
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  metadata = {
+    'ip_metadata_uri': "test-uri",
+    'ip_metadata_hash': web3.to_hex(web3.keccak(text="test-ip-metadata-hash")),
+    'nft_metadata_uri': "test-uri",
+    'nft_metadata_hash': web3.to_hex(web3.keccak(text="test-nft-metadata-hash"))
+  }
+
+  response = story_client.IPAsset.register(
+    nft_contract="0x041B4F29183317Fd352AE57e331154b73F8a1D73",
+    token_id="12",
+    ip_metadata=metadata
+  )
+  ```
+
+  ```python Request Parameters
+  nft_contract: str  # The address of the NFT
+  token_id: str  # The token identifier of the NFT
+  ip_metadata: dict = None  # Optional: Metadata for the NFT and IP
+  deadline: int = None  # Optional: The deadline for the signature in milliseconds
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "ip_id": str,  # The IP ID of the registered IP
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+## register\_derivative
+
+라이선스 토큰 없이 부모 IP의 라이선스 조건으로 직접 파생물을 등록하고, 부모 IP의 라이선스 조건을 파생 IP에 연결합니다.
+
+이 함수를 호출하기 전에 부모 IP에 라이선스 조건이 연결되어 있어야 합니다.
+
+모든 IP는 기본적으로 기본 라이선스 조건이 연결되어 있습니다.
+
+파생 IP 소유자는 호출자이거나 승인된 운영자여야 합니다.
+
+| 메소드                   |
+| --------------------- |
+| `register_derivative` |
+
+Parameters:
+
+* `child_ip_id`: 파생 IP ID.
+* `parent_ip_ids`: 부모 IP ID들.
+* `license_terms_ids`: 부모 IP가 지원하는 라이선스 조건의 ID들.
+* `max_minting_fee`: \[선택사항] 호출자가 지불하고자 하는 최대 발행 수수료. 0으로 설정하면 제한이 없습니다.**Default: 0**
+* `max_revenue_share`: \[선택사항] 자식이 파생물로 등록할 때 자식과 부모 간에 합의된 최대 수익 공유 비율. 0에서 100 사이여야 합니다.**Default: 100**
+* `max_rts`: \[선택사항] 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다.**Default: 100\_000\_000**
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.IPAsset.register_derivative(
+    child_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    parent_ip_ids=["0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba"],
+    license_terms_ids=["5"],
+    max_minting_fee=0, # disabled
+    max_rts=100_000_000, # default
+    max_revenue_share=100 # default
+  )
+  ```
+
+  ```python Request Parameters
+  child_ip_id: str  # The derivative IP ID
+  parent_ip_ids: list  # The parent IP IDs
+  license_terms_ids: list  # The IDs of the license terms that the parent IP supports
+  max_minting_fee: int = 0  # Optional: The maximum minting fee the caller is willing to pay
+  max_rts: int = 0  # Optional: The maximum number of royalty tokens
+  max_revenue_share: int = 0  # Optional: The maximum revenue share percentage
+  license_template: str = None  # Optional: The address of the license template
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+## register\_derivative\_with\_license\_tokens
+
+라이선스 토큰으로 파생물을 등록합니다.
+
+파생 IP는 부모 IP의 라이선스 조건에서 발행된 라이선스 토큰으로 등록됩니다.
+
+라이선스 토큰으로 발행된 부모 IP의 라이선스 조건이 파생 IP에 연결됩니다.
+
+호출자는 파생 IP 소유자이거나 승인된 운영자여야 합니다.
+
+| 메소드                                       |
+| ----------------------------------------- |
+| `register_derivative_with_license_tokens` |
+
+Parameters:
+
+* `child_ip_id`: 파생 IP ID.
+* `license_token_ids`: 라이선스 토큰의 ID들.
+* `max_rts`: 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다. **단순화를 위한 권장값: 100\_000\_000**
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.IPAsset.register_derivative_with_license_tokens(
+    child_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    license_token_ids=["5"],
+    max_rts=100_000_000 # default
+  )
+  ```
+
+  ```python Request Parameters
+  child_ip_id: str  # The derivative IP ID
+  license_token_ids: list  # The IDs of the license tokens
+  max_rts: int = 0  # Optional: The maximum number of royalty tokens
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+## mint\_and\_register\_ip\_asset\_with\_pil\_terms
+
+컬렉션에서 NFT를 발행하고, IP로 등록하고, IP에 메타데이터를 연결하고, IP에 라이선스 조건을 연결하는 모든 작업을 하나의 함수로 수행합니다.
+
+<Note>
+  이 함수는 또한 기본 NFT의 `tokenUri`을 다음에 전달된 값으로 설정합니다 `ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메소드                                         |
+| ------------------------------------------- |
+| `mint_and_register_ip_asset_with_pil_terms` |
+
+Parameters:
+
+* `spg_nft_contract`: NFT 컬렉션의 주소.
+* `terms`: 연결될 라이선스 조건 배열. ⚠️ **빈 배열을 전달하면 이 함수는 실패합니다.**
+  * `terms[].terms`: 라이선스 조건 데이터. 구조는 아래 Python 예제를 참조하세요.
+  * `terms[].licensing_config`: \[선택사항] 라이선싱 구성. 구조는 아래 Python 예제를 참조하세요.
+* `allow_duplicates`: \[선택사항] 동일한 NFT 메타데이터로 IP 발행을 허용하려면 true로 설정하세요.**Default: True**
+* `ip_metadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP의 원하는 메타데이터.
+  * `ip_metadata['ip_metadata_uri']`: \[선택사항] IP의 메타데이터 URI.
+  * `ip_metadata['ip_metadata_hash']`: \[선택사항] IP의 메타데이터 해시.
+  * `ip_metadata['nft_metadata_uri']`: \[선택사항] NFT의 메타데이터 URI.
+  * `ip_metadata['nft_metadata_hash']`: \[선택사항] IP NFT의 메타데이터 해시.
+* `recipient`: \[선택사항] 발행된 NFT를 받을 수신자의 주소.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  commercial_remix_terms = {
+    "transferable": True,
+    "royalty_policy": "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", # RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    "default_minting_fee": 0,
+    "expiration": 0,
+    "commercial_use": True,
+    "commercial_attribution": True,
+    "commercializer_checker": "0x0000000000000000000000000000000000000000",
+    "commercializer_checker_data": "0x0000000000000000000000000000000000000000",
+    "commercial_rev_share": 50,
+    "commercial_rev_ceiling": 0,
+    "derivatives_allowed": True,
+    "derivatives_attribution": True,
+    "derivatives_approval": False,
+    "derivatives_reciprocal": True,
+    "derivative_rev_ceiling": 0,
+    "currency": "0x1514000000000000000000000000000000000000", # $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    "uri": "",
+  }
+
+  licensing_config = {
+    "is_set": False,
+    "minting_fee": 0,
+    "licensing_hook": "0x0000000000000000000000000000000000000000",
+    "hook_data": "0x0000000000000000000000000000000000000000",
+    "commercial_rev_share": 0,
+    "disabled": False,
+    "expect_minimum_group_reward_share": 0,
+    "expect_group_reward_pool": "0x0000000000000000000000000000000000000000",
+  }
+
+  metadata = {
+    'ip_metadata_uri': "test-uri",
+    'ip_metadata_hash': web3.to_hex(web3.keccak(text="test-ip-metadata-hash")),
+    'nft_metadata_uri': "test-uri",
+    'nft_metadata_hash': web3.to_hex(web3.keccak(text="test-nft-metadata-hash"))
+  }
+
+  response = story_client.IPAsset.mint_and_register_ip_asset_with_pil_terms(
+    spg_nft_contract="0xfE265a91dBe911db06999019228a678b86C04959",
+    terms=[{
+      "terms": commercial_remix_terms,
+      "licensing_config": licensing_config
+    }],
+    allow_duplicates=True,
+    ip_metadata=metadata
+  )
+  ```
+
+  ```python Request Parameters
+  spg_nft_contract: str  # The address of the NFT collection
+  terms: list  # The array of license terms to be attached
+  ip_metadata: dict = None  # Optional: Metadata for the NFT and IP
+  recipient: str = None  # Optional: The address of the recipient of the minted NFT
+  allow_duplicates: bool = False  # Optional: Allow minting IPs with the same NFT metadata
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "ip_id": str,  # The IP ID of the registered IP
+    "token_id": int,  # The token ID of the minted NFT
+    "tx_hash": str,  # The transaction hash
+    "license_terms_ids": list  # The IDs of the registered license terms
+  }
+  ```
+</CodeGroup>

@@ -1,0 +1,64 @@
+---
+title: Story Attestation Service
+description: 지적 재산권을 검증하기 위한 다층적 분산 접근 방식.
+icon: user-secret
+---
+
+<Accordion title="Skip the Read - 1 Minute Summary" icon="circle-info">
+  Story Attestation Service(SAS)는 각각의 방식으로 IP의 유효성을 증명하는 독립적인 서비스 제공자들(침해, 신원 등)의 집합이라고 생각할 수 있습니다. 따라서 각 IP에는 그 결과를 보여주는 "배지" 세트가 표시됩니다.
+
+  그런 다음 어떤 제공자를 신뢰하거나 믿을지는 생태계/시장이 결정하게 됩니다. 이는 IP 자산에 대해 많은 제공자들이 유효하다고 말한다면, 아마도 유효할 것이라는 분산된 "검증자" 같은 접근 방식이 됩니다.
+</Accordion>
+
+Story는 두 가지 기본 구성 요소를 바탕으로 지적 재산권을 검증하는 다층적 분산 접근 방식을 채택합니다:
+
+1. Story Attestation Service(SAS): 다양한 매체(이미지, 오디오 등)에서 저작권 위반을 감지하는 전문 서비스 제공자 네트워크를 활용하여 [🧩 IP Asset](/concepts/ip-asset)의 정당성에 대한 투명하고 공개적으로 접근 가능한 신호를 제공합니다. IP 등록을 촉진하는 애플리케이션(예: 원본 콘텐츠)도 향후 IP 자산의 출처를 증명할 수 있습니다("앱테스테이션"이라고 함).
+2. The [❌ Dispute Module](/concepts/dispute-module): IP 분쟁의 미묘한 특성을 수용하기 위해 온체인 및 오프체인 프로세스를 모두 활용하여 분쟁을 해결하는 유연한 프레임워크를 제공합니다.
+
+이러한 감지 방법과 분쟁 해결의 조합은 불필요한 마찰을 일으키지 않고 IP를 등록할 수 있게 하면서, 시장과 개별 생태계 앱이 각 증명 제공자에게 얼마나 가중치를 부여할지 결정할 수 있는 강력한 생태계를 만듭니다.
+
+이러한 계층들이 **IP Validation Service (IPVS)**&#xB97C; 구성합니다 - 완전히 분산된 신뢰의 마켓플레이스입니다. 기존의 감지 제공자 시스템은 IP 진위성에 대한 전문적이고 검증 가능한 평가를 제공할 수 있는 더 광범위한 신호 기여자 생태계로 계속 확장될 것입니다. IPVS는 인센티브가 부여된 참여를 통해 다양한 검증자들이 전문화된 신호를 제공하기 위해 협력하는 자급자족 시장을 조성합니다.
+
+따라서 잠재적으로 더 큰 혼란을 야기할 수 있는 프론트 러닝 위험을 초래하는 중복을 방지하는 대신, 신호와 증명을 통해 원본 IP가 다른 것들보다 더 잘 드러나도록 합니다.
+
+## "SAS는 언제 내 IP를 스캔하나요?"
+
+<Note>
+  Story Attestation Service는 **commercial IP**에 대해서만 IP 침해 검사를 실행한다는 점에 주목하는 것이 중요합니다. 즉, 최소한 하나의 [License Terms](/concepts/licensing-module/license-terms) where `commercialUse = true`.
+
+  만약 귀하의 IP가 비상업적이라면, 이 섹션은 귀하에게 해당되지 않습니다.
+</Note>
+
+When [registering your IP on Story](/developers/tutorials/how-to-register-ip-on-story)할 때, [📝 IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard)를 구현하는 IP 특정 메타데이터를 전달합니다. 이 표준에서는 3개의 필드가 있습니다:
+
+| 속성 이름       | 유형       | 설명                                                                                                                                                                                                        |
+| :---------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mediaUrl`  | `string` | 침해 검사에 사용되며, 실제 미디어(예: 이미지 또는 오디오)를 가리킵니다                                                                                                                                                                 |
+| `mediaHash` | `string` | SHA-256 해싱 알고리즘을 사용한 미디어의 해시된 문자열. [here](/concepts/ip-asset/ipa-metadata-standard#hashing-content)에서 그 방법을 확인하세요.                                                                                        |
+| `mediaType` | `string` | 미디어 유형(오디오, 비디오, 이미지), [mimeType](https://developer.mozilla.org/en-US/docs/Web/HTTP/MIME_types/Common_types)을 기반으로 합니다. 허용된 미디어 유형은 [here](/concepts/ip-asset/ipa-metadata-standard#media-types)에서 확인하세요. |
+
+이것들은 상업적 침해 검사에 사용됩니다. `mediaUrl`를 통해 전달하는 모든 미디어는 침해 감지 제공자들에 의해 검사되며 침해가 감지되면 플래그가 지정됩니다.
+
+만약 이러한 `media.*` 필드들을 전달하지 않으면, 침해 감지가 수행되지 않고 IP의 유효성이 증명되지 않을 것입니다.
+
+### 현재 제한사항
+
+* 상업적 조건(`media.*`)을 첨부하기 전에 `commercialUse = true` 필드를 설정해야 합니다. 그렇지 않으면 검사가 수행되지 않습니다.
+* 증명은 IP 포털(곧 출시될 "IP를 위한 GitHub" 플랫폼)에서만 표시됩니다. 누구나 결과에 접근할 수 있도록 증명을 공개 기록에 게시하는 작업을 진행 중입니다(**COMING SOON!**).
+* 오직 **인터넷에 존재하는** 미디어만 감지됩니다. 누군가가 Story에 새로운 IP를 등록하면, 우리 제공자들이 그것에 대한 데이터가 없기 때문에 단순히 검증됨으로 반환될 것입니다.
+
+## 현재 제공자
+
+<CardGroup cols={2}>
+  <Card title="Yakoa" href="https://www.yakoa.io/" icon="house" color="#190087">
+    Yakoa는 AI와 머신러닝을 사용하여 여러 블록체인을 스캔하고 온체인 데이터를 분석하여 디지털 자산의 직접적인 복사, 스타일 위조, 무단 복제를 감지합니다. 새로운 자산을 알려진 IP 데이터베이스와 비교하여 잠재적 위반을 실시간으로 표시하고 집행을 위한 상세한 감사 로그를 제공합니다.
+  </Card>
+
+  <Card title="Pex" href="https://www.pex.com/" icon="house" color="#019cf4">
+    Pex.com은 고급 콘텐츠 인식과 분석을 활용하여 창작자와 권리 소유자가 온라인에서 시각 및 오디오 미디어를 추적, 관리, 수익화할 수 있도록 돕는 디지털 플랫폼입니다. 웹 전반에 걸쳐 콘텐츠가 어떻게 사용되는지 모니터링하여 사용자가 라이선스 기회를 발견하고 지적 재산권을 보호하기 쉽게 만듭니다.
+  </Card>
+</CardGroup>
+
+## 증명 제공자 되기
+
+Story Attestation Service는 현재 활발히 개발 중입니다. IP 검증(침해, 신원, 출처 등)을 수행하는 경우 증명 제공자가 될 수 있습니다. 이를 위해서는 이 [양식](https://docs.google.com/forms/d/10n3AnWoiLsxpaY17kJlxRazysDe8aOWJgirRnfkFRAk/edit)을 작성해 주세요.

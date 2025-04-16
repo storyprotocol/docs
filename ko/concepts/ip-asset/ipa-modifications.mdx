@@ -1,0 +1,31 @@
+---
+title: IP 수정 및 제한사항
+description: IP 자산의 수정 및 제한사항에 대해 알아보기
+---
+
+# IP 자산 수정
+
+IP 자산은 몇 가지 방법으로 수정/사용자 지정할 수 있습니다. 예를 들어, [라이선스 설정](/concepts/licensing-module/license-config)을 통해 아래에서 보시게 될 몇 가지 사항을 변경하거나, 메타데이터를 변경하는 등의 방법이 있습니다. 이러한 사항들은**특정 조건이 없는 한 항상 변경할 수 있습니다**.
+
+| 동작                      | 조건                                                                                                                                                                                                                | 다음을 통해...                                                                                                                               |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| 라이선스 발행 수수료 수정          | 발행 수수료를 **인상**할 수 있습니다. **인하는 불가능**합니다.                                                                                                                                                                           | [라이선스 설정](/concepts/licensing-module/license-config)                                                                                    |
+| 라이선싱 훅 수정               | 훅은 반드시 [Module Registry](/concepts/registry/module-registry)에 화이트리스트로 등록되어 있어야 합니다.                                                                                                                               | [라이선스 설정](/concepts/licensing-module/license-config)                                                                                    |
+| 수정 `commercialRevShare` | 수익 공유 비율을 **인상**할 수 있습니다. **인하는 불가능**합니다. <br /><br />하지만, **가능**오버라이트를 비활성화하기 위해 0으로 설정할 수 있습니다.                                                                                                                 | [라이선스 설정](/concepts/licensing-module/license-config)                                                                                    |
+| 라이선스 비활성화/활성화           | 라이선스는 언제든지 비활성화하거나 다시 활성화할 수 있습니다.<br /><br />*라이선스를 비활성화하면 향후 라이선스 발행은 불가능하지만, 기존 라이선스에는 영향을 미치지 않습니다.*                                                                                                          | [라이선스 설정](/concepts/licensing-module/license-config)                                                                                    |
+| 메타데이터 수정                | 메타데이터가 고정되어 있으면 수정할 수 없습니다**동결됨**. 이는 다음을 호출하여 수행됩니다 `freezeMetadata` 내의 [CoreMetadataModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/metadata/CoreMetadataModule.sol). | [CoreMetadataModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/metadata/CoreMetadataModule.sol) |
+
+## 라이선스 훅 수정
+
+IP는 다음을 사용하여 추가로 사용자 정의하거나 수정할 수 있습니다 [License Hook](/concepts/hooks#licensing-hooks). 이는 License Config 내에서 설정되는 함수로, [License Token](/concepts/licensing-module/license-token) (또는 간단히 "라이선스")이 발행되기 전에 호출됩니다. License Hook으로 구현할 수 있는 다양한 기능들이 있으며, 이는 **항상 수정 가능**합니다:
+
+| 기능          | 설명                                                                |
+| ----------- | ----------------------------------------------------------------- |
+| 동적 라이선스 수수료 | 라이선스의 가격을 동적으로 설정할 수 있습니다. 예를 들어, 본딩 커브 로직을 통해 동적으로 업데이트될 수 있습니다. |
+| 총 라이선스 수    | 발행될 수 있는 최대 라이선스 토큰 수에 기반하여 함수를 중단할 수 있습니다.                       |
+| 특정 수신자      | 특정 수신자에게만 라이선스 발행을 제한할 수 있습니다.                                    |
+| 기타...       | 필요에 따라 추가 라이선싱 훅 기능을 구현할 수 있습니다.                                  |
+
+# 그룹 IPA 제한
+
+참조: [👥 Group IPA Restrictions](/concepts/grouping-module#group-restrictions) 자세한 정보를 확인하세요.

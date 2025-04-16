@@ -1,0 +1,49 @@
+---
+title: Dev Overview
+sidebarTitle: Overview
+description: 우리의 프로토콜 위에 구축하고자 하는 개발자들을 위한 안내서.
+---
+
+개발자라면, 필요한 모든 것이 여기 있습니다:
+
+<Tip>
+  찾으시는 것이 없나요? [Builder Discord](https://discord.gg/storybuilders)에서 문서 작성자에게 도움을 요청하세요.
+</Tip>
+
+<CardGroup cols={3}>
+  <Card title="Testnet Block Explorer" href="https://aeneid.storyscan.io" icon="house">
+    Story의 모든 테스트넷 블록 및 트랜잭션 데이터를 확인하세요.
+  </Card>
+
+  <Card title="IP-related Explorer" href="https://aeneid.explorer.story.foundation" icon="user">
+    등록, 라이선싱 등 IP 상호작용과 관련된 테스트넷 트랜잭션 데이터를 확인하세요.
+  </Card>
+
+  <Card title="Quickstart" href="/quickstart" icon="truck-fast">
+    Story에서 빠르게 구축을 시작하세요.
+  </Card>
+</CardGroup>
+
+## SDK
+
+SDK를 배우기 위한 다음 리소스들을 확인하세요:
+
+* [SDK Reference](/sdk-reference) - 각 함수에 대한 상세한 **설명과 예제**가 포함된 ***전체 SDK 레퍼런스를 확인하세요 (바로 코딩을 시작할 수 있는 작동 코드 포함)***
+* [TypeScript SDK Guide](/developers/typescript-sdk/overview) - SDK의 가장 일반적인 사용(IP 등록, 약관 첨부, 파생작 등록 등)을 설정하고 구현하는 방법에 대한 자세한 단계별 안내서 ***(바로 코딩을 시작할 수 있는 작동 코드 포함)***
+* [Tutorials](/developers/tutorials/overview) - "Story에서 음악을 어떻게 등록하나요?", "SDK로 지갑 없는 온보딩을 어떻게 구현하나요?" 등과 같은 더 구체적이고 외부적인 주제/튜토리얼 ***(바로 코딩을 시작할 수 있는 작동 코드 포함)***
+
+## 스마트 컨트랙트
+
+프로토콜을 배우기 위해 다음 리소스를 확인하세요:
+
+* [스마트 컨트랙트 가이드](/developers/smart-contracts-guide/overview) - 프로토콜의 가장 일반적인 사용 사례를 설정하고 구현하는 방법에 대한 안&#xB0B4;***(바로 코딩을 시작할 수 있도록 작동하는 코드 포함)***
+* [배포된 스마트 컨트랙트](/developers/deployed-smart-contracts) - 모든 배포된 프로토콜 주소
+* [튜토리얼](/developers/tutorials/overview) - 음악 등록, AI 생성 이미지 등록 등 더 구체적인 주제를 다루는 튜토리얼 포&#xD568;***(바로 코딩을 시작할 수 있도록 작동하는 코드 포함)***
+
+<Warning>
+  사용하지 마세요`RANDAO` 의사 난수 생성에는 대신 온체인 VRF(Pyth 또는 Gelato)를 사용하세요. 현재, `RANDAO` 값은 부모 블록 해시로 설정되어 있어 X-1 블록에 대해서는 무작위가 아닙니다.
+</Warning>
+
+## API
+
+우리의 [API 레퍼런스](/api-reference)를 확인하세요.

@@ -1,0 +1,583 @@
+---
+title: LicenseRegistry
+---
+
+LicenseRegistry는 IP ID 라이센서가 파생 IP를 생성하기 위해 부여한 라이센스를 나타내는 라이센스 NFT(LNFT)의 등록과 추적을 관리합니다. 라이센스 템플릿, 라이센스 조건, 그리고 부모와 파생 IP 자산 간의 관계를 관리하는 기능을 제공합니다.
+
+## 상태 변수
+
+### MAX\_PARENTS
+
+```solidity
+uint256 public constant MAX_PARENTS = 16
+```
+
+파생 IP가 가질 수 있는 최대 부모 IP 수입니다.
+
+### MAX\_ANCESTORS
+
+```solidity
+uint256 public constant MAX_ANCESTORS = 1024
+```
+
+파생 IP가 가질 수 있는 최대 조상 IP 수입니다.
+
+### IP\_GRAPH
+
+```solidity
+address public constant IP_GRAPH = address(0x0101)
+```
+
+IP 간의 관계를 추적하는 IP Graph 컨트랙트의 주소입니다.
+
+### GROUP\_IP\_ASSET\_REGISTRY
+
+```solidity
+IGroupIPAssetRegistry public immutable GROUP_IP_ASSET_REGISTRY
+```
+
+Group IP Asset Registry 컨트랙트의 주소입니다.
+
+### LICENSING\_MODULE
+
+```solidity
+ILicensingModule public immutable LICENSING_MODULE
+```
+
+Licensing Module 컨트랙트의 주소입니다.
+
+### DISPUTE\_MODULE
+
+```solidity
+IDisputeModule public immutable DISPUTE_MODULE
+```
+
+Dispute Module 컨트랙트의 주소입니다.
+
+### IP\_GRAPH\_ACL
+
+```solidity
+IPGraphACL public immutable IP_GRAPH_ACL
+```
+
+IP Graph Access Control List 컨트랙트의 주소입니다.
+
+### EXPIRATION\_TIME
+
+```solidity
+bytes32 public constant EXPIRATION_TIME = "EXPIRATION_TIME"
+```
+
+IP Account 스토리지에 만료 시간을 저장하는 데 사용되는 키입니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) public initializer
+```
+
+LicenseRegistry 컨트랙트를 초기화합니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 컨트랙트의 주소입니다.
+
+### setDefaultLicenseTerms
+
+```solidity
+function setDefaultLicenseTerms(address newLicenseTemplate, uint256 newLicenseTermsId) external restricted
+```
+
+모든 IP에 기본적으로 첨부되는 기본 라이센스 조건을 설정합니다.
+
+**Parameters:**
+
+* `newLicenseTemplate`: 새로운 기본 라이센스 템플릿의 주소입니다.
+* `newLicenseTermsId`: 새로운 기본 라이센스 조건의 ID입니다.
+
+### registerLicenseTemplate
+
+```solidity
+function registerLicenseTemplate(address licenseTemplate) external restricted
+```
+
+Story에 새로운 라이센스 템플릿을 등록합니다.
+
+**Parameters:**
+
+* `licenseTemplate`: 등록할 라이센스 템플릿의 주소입니다.
+
+### setLicensingConfigForLicense
+
+```solidity
+function setLicensingConfigForLicense(
+    address ipId,
+    address licenseTemplate,
+    uint256 licenseTermsId,
+    Licensing.LicensingConfig calldata licensingConfig
+) external onlyLicensingModule
+```
+
+특정 IP에 첨부된 특정 라이센스에 대한 민팅 라이센스 구성을 설정합니다.
+
+**Parameters:**
+
+* `ipId`: 구성이 설정되는 IP의 주소입니다.
+* `licenseTemplate`: 사용된 라이센스 템플릿의 주소입니다.
+* `licenseTermsId`: 라이센스 템플릿 내의 라이센스 조건 ID입니다.
+* `licensingConfig`: 라이센스 민팅을 위한 구성입니다.
+
+### attachLicenseTermsToIp
+
+```solidity
+function attachLicenseTermsToIp(
+    address ipId,
+    address licenseTemplate,
+    uint256 licenseTermsId
+) external onlyLicensingModule
+```
+
+IP에 라이센스 조건을 첨부합니다.
+
+**Parameters:**
+
+* `ipId`: 라이센스 조건이 첨부될 IP의 주소입니다.
+* `licenseTemplate`: 라이센스 템플릿의 주소입니다.
+* `licenseTermsId`: 라이센스 조건의 ID입니다.
+
+### registerDerivativeIp
+
+```solidity
+function registerDerivativeIp(
+    address childIpId,
+    address[] calldata parentIpIds,
+    address licenseTemplate,
+    uint256[] calldata licenseTermsIds,
+    bool isUsingLicenseToken
+) external onlyLicensingModule
+```
+
+파생 IP와 부모 IP와의 관계를 등록합니다.
+
+**Parameters:**
+
+* `childIpId`: 파생 IP의 주소입니다.
+* `parentIpIds`: 부모 IP 주소들의 배열입니다.
+* `licenseTemplate`: 사용된 라이센스 템플릿의 주소입니다.
+* `licenseTermsIds`: 라이센스 조건 ID들의 배열입니다.
+* `isUsingLicenseToken`: 파생 IP가 라이센스 토큰과 함께 등록되는지 여부입니다.
+
+### initializeLicenseTemplate
+
+```solidity
+function initializeLicenseTemplate(address ipId, address licenseTemplate) external onlyLicensingModule
+```
+
+IP에 라이센스 템플릿이 설정되어 있지 않은 경우 라이센스 템플릿을 설정합니다.
+
+**Parameters:**
+
+* `ipId`: 라이센스 템플릿이 첨부될 IP의 주소입니다.
+* `licenseTemplate`: 라이센스 템플릿의 주소입니다.
+
+### verifyMintLicenseToken
+
+```solidity
+function verifyMintLicenseToken(
+    address licensorIpId,
+    address licenseTemplate,
+    uint256 licenseTermsId,
+    bool isMintedByIpOwner
+) external view returns (Licensing.LicensingConfig memory)
+```
+
+라이센스 토큰의 민팅을 검증합니다.
+
+**Parameters:**
+
+* `licensorIpId`: 라이센서 IP의 주소입니다.
+* `licenseTemplate`: 라이센스 조건이 정의된 라이센스 템플릿의 주소입니다.
+* `licenseTermsId`: 라이센스 토큰을 민팅할 라이센스 조건의 ID입니다.
+* `isMintedByIpOwner`: 라이센스 토큰이 IP 소유자에 의해 민팅되는지 여부입니다.
+
+**Returns:**
+
+* `Licensing.LicensingConfig`: 라이센스 민팅을 위한 구성입니다.
+
+### verifyGroupAddIp
+
+```solidity
+function verifyGroupAddIp(
+    address groupId,
+    address groupRewardPool,
+    address ipId,
+    address groupLicenseTemplate,
+    uint256 groupLicenseTermsId
+) external view returns (Licensing.LicensingConfig memory ipLicensingConfig)
+```
+
+그룹이 주어진 IP를 추가할 수 있는지 확인합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹의 주소.
+* `groupRewardPool`: 그룹의 리워드 풀 주소.
+* `ipId`: 그룹에 추가될 IP의 주소.
+* `groupLicenseTemplate`: 그룹에 연결된 라이선스 템플릿의 주소.
+* `groupLicenseTermsId`: 그룹에 연결된 라이선스 조항의 ID.
+
+**Returns:**
+
+* `ipLicensingConfig`: IP에 연결된 라이선스의 구성.
+
+### isRegisteredLicenseTemplate
+
+```solidity
+function isRegisteredLicenseTemplate(address licenseTemplate) external view returns (bool)
+```
+
+라이선스 템플릿이 등록되어 있는지 확인합니다.
+
+**Parameters:**
+
+* `licenseTemplate`: 확인할 라이선스 템플릿의 주소.
+
+**Returns:**
+
+* `bool`: 라이선스 템플릿이 등록되어 있는지 여부.
+
+### isDerivativeIp
+
+```solidity
+function isDerivativeIp(address childIpId) external view returns (bool)
+```
+
+IP가 파생 IP인지 확인합니다.
+
+**Parameters:**
+
+* `childIpId`: 확인할 IP의 주소.
+
+**Returns:**
+
+* `bool`: IP가 파생 IP인지 여부.
+
+### hasDerivativeIps
+
+```solidity
+function hasDerivativeIps(address parentIpId) external view returns (bool)
+```
+
+IP가 파생 IP들을 가지고 있는지 확인합니다.
+
+**Parameters:**
+
+* `parentIpId`: 확인할 IP의 주소.
+
+**Returns:**
+
+* `bool`: IP가 파생 IP들을 가지고 있는지 여부.
+
+### exists
+
+```solidity
+function exists(address licenseTemplate, uint256 licenseTermsId) external view returns (bool)
+```
+
+라이선스 조항이 존재하는지 확인합니다.
+
+**Parameters:**
+
+* `licenseTemplate`: 라이선스 조항이 정의된 라이선스 템플릿의 주소.
+* `licenseTermsId`: 라이선스 조항의 ID.
+
+**Returns:**
+
+* `bool`: 라이선스 조항이 존재하는지 여부.
+
+### hasIpAttachedLicenseTerms
+
+```solidity
+function hasIpAttachedLicenseTerms(
+    address ipId,
+    address licenseTemplate,
+    uint256 licenseTermsId
+) external view returns (bool)
+```
+
+IP가 라이선스 조항을 연결했는지 확인합니다.
+
+**Parameters:**
+
+* `ipId`: 확인할 IP의 주소.
+* `licenseTemplate`: 라이선스 조항이 정의된 라이선스 템플릿의 주소.
+* `licenseTermsId`: 라이선스 조항의 ID.
+
+**Returns:**
+
+* `bool`: IP가 라이선스 조항을 연결했는지 여부.
+
+### getAttachedLicenseTerms
+
+```solidity
+function getAttachedLicenseTerms(
+    address ipId,
+    uint256 index
+) external view returns (address licenseTemplate, uint256 licenseTermsId)
+```
+
+인덱스로 IP의 연결된 라이선스 조항을 가져옵니다.
+
+**Parameters:**
+
+* `ipId`: IP의 주소.
+* `index`: IP의 모든 연결된 라이선스 조항 배열 내의 연결된 라이선스 조항의 인덱스.
+
+**Returns:**
+
+* `licenseTemplate`: 라이선스 조항이 정의된 라이선스 템플릿의 주소.
+* `licenseTermsId`: 라이선스 조항의 ID.
+
+### getAttachedLicenseTermsCount
+
+```solidity
+function getAttachedLicenseTermsCount(address ipId) external view returns (uint256)
+```
+
+IP의 연결된 라이선스 조항의 수를 가져옵니다.
+
+**Parameters:**
+
+* `ipId`: IP의 주소.
+
+**Returns:**
+
+* `uint256`: 연결된 라이선스 조항의 수.
+
+### getDerivativeIp
+
+```solidity
+function getDerivativeIp(address parentIpId, uint256 index) external view returns (address childIpId)
+```
+
+인덱스로 IP의 파생 IP를 가져옵니다.
+
+**Parameters:**
+
+* `parentIpId`: IP의 주소.
+* `index`: IP의 모든 파생 IP 배열 내의 파생 IP의 인덱스.
+
+**Returns:**
+
+* `childIpId`: 파생 IP의 주소.
+
+### getDerivativeIpCount
+
+```solidity
+function getDerivativeIpCount(address parentIpId) external view returns (uint256)
+```
+
+IP의 파생 IP 수를 가져옵니다.
+
+**Parameters:**
+
+* `parentIpId`: IP의 주소.
+
+**Returns:**
+
+* `uint256`: 파생 IP의 수.
+
+### getParentIp
+
+```solidity
+function getParentIp(address childIpId, uint256 index) external view returns (address parentIpId)
+```
+
+인덱스로 IP의 부모 IP를 가져옵니다.
+
+**Parameters:**
+
+* `childIpId`: IP의 주소.
+* `index`: IP의 모든 부모 IP 배열 내의 부모 IP의 인덱스.
+
+**Returns:**
+
+* `parentIpId`: 부모 IP의 주소.
+
+### isParentIp
+
+```solidity
+function isParentIp(address parentIpId, address childIpId) external view returns (bool)
+```
+
+IP가 다른 IP의 부모인지 확인합니다.
+
+**Parameters:**
+
+* `parentIpId`: 잠재적 부모 IP의 주소.
+* `childIpId`: 잠재적 자식 IP의 주소.
+
+**Returns:**
+
+* `bool`: IP가 다른 IP의 부모인지 여부.
+
+### getParentIpCount
+
+```solidity
+function getParentIpCount(address childIpId) external view returns (uint256)
+```
+
+부모 IP의 수를 가져옵니다.
+
+**Parameters:**
+
+* `childIpId`: 자식 IP의 주소.
+
+**Returns:**
+
+* `uint256`: 부모 IP의 수.
+
+### getAncestorsCount
+
+```solidity
+function getAncestorsCount(address ipId) external returns (uint256)
+```
+
+조상 IP의 수를 가져옵니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ID.
+
+**Returns:**
+
+* `uint256`: 조상 IP의 수.
+
+### getLicensingConfig
+
+```solidity
+function getLicensingConfig(
+    address ipId,
+    address licenseTemplate,
+    uint256 licenseTermsId
+) external view returns (Licensing.LicensingConfig memory)
+```
+
+IP의 주어진 라이선스 조건에 대한 민팅 라이선스 구성을 검색합니다.
+
+**Parameters:**
+
+* `ipId`: IP의 주소.
+* `licenseTemplate`: 라이선스 조건이 정의된 라이선스 템플릿의 주소.
+* `licenseTermsId`: 라이선스 조건의 ID.
+
+**Returns:**
+
+* `Licensing.LicensingConfig`: 라이선스 민팅을 위한 구성.
+
+### getExpireTime
+
+```solidity
+function getExpireTime(address ipId) external view returns (uint256)
+```
+
+IP의 만료 시간을 가져옵니다.
+
+**Parameters:**
+
+* `ipId`: IP의 주소.
+
+**Returns:**
+
+* `uint256`: 만료 시간, 0은 만료되지 않음을 의미합니다.
+
+### isExpiredNow
+
+```solidity
+function isExpiredNow(address ipId) external view returns (bool)
+```
+
+IP가 만료되었는지 확인합니다.
+
+**Parameters:**
+
+* `ipId`: IP의 주소.
+
+**Returns:**
+
+* `bool`: IP가 만료되었는지 여부.
+
+### getDefaultLicenseTerms
+
+```solidity
+function getDefaultLicenseTerms() external view returns (address licenseTemplate, uint256 licenseTermsId)
+```
+
+기본 라이선스 조건을 반환합니다.
+
+**Returns:**
+
+* `licenseTemplate`: 기본 라이선스 템플릿의 주소.
+* `licenseTermsId`: 기본 라이선스 조건의 ID.
+
+### isDefaultLicense
+
+```solidity
+function isDefaultLicense(address licenseTemplate, uint256 licenseTermsId) external view returns (bool)
+```
+
+라이선스 조건이 기본 라이선스 조건인지 확인합니다.
+
+**Parameters:**
+
+* `licenseTemplate`: 라이선스 템플릿의 주소.
+* `licenseTermsId`: 라이선스 조건의 ID.
+
+**Returns:**
+
+* `bool`: 라이선스 조건이 기본 라이선스 조건인지 여부.
+
+### getParentLicenseTerms
+
+```solidity
+function getParentLicenseTerms(
+    address childIpId,
+    address parentIpId
+) external view returns (address licenseTemplate, uint256 licenseTermsId)
+```
+
+자식 IP가 부모 IP와 연결되는 라이선스 조건을 반환합니다.
+
+**Parameters:**
+
+* `childIpId`: 자식 IP의 주소.
+* `parentIpId`: 부모 IP의 주소.
+
+**Returns:**
+
+* `licenseTemplate`: 라이선스 템플릿의 주소.
+* `licenseTermsId`: 라이선스 조건의 ID.
+
+### getRoyaltyPercent
+
+```solidity
+function getRoyaltyPercent(
+    address ipId,
+    address licenseTemplate,
+    uint256 licenseTermsId
+) external view returns (uint32 royaltyPercent)
+```
+
+IP의 라이선스 조건에 대한 로열티 비율을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: IP의 주소.
+* `licenseTemplate`: 라이선스 조건이 정의된 라이선스 템플릿의 주소.
+* `licenseTermsId`: 라이선스 조건의 ID.
+
+**Returns:**
+
+* `royaltyPercent`: 로열티 비율 100%는 100\_000\_000입니다.
