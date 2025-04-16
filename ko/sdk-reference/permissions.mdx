@@ -1,0 +1,148 @@
+---
+title: Permissions
+description: PermissionClient는 Story 내에서 IP 계정에 대한 권한을 관리할 수 있게 해줍니다.
+---
+
+## PermissionClient
+
+### 메소드
+
+* setPermission
+* createSetPermissionSignature
+* setAllPermissions
+* setBatchPermissions
+* createBatchPermissionSignature
+
+### setPermission
+
+특정 함수 호출에 대한 권한을 설정합니다.
+
+각 정책은 IP 계정 주소에서 서명자 주소로, 수신자\
+주소로, 함수 선택자로, 권한 수준으로의 매핑으로 표현됩니다. 권한 수준은 0(기권), 1(허용), 또는\
+2(거부)가 될 수 있습니다.
+
+기본적으로 모든 정책은 0(기권)으로 설정되어 있으며, 이는 권한이 설정되지 않았음을 의미합니다. IP 계정의 소유자는 기본적으로 모든 권한을 가집니다.
+
+| 메소드             | 타입                                                                    |
+| --------------- | --------------------------------------------------------------------- |
+| `setPermission` | `(request: SetPermissionsRequest) => Promise<SetPermissionsResponse>` |
+
+Parameters:
+
+* `request.ipId`: 에 대한 권한을 부여하는 IP ID `signer`.
+* `request.signer`: 를 호출할 수 있는 주소 `to` 를 대신하여 `ipAccount`.
+* `request.to`: 가 호출할 수 있는 주소 `signer` (현재는 모듈만 가능 `to`)
+* `request.permission`: 새로운 권한 수준.
+* `request.func`: \[선택사항] 의 함수 선택자 문자열 `to` 가 호출할 수 있는 `signer` 를 대신하여 `ipAccount`. 기본적으로 모든 함수를 허용합니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type SetPermissionsResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
+};
+```
+
+### createSetPermissionSignature
+
+서명이 있는 특정 권한이 와일드카드 권한을 재정의합니다.
+
+| 메소드                            | 타입                                                                                  |
+| ------------------------------ | ----------------------------------------------------------------------------------- |
+| `createSetPermissionSignature` | `(request: CreateSetPermissionSignatureRequest) => Promise<SetPermissionsResponse>` |
+
+Parameters:
+
+* `request.ipId`: 에 대한 권한을 부여하는 IP ID `signer`.
+* `request.signer`: 를 호출할 수 있는 주소 `to` 를 대신하여 `ipAccount`.
+* `request.to`: 호출할 수 있는 주소`signer` (현재는 모듈만 가능`to`)
+* `request.permission`: 새로운 권한 레벨.
+* `request.func`: \[선택사항] 함수 선택자 문자열`to`이(가) 호출할 수 있는`signer`을(를) 대신하여`ipAccount`. 기본적으로 모든 함수를 허용합니다.
+* `request.deadline`: \[선택사항] 서명의 기한(밀리초), 기본값은 1000ms입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션[옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type SetPermissionsResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
+};
+```
+
+### setAllPermissions
+
+모든 모듈의 모든 함수에 대한 서명자의 권한을 설정합니다.
+
+| 메소드                 | 타입                                                                       |
+| ------------------- | ------------------------------------------------------------------------ |
+| `setAllPermissions` | `(request: SetAllPermissionsRequest) => Promise<SetPermissionsResponse>` |
+
+Parameters:
+
+* `request.ipId`: 권한을 부여하는 IP ID`signer`.
+* `request.signer`: 권한을 받는 서명자의 주소.
+* `request.permission`: 새로운 권한.
+* `request.txOptions`: \[선택사항] 트랜잭션[옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type SetPermissionsResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
+};
+```
+
+### setBatchPermissions
+
+단일 트랜잭션에서 일괄 권한을 설정합니다.
+
+| 메소드                   | 타입                                                                         |
+| --------------------- | -------------------------------------------------------------------------- |
+| `setBatchPermissions` | `(request: SetBatchPermissionsRequest) => Promise<SetPermissionsResponse>` |
+
+Parameters:
+
+* `request.permissions[]`: 배열`Permission` 구조, 각각 설정할 권한을 나타냅니다.
+  * `request.permissions[].ipId`: 권한을 부여하는 IP ID`signer`.
+  * `request.permissions[].signer`: 호출할 수 있는 주소`to`을(를) 대신하여`ipAccount`.
+  * `request.permissions[].to`: 호출할 수 있는 주소`signer` (현재는 모듈만 가능`to`)
+  * `request.permissions[].permission`: 새로운 권한 레벨.
+  * `request.permissions[].func`: \[선택사항] 함수 선택자 문자열`to`이(가) 호출할 수 있는`signer`을(를) 대신하여`ipAccount`. 기본적으로 모든 함수를 허용합니다.
+* `request.deadline`: \[선택사항] 서명의 기한(밀리초), 기본값은 1000ms입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션[옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type SetPermissionsResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
+};
+```
+
+### createBatchPermissionSignature
+
+서명이 포함된 단일 트랜잭션에서 일괄 권한을 설정합니다.
+
+| 메소드                              | 타입                                                                                    |
+| -------------------------------- | ------------------------------------------------------------------------------------- |
+| `createBatchPermissionSignature` | `(request: CreateBatchPermissionSignatureRequest) => Promise<SetPermissionsResponse>` |
+
+Parameters:
+
+* `request.ipId`: 권한을 부여하는 IP ID`signer`
+* `request.permissions[]` - 배열`Permission` 구조, 각각 설정할 권한을 나타냅니다.
+  * `request.permissions[].ipId`: 권한을 부여하는 IP ID`signer`.
+  * `request.permissions[].signer`: 호출할 수 있는 주소`to`을(를) 대신하여`ipAccount`.
+  * `request.permissions[].to`: 호출할 수 있는 주소`signer` (현재는 모듈만 가능`to`)
+  * `request.permissions[].permission`: 새로운 권한 레벨.
+  * `request.permissions[].func`: \[선택사항] 함수 선택자 문자열`to`이(가) 호출할 수 있는`signer`을(를) 대신하여`ipAccount`. 기본적으로 모든 함수를 허용합니다.
+* `request.txOptions`: \[선택사항] 트랜잭션[옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type SetPermissionsResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
+};
+```

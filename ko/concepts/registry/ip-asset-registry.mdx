@@ -1,0 +1,20 @@
+---
+title: IP Asset Registry
+description: Story에서 IP를 등록하는 역할을 하는 레지스트리에 대해 알아보세요.
+---
+
+<CardGroup cols={1}>
+  <Card title="IPAssetRegistry.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/registries/IPAssetRegistry.sol" icon="scroll" color="#ccb092">
+    IP Asset Registry의 스마트 컨트랙트를 확인하세요.
+  </Card>
+</CardGroup>
+
+IP Asset Registry는 프로토콜에 IP를 등록하는 역할을 담당합니다. 프로토콜에 등록된 각각의 새로운 IP Asset을 위해 전용 [IP Account](/concepts/ip-asset/ip-account) 컨트랙트를 배포합니다 (*NOTE: This registry inherits from the* [IP Account Registry](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/registries/IPAccountRegistry.sol))
+
+### 주요 기능
+
+```solidity IPAssetRegistry.sol
+function register(uint256 chainid, address tokenContract, uint256 tokenId) external whenNotPaused returns (address id)
+```
+
+이 기능은 ERC-721 NFT를 Story의 새로운 IP Asset으로 등록합니다.

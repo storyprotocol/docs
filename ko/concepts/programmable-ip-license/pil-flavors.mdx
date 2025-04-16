@@ -1,0 +1,366 @@
+---
+title: PIL Flavors (예시)
+description: 사용하기 쉽게 사전 구성된 라이선스 조건
+icon: soft-serve
+---
+
+The [💊 Programmable IP License (PIL)](/concepts/programmable-ip-license/overview)은 매우 구성 가능하지만, 사용하기 쉽도록 인기 있는 사전 구성된 라이선스 조건("플레이버"라고도 함)을 지원합니다. 다음이 가장 인기 있는 옵션이 될 것으로 예상됩니다:
+
+## 플레이버 #1: 비상업적 소셜 리믹스
+
+<Note>
+  이 플레이버는 이미 우리 프로토콜에 `licenseTermsId = 1`로 등록되어 있습니다. 이는 입력값이 필요하지 않기 때문에 미리 등록해 두었습니다.
+</Note>
+
+세상이 당신의 창작물을 기반으로 구축하고 즐길 수 있게 하세요. 이 라이선스는 당신의 작품에 대한 모든 사용을 추적하고 완전한 크레딧을 제공하면서 무한한 무료 리믹스를 허용합니다. 유사한 예: 저작자 표시가 포함된 TikTok.
+
+### 다른 사람들이 할 수 있는 것은?
+
+| 가능한 것                                      | 불가능한 것                                                |
+| ------------------------------------------ | ----------------------------------------------------- |
+| ✅ 이 작품을 리믹스 (`derivativesAllowed == true`) | ❌ 원작과 파생 작품의 상업적 이용 (`commercialUse == false`)        |
+| ✅ 리믹스를 어디서나 배포                             | ❌ 파생 작품에 대한 저작권 주장 (`derivativesAttribution == true`) |
+| ✅ 무료로 라이선스 획득 (`defaultMintingFee == 0`)   | ❌ 원작에 대한 저작권 주장 ("저작자 표시"는 오프체인 조건에서 참으로 설정됨)         |
+
+### PIL 조건 값
+
+* **온체인**:
+
+<CodeGroup>
+  ```solidity Solidity
+  PILTerms({
+    transferable: true,
+    royaltyPolicy: address(0),
+    defaultMintingFee: 0,
+    expiration: 0,
+    commercialUse: false,
+    commercialAttribution: false,
+    commercializerChecker: address(0),
+    commercializerCheckerData: EMPTY_BYTES,
+    commercialRevShare: 0,
+    commercialRevCeiling: 0,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0,
+    currency: address(0),
+    uri: "https://github.com/piplabs/pil-document/blob/998c13e6ee1d04eb817aefd1fe16dfe8be3cd7a2/off-chain-terms/NCSR.json"
+  });
+  ```
+
+  ```typescript TypeScript
+  import { zeroAddress } from "viem";
+
+  const nonCommercialSocialRemix = {
+    transferable: true,
+    royaltyPolicy: zeroAddress,
+    defaultMintingFee: 0n,
+    expiration: 0n,
+    commercialUse: false,
+    commercialAttribution: false,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: "0x",
+    commercialRevShare: 0,
+    commercialRevCeiling: 0n,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0n,
+    currency: zeroAddress,
+    uri: "https://github.com/piplabs/pil-document/blob/998c13e6ee1d04eb817aefd1fe16dfe8be3cd7a2/off-chain-terms/NCSR.json",
+  };
+  ```
+</CodeGroup>
+
+* **Off-chain:**
+
+| 매개변수          | 옵션 / 태그                                                                     |
+| ------------- | --------------------------------------------------------------------------- |
+| 지역            | 제한 없음                                                                       |
+| 배포 채널         | 제한 없음                                                                       |
+| 저작자 표시        | 참                                                                           |
+| 콘텐츠 기준        | 혐오 금지, 전연령 적합, 약물-무기 금지, 음란물 금지                                             |
+| 서브라이선스 가능     | 거짓                                                                          |
+| AI 학습 모델      | 거짓                                                                          |
+| 크로스 플랫폼 사용 제한 | 거짓                                                                          |
+| 준거법           | California, USA                                                             |
+| 대체 분쟁 해결      | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
+| 추가 라이선스 매개변수  | 없음                                                                          |
+
+## 플레이버 #2: 상업적 사용
+
+작품의 재사용에 대한 통제권을 유지하면서, 누구나 설정한 경제적 조건에 따라 적절하게 작품을 사용할 수 있도록 합니다. 이는 창작자가 규칙을 설정하는 Shutterstock과 유사합니다.
+
+### 다른 사람들이 할 수 있는 것은?
+
+| 가능한 것                                  | 불가능한 것                                                |
+| -------------------------------------- | ----------------------------------------------------- |
+| ✅ 원작의 상업적 이용 (`commercialUse == true`) | ❌ 이 작품을 리믹스 (`derivativesAllowed == false`)           |
+| ✅ 모든 수익 유지 (`commercialRevShare == 0`) | ❌ 원작에 대한 저작권 주장 (`commercialAttribution == true`)     |
+|                                        | ❌ 무료로 라이선스 획득 (`defaultMintingFee` 설정됨)               |
+|                                        | ❌ 비상업적으로도 원작에 대한 저작권 주장 ("저작자 표시"는 오프체인 조건에서 참으로 설정됨) |
+
+### PIL 조건 값
+
+* **온체인**:
+
+<CodeGroup>
+  ```solidity Solidity
+  PILTerms({
+    transferable: true,
+    royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+    defaultMintingFee: MINTING_FEE, // ex. 1000000000000000000 (which means it costs 1 $WIP to mint)
+    expiration: 0,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: address(0),
+    commercializerCheckerData: EMPTY_BYTES,
+    commercialRevShare: 0,
+    commercialRevCeiling: 0,
+    derivativesAllowed: false,
+    derivativesAttribution: false,
+    derivativesApproval: false,
+    derivativesReciprocal: false,
+    derivativeRevCeiling: 0,
+    currency: CURRENCY, // ex. $WIP address
+    uri: "https://github.com/piplabs/pil-document/blob/9a1f803fcf8101a8a78f1dcc929e6014e144ab56/off-chain-terms/CommercialUse.json"
+  })
+  ```
+
+  ```typescript TypeScript
+  import { zeroAddress, parseEther } from "viem";
+
+  const commercialUse = {
+    transferable: true,
+    royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+    defaultMintingFee: MINTING_FEE, // ex. parseEther("1") (which means it costs 1 $WIP to mint)
+    expiration: 0n,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: "0x",
+    commercialRevShare: 0,
+    commercialRevCeiling: 0n,
+    derivativesAllowed: false,
+    derivativesAttribution: false,
+    derivativesApproval: false,
+    derivativesReciprocal: false,
+    derivativeRevCeiling: 0n,
+    currency: CURRENCY, // ex. $WIP address
+    uri: "https://github.com/piplabs/pil-document/blob/9a1f803fcf8101a8a78f1dcc929e6014e144ab56/off-chain-terms/CommercialUse.json",
+  };
+  ```
+</CodeGroup>
+
+* **오프체인**
+
+| 매개변수          | 옵션 / 태그                                                                     |
+| ------------- | --------------------------------------------------------------------------- |
+| 지역            | 제한 없음                                                                       |
+| 배포 채널         | 제한 없음                                                                       |
+| 저작자 표시        | 참                                                                           |
+| 콘텐츠 기준        | 혐오 없음, 전연령 적합, 마약 또는 무기 없음, 음란물 없음                                          |
+| 서브라이선스 가능     | False                                                                       |
+| AI 학습 모델      | False                                                                       |
+| 크로스 플랫폼 사용 제한 | False                                                                       |
+| 준거법           | California, USA                                                             |
+| 대체 분쟁 해결      | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
+| 추가 라이선스 매개변수  | 없음                                                                          |
+
+## 플레이버 #3: 상업적 리믹스
+
+세상이 당신의 창작물을 기반으로 만들고 함께 즐기도록 하세요... 그리고 함께 수익을 창출하세요! 이 라이선스는 무제한 무료 리믹스를 허용하면서 당신의 작품의 모든 사용을 추적하고 완전한 크레딧을 제공하며, 각 파생작은 "부모" IP에 수익의 일정 비율을 지불합니다.
+
+### 예시
+
+Story의 공식 마스코트 **Ippy**를 확인해보세요. 우리는 [Mainnet](https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42)과 [Aeneid Testnet](https://aeneid.explorer.story.foundation/ipa/0x641E638e8FCA4d4844F509630B34c9D524d40BE5)에서 상업적 리믹스 조건으로 등록했습니다.
+
+### 다른 사람들이 할 수 있는 것은?
+
+| 다른 사람들이 할 수 있는 것                           | 다른 사람들이 할 수 없는 것                                        |
+| ------------------------------------------ | ------------------------------------------------------- |
+| ✅ 이 작품을 리믹스 (`derivativesAllowed == true`) | ❌ 원작에 대한 크레딧 주장 (`commercialAttribution == true`)       |
+| ✅ 원작과 파생 작품의 상업화 (`commercialUse == true`) | ❌ 파생 작품에 대한 크레딧 주장 (`derivativesAttribution == true`)   |
+| ✅ 리믹스를 어디서든 배포                             | ❌ 모든 수익 보유 (`commercialRevShare` 설정됨)                   |
+|                                            | ❌ 무료로 라이선스 획득 (`defaultMintingFee` 설정됨)                 |
+|                                            | ❌ 비상업적으로도 원작에 대한 크레딧 주장 ("Attribution이 오프체인 조건에서 true임) |
+
+### PIL 조건 값
+
+* **온체인**:
+
+<CodeGroup>
+  ```solidity Solidity
+  PILTerms({
+    transferable: true,
+    royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+    defaultMintingFee: MINTING_FEE, // ex. 1000000000000000000 (which means it costs 1 $WIP to mint)
+    expiration: 0,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: address(0),
+    commercializerCheckerData: EMPTY_BYTES,
+    commercialRevShare: COMMERCIAL_REV_SHARE, // ex. 50 * 10 ** 6 (which means 50% of derivative revenue)
+    commercialRevCeiling: 0,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0,
+    currency: CURRENCY, // ex. $WIP address
+    uri: "https://github.com/piplabs/pil-document/blob/ad67bb632a310d2557f8abcccd428e4c9c798db1/off-chain-terms/CommercialRemix.json"
+  });
+  ```
+
+  ```typescript TypeScript
+  import { zeroAddress, parseEther } from "viem";
+
+  const commercialRemix = {
+    transferable: true,
+    royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+    defaultMintingFee: MINTING_FEE, // ex. parseEther("1") (which means it costs 1 $WIP to mint)
+    expiration: 0n,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: "0x",
+    commercialRevShare: COMMERCIAL_REV_SHARE, // ex. 50 (which means 50% of derivative revenue)
+    commercialRevCeiling: 0n,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0n,
+    currency: CURRENCY, // ex. $WIP address
+    uri: "https://github.com/piplabs/pil-document/blob/ad67bb632a310d2557f8abcccd428e4c9c798db1/off-chain-terms/CommercialRemix.json",
+  };
+  ```
+</CodeGroup>
+
+* **오프체인**
+
+| 매개변수          | 옵션 / 태그                                                                     |
+| ------------- | --------------------------------------------------------------------------- |
+| 지역            | 제한 없음                                                                       |
+| 배포 채널         | 제한 없음                                                                       |
+| 저작자 표시        | True                                                                        |
+| 콘텐츠 기준        | 혐오 없음, 전연령 적합, 마약 또는 무기 없음, 음란물 없음                                          |
+| 서브라이선스 가능     | False                                                                       |
+| AI 학습 모델      | False                                                                       |
+| 크로스 플랫폼 사용 제한 | False                                                                       |
+| 준거법           | California, USA                                                             |
+| 대체 분쟁 해결      | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
+| 추가 라이선스 매개변수  | 없음                                                                          |
+
+## 플레이버 #4: Creative Commons Attribution
+
+세상이 당신의 창작물을 기반으로 만들고 즐기도록 하세요 - 수익 창출 포함.
+
+### 다른 사람들이 할 수 있는 것은?
+
+| 다른 사람들이 할 수 있는 것                           | 다른 사람들이 할 수 없는 것                                               |
+| ------------------------------------------ | -------------------------------------------------------------- |
+| ✅ 이 작품을 리믹스 (`derivativesAllowed == true`) | ❌ 원작에 대한 크레딧 주장 (`commercialAttribution == true`)              |
+| ✅ 원작과 파생 작품의 상업화 (`commercialUse == true`) | ❌ 파생 작품에 대한 크레딧 주장 (`derivativesAttribution == true`)          |
+| ✅ 리믹스를 어디서든 배포 가능                          | ❌ 비영리적으로도 원작에 대한 크레딧을 주장할 수 없음 ("Attribution은 오프체인 조건에서 true임) |
+| ✅ 무료로 라이선스 획득 (`defaultMintingFee == 0`)   |                                                                |
+| ✅ 모든 수익 보유 (`commercialRevShare == 0`)     |                                                                |
+
+### PIL 조건 값
+
+* **온체인**:
+
+<CodeGroup>
+  ```solidity Solidity
+  PILTerms({
+    transferable: true,
+    royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+    defaultMintingFee: 0,
+    expiration: 0,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: address(0),
+    commercializerCheckerData: EMPTY_BYTES,
+    commercialRevShare: 0,
+    commercialRevCeiling: 0,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCelling: 0,
+    currency: CURRENCY, // ex. $WIP address
+    uri: 'https://github.com/piplabs/pil-document/blob/998c13e6ee1d04eb817aefd1fe16dfe8be3cd7a2/off-chain-terms/CC-BY.json'
+  });
+  ```
+
+  ```typescript TypeScript
+  import { zeroAddress } from "viem";
+
+  const creativeCommonsAttribution = {
+    transferable: true,
+    royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+    defaultMintingFee: 0n,
+    expiration: 0n,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: "0x",
+    commercialRevShare: 0,
+    commercialRevCeiling: 0n,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCelling: 0n,
+    currency: CURRENCY, // ex. $WIP address
+    uri: "https://github.com/piplabs/pil-document/blob/998c13e6ee1d04eb817aefd1fe16dfe8be3cd7a2/off-chain-terms/CC-BY.json",
+  };
+  ```
+</CodeGroup>
+
+* **오프체인**
+
+| 매개변수          | 옵션 / 태그                                                                     |
+| ------------- | --------------------------------------------------------------------------- |
+| 지역            | 제한 없음                                                                       |
+| 배포 채널         | 제한 없음                                                                       |
+| 저작자 표시        | True                                                                        |
+| 콘텐츠 기준        | No-Hate, Suitable-for-All-Ages, No-Drugs-or-Weapons, No-Pornography         |
+| 서브라이선스 가능     | False                                                                       |
+| AI 학습 모델      | True                                                                        |
+| 크로스 플랫폼 사용 제한 | False                                                                       |
+| 준거법           | California, USA                                                             |
+| 대체 분쟁 해결      | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
+| 추가 라이선스 매개변수  | 없음                                                                          |
+
+# 예시
+
+다음은 로열티 흐름의 일반적인 예시입니다. *곧 더 많은 예시가 추가될 예정입니다!*
+
+## 예시 1
+
+<Frame>
+  <img src="/images/concepts/flavor-1.png" alt="Example 1 Royalty Flow" />
+</Frame>
+
+### 설명
+
+누군가가 Story에 자신의 Azuki를 등록합니다. 기본적으로 해당 IP 자산은 비영리 소셜 리믹스 조건을 가지며, 이는 누구나 해당 작품의 파생물을 만들 수 있지만 상업화할 수 없다는 것을 명시합니다. 따라서 다른 사람이 해당 작품의 리믹스를 만들어 등록하면(IPA2) 동일한 조건을 상속받습니다. 또 다른 사람이 IPA2에 대해 동일한 작업을 수행하여 IPA3를 만들고 등록합니다.
+
+그런 다음 IPA1의 소유자는 다른 사람들이 작품을 상업화할 수 있지만 파생물을 만들 수 없고, 10 \$WIP의 발행 수수료를 지불해야 하며, 모든 수익의 10%를 공유해야 한다고 결정합니다. 따라서 누군가가 IPA1을 티셔츠에 넣어 상업화하고자 합니다. 그들은 IPA1을 상업화할 수 있는 라이선스를 나타내는 라이선스 토큰을 얻기 위해 10 \$WIP의 발행 수수료를 지불합니다. 그런 다음 이미지를 티셔츠에 넣어 판매합니다. 해당 티셔츠로 얻은 수익의 10%는 온체인으로 IPA1에 전송되어야 합니다.
+
+## 예시 2
+
+<Frame>
+  <img src="/images/concepts/flavor-2.png" alt="Example 2 Royalty Flow" />
+</Frame>
+
+### 설명
+
+누군가가 Story에 자신의 Azuki를 등록합니다. 기본적으로 해당 IP 자산은 비영리 소셜 리믹스 조건을 가지며, 이는 누구나 해당 작품의 파생물을 만들 수 있지만 상업화할 수 없다는 것을 명시합니다. 따라서 다른 사람이 해당 작품의 리믹스를 만들어 등록하면(IPA2) 동일한 조건을 상속받습니다. 또 다른 사람이 IPA2에 대해 동일한 작업을 수행하여 IPA3를 만들고 등록합니다.
+
+그런 다음 IPA1의 소유자는 다른 사람들이 자신의 작품의 파생물을 만들고 상업화할 수 있지만, 10 \$WIP의 발행 수수료를 지불하고 모든 수익의 10%를 공유해야 한다고 결정합니다. 따라서 누군가가 IPA1을 티셔츠에 넣어 상업화하고자 합니다. 그들은 라이선스 토큰을 얻기 위해 10 \$WIP의 발행 수수료를 지불하고 이를 소각하여 배경색을 빨간색으로 변경한 자신만의 파생물을 만듭니다. 그런 다음 리믹스된 이미지를 티셔츠에 넣어 판매합니다. 해당 티셔츠로 얻은 수익의 10%는 온체인으로 IPA1에 전송되어야 합니다.
+
+세 번째 사람이 TV 광고에 리믹스를 상업적으로 사용하고 싶어하지만 머리 색상을 흰색으로 변경하고 싶어합니다. 따라서 자신만의 파생물을 만들기 위해 10 \$WIP의 발행 수수료를 지불합니다(이 중 1 \$WIP는 IPA1로 다시 전송됨). 그런 다음 리믹스된 이미지를 TV 광고에 넣습니다. 해당 티셔츠로 얻은 수익의 10%는 온체인으로 IPA4에 전송되어야 하며, 이 중 10%는 IPA1로 다시 분배됩니다.

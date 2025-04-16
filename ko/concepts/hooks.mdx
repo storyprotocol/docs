@@ -1,0 +1,192 @@
+---
+title: 🪝 Hooks
+sidebarTitle: Hooks
+icon: fishing-rod
+description: 라이선스 토큰을 발행하거나 파생물을 등록하기 전에 사용자 정의 로직을 추가합니다.
+---
+
+Hooks를 통해 개발자는 발행 시 사용자 정의 구현, 제한 사항 및 기능을 만들 수 있습니다[License Tokens](/concepts/licensing-module/license-token) 또는 파생물을 등록할 때.
+
+두 가지 유형의 hooks가 있습니다:
+
+1. **Licensing Hooks**: 다음을 할 수 있습니다 [라이선스 토큰을 발행하기 전에 사용자 정의 로직 추가](/concepts/licensing-module/license-config#logic-that-is-possible-with-license-config) (그리고 파생물 등록). 예를 들어, 동적 가격 요청, 발행할 수 있는 라이선스 토큰의 수량 제한, 화이트리스트 등입니다. Licensing Hooks는 언제든지 라이선싱 구성에 추가/수정할 수 있습니다.
+2. **Commercializer Checker Hooks**: Licensing Hooks와 유사하지만, 라이선스 조건의 직접적인 부분이며 변경되지 않습니다. 또한 사용자 정의 발행 수수료를 반환할 수 없습니다.
+
+## Licensing Hooks
+
+이는 다음 인터페이스를 구현하는 계약입니다 `ILicensingHook` 이는 다음으로부터 확장됩니다 `IModule`.
+
+가장 중요한 것은, Licensing Hook이 다음을 구현한다는 것입니다 `beforeMintLicenseTokens` 함수로, 이는 License Token이 발행되기 전에 호출되어 구현하는 함수입니다 [사용자 정의 로직](/concepts/licensing-module/license-config#logic-that-is-possible-with-license-config) 그리고 최종 결정 `totalMintingFee` 해당 License Token의.
+
+<Note>
+  다음을 확인하세요 `ILicensingHook` 스마트 계약
+  [여기](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/interfaces/modules/licensing/ILicensingHook.sol#L26).
+</Note>
+
+```solidity ILicensingHook.sol
+/// @notice This function is called when the LicensingModule mints license tokens.
+/// @dev The hook can be used to implement various checks and determine the minting price.
+/// The hook should revert if the minting is not allowed.
+/// @param caller The address of the caller who calling the mintLicenseTokens() function.
+/// @param licensorIpId The ID of licensor IP from which issue the license tokens.
+/// @param licenseTemplate The address of the license template.
+/// @param licenseTermsId The ID of the license terms within the license template,
+/// which is used to mint license tokens.
+/// @param amount The amount of license tokens to mint.
+/// @param receiver The address of the receiver who receive the license tokens.
+/// @param hookData The data to be used by the licensing hook.
+/// @return totalMintingFee The total minting fee to be paid when minting amount of license tokens.
+function beforeMintLicenseTokens(
+  address caller,
+  address licensorIpId,
+  address licenseTemplate,
+  uint256 licenseTermsId,
+  uint256 amount,
+  address receiver,
+  bytes calldata hookData
+) external returns (uint256 totalMintingFee);
+```
+
+이것이 반환하는 것에 주목하세요 `totalMintingFee`. "라이선스 조건에서 발행 수수료를 설정할 수 있고, `LicenseConfig`에서도 설정할 수 있으며, `beforeMintLicenseTokens`에서 동적 가격을 반환할 수 있습니다. 실제 최종 발행 수수료는 어떻게 될까요?" 다음이 우선순위입니다:
+
+| 발행 수수료                                               | 중요도    |
+| ---------------------------------------------------- | ------ |
+| 다음에서 `totalMintingFee` 반환된 `beforeMintLicenseTokens` | 최우선 순위 |
+| 다음에서 `mintingFee` 설정된 `LicenseConfig`                | ⬇️     |
+| 다음에서 `mintingFee` 라이선스 조건에서 설정된                      | 최하위 순위 |
+
+<Warning>
+  외부 라이선스 hooks의 잠재적으로 악의적인 구현을 주의하세요.
+  선택한 hook의 코드를 먼저 확인하시기 바랍니다. Story 팀이 검토하거나
+  감사하지 않았을 수 있습니다.
+</Warning>
+
+### 사용 가능한 Hooks
+
+다음은 우리 프로토콜에 배포된 사용 가능한 hooks입니다.
+
+<Info>
+  이러한 hooks의 배포된 주소를 확인하세요 [여기](/developers/deployed-smart-contracts#license-hooks).
+</Info>
+
+| Hook                       | 설명                                                | 계약 코드                                                                                                                        |
+| :------------------------- | :------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------- |
+| LockLicenseHook            | 라이선스 토큰 발행이나 새로운 파생물 등록을 중지합니다.                   | [여기서 보기 ↗️](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/hooks/LockLicenseHook.sol)            |
+| TotalLicenseTokenLimitHook | 발행할 수 있는 라이선스 토큰의 수량 제한을 설정하며, 언제든지 업데이트할 수 있습니다. | [여기서 보기 ↗️](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/hooks/TotalLicenseTokenLimitHook.sol) |
+
+### Hooks 구현하기
+
+<CardGroup cols={2}>
+  <Card title="SDK Code Example" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/licenses/oneTimeUseLicense.ts" icon="code">
+    라이선싱 hook을 구현하는 방법을 보여주는 작동하는 TypeScript SDK 코드 예제입니다.
+    더 구체적으로, 발행할 수 있는 라이선스의 수를 제한하는 방법을 보여줍니다.
+  </Card>
+
+  <Card title="Solidity Code Example" href="https://github.com/storyprotocol/protocol-periphery-v1/blob/main/test/hooks/TotalLicenseTokenLimitHook.t.sol" icon="code">
+    라이선싱 hook을 구현하는 방법을 보여주는 작동하는 Solidity 코드 예제입니다.
+    더 구체적으로, 발행할 수 있는 라이선스의 수를 제한하는 방법을 보여줍니다.
+  </Card>
+</CardGroup>
+
+Licensing Hooks는 궁극적으로 다음 인터페이스를 구현하는 스마트 계약입니다 `ILicensingHook`. 인터페이스는 다음에서 확인할 수 있습니다 [여기](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/interfaces/ILicensingHook.sol). 우리는 이미 몇 가지 Licensing Hooks를 배포했습니다 (위의 차트를 참조하세요).
+
+Licensing Hook을 실제로 사용하려면 Licensing Config에서 설정해야 합니다. 이는 기본적으로 IP Asset에 조건을 첨부할 때 License Terms에 설정하는 구성 세트입니다.
+
+<Steps>
+  <Step title="Create Licensing Config">
+    먼저 Licensing Config를 생성해야 합니다:
+
+    ```typescript {6-8}
+    import { LicensingConfig } from '@story-protocol/core-sdk';
+
+    const licensingConfig: LicensingConfig = {
+        isSet: true,
+        mintingFee: 0n,
+        // address of TotalLicenseTokenLimitHook
+        // from https://docs.story.foundation/developers/deployed-smart-contracts
+        licensingHook: '0xaBAD364Bfa41230272b08f171E0Ca939bD600478',
+        hookData: zeroAddress,
+        commercialRevShare: 0,
+        disabled: false,
+        expectMinimumGroupRewardShare: 0,
+        expectGroupRewardPool: zeroAddress,
+    }
+    ```
+  </Step>
+
+  <Step title="Set the Licensing Config">
+    다음으로, License Terms에 Licensing Config를 설정하겠습니다. 다음 예제에서는 IP Asset을 등록할 때 이 작업이 발생하는 것을 보여줍니다:
+
+    <Tip>
+      이 코드 스니펫은 약간의 설정이 필요하며, TypeScript SDK 설정 방법을 이미
+      이해하고 있는 개발자를 위한 것입니다. 더 자세히 알아보려면
+      다음을 확인하세요 [작동하는 코드
+      예제](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/licenses/oneTimeUseLicense.ts).
+    </Tip>
+
+    <Note>
+      이것은 다음을 사용합니다 `mintAndRegisterIpAssetWithPilTerms` 메서드는 다음에서 찾을 수 있습니다 [여기](/sdk-reference/ipasset#mintandregisteripassetwithpilterms).
+    </Note>
+
+    ```typescript {6-7}
+    const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
+        spgNftContract: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc', // public spg contract for ease-of-use
+        licenseTermsData: [
+            {
+                terms: { defaultMintingFee: 0, commercialUse: true, ... }, // dummy license terms
+                // set the licensing config here
+                licensingConfig: licensingConfig
+            },
+        ],
+        ipMetadata: {
+            ipMetadataURI: 'test-uri',
+            ipMetadataHash: toHex('test-metadata-hash', { size: 32 }),
+            nftMetadataHash: toHex('test-nft-metadata-hash', { size: 32 }),
+            nftMetadataURI: 'test-nft-uri',
+        },
+        txOptions: { waitForTransaction: true },
+    })
+    ```
+  </Step>
+
+  <Step title="Set the Limit to 1">
+    이제 우리의 조건에 Licensing Config를 설정했으므로, 다음을 호출할 수 있습니다 `setTotalLicenseTokenLimit` hook의 함수를 호출하여 발행할 수 있는 최대 라이선스 수를 1로 설정합니다.
+
+    <Note>
+      이를 위한 Story SDK 메서드가 없으므로, viem의 다음 메서드를 사용해야 합니다 `writeContract` 메서드.
+    </Note>
+
+    ```typescript
+    import { totalLicenseTokenLimitHook } from './abi/totalLicenseTokenLimitHook'
+
+    const { request } = await publicClient.simulateContract({
+        // address of TotalLicenseTokenLimitHook
+        // from https://docs.story.foundation/developers/deployed-smart-contracts
+        address: '0xaBAD364Bfa41230272b08f171E0Ca939bD600478',
+        abi: totalLicenseTokenLimitHook,
+        functionName: 'setTotalLicenseTokenLimit',
+        args: [
+            response.ipId, // ipId from the step above
+            '0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316', // the address of PILicenseTemplate from https://docs.story.foundation/developers/deployed-smart-contracts
+            response.licenseTermsIds![0], // licenseTermsId
+            1n, // limit (as BigInt)
+        ],
+        account: account, // Specify the account to use for permission checking
+    })
+
+    // Prepare transaction
+    const hash = await walletClient.writeContract({ ...request, account: account })
+
+    // Wait for transaction to be mined
+    const receipt = await publicClient.waitForTransactionReceipt({
+        hash,
+    })
+    ```
+  </Step>
+</Steps>
+
+## Commercializer Checker Hooks
+
+<Warning>
+  문서가 곧 제공될 예정입니다. 그동안 질문이 있으시다면 다음에서 문의하세요 [Builder's Discord](https://discord.gg/storybuilders).
+</Warning>

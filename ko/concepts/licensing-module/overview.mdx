@@ -1,0 +1,44 @@
+---
+title: 📜 Licensing Module
+sidebarTitle: Overview
+description: Story에서 IP에 실제 법적 라이선스를 생성하고 첨부하는 방법 알아보기
+---
+
+<Accordion title="Skip the Read - 1 Minute Summary" icon="circle-info">
+  라이선싱 모듈을 사용하면**License Template**(이는[Programmable IP License (PIL💊)](/concepts/programmable-ip-license/overview)입니다)에서 실제 법적 라이선스를 생성하고 IP 자산에 첨부할 수 있습니다. 이 라이선스와**License Terms**는 다른 사람들이 귀하의 IP를 사용하고, 상업화하고, 리믹스하는 방법을 제한합니다.
+
+  IP 자산에 License Terms가 첨부되어 있다면, 누구나**License Token**(ERC-721 NFT)을 발행할 수 있으며, 이는 정의된 조건에 따라 해당 작품을 사용할 수 있는 라이선스 역할을 합니다. 이 토큰은 파생 작품을 등록하기 위해 소각될 수 있습니다. 이는 자산 간의 부모-자식 관계를 설정하여[💸 Royalty Module](/concepts/royalty-module/overview)에서 자동 로열티 흐름과 같은 기능을 활성화합니다.
+</Accordion>
+
+IP 자산의 소유자는 파생물 생성, 상업적 이용, 다양한 플랫폼에서의 복제와 같은 지적재산권을 보유합니다.
+
+IP 자산은 프로그래밍 방식으로 사용자들에게[License Tokens](/concepts/licensing-module/license-token)(ERC-721 NFT)를 통해 특정 조건 세트인[License Terms](/concepts/licensing-module/license-terms)에 따라 이러한 권한을 자율적으로 행사할 수 있도록 허용할 수 있습니다.
+
+<Frame caption="Blue: contracts built into the protocol. White: contracts developed by the community or 3rd party vendor.">
+  <img src="/images/concepts/licensing-module-diagram.png" alt="The contracts in blue are built into the protocol. The contracts in white can be developed by the community or 3rd party vendor." />
+</Frame>
+
+## LicensingModule
+
+<CardGroup cols={1}>
+  <Card title="LicensingModule.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/licensing/LicensingModule.sol" icon="scroll" color="#ccb092">
+    라이선스 모듈의 스마트 컨트랙트를 확인하세요.
+  </Card>
+</CardGroup>
+
+이`LicensingModule.sol`컨트랙트는 라이선싱 시스템의 주요 진입점입니다. 다음과 같은 책임이 있습니다:
+
+* IP 자산에 License Terms 첨부
+* License Token 발행
+* 파생물 등록
+* 라이선스 설정 구성
+
+## 추가 자료
+
+다음 문서에서는 위에서 보여진 라이선싱 모듈의 모든 주요 구성 요소를 살펴볼 것입니다:
+
+* [License Template](/concepts/licensing-module/license-template)
+* [License Terms](/concepts/licensing-module/license-terms)
+* [License Token](/concepts/licensing-module/license-token)
+* [License Registry](/concepts/registry/license-registry)
+* [License Config](/concepts/licensing-module/license-config)

@@ -1,0 +1,41 @@
+---
+title: 📦 SPG (Periphery)
+sidebarTitle: Overview
+description: 프로토콜과의 상호작용을 단순화하는 Story Protocol Gateway에 대해 알아보세요
+---
+
+Story Protocol Gateway (SPG)는 프로토콜에 배포된 주변부/유틸리티 스마트 컨트랙트 그룹으로 **독립적인 작업들을 결합할 수 있게 해줍니다** - 예를 들어 [🧩 IP Asset](/concepts/ip-asset/overview) 등록과 해당 IP Asset에 라이선스 조건을 첨부하는 것 - **을 하나의 트랜잭션으로 처리하여 사용을 더 쉽게 만듭니다**.
+
+이는 주로 우리의 [SDK](/sdk-reference) 사용을 더 쉽게 만들기 위해 개발되었습니다.
+
+예를 들어, `mintAndRegisterIpAndAttachPILTerms`는 SPG의 함수 중 하나입니다 (더 구체적으로는 `LicenseAttachmentWorkflows.sol`에 있음) NFT를 민팅하고, IP Asset으로 등록하고, 라이선스 조건을 한 번에 첨부할 수 있게 해줍니다:
+
+```solidity LicenseAttachmentWorkflows.sol
+function mintAndRegisterIpAndAttachPILTerms(
+  address spgNftContract,
+  address recipient,
+  WorkflowStructs.IPMetadata calldata ipMetadata,
+  WorkflowStructs.LicenseTermsData[] calldata licenseTermsData,
+  bool allowDuplicates
+) external onlyMintAuthorized(spgNftContract) returns (address ipId, uint256 tokenId, uint256[] memory licenseTermsIds)
+```
+
+## 지원되는 모든 워크플로우
+
+위에서 언급했듯이, 여러 함수를 하나로 결합한 다양한 함수들을 만들어 두었습니다. 이러한 함수들을 다른 그룹으로 분류했습니다. 이러한 그룹들을 "워크플로우"라고 합니다.
+
+<CardGroup cols={2}>
+  <Card title="View all Workflows" href="https://github.com/storyprotocol/protocol-periphery-v1/blob/main/docs/WORKFLOWS.md" icon="eyes" color="grey">
+    지원되는 모든 워크플로우를 보려면 여기를 클릭하세요.
+  </Card>
+
+  <Card title="Smart Contracts" href="https://github.com/storyprotocol/protocol-periphery-v1/tree/main/contracts/workflows" icon="scroll" color="#ccb092">
+    워크플로우 스마트 컨트랙트를 보려면 여기를 클릭하세요.
+  </Card>
+</CardGroup>
+
+## 호출 일괄 처리
+
+SPG가 `mintAndRegisterIpAndAttachPILTerms`, `registerIpAndAttachPILTerms`와 같은 특정 함수들을 포함하고 있지만, IP Asset과의 모든 가능한 상호작용 조합을 고려하여 계속해서 컨트랙트를 업데이트하는 것은 번거로울 것입니다.
+
+대신, 원하는 대로 트랜잭션을 일괄 처리할 수 있는 "Multicall" 메커니즘을 허용했습니다. 자세한 내용은 [일괄 함수 호출](/concepts/spg/batch-spg-function-calls)을 참조하세요.

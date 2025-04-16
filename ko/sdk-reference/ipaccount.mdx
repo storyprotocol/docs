@@ -1,0 +1,167 @@
+---
+title: IP Account
+description: IPAccountClient를 사용하여 IP Account 메타데이터를 관리하고
+  트랜잭션을 실행할 수 있습니다.
+---
+
+## IPAccountClient
+
+### 메소드
+
+* setIpMetadata
+* execute
+* executeWithSig
+* transferErc20
+
+### setIpMetadata
+
+IP 자산의 metadataURI를 설정합니다.
+
+| 메소드             | 타입                                      |
+| --------------- | --------------------------------------- |
+| `setIpMetadata` | `(SetIpMetadataRequest) => Promis<Hex>` |
+
+Parameters:
+
+* `request.ipId`: 메타데이터를 설정할 IP입니다.
+* `request.metadataURI`: IP 자산에 설정할 metadataURI입니다. [IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard)에 맞는 메타데이터를 가리키는 URL이어야 합니다.
+* `request.metadataHash`: metadataURI에 있는 메타데이터의 해시입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts)입니다.
+
+<CodeGroup>
+  ```typescript TypeScript
+  const txHash = await client.ipAccount.setIpMetadata({
+    ipId: "0x01",
+    metadataURI:
+      "https://ipfs.io/ipfs/bafkreiardkgvkejqnnkdqp4pamkx2e5bs4lzus5trrw3hgmoa7dlbb6foe",
+    // example hash (not accurate)
+    metadataHash:
+      "0x129f7dd802200f096221dd89d5b086e4bd3ad6eafb378a0c75e3b04fc375f997",
+  });
+  ```
+
+  ```typescript Request Type
+  export type SetIpMetadataRequest = {
+    ipId: Address;
+    metadataURI: string;
+    metadataHash: Hex;
+    txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+  };
+  ```
+</CodeGroup>
+
+### execute
+
+IP Account에서 트랜잭션을 실행합니다.
+
+| 메소드       | 타입                                                              |
+| --------- | --------------------------------------------------------------- |
+| `execute` | `(IPAccountExecuteRequest) => Promis<IPAccountExecuteResponse>` |
+
+Parameters:
+
+* `request.ipId`: IP 계정을 가져올 IP Id입니다.
+* `request.to`: 트랜잭션의 수신자입니다.
+* `request.value`: 전송할 이더 양입니다.
+* `request.data`: 트랜잭션과 함께 전송할 데이터입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts)입니다.
+
+<CodeGroup>
+  ```typescript Request Type
+  export type IPAccountExecuteRequest = {
+    ipId: Address;
+    to: Address;
+    value: number;
+    data: Hex;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type IPAccountExecuteResponse = {
+    txHash?: Hex;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### executeWithSig
+
+IP Account에서 트랜잭션을 실행합니다.
+
+| 메소드              | 타입                                                              |
+| ---------------- | --------------------------------------------------------------- |
+| `executeWithSig` | `(IPAccountExecuteRequest) => Promis<IPAccountExecuteResponse>` |
+
+Parameters:
+
+* `request.ipId`: IP 계정을 가져올 IP Id입니다.
+* `request.to`: 트랜잭션의 수신자입니다.
+* `request.data`: 트랜잭션과 함께 전송할 데이터입니다.
+* `request.signer`: 트랜잭션의 서명자입니다.
+* `request.deadline`: 트랜잭션 서명의 마감 시간입니다.
+* `request.signature`: EIP-712로 인코딩된 트랜잭션의 서명입니다.
+* `request.value`: \[선택사항] 전송할 이더 양입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts)입니다.
+
+<CodeGroup>
+  ```typescript Request Type
+  export type IPAccountExecuteWithSigRequest = {
+    ipId: Address;
+    to: Address;
+    data: Hex;
+    signer: Address;
+    deadline: number | bigint | string;
+    signature: Address;
+    value?: number | bigint | string;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type IPAccountExecuteWithSigResponse = {
+    txHash?: Hex;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### transferErc20
+
+IP Account에서 ERC20 토큰을 전송합니다.
+
+| 메소드             | 타입                                                                |
+| --------------- | ----------------------------------------------------------------- |
+| `transferErc20` | `(request: TransferErc20Request) => Promise<TransactionResponse>` |
+
+Parameters:
+
+* `request.ipId`: 계정의 `ipId`입니다
+* `request.tokens`: 전송할 토큰 정보입니다
+  * `request.tokens.address`: WIP와 표준 ERC20을 포함한 ERC20 토큰의 주소입니다.
+  * `request.tokens.amount`: 전송할 토큰의 양입니다
+  * `request.tokens.target`: 수신자의 주소입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts)입니다.
+
+<CodeGroup>
+  ```typescript Request Type
+  export type TransferErc20Request = {
+    ipId: Address;
+    tokens: {
+      address: Address;
+      amount: bigint | number;
+      target: Address;
+    }[];
+    txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+  };
+  ```
+
+  ```typescript Response Type
+  export type TransactionResponse = {
+    txHash: Hex;
+
+    /** Transaction receipt, only available if waitForTransaction is set to true */
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>

@@ -1,0 +1,71 @@
+---
+title: 👥 Grouping Module
+sidebarTitle: Grouping Module
+description: 그룹 IP 자산을 생성하고 관리하며, 그룹을 위한 로열티 풀을 지원합니다.
+icon: user-group
+---
+
+그룹핑 모듈은 그룹 IP 자산의 생성과 관리를 가능하게 하며, 그룹을 위한 로열티 풀을 지원합니다.
+
+<CardGroup cols={1}>
+  <Card title="GroupingModule.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/grouping/GroupingModule.sol" icon="scroll" color="#ccb092">
+    그룹핑 모듈의 스마트 컨트랙트를 확인하세요.
+  </Card>
+</CardGroup>
+
+`GroupingModule.sol`는 그룹핑 워크플로우의 주요 진입점입니다. 이것은 **stateless**이며 다음을 담당합니다:
+
+* 새로운 그룹 등록
+* 그룹에 IPA 추가
+* 그룹에서 IPA 제거
+* 그룹이 특정 IPA를 포함하는지 확인
+* 그룹의 총 IPA 수 확인
+
+## 그룹 IPA 생성하기
+
+IP 자산 등록 과정과 유사하게, 등록을 위해 민팅된 NFT가 필요하고 그 다음 IP 계정이 생성되는 것처럼, 그룹 IP 자산에도 동일하게 적용됩니다. 그룹의 소유권을 나타내는 민팅된 ERC-721 NFT가 있어야 그룹으로 등록할 수 있으며, 등록하면 그룹을 위한 IP 계정이 배포됩니다.
+
+누구나 새로운 그룹을 만들 수 있습니다.
+
+### 그룹 IP 자산 레지스트리
+
+IP 자산이 생성될 때 IP 계정이 배포되고 [IP Asset Registry](/concepts/registry/ip-asset-registry)를 통해 등록되는 것과 유사하게, 그룹의 IP 계정은 [Group IP Asset Registry](/concepts/registry/group-ip-asset-registry)를 통해 배포되고 등록됩니다. 이는 그룹 멤버와 보상 풀을 포함하여 그룹 IP 자산의 등록과 추적을 관리하는 역할을 합니다.
+
+### 그룹의 IP 계정
+
+그룹 IP 계정은 일반 IP 계정과 동일하게 작동해야 하며, 라이선스 약관 첨부, 파생물 생성, 모듈과의 실행 및 기타 상호작용이 가능합니다. 또한 IP 계정의 공통 인터페이스도 동일합니다. 따라서 그룹 IP 계정은 IP 계정이 적용될 수 있는 모든 곳에 적용될 수 있습니다.
+
+IP 계정의 공통 인터페이스 외에도, 그룹 IP 계정은 그룹 내 개별 IPA의 추가/제거를 관리하는 기능을 가지고 있습니다.
+
+## 그룹 제한사항
+
+다음은 그룹 IPA와 관련된 제한사항입니다:
+
+* 그룹 IP의 파생 IP는 해당 그룹 IP만을 유일한 부모로 가질 수 있습니다
+* 그룹 IP는 다음을 사용하는 라이선스 조건을 첨부할 수 없습니다 [Liquid Absolute Percentage (LAP)](/concepts/royalty-module/liquid-absolute-percentage) 로열티 정책
+* 빈 그룹은 파생 IP를 가질 수 없으며 라이선스 토큰을 발행할 수 없습니다
+* 그룹 IP는 파생물로 등록될 수 없습니다
+* 그룹 IP는 모든 멤버에게 공통된 하나의 라이선스 조건만 첨부할 수 있습니다
+* 그룹이 첫 번째 멤버를 얻으면 `mintingFee`, `licensingHook`, 그리고 `licensingHookData`가 고정됩니다. 그룹의 `commercialRevShare`는 오직 증가만 할 수 있습니다
+* 그룹은 최대 1000명의 멤버를 가질 수 있습니다
+
+### 그룹에 추가하기 & 제거하기
+
+* 그룹의 소유자만이 IP 자산을 추가/제거할 수 있습니다. 귀하는 **반드시** IP 자산을 소유하지 않아도 그룹에 추가할 수 있습니다.
+* IPA는 그룹의 라이선스 조건과 일치하는 하나의 라이선스 조건을 포함해야 합니다(동일한 `licenseTemplate` 및 `licenseTerms`. IPA는 그룹과 일치하는 것 외에도 다른 라이선스 조건을 포함할 수 있습니다.
+* IP를 그룹에 추가할 때, 그룹과 IP는 동일한 `mintingFee` 및 `licenseHook`를 `LicenseConfig`에 가져야 합니다. 또한, 그룹의 상업적 수익 공유는 IP의 상업적 수익 공유보다 크거나 같아야 합니다.
+
+### 그룹이 잠기는 경우
+
+그룹이 잠기면 IPA를 제거할 수 없지만 새로운 IPA는 여전히 추가할 수 있습니다.
+
+그룹 IPA는 다음과 같은 경우에 잠깁니다:
+
+1. 파생 IP가 등록되었을 때 또는
+2. 누군가가 그룹에서 라이선스 토큰을 발행했을 때
+
+## 예시
+
+학습 데이터를 사용하여 지속적으로 학습하고 더 나은 콘텐츠를 생성하는 AI 봇이 있다고 가정해 보겠습니다. 학습 데이터는 루트인 그룹 IPA이고, AI 봇은 학습 데이터의 파생 IPA입니다. AI 봇이 수익을 얻을 때마다 해당 수익은 학습 데이터로 수익으로 돌아갑니다.
+
+이제 그룹에 더 많은 학습 데이터를 추가하고 싶습니다. 그룹이 이미 잠겨있기 때문에(파생물을 연결했으므로), 새로운 그룹 IPA를 루트로 등록한 다음 새로운 AI 봇을 파생물로 등록해야 합니다.
