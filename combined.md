@@ -18084,7 +18084,7 @@ Once you have the SDK set up in React, you can use it just as we describe in the
 
 ## Prerequisites
 
-1. Complete the [SDK setup in React](/developers/react-guide/setup)
+1. Complete the [SDK setup in React](/developers/react-guide/setup/overview)
 
 ## Example
 
@@ -19501,7 +19501,7 @@ export const client = StoryClient.newClient(config);
 
 ### Setup for React (ex. Metamask)
 
-The [React Setup Guide](/developers/react-guide/setup) shows how we can also use the TypeScript SDK to delay signing & sending transactions to a JSON-RPC account like Metamask.
+The [React Setup Guide](/developers/react-guide/setup/overview) shows how we can also use the TypeScript SDK to delay signing & sending transactions to a JSON-RPC account like Metamask.
 
 
 # Register a Derivative
