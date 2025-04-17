@@ -18134,6 +18134,45 @@ export default function TestComponent() {
 ```
 
 
+# React Guide
+
+The best way to get started is to get your hands dirty and start building.
+
+<CardGroup cols={3}>
+
+<Card
+  title="Working Code Example"
+  href="https://github.com/jacob-tucker/story-developer-sandbox"
+  icon="thumbs-up"
+>
+  Clone our "developer sandbox" locally to see a working code example that shows
+  setting up & calling TypeScript SDK functions in Next.js
+</Card>
+
+<Card
+  title="Live Sandbox"
+  href="https://sandbox.story.foundation"
+  icon="umbrella-beach"
+>
+  Play around with a live version of our developer sandbox to get an
+  introductory walkthrough of our SDK.
+</Card>
+
+<Card
+  title="SDK Reference"
+  href="/sdk-reference"
+  icon="books"
+  
+  
+>
+  View the whole SDK reference, which shows examples and types for every function in our SDK.
+</Card>
+  
+</CardGroup>
+
+In the following series of tutorials, you will learn how to setup the TypeScript SDK in React.
+
+
 # Tomo Setup
 
 <Note>
@@ -18787,49 +18826,10 @@ We do not have a specific React SDK, however **we can use the TypeScript SDK in 
 
 We recommend using [wagmi](https://wagmi.sh/) as a Web3 provider and then installing a wallet provider like Dynamic or RainbowKit. We provide examples for all of the following:
 
-- [Dynamic Setup](/developers/react-guide/wallet-providers/dynamic-setup)
-- [RainbowKit Setup](/developers/react-guide/wallet-providers/rainbowkit-setup)
-- [Reown (WalletConnect) Setup](/developers/react-guide/wallet-providers/reown-setup)
-- [Tomo Setup](/developers/react-guide/wallet-providers/tomo-setup)
-
-
-# React Guide
-
-The best way to get started is to get your hands dirty and start building.
-
-<CardGroup cols={3}>
-
-<Card
-  title="Working Code Example"
-  href="https://github.com/jacob-tucker/story-developer-sandbox"
-  icon="thumbs-up"
->
-  Clone our "developer sandbox" locally to see a working code example that shows
-  setting up & calling TypeScript SDK functions in Next.js
-</Card>
-
-<Card
-  title="Live Sandbox"
-  href="https://sandbox.story.foundation"
-  icon="umbrella-beach"
->
-  Play around with a live version of our developer sandbox to get an
-  introductory walkthrough of our SDK.
-</Card>
-
-<Card
-  title="SDK Reference"
-  href="/sdk-reference"
-  icon="books"
-  
-  
->
-  View the whole SDK reference, which shows examples and types for every function in our SDK.
-</Card>
-  
-</CardGroup>
-
-In the following series of tutorials, you will learn how to setup the TypeScript SDK in React.
+- [Dynamic Setup](/developers/react-guide/setup/dynamic-setup)
+- [RainbowKit Setup](/developers/react-guide/setup/rainbowkit-setup)
+- [Reown (WalletConnect) Setup](/developers/react-guide/setup/reown-setup)
+- [Tomo Setup](/developers/react-guide/setup/tomo-setup)
 
 
 # Raise a Dispute
