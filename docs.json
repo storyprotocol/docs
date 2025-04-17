@@ -228,14 +228,14 @@
                 "icon": "atom",
                 "pages": [
                   "developers/react-guide/overview",
-                  "developers/react-guide/setup",
                   {
-                    "group": "Wallet Providers",
+                    "group": "Setup",
                     "pages": [
-                      "developers/react-guide/wallet-providers/dynamic-setup",
-                      "developers/react-guide/wallet-providers/rainbowkit-setup",
-                      "developers/react-guide/wallet-providers/reown-setup",
-                      "developers/react-guide/wallet-providers/tomo-setup"
+                      "developers/react-guide/setup/overview",
+                      "developers/react-guide/setup/dynamic-setup",
+                      "developers/react-guide/setup/rainbowkit-setup",
+                      "developers/react-guide/setup/reown-setup",
+                      "developers/react-guide/setup/tomo-setup"
                     ]
                   },
                   "developers/react-guide/using-the-sdk-in-react"
@@ -899,23 +899,23 @@
     },
     {
       "source": "/react-setup",
-      "destination": "/developers/react-guide/setup"
+      "destination": "/developers/react-guide/setup/overview"
     },
     {
       "source": "/dynamic-setup",
-      "destination": "/developers/react-guide/wallet-providers/dynamic-setup"
+      "destination": "/developers/react-guide/setup/dynamic-setup"
     },
     {
       "source": "/rainbowkit-setup",
-      "destination": "/developers/react-guide/wallet-providers/rainbowkit-setup"
+      "destination": "/developers/react-guide/setup/rainbowkit-setup"
     },
     {
       "source": "/reown-setup",
-      "destination": "/developers/react-guide/wallet-providers/reown-setup"
+      "destination": "/developers/react-guide/setup/reown-setup"
     },
     {
       "source": "/tomo-setup",
-      "destination": "/developers/react-guide/wallet-providers/tomo-setup"
+      "destination": "/developers/react-guide/setup/tomo-setup"
     },
     {
       "source": "/using-the-sdk-in-react",
