@@ -13,6 +13,7 @@ description: Used to handle the wrapping/unwrapping of WIP (Wrapped IP) tokens w
 - balance_of
 - transfer
 - transfer_from
+- allowance
 
 ### deposit
 
@@ -241,6 +242,40 @@ tx_options: dict = None  # Optional: Transaction options
 {
   "tx_hash": str  # The transaction hash
 }
+```
+
+</CodeGroup>
+
+### allowance
+
+Returns the amount of WIP tokens that `spender` is allowed to spend on behalf of `owner`.
+
+| Method      |
+| ----------- |
+| `allowance` |
+
+Parameters:
+
+- `owner`: The address of the token owner.
+- `spender`: The address of the spender.
+
+<CodeGroup>
+
+```python Python
+response = story_client.WIP.allowance(
+    owner="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    spender="0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68"
+)
+print(f"Allowance: {response}")
+```
+
+```python Request Parameters
+owner: str  # The owner address
+spender: str  # The spender address
+```
+
+```python Response
+int  # The allowance amount
 ```
 
 </CodeGroup>
