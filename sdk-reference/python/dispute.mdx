@@ -11,6 +11,8 @@ description: Dispute allows you to manage disputes within Story.
 - cancel_dispute
 - resolve_dispute
 - tag_if_related_ip_infringed
+- dispute_assertion
+- dispute_id_to_assertion_id
 
 ### raise_dispute
 
@@ -181,6 +183,93 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 [str]  # An array of transaction hashes
+```
+
+</CodeGroup>
+
+### dispute_assertion
+
+Counters a dispute that was raised by another party on an IP using counter evidence.
+
+This method can only be called by the IP's owner to counter a dispute by providing counter evidence. The counter evidence (e.g., documents, images) should be uploaded to IPFS, and its corresponding CID is converted to a hash for the request.
+
+The liveness period is split in two parts:
+
+    - the first part of the liveness period in which only the IP's owner can be called the method.
+    - a second part in which any address can be called the method.
+
+If you only have a `dispute_id`, call `dispute_id_to_assertion_id` to get the `assertion_id` needed here.
+
+<Warning>
+  You will need $WIP that the IP owner will have to deposit themselves using the
+  wip module.
+</Warning>
+
+| Method              |
+| ------------------- |
+| `dispute_assertion` |
+
+Parameters:
+
+- `ip_id`: The IP ID that is the target of the dispute.
+- `assertion_id`: The identifier of the assertion that was disputed. You can get this from the `dispute_id` by calling `Dispute.dispute_id_to_assertion_id`.
+- `counter_evidence_cid`: Content Identifier (CID) for the counter evidence. This should be obtained by uploading your dispute evidence (documents, images, etc.) to IPFS. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
+- `tx_options`: [Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+# First get the assertion_id from the dispute_id
+assertion_id = story_client.Dispute.dispute_id_to_assertion_id(1)
+
+# Then dispute the assertion
+response = story_client.Dispute.dispute_assertion(
+  ip_id="0xa1BaAA464716eC76A285Ef873d27f97645fE0366",
+  assertion_id=assertion_id,
+  counter_evidence_cid="QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"
+)
+```
+
+```python Request Parameters
+ip_id: str  # The IP ID that is the target of the dispute
+assertion_id: str  # The identifier of the assertion that was disputed
+counter_evidence_cid: str  # Content Identifier (CID) for the counter evidence
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str,  # The transaction hash
+  "receipt": str # tx receipt
+}
+```
+
+</CodeGroup>
+
+### dispute_id_to_assertion_id
+
+Maps a dispute ID to an assertion ID.
+
+| Method                       |
+| ---------------------------- |
+| `dispute_id_to_assertion_id` |
+
+Parameters:
+
+- `dispute_id`: The dispute ID to convert to an assertion ID.
+
+<CodeGroup>
+
+```python Python
+assertion_id = story_client.Dispute.dispute_id_to_assertion_id(1)
+```
+
+```python Request Parameters
+dispute_id: int  # The dispute ID to convert
+```
+
+```python Response
+str  # The assertion ID as a hex string
 ```
 
 </CodeGroup>
