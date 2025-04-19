@@ -11834,6 +11834,8 @@ str  # The royalty vault proxy address
 - cancel_dispute
 - resolve_dispute
 - tag_if_related_ip_infringed
+- dispute_assertion
+- dispute_id_to_assertion_id
 
 ### raise_dispute
 
@@ -12004,6 +12006,93 @@ tx_options: dict = None  # Optional: Transaction options
 
 ```python Response
 [str]  # An array of transaction hashes
+```
+
+</CodeGroup>
+
+### dispute_assertion
+
+Counters a dispute that was raised by another party on an IP using counter evidence.
+
+This method can only be called by the IP's owner to counter a dispute by providing counter evidence. The counter evidence (e.g., documents, images) should be uploaded to IPFS, and its corresponding CID is converted to a hash for the request.
+
+The liveness period is split in two parts:
+
+    - the first part of the liveness period in which only the IP's owner can be called the method.
+    - a second part in which any address can be called the method.
+
+If you only have a `dispute_id`, call `dispute_id_to_assertion_id` to get the `assertion_id` needed here.
+
+<Warning>
+  You will need $WIP that the IP owner will have to deposit themselves using the
+  wip module.
+</Warning>
+
+| Method              |
+| ------------------- |
+| `dispute_assertion` |
+
+Parameters:
+
+- `ip_id`: The IP ID that is the target of the dispute.
+- `assertion_id`: The identifier of the assertion that was disputed. You can get this from the `dispute_id` by calling `Dispute.dispute_id_to_assertion_id`.
+- `counter_evidence_cid`: Content Identifier (CID) for the counter evidence. This should be obtained by uploading your dispute evidence (documents, images, etc.) to IPFS. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
+- `tx_options`: [Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+# First get the assertion_id from the dispute_id
+assertion_id = story_client.Dispute.dispute_id_to_assertion_id(1)
+
+# Then dispute the assertion
+response = story_client.Dispute.dispute_assertion(
+  ip_id="0xa1BaAA464716eC76A285Ef873d27f97645fE0366",
+  assertion_id=assertion_id,
+  counter_evidence_cid="QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"
+)
+```
+
+```python Request Parameters
+ip_id: str  # The IP ID that is the target of the dispute
+assertion_id: str  # The identifier of the assertion that was disputed
+counter_evidence_cid: str  # Content Identifier (CID) for the counter evidence
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str,  # The transaction hash
+  "receipt": str # tx receipt
+}
+```
+
+</CodeGroup>
+
+### dispute_id_to_assertion_id
+
+Maps a dispute ID to an assertion ID.
+
+| Method                       |
+| ---------------------------- |
+| `dispute_id_to_assertion_id` |
+
+Parameters:
+
+- `dispute_id`: The dispute ID to convert to an assertion ID.
+
+<CodeGroup>
+
+```python Python
+assertion_id = story_client.Dispute.dispute_id_to_assertion_id(1)
+```
+
+```python Request Parameters
+dispute_id: int  # The dispute ID to convert
+```
+
+```python Response
+str  # The assertion ID as a hex string
 ```
 
 </CodeGroup>
@@ -12312,6 +12401,7 @@ tx_options: dict = None  # Optional: Transaction options
 - balance_of
 - transfer
 - transfer_from
+- allowance
 
 ### deposit
 
@@ -12540,6 +12630,40 @@ tx_options: dict = None  # Optional: Transaction options
 {
   "tx_hash": str  # The transaction hash
 }
+```
+
+</CodeGroup>
+
+### allowance
+
+Returns the amount of WIP tokens that `spender` is allowed to spend on behalf of `owner`.
+
+| Method      |
+| ----------- |
+| `allowance` |
+
+Parameters:
+
+- `owner`: The address of the token owner.
+- `spender`: The address of the spender.
+
+<CodeGroup>
+
+```python Python
+response = story_client.WIP.allowance(
+    owner="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    spender="0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68"
+)
+print(f"Allowance: {response}")
+```
+
+```python Request Parameters
+owner: str  # The owner address
+spender: str  # The spender address
+```
+
+```python Response
+int  # The allowance amount
 ```
 
 </CodeGroup>
@@ -12931,11 +13055,171 @@ Additional utility and extra clients:
 
 <CardGroup cols={2}>
 
+<Card
+  title="Set Permissions"
+  icon="house"
+  href="/sdk-reference/python/permissions"
+>
+  Learn how to set permissions using the Python SDK.
+</Card>
+
 <Card title="NFT Client" icon="house" href="/sdk-reference/python/nftclient">
   Interact with SPG NFTs using the Python SDK.
 </Card>
 
 </CardGroup>
+
+
+# Permissions
+
+## Permission
+
+### Methods
+
+- set_permission
+- create_set_permission_signature
+- set_all_permissions
+
+### set_permission
+
+Sets the permission for a specific function call.
+
+Each policy is represented as a mapping from an IP account address to a signer address to a recipient
+address to a function selector to a permission level. The permission level can be 0 (ABSTAIN), 1 (ALLOW), or
+2 (DENY).
+
+By default, all policies are set to 0 (ABSTAIN), which means that the permission is not set. The owner of IP Account by default has all permission.
+
+| Method           |
+| ---------------- |
+| `set_permission` |
+
+Parameters:
+
+- `ip_id`: The IP ID that grants the permission for `signer`.
+- `signer`: The address that can call `to` on behalf of the `ipAccount`.
+- `to`: The address that can be called by the `signer` (currently only modules can be `to`)
+- `permission`: The new permission level.
+- `func`: [Optional] The function selector string of `to` that can be called by the `signer` on behalf of the `ipAccount`. By default, it allows all functions.
+- `tx_options`: [Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+set_permission_response = story_client.Permission.set_permission(
+  ip_id="0x01",
+  signer="0x1234567890123456789012345678901234567890",
+  to="0x2345678901234567890123456789012345678901",
+  permission=1,  # ALLOW
+  func="0x12345678"  # Optional function selector
+)
+```
+
+```python Request Parameters
+ip_id: str  # The IP ID that grants the permission for signer
+signer: str  # The address that can call to on behalf of the ipAccount
+to: str  # The address that can be called by the signer (currently only modules can be to)
+permission: int  # The new permission level (0=ABSTAIN, 1=ALLOW, 2=DENY)
+func: str = "0x00000000"  # Optional: The function selector string
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str  # The transaction hash
+}
+```
+
+</CodeGroup>
+
+### create_set_permission_signature
+
+Specific permission overrides wildcard permission with signature.
+
+| Method                            |
+| --------------------------------- |
+| `create_set_permission_signature` |
+
+Parameters:
+
+- `ip_id`: The IP ID that grants the permission for `signer`.
+- `signer`: The address that can call `to` on behalf of the `ipAccount`.
+- `to`: The address that can be called by the `signer` (currently only modules can be `to`)
+- `permission`: The new permission level.
+- `func`: [Optional] The function selector string of `to` that can be called by the `signer` on behalf of the `ipAccount`. By default, it allows all functions.
+- `deadline`: [Optional] The deadline for the signature in milliseconds, default is 1000ms.
+- `tx_options`: [Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+response = story_client.PermissionClient.create_set_permission_signature(
+  ip_id="0x01",
+  signer="0x1234567890123456789012345678901234567890",
+  to="0x2345678901234567890123456789012345678901",
+  permission=1,  # ALLOW
+  func="0x12345678",  # Optional function selector
+  deadline=1000  # Optional deadline in milliseconds
+)
+```
+
+```python Request Parameters
+ip_id: str  # The IP ID that grants the permission for signer
+signer: str  # The address that can call to on behalf of the ipAccount
+to: str  # The address that can be called by the signer (currently only modules can be to)
+permission: int  # The new permission level (0=ABSTAIN, 1=ALLOW, 2=DENY)
+func: str = "0x00000000"  # Optional: The function selector string
+deadline: int = None  # Optional: The deadline for the signature in milliseconds
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str  # The transaction hash
+}
+```
+
+</CodeGroup>
+
+### set_all_permissions
+
+Sets permission to a signer for all functions across all modules.
+
+| Method                |
+| --------------------- |
+| `set_all_permissions` |
+
+Parameters:
+
+- `ip_id`: The IP ID that grants the permission for `signer`.
+- `signer`: The address of the signer receiving the permissions.
+- `permission`: The new permission.
+- `tx_options`: [Optional] Transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+response = story_client.PermissionClient.set_all_permissions(
+  ip_id="0x01",
+  signer="0x1234567890123456789012345678901234567890",
+  permission=1  # ALLOW
+)
+```
+
+```python Request Parameters
+ip_id: str  # The IP ID that grants the permission for signer
+signer: str  # The address of the signer receiving the permissions
+permission: int  # The new permission level (0=ABSTAIN, 1=ALLOW, 2=DENY)
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str  # The transaction hash
+}
+```
+
+</CodeGroup>
 
 
 # IP Account
