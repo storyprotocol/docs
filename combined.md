@@ -20606,7 +20606,7 @@ Let's say that IP Asset (`ipId = 0x01`) has License Terms (`licenseTermdId = 10`
 
 <Warning>
 
-Be mindful that some IP Assets may have license terms attached that require the user minting the license to pay a `defaultMintingFee`. You can see an example of that in the [TypeScript Tutorial](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercialCustom.ts).
+Be mindful that some IP Assets may have license terms attached that require the user minting the license to pay a `defaultMintingFee`. You can see an example of that in the [TypeScript Tutorial](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts).
 
 </Warning>
 
@@ -21233,7 +21233,7 @@ In the following series of tutorials, you will learn how to build IP application
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/royalty/payRevenue.ts"
     icon="thumbs-up"
   >
     All of this page is covered in this working code example.
@@ -21345,7 +21345,7 @@ Congratulations, you paid an IP Asset on-chain!
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/royalty/payRevenue.ts"
     icon="thumbs-up"
   >
     All of this page is covered in this working code example.
@@ -21362,7 +21362,7 @@ Now that we have paid revenue, we need to learn how to claim it! We will cover t
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/royalty/payRevenue.ts"
     icon="thumbs-up"
   >
     All of this page is covered in this working code example.
@@ -21537,7 +21537,7 @@ Congratulations, you claimed revenue using the [Royalty Module](/concepts/royalt
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/royalty/payRevenue.ts"
     icon="thumbs-up"
   >
     All of this page is covered in this working code example.
@@ -23665,7 +23665,7 @@ You can see the explorer recognizes the metadata format, and you can play the so
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercialCustom.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/royalty/payRevenue.ts"
     icon="thumbs-up"
   >
     See a completed, working example of setting up a simple derivative chain and
@@ -23840,7 +23840,7 @@ main();
 <CardGroup cols={1}>
   <Card
     title="Completed Code"
-    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercialCustom.ts"
+    href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/royalty/payRevenue.ts"
     icon="thumbs-up"
   >
     See a completed, working example of setting up a simple derivative chain and
