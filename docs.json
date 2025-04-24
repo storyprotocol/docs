@@ -322,6 +322,7 @@
                   "sdk-reference/python/license",
                   "sdk-reference/python/royalty",
                   "sdk-reference/python/dispute",
+                  "sdk-reference/python/group",
                   "sdk-reference/python/permissions",
                   "sdk-reference/python/nftclient",
                   "sdk-reference/python/wipclient"
