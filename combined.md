@@ -90,10 +90,12 @@ It might require the caller pay a minting fee, depending on the license terms or
 Parameters:
 
 - `request.licensorIpId`: The licensor IP ID.
-- `request.licenseTemplate`: The address of the license template.
 - `request.licenseTermsId`: The ID of the license terms within the license template.
-- `request.amount`: The amount of license tokens to mint.
-- `request.receiver`: The address of the receiver.
+- `request.maxMintingFee`: The maximum minting fee to be paid when minting a license.
+- `request.maxRevenueShare`: The maximum revenue share to be paid when minting a license.
+- `request.amount`: \[Optional] The amount of license tokens to mint.
+- `request.receiver`: \[Optional] The address of the receiver.
+- `request.licenseTemplate`: \[Optional] The address of the license template.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
