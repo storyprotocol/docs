@@ -11,6 +11,7 @@ description: Royalty allows you to manage royalty payments and claims within Sto
 - claimable_revenue
 - claim_all_revenue
 - get_royalty_vault_address
+- transfer_to_vault
 
 ### pay_royalty_on_behalf
 
@@ -200,6 +201,51 @@ ip_id: str  # The ipId associated with the royalty vault
 
 ```python Response
 str  # The royalty vault proxy address
+```
+
+</CodeGroup>
+
+### transfer_to_vault
+
+Transfers to vault an amount of revenue tokens claimable via a royalty policy.
+
+| Method              |
+| ------------------- |
+| `transfer_to_vault` |
+
+Parameters:
+
+- `ip_id`: The ID of the IP asset that pays the royalties.
+- `ancestor_ip_id`: The ID of the ancestor IP asset.
+- `token`: The token address to transfer.
+- `royalty_policy`: \[Optional] The royalty policy to use ("LAP" or "LRP"). **Default: "LAP"**
+- `tx_options`: [Optional] The transaction options dictionary.
+
+<CodeGroup>
+
+```python Python
+transfer_result = story_client.Royalty.transfer_to_vault(
+    ip_id="0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1",
+    ancestor_ip_id="0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68",
+    royalty_policy="LAP",
+    token="0x1514000000000000000000000000000000000000",  # $WIP
+)
+print(f"Transferred to vault at transaction hash {transfer_result['tx_hash']}")
+```
+
+```python Request Parameters
+ip_id: str  # The ID of the IP asset that pays the royalties
+ancestor_ip_id: str  # The ID of the ancestor IP asset
+token: str  # The token address to transfer
+royalty_policy: str = "LAP"  # The royalty policy to use ("LAP" or "LRP")
+tx_options: dict = None  # Optional: Transaction options
+```
+
+```python Response
+{
+  "tx_hash": str,  # The transaction hash
+  "receipt": dict  # The transaction receipt, only available if wait_for_transaction is set to true
+}
 ```
 
 </CodeGroup>
