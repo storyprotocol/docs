@@ -18,7 +18,7 @@ jobs:
 
       - name: Combine .mdx files
         run: |
-          find . -type f -name "*.mdx" \
+          find . -type f -name "*.mdx" -not -path "*/ko/*" \
             -exec sh -c '
               perl -0777 -ne '\''
                 if (/^---\n.*?title: (.*?)[\n].*?---\n(.*)/s) {
