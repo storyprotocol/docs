@@ -1,0 +1,47 @@
+---
+title: staking
+description: 잠긴 토큰과 잠기지 않은 토큰에 대한 보상 승수가 있는 수정된 스테이킹 모듈
+---
+
+## 개요
+
+스테이킹 모듈은 아래의 변경 사항을 수용하도록 수정되었습니다. 자세한 정보는 Cosmos SDK의 [스테이킹 모듈 문서](https://docs.cosmos.network/main/build/modules/staking)를 참조하세요.
+
+## 보상 승수
+
+### 검증인
+
+검증인은 잠긴 토큰 또는 잠기지 않은 토큰을 위임으로 받아들일 수 있습니다. 잠긴 토큰에 대한 검증인은 잠기지 않은 토큰에 대한 검증인의 인플레이션 할당의 절반으로 제한됩니다.
+
+각 검증인이 위임에 따라 다른 인플레이션 분배를 받기 때문에, 검증인 v<sub>v<sub>i</sub></sub>에 대한 검증인 v<sub>i</sub>의 보상 풀에서의 인플레이션 분배 I
+
+<Image align="center" src="https://files.readme.io/3ee4914a7cc6036ceebbdd31ce93e525984a08364f8c3ab2152b86b3bcd5df7e-Screenshot_2025-02-11_at_8.30.07_AM.png" />
+
+여기서
+
+* I<sub>v<sub>i</sub></sub>는 v<sub>i</sub>
+* S<sub>v<sub>i</sub></sub>는 v<sub>i</sub>
+* M<sub>v<sub>i</sub></sub>는 v<sub>i</sub>
+  * 잠긴 토큰의 경우 0.5
+  * 잠기지 않은 토큰의 경우 1
+* R<sub>n</sub>은 [mint](/network/node-architecture/cosmos-modules/mint-module) 모듈
+
+### 위임
+
+위임자는 네 가지 다른 스테이킹 잠금 시간으로 위임할 수 있으며, 이는 각 위임(위임자-검증인 쌍의 스테이크)에 대해 다른 스테이킹 보상 승수를 초래합니다. 각 위임 D<sub>i</sub>에 대한 인플레이션 분배는 다음과 같이 계산됩니다:
+
+<Image align="center" src="https://files.readme.io/002ae69aa3b3e52a33747452fe0c0b91b9120f20155deb19b56fb7917132b8de-Screenshot_2025-02-11_at_8.34.44_AM.png" />
+
+여기서
+
+* S<sub>d<sub>i</sub></sub>는 검증인 v<sub>i</sub>에 대한 위임 d<sub>d</sub>
+* M<sub>d<sub>i</sub></sub>는 d의 보상 승수입니다<sub>i</sub> on v<sub>d</sub>
+* I<sub>v</sub>는 v에 대한 총 인플레이션 토큰 보상입니다<sub>d</sub>
+* C<sub>v</sub>는 v에 대한 수수료율입니다<sub>d</sub>
+
+#### 시간 가중 보상 승수 M<sub>d<sub>i</sub></sub>
+
+* *유연* (락업 없음): 1
+* *단기* (90일): 1.1
+* *중기* (360일): 1.5
+* *장기* (540일): 2.0

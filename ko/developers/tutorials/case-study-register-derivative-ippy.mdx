@@ -1,0 +1,297 @@
+---
+title: "사례 연구: Ippy의 파생작 등록하기"
+description: Story의 공식 마스코트 Ippy의 파생작을 PiPi라는 생성형 pfp 프로젝트가 어떻게 등록하는지 보여주는 사례 연구입니다.
+---
+
+[PiPi](https://pfp3.io/pipi/mint)는 Story에서 무료로 [Ippy](https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42), Story의 공식 마스코트의 파생 작품을 민팅할 수 있게 해주는 생성형 pfp 프로젝트입니다. Ippy에는 [Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing) 조건이 붙어 있어, 상업적으로 사용되지 않고 적절한 출처 표시가 이루어지는 한 누구나 사용하거나 파생 작품을 만들 수 있습니다.
+
+<CardGroup cols={3}>
+  <Card title="원본 Ippy" href="https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42" icon="house">
+    우리의 탐색기에서 원본 Ippy 마스코트를 확인하세요.
+  </Card>
+
+  {" "}
+
+  <Card title="PiPi 파생작" href="https://explorer.story.foundation/ipa/0xBB42BF2713ee736284C45B1b549a03625cc97e51" icon="house">
+    우리의 탐색기에서 PiPi 파생작을 확인하세요.
+  </Card>
+
+  <Card title="PiPi 계약 보기" href="https://www.storyscan.io/address/0x5C6b236A100d09f8A625dB87E11122749A9B71A6?tab=contract" icon="scroll">
+    PiPi 계약 소스 코드를 확인하세요.
+  </Card>
+</CardGroup>
+
+PiPi가 Ippy의 파생작으로 연결되면 자동으로 동일한 라이선스 조건(NCSR)을 상속받고 그 계보 그래프에 연결되며, 이는 우리의 탐색기에서 직접 확인할 수 있습니다:
+
+<Frame caption="오른쪽 하단에서 Ippy가 이 PiPi의 루트 IP임을 확인할 수 있습니다.">
+  <img src="/images/tutorials/pippy-explorer.png" alt="In the bottom right, you can see Ippy is the root IP of this PiPi." />
+</Frame>
+
+다음 튜토리얼에서는 이 PiPi 이미지들이 어떻게 정확히 공식 Ippy IP의 파생작으로 적절히 등록되었는지 배우게 될 것입니다.
+
+## 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 다음을 완료하세요 [자신의 프로젝트 설정하기](/developers/smart-contracts-guide/setup)
+
+## 1. 메타데이터 설정
+
+새로운 PiPi IP를 등록하기 전에 메타데이터를 설정해야 합니다. 두 가지 유형의 메타데이터가 있습니다:
+
+1. NFT 메타데이터
+2. IP 메타데이터
+
+<CardGroup cols={1}>
+  <Card title="NFT vs. IP 메타데이터" href="/concepts/ip-asset/overview#nft-vs-ip-metadata" icon="house">
+    NFT와 IP 메타데이터를 올바르게 설정하는 방법을 배우세요.
+  </Card>
+</CardGroup>
+
+다음 [PiPi](https://explorer.story.foundation/ipa/0xBB42BF2713ee736284C45B1b549a03625cc97e51)를 예로 들어, NFT & IP 메타데이터는 다음과 같아야 합니다:
+
+<CodeGroup>
+  ```json NFT Metadata
+  {
+    "name": "PiPi NFT #1103",
+    "image": "https://ipfs.io/ipfs/bafybeigsv4cgacndijwy6b7qhxbseonrybrcpbh47zrlm64gsjm4mlpb2q/nft_1103.jpeg",
+    "attributes": [
+      {
+        "trait_type": "Bg",
+        "value": "Orange"
+      },
+      {
+        "trait_type": "Body",
+        "value": "Pink"
+      },
+      {
+        "trait_type": "Eyes",
+        "value": "Cute"
+      },
+      {
+        "trait_type": "Cloth",
+        "value": "Blue"
+      },
+      {
+        "trait_type": "Glasses",
+        "value": "Neo"
+      },
+      {
+        "trait_type": "Hat",
+        "value": "Duck"
+      }
+    ],
+    "description": "Pipi - The first Derivative IP Asset NFT collection on Story Protocol. Limited 2222 generative PFPs inspired by the Ippy, official Story mascot."
+  }
+  ```
+
+  ```json IP Metadata
+  {
+    "title": "PiPi NFT",
+    "description": "Pipi - The first Derivative IP Asset NFT collection on Story Protocol. Limited 2222 generative PFPs inspired by the Ippy, official Story mascot.",
+    "image": "https://ipfs.io/ipfs/bafybeigsv4cgacndijwy6b7qhxbseonrybrcpbh47zrlm64gsjm4mlpb2q/nft_1103.jpeg",
+    "imageHash": "0xb930f3ba19350bddbcd8c180a3127086f6e454d29cd5b3db613c70bae2848329",
+    "mediaUrl": "https://ipfs.io/ipfs/bafybeigsv4cgacndijwy6b7qhxbseonrybrcpbh47zrlm64gsjm4mlpb2q/nft_1103.jpeg",
+    "mediaHash": "0xb930f3ba19350bddbcd8c180a3127086f6e454d29cd5b3db613c70bae2848329",
+    "mediaType": "image/jpeg",
+    "creators": [
+      {
+        "name": "PFP3",
+        "address": "0xF91510A17392Be6B3b6F620427051168A1e56A72",
+        "description": "PFP Generator",
+        "image": "https://utfs.io/f/XyGBmmuHQK18FodS0WDuqCo1LVerXR7sgm8vJnESazWcM5yB",
+        "socialMedia": [
+          {
+            "platform": "twitter",
+            "url": "https://x.com/pfp3_"
+          },
+          {
+            "platform": "website",
+            "url": "https://pfp3.io"
+          },
+          {
+            "platform": "discord",
+            "url": "https://discord.gg/pfp3"
+          }
+        ],
+        "role": "creator",
+        "contributionPercent": 100
+      }
+    ],
+    "tags": ["PiPi", "Derivative IPA", "NFT", "PF3", "PFP"],
+    "ipType": "NFT"
+  }
+  ```
+</CodeGroup>
+
+메타데이터를 작성한 후에는 IPFS에 업로드하고 나중에 NFT를 민팅할 때 설정할 수 있습니다.
+
+## 2. NFT 민팅하기
+
+Story에 IP를 등록하려면 먼저 NFT를 민팅해야 합니다. 이 NFT는 **소유권**을 나타냅니다 [IP 자산](/concepts/ip-asset)의.
+
+<CardGroup cols={1}>
+  <Card title="PiPi 계약 보기" href="https://www.storyscan.io/address/0x5C6b236A100d09f8A625dB87E11122749A9B71A6?tab=contract" icon="scroll">
+    PiPi 계약 소스 코드를 확인하세요.
+  </Card>
+</CardGroup>
+
+다음은 `_mintNFT` 함수의 일부입니다 `PiPi.sol` contract:
+
+```sol PiPi.sol
+contract PiPi is ERC721, Ownable, IERC721Receiver {
+
+  // ... some code here ...
+
+  function whitelistMint() external payable returns (string memory, address) {
+    require(whitelistMintEnabled, "Whitelist mint is not active");
+    require(whitelist[msg.sender], "Address not whitelisted");
+    require(mintedCount[msg.sender] < WHITELIST_MAX_P_WALLET, "Whitelist mint limit reached");
+    require(_totalSupply < MAX_SUPPLY, "Max supply reached");
+
+    return _mintNFT(msg.sender);
+  }
+
+  function _mintNFT(address recipient) internal returns (string memory, address) {
+    uint256 newTokenId = _totalSupply + 1;
+    _safeMint(address(this), newTokenId);
+
+    address ipId = _registerAsIPAsset(newTokenId);
+
+    string memory nftUri = tokenURI(newTokenId);
+    bytes32 metadataHash = keccak256(abi.encodePacked(nftUri));
+    CORE_METADATA_MODULE.setAll(ipId, nftUri, metadataHash, metadataHash);
+
+    registerDerivativeForToken(ipId);
+
+    _safeTransfer(address(this), recipient, newTokenId, "");
+
+    // ... more code here ...
+
+    return (nftUri, ipId);
+  }
+}
+```
+
+보시다시피, 사용자가 `whitelistMint`를 호출하면 `_mintNFT`를 호출합니다. 사용자가 화이트리스트에 있는지 확인한 후에요. 16번 줄에서 우리는 계약에 새로운 NFT를 민팅하고 있습니다.
+
+<Note>
+  **왜 우리는 NFT를 사용자가 아닌 계약에 민팅하나요?**
+
+  나중에 IP를 Ippy의 파생작으로 등록해야 합니다. 오직 소유자(NFT를 보유한 주소)만이 IP를 다른 IP의 파생작으로 등록할 수 있습니다. 따라서 우리는 NFT를 계약에 민팅 => 계약이 NFT를 IP로 등록하고 나중에 Ippy의 파생작으로 등록 => NFT를 사용자에게 전송하는 순서로 진행합니다.
+</Note>
+
+## 3. NFT를 IP로 등록하기
+
+새로운 NFT를 민팅한 후에는 이를 IP로 등록할 수 있습니다. 위의 18번 줄에서 `_registerAsIPAsset` function:
+
+```sol PiPi.sol
+function _registerAsIPAsset(uint256 tokenId) internal returns (address) {
+  try IP_ASSET_REGISTRY.register(block.chainid, address(this), tokenId) returns (address ipId) {
+    require(ipId != address(0), "IP Asset registration failed");
+    return ipId;
+  } catch Error(string memory reason) {
+    revert(reason);
+  } catch {
+    revert("IP Asset registration failed");
+  }
+}
+```
+
+이 모든 것은 `register` 함수를 [IP Asset Registry](/concepts/registry/ip-asset-registry)에서 호출하는 것입니다. 이는 새로운 [IP Asset](/concepts/ip-asset)을 우리 프로토콜에 생성하고, `ipId`를 반환합니다.
+
+## 4. IP에 메타데이터 설정하기
+
+이제 새로운 IP 자산을 등록했으니, 이전에 만든 메타데이터를 `CoreMetadataModule.sol`를 사용하여 NFT & IP에 설정할 수 있습니다. [여기](/concepts/ip-asset/overview#adding-nft-%26-ip-metadata-to-ip-asset)에서 설명한 대로, 우리는 4개의 매개변수를 설정해야 합니다:
+
+1. `nftMetadataHash`
+2. `nftMetadataURI`
+3. `ipMetadataHash`
+4. `ipMetadataURI`
+
+```sol PiPi.sol
+// handles the NFT's `nftMetadataHash`
+// handles the IP's `ipMetadataURI` and `ipMetadataHash`
+function _mintNFT(address recipient) internal returns (string memory, address) {
+
+  // ... some code here ...
+
+  string memory nftUri = tokenURI(newTokenId);
+  bytes32 metadataHash = keccak256(abi.encodePacked(nftUri));
+  CORE_METADATA_MODULE.setAll(ipId, nftUri, metadataHash, metadataHash);
+
+  // ... some code here ...
+
+}
+
+// handles the NFT's `nftMetadataURI`
+function tokenURI(uint256 tokenId) public view override returns (string memory) {
+  return string(abi.encodePacked(_baseUri, StringUtils.uint2str(tokenId), ".json"));
+}
+```
+
+## 5. 파생작으로 등록하기
+
+이제 NFT를 민팅하고, IP로 등록하고, 적절한 메타데이터를 설정했으니, Ippy의 파생작으로 등록할 수 있습니다. `PiPi.sol` 계약은 `registerDerivativeForToken`를 사용하여 이를 처리합니다:
+
+```sol PiPi.sol
+function registerDerivativeForToken(address ipId) internal {
+  address[] memory parentIpIds = new address[](1);
+  parentIpIds[0] = 0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42;
+
+  uint256[] memory licenseTermsIds = new uint256[](1);
+  licenseTermsIds[0] = 1;
+
+  address licenseTemplate = 0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316;
+  bytes memory royaltyContext = hex"0000000000000000000000000000000000000000";
+  uint256 maxMintingFee = 0;
+  uint32 maxRts = 0;
+  uint32 maxRevenueShare = 0;
+
+  LICENSING_MODULE.registerDerivative(
+    ipId,
+    parentIpIds,
+    licenseTermsIds,
+    licenseTemplate,
+    royaltyContext,
+    maxMintingFee,
+    maxRts,
+    maxRevenueShare
+  );
+}
+```
+
+이 함수는 `registerDerivative`를 호출합니다 [라이선싱 모듈](/concepts/licensing-module), 다음과 함께:
+
+* `ipId`: 3단계에서 얻은 새로운 `ipId`&#x20;
+* `parentIpIds`: Ippy의 를 포함하는 배열`ipId`, 이는 `0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42`
+* `licenseTermsIds`: 를 포함하는 배열`1`, 이는 의 라이선스 조건 ID입니다[Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing). 이는 파생작이 Ippy를 무료로 사용할 수 있지만 상업화할 수 없음을 의미합니다
+* `licenseTemplate`: 의 주소`PILicenseTemplate`, 에서 찾을 수 있음[배포된 스마트 컨트랙트](/developers/deployed-smart-contracts)
+* `royaltyContext`: 그냥 제로 주소로 설정
+* `maxMintingFee`, `maxRts`, 그리고 `maxRevenueShare` 는 0으로 설정할 수 있습니다. 라이선스 조건이 비상업적이기 때문에 이들은 아무 작용을 하지 않습니다.
+
+## 6. NFT 전송
+
+이제 컨트랙트가 IP를 파생작으로 등록하는 것을 처리했으므로, PiPi IP에 대한 소유권을 갖도록 사용자에게 NFT를 전송합니다:
+
+```sol PiPi.sol
+function _mintNFT(address recipient) internal returns (string memory, address) {
+  // ... some code here ...
+  _safeTransfer(address(this), recipient, newTokenId, "");
+  // ... some code here ...
+}
+```
+
+## 7. 완료!
+
+축하합니다, 공식 Ippy IP의 파생작을 등록했습니다!
+
+<CardGroup cols={2}>
+  <Card title="Explorer에서 보기" href="https://explorer.story.foundation/ipa/0xBB42BF2713ee736284C45B1b549a03625cc97e51" icon="house">
+    우리의 explorer에서 파생 PiPi를 확인하세요.
+  </Card>
+
+  <Card title="더 알아보기" href="/developers/tutorials" icon="book-open">
+    우리의 문서에서 더 많은 튜토리얼을 탐험해보세요
+  </Card>
+</CardGroup>

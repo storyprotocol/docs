@@ -1,0 +1,155 @@
+---
+title: Register a Derivative
+description: Solidity에서 다른 IP 자산의 자식으로 파생/리믹스 IP 자산을 등록하는 방법을 알아보세요.
+---
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/4_IPARemix.t.sol" icon="thumbs-up">
+  이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다룹니다.
+</Card>
+
+일단 [License Token](/concepts/licensing-module/license-token)이 IP Asset에서 발행되면, 해당 토큰(ERC-721 NFT)의 소유자는 이를 소각하여 자신의 IP Asset을 License Token과 연관된 IP Asset의 파생작으로 등록할 수 있습니다.
+
+## 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 완료하세요 [자체 프로젝트 설정](/developers/smart-contracts-guide/setup)
+2. 발행된 License Token이 있어야 합니다. 방법은 [여기](/developers/smart-contracts-guide/mint-license)
+
+## 파생작으로 등록하기
+
+작동을 확인하고 결과를 검증하기 위해 `test/4_IPARemix.t.sol` 아래에 테스트 파일을 만들어 봅시다:
+
+<Note>
+  **계약 주소**
+
+  Story 계약의 주소를 여러분을 위해 미리 채워 넣었습니다. 하지만 여기에서도 주소를 찾을 수 있습니다: [배포된 스마트 계약](/developers/deployed-smart-contracts)
+</Note>
+
+```solidity test/4_IPARemix.t.sol
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.26;
+
+import { Test } from "forge-std/Test.sol";
+// for testing purposes only
+import { MockIPGraph } from "@storyprotocol/test/mocks/MockIPGraph.sol";
+import { IIPAssetRegistry } from "@storyprotocol/core/interfaces/registries/IIPAssetRegistry.sol";
+import { ILicenseRegistry } from "@storyprotocol/core/interfaces/registries/ILicenseRegistry.sol";
+import { IPILicenseTemplate } from "@storyprotocol/core/interfaces/modules/licensing/IPILicenseTemplate.sol";
+import { ILicensingModule } from "@storyprotocol/core/interfaces/modules/licensing/ILicensingModule.sol";
+import { PILFlavors } from "@storyprotocol/core/lib/PILFlavors.sol";
+import { PILTerms } from "@storyprotocol/core/interfaces/modules/licensing/IPILicenseTemplate.sol";
+
+import { SimpleNFT } from "../src/mocks/SimpleNFT.sol";
+
+// Run this test:
+// forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/4_IPARemix.t.sol
+contract IPARemixTest is Test {
+    address internal alice = address(0xa11ce);
+    address internal bob = address(0xb0b);
+
+    // For addresses, see https://docs.story.foundation/developers/deployed-smart-contracts
+    // Protocol Core - IPAssetRegistry
+    IIPAssetRegistry internal IP_ASSET_REGISTRY = IIPAssetRegistry(0x77319B4031e6eF1250907aa00018B8B1c67a244b);
+    // Protocol Core - LicenseRegistry
+    ILicenseRegistry internal LICENSE_REGISTRY = ILicenseRegistry(0x529a750E02d8E2f15649c13D69a465286a780e24);
+    // Protocol Core - LicensingModule
+    ILicensingModule internal LICENSING_MODULE = ILicensingModule(0x04fbd8a2e56dd85CFD5500A4A4DfA955B9f1dE6f);
+    // Protocol Core - PILicenseTemplate
+    IPILicenseTemplate internal PIL_TEMPLATE = IPILicenseTemplate(0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316);
+    // Protocol Core - RoyaltyPolicyLAP
+    address internal ROYALTY_POLICY_LAP = 0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E;
+    // Revenue Token - MERC20
+    address internal MERC20 = 0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E;
+
+    SimpleNFT public SIMPLE_NFT;
+    uint256 public tokenId;
+    address public ipId;
+    uint256 public licenseTermsId;
+    uint256 public startLicenseTokenId;
+
+    function setUp() public {
+        // this is only for testing purposes
+        // due to our IPGraph precompile not being
+        // deployed on the fork
+        vm.etch(address(0x0101), address(new MockIPGraph()).code);
+
+        SIMPLE_NFT = new SimpleNFT("Simple IP NFT", "SIM");
+        tokenId = SIMPLE_NFT.mint(alice);
+        ipId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), tokenId);
+
+        licenseTermsId = PIL_TEMPLATE.registerLicenseTerms(
+            PILFlavors.commercialRemix({
+                mintingFee: 0,
+                commercialRevShare: 10 * 10 ** 6, // 10%
+                royaltyPolicy: ROYALTY_POLICY_LAP,
+                currencyToken: MERC20
+            })
+        );
+
+        vm.prank(alice);
+        LICENSING_MODULE.attachLicenseTerms(ipId, address(PIL_TEMPLATE), licenseTermsId);
+        startLicenseTokenId = LICENSING_MODULE.mintLicenseTokens({
+            licensorIpId: ipId,
+            licenseTemplate: address(PIL_TEMPLATE),
+            licenseTermsId: licenseTermsId,
+            amount: 2,
+            receiver: bob,
+            royaltyContext: "", // for PIL, royaltyContext is empty string
+            maxMintingFee: 0,
+            maxRevenueShare: 0
+        });
+    }
+
+    /// @notice Mints an NFT to be registered as IP, and then
+    /// linked as a derivative of alice's asset using the
+    /// minted license token.
+    function test_registerDerivativeWithLicenseTokens() public {
+        // First we mint an NFT and register it as an IP Asset,
+        // owned by Bob.
+        uint256 childTokenId = SIMPLE_NFT.mint(bob);
+        address childIpId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), childTokenId);
+
+        uint256[] memory licenseTokenIds = new uint256[](1);
+        licenseTokenIds[0] = startLicenseTokenId;
+
+        // Bob uses the License Token he has from Alice's IP
+        // to register his IP as a derivative of Alice's IP.
+        vm.prank(bob);
+        LICENSING_MODULE.registerDerivativeWithLicenseTokens({
+            childIpId: childIpId,
+            licenseTokenIds: licenseTokenIds,
+            royaltyContext: "", // empty for PIL
+            maxRts: 0
+        });
+
+        assertTrue(LICENSE_REGISTRY.hasDerivativeIps(ipId));
+        assertTrue(LICENSE_REGISTRY.isParentIp(ipId, childIpId));
+        assertTrue(LICENSE_REGISTRY.isDerivativeIp(childIpId));
+        assertEq(LICENSE_REGISTRY.getParentIpCount(childIpId), 1);
+        assertEq(LICENSE_REGISTRY.getDerivativeIpCount(ipId), 1);
+        assertEq(LICENSE_REGISTRY.getParentIp({ childIpId: childIpId, index: 0 }), ipId);
+        assertEq(LICENSE_REGISTRY.getDerivativeIp({ parentIpId: ipId, index: 0 }), childIpId);
+    }
+}
+```
+
+## 코드를 테스트하세요!
+
+실행하세요 `forge build`. 모든 것이 성공적이라면, 명령이 성공적으로 컴파일될 것입니다.
+
+이제 다음 명령을 실행하여 테스트를 실행하세요:
+
+```bash
+forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/4_IPARemix.t.sol
+```
+
+## 수익 지불 및 청구
+
+축하합니다, 파생 IP Asset을 등록하셨습니다!
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/4_IPARemix.t.sol" icon="thumbs-up">
+  이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다룹니다.
+</Card>
+
+이제 부모-자식 IP 관계를 설정했으니, 라이선스 조건에 따른 지불과 자동화된 수익 공유를 탐색할 수 있습니다. 이에 대해서는 다음 페이지에서 다룰 것입니다.

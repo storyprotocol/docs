@@ -1,0 +1,311 @@
+---
+title: Royalty
+description: RoyaltyClient를 사용하여 Story 내에서 로열티 지불 및 청구를 관리할 수 있습니다.
+---
+
+## RoyaltyClient
+
+### 메서드
+
+* payRoyaltyOnBehalf
+* claimableRevenue
+* claimAllRevenue
+* batchClaimAllRevenue
+* getRoyaltyVaultAddress
+* batchClaimAllRevenue
+* transferToVault
+
+### payRoyaltyOnBehalf
+
+함수 호출자가 지불자 IP 자산을 대신하여 수신자 IP 자산에 로열티를 지불할 수 있도록 합니다.
+
+| 메서드                  | 타입                                                                            |
+| -------------------- | ----------------------------------------------------------------------------- |
+| `payRoyaltyOnBehalf` | `(request: PayRoyaltyOnBehalfRequest) => Promise<PayRoyaltyOnBehalfResponse>` |
+
+Parameters:
+
+* `request.receiverIpId`: 로열티를 받는 ipId입니다.
+* `request.payerIpId`: 로열티를 지불하는 IP 자산의 ID입니다.
+* `request.token`: 로열티 지불에 사용할 토큰입니다.
+* `request.amount`: 지불할 금액입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+* `request.wipOptions`: \[선택사항]
+  * `request.wipOptions.useMulticallWhenPossible`: \[선택사항] 가능한 경우 멀티콜을 사용하여 WIP 호출을 하나의 트랜잭션으로 일괄 처리합니다.**Default: true**
+  * `request.wipOptions.enableAutoWrapIp`: \[선택사항] 기본적으로 현재 WIP 잔액이 수수료를 충당하지 못하는 경우 IP가 WIP로 변환됩니다. 이 동작을 비활성화하려면 이 값을 `false`로 설정하세요.**Default: true**
+  * `request.wipOptions.enableAutoApprove`: \[선택사항] WIP가 필요하지만 현재 허용량이 충분하지 않은 경우 자동으로 WIP 사용을 승인합니다. 이 동작을 비활성화하려면 이 값을 `false`로 설정하세요.**Default: true**
+* `request.erc20Options`: \[선택사항]
+  * `request.erc20Options.enableAutoApprove`: \[선택사항] ERC20이 필요하지만 현재 허용량이 충분하지 않은 경우 자동으로 ERC20 사용을 승인합니다. 이 동작을 비활성화하려면 이 값을 `false`로 설정하세요.**Default: true**
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+  import { parseEther, zeroAddress } from "viem";
+
+  // In this case, lets say there is a root IPA 'A' and a derivative IPA 'B'.
+  // Someone wants to pay 'B' for whatever reason (they bought it, they want to tip it, etc).
+  // Since the payer is not an IP Asset (rather an external user), the `payerIpId` can
+  // be a zeroAddress. And the receiver is, well, the receiver's ipId which is B.
+  //
+  // It's important to note that both 'B' and its parent 'A' will be able
+  // to claim revenue from this based on the negotiated license terms
+  const payRoyalty = await client.royalty.payRoyaltyOnBehalf({
+    receiverIpId: "0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1", // B's ipId
+    payerIpId: zeroAddress,
+    token: WIP_TOKEN_ADDRESS,
+    amount: parseEther("2"), // 2 $WIP
+    txOptions: { waitForTransaction: true },
+  });
+  console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
+
+  // In this case, lets say there is a root IPA 'A' and a derivative IPA 'B'.
+  // 'B' earns revenue off-chain, but must pay 'A' based on their negotiated license terms.
+  // So 'B' pays 'A' what they are due
+  const payRoyalty = await client.royalty.payRoyaltyOnBehalf({
+    receiverIpId: "0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68", // A's ipId
+    payerIpId: "0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1", // B's ipId
+    token: WIP_TOKEN_ADDRESS,
+    amount: parseEther("2"), // 2 $WIP
+    txOptions: { waitForTransaction: true },
+  });
+  console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
+  ```
+
+  ```typescript Request Type
+  export type PayRoyaltyOnBehalfRequest = {
+    receiverIpId: Address;
+    payerIpId: Address;
+    token: Address;
+    amount: TokenAmountInput;
+  } & WithTxOptions &
+    WithERC20Options &
+    WithWipOptions;
+  ```
+
+  ```typescript Response Type
+  export type PayRoyaltyOnBehalfResponse = {
+    txHash?: string;
+    receipt?: TransactionReceipt;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### claimableRevenue
+
+로열티 토큰 보유자가 청구할 수 있는 총 수익 토큰 금액을 가져옵니다.
+
+| 메서드                | 타입                                                                        |
+| ------------------ | ------------------------------------------------------------------------- |
+| `claimableRevenue` | `(request: ClaimableRevenueRequest) => Promise<ClaimableRevenueResponse>` |
+
+Parameters:
+
+* `request.royaltyVaultIpId`: 로열티 금고의 ID입니다.
+* `request.claimer`: 로열티 토큰 보유자의 주소입니다.
+* `request.token`: 청구할 수익 토큰입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript Request Type
+  export type ClaimableRevenueRequest = {
+    royaltyVaultIpId: Address;
+    claimer: Address;
+    token: Address;
+  };
+  ```
+
+  ```typescript Response Type
+  export type ClaimableRevenueResponse = bigint;
+  ```
+</CodeGroup>
+
+### claimAllRevenue
+
+자식 IP 자산 및/또는 자신의 IP 로열티 금고에서 모든 수익을 청구합니다.
+
+| 메서드               | 타입                                                                      |
+| ----------------- | ----------------------------------------------------------------------- |
+| `claimAllRevenue` | `(request: ClaimAllRevenueRequest) => Promise<ClaimAllRevenueResponse>` |
+
+Parameters:
+
+* `request.ancestorIpId`: 수익이 청구되는 조상 IP의 주소입니다.
+* `request.claimer`: 통화(수익) 토큰의 청구자 주소입니다. 일반적으로 IP가 모든 로열티 토큰을 가지고 있는 경우 조상 IP의 ipId입니다. 그렇지 않은 경우, 이는 조상 IP 로열티 토큰을 보유하고 있는 주소가 됩니다.
+* `request.childIpIds[]`: 로열티가 파생되는 자식 IP들의 주소입니다.
+* `request.royaltyPolicies[]`: 로열티 정책의 주소들로, royaltyPolicies\[i]는 childIpIds\[i]의 로열티 흐름을 관리합니다.
+* `request.currencyTokens[]`: 로열티가 청구될 통화 토큰의 주소들입니다.
+* `request.claimOptions`: \[선택사항]
+  * `request.claimOptions.autoTransferAllClaimedTokensFromIp`: \[선택사항] 활성화된 경우, 지갑이 IP를 소유하고 있다면 청구자에게 청구된 모든 토큰이 지갑 주소로 전송됩니다. 지갑이 청구자이거나 청구자가 지갑이 소유한 IP가 아닌 경우, 토큰은 전송되지 않습니다. 청구자로부터 청구된 토큰의 자동 전송을 비활성화하려면 false로 설정하세요.**Default: true**
+  * `request.claimOptions.autoUnwrapIpTokens`: \[선택사항] 기본적으로 전송된 후 모든 청구된 WIP 토큰은 IP로 다시 변환됩니다. 이 동작을 비활성화하려면 false로 설정하세요.**Default: false**
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+  const claimRevenue = await client.royalty.claimAllRevenue({
+    // IP Asset 1's (parent) ipId
+    ancestorIpId: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    // whoever owns the royalty tokens associated with IP Royalty Vault 1
+    // (most likely the associated ipId, which is IP Asset 1's ipId)
+    claimer: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    currencyTokens: [WIP_TOKEN_ADDRESS],
+    // IP Asset 2's (child) ipId
+    childIpIds: ["0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2"],
+    // testnet address of RoyaltyPolicyLAP
+    royaltyPolicies: ["0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E"],
+  });
+
+  console.log(`Claimed revenue: ${claimRevenue.claimedTokens}`);
+  ```
+
+  ```typescript Request Type
+  export type ClaimAllRevenueRequest = {
+    ancestorIpId: Address;
+    claimer: Address;
+    childIpIds: Address[];
+    royaltyPolicies: Address[];
+    currencyTokens: Address[];
+  } & WithClaimOptions;
+
+  export type WithClaimOptions = {
+    claimOptions?: {
+      autoTransferAllClaimedTokensFromIp?: boolean;
+      autoUnwrapIpTokens?: boolean;
+    };
+  };
+  ```
+
+  ```typescript Response Type
+  export type ClaimAllRevenueResponse = {
+    txHashes: Hash[];
+    receipt?: TransactionReceipt;
+    claimedTokens?: ClaimedToken[];
+  };
+
+  export type ClaimedToken = {
+    token: Address;
+    amount: bigint;
+  };
+  ```
+</CodeGroup>
+
+### batchClaimAllRevenue
+
+여러 조상 IP의 자식 IP들로부터 모든 수익을 자동으로 일괄 청구합니다. 멀티콜이 비활성화된 경우, 각 조상 IP에 대해 `claimAllRevenue`를 호출합니다. 그런 다음 지갑이 IP를 소유하고 있거나 청구자인 경우 모든 청구된 토큰을 지갑으로 전송합니다. 청구된 토큰이 WIP인 경우, IP로 다시 변환됩니다.
+
+| 메서드                    | 타입                                                                                |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| `batchClaimAllRevenue` | `(request: BatchClaimAllRevenueRequest) => Promise<BatchClaimAllRevenueResponse>` |
+
+Parameters:
+
+* `request.ancestorIps[]`: 수익이 청구되는 조상 IP 정보의 배열입니다.
+  * `request.ancestorIps[].ipId`: 수익이 청구되는 조상 IP의 주소입니다.
+  * `request.ancestorIps[].claimer`: 통화(수익) 토큰의 청구자 주소입니다. 일반적으로 IP가 모든 로열티 토큰을 가지고 있는 경우 조상 IP의 ipId입니다. 그렇지 않은 경우, 이는 조상 IP 로열티 토큰을 보유하고 있는 주소가 됩니다.
+  * `request.ancestorIps[].childIpIds[]`: 로열티가 파생되는 자식 IP들의 주소입니다.
+  * `request.ancestorIps[].royaltyPolicies[]`: 로열티 정책의 주소들로, royaltyPolicies\[i]는 childIpIds\[i]의 로열티 흐름을 관리합니다.
+  * `request.ancestorIps[].currencyTokens[]`: 로열티가 청구될 통화 토큰의 주소들입니다.
+* `request.claimOptions`: \[선택사항]
+  * `request.claimOptions.autoTransferAllClaimedTokensFromIp`: \[선택사항] 활성화된 경우, 지갑이 IP를 소유하고 있다면 청구자에게 청구된 모든 토큰이 지갑 주소로 전송됩니다. 지갑이 청구자이거나 청구자가 지갑이 소유한 IP가 아닌 경우, 토큰은 전송되지 않습니다. 청구자로부터 청구된 토큰의 자동 전송을 비활성화하려면 false로 설정하세요.**Default: true**
+  * `request.claimOptions.autoUnwrapIpTokens`: \[선택사항] 기본적으로 전송된 후 모든 청구된 WIP 토큰은 IP로 다시 변환됩니다. 이 동작을 비활성화하려면 false로 설정하세요.**Default: false**
+* `request.options`: \[선택사항]
+  * `request.options.useMulticallWhenPossible`: \[선택사항] 가능한 경우 멀티콜을 사용하여 호출을 `claimAllRevenue`하나의 트랜잭션으로 일괄 처리합니다. ancestorIp가 1개만 제공된 경우 멀티콜은 사용되지 않습니다.**Default: true**
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+  const claimRevenue = await client.royalty.batchClaimAllRevenue({
+    ancestorIps: [
+      {
+        ipId: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+        claimer: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+        currencyTokens: [WIP_TOKEN_ADDRESS],
+        childIpIds: ["0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2"],
+        royaltyPolicies: ["0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E"],
+      },
+    ],
+  });
+
+  console.log(`Claimed revenue: ${claimRevenue.claimedTokens}`);
+  ```
+
+  ```typescript Request Type
+  export type BatchClaimAllRevenueRequest = WithClaimOptions & {
+    ancestorIps: {
+      ipId: Address;
+      claimer: Address;
+      childIpIds: Address[];
+      royaltyPolicies: Address[];
+      currencyTokens: Address[];
+    }[];
+    options?: {
+      useMulticallWhenPossible?: boolean;
+    };
+  };
+
+  export type WithClaimOptions = {
+    claimOptions?: {
+      autoTransferAllClaimedTokensFromIp?: boolean;
+      autoUnwrapIpTokens?: boolean;
+    };
+  };
+  ```
+
+  ```typescript Response Type
+  export type BatchClaimAllRevenueResponse = {
+    txHashes: Hash[];
+    receipts: TransactionReceipt[];
+    claimedTokens?: IpRoyaltyVaultImplRevenueTokenClaimedEvent[];
+  };
+  ```
+</CodeGroup>
+
+### getRoyaltyVaultAddress
+
+주어진 royaltyVaultIpId의 로열티 금고 프록시 주소를 가져옵니다.
+
+| 메서드                      | 타입                                            |
+| ------------------------ | --------------------------------------------- |
+| `getRoyaltyVaultAddress` | `(royaltyVaultIpId: Hex) => Promise<Address>` |
+
+Parameters:
+
+* `royaltyVaultIpId`: 로열티 금고와 연관된 `ipId`입니다.
+
+### transferToVault
+
+로열티 정책을 통해 청구 가능한 수익 토큰의 금액을 금고로 전송합니다.
+
+| 메서드               | 타입                                                                  |
+| ----------------- | ------------------------------------------------------------------- |
+| `transferToVault` | `(request: TransferToVaultRequest) => Promise<TransactionResponse>` |
+
+Parameters:
+
+* `request.royaltyPolicy`: 사용할 로열티 정책입니다.
+* `request.ipId`: 로열티를 지불하는 IP 자산의 ID입니다.
+* `request.ancestorIpId`: 조상 IP 자산의 ID.
+* `request.token`: 전송할 토큰 주소.
+* `request.txOptions`: \[선택사항] 트랜잭션 [옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript Request Type
+  export type TransferToVaultRequest = WithTxOptions & {
+    royaltyPolicy: RoyaltyPolicyInput;
+    ipId: Address;
+    ancestorIpId: Address;
+    token: Address;
+  };
+  ```
+
+  ```typescript Response Type
+  export type TransactionResponse = {
+    txHash: Hex;
+
+    /** Transaction receipt, only available if waitForTransaction is set to true */
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>

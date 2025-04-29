@@ -1,0 +1,258 @@
+---
+title: LicensingModule
+---
+
+LicensingModule은 Story의 라이선싱 시스템의 주요 진입점입니다. 다음과 같은 책임을 갖습니다:
+
+* IP 자산에 라이선스 조건 첨부
+* 라이선스 토큰 발행
+* 파생물 등록
+
+## 상태 변수
+
+### name
+
+```solidity
+string public constant override name = LICENSING_MODULE_KEY
+```
+
+모듈의 이름을 반환합니다.
+
+### ROYALTY\_MODULE
+
+```solidity
+RoyaltyModule public immutable ROYALTY_MODULE
+```
+
+프로토콜 전체의 표준 RoyaltyModule을 반환합니다.
+
+### LICENSE\_REGISTRY
+
+```solidity
+ILicenseRegistry public immutable LICENSE_REGISTRY
+```
+
+프로토콜 전체의 표준 LicenseRegistry를 반환합니다.
+
+### DISPUTE\_MODULE
+
+```solidity
+IDisputeModule public immutable DISPUTE_MODULE
+```
+
+프로토콜 전체의 분쟁 모듈을 반환합니다.
+
+### LICENSE\_NFT
+
+```solidity
+ILicenseToken public immutable LICENSE_NFT
+```
+
+라이선스 NFT를 반환합니다.
+
+### MODULE\_REGISTRY
+
+```solidity
+IModuleRegistry public immutable MODULE_REGISTRY
+```
+
+프로토콜 전체의 ModuleRegistry를 반환합니다.
+
+### IP\_GRAPH\_ACL
+
+```solidity
+IPGraphACL public immutable IP_GRAPH_ACL
+```
+
+프로토콜 전체의 IP 그래프 접근 제어 목록을 반환합니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) public initializer
+```
+
+이 구현 계약의 초기화 함수입니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 계약의 주소입니다.
+
+### attachDefaultLicenseTerms
+
+```solidity
+function attachDefaultLicenseTerms(address ipId) external
+```
+
+IP에 기본 라이선스 조건을 첨부합니다.
+
+**Parameters:**
+
+* `ipId`: 기본 라이선스 조건을 첨부할 IP ID입니다.
+
+### attachLicenseTerms
+
+```solidity
+function attachLicenseTerms(
+    address ipId,
+    address licenseTemplate,
+    uint256 licenseTermsId
+) external
+```
+
+특정 라이선스 조건을 IP에 첨부합니다. 이 함수는 IP 소유자 또는 승인된 운영자에 의해 호출되어야 합니다.
+
+**Parameters:**
+
+* `ipId`: IP ID입니다.
+* `licenseTemplate`: 라이선스 템플릿의 주소입니다.
+* `licenseTermsId`: 라이선스 조건의 ID입니다.
+
+### mintLicenseTokens
+
+```solidity
+function mintLicenseTokens(
+    address licensorIpId,
+    address licenseTemplate,
+    uint256 licenseTermsId,
+    uint256 amount,
+    address receiver,
+    bytes calldata royaltyContext,
+    uint256 maxMintingFee,
+    uint32 maxRevenueShare
+) external returns (uint256 startLicenseTokenId)
+```
+
+IP에 첨부된 라이선스 조건에 대한 라이선스 토큰을 발행합니다. 라이선스 토큰은 수신자에게 발행됩니다.
+
+이 함수를 호출하기 전에 라이선스 조건이 IP에 첨부되어 있어야 하지만, 기본 라이선스 조건은 모든 IP에 기본적으로 첨부되어 있으므로 명시적으로 첨부하지 않고도 기본 라이선스 조건의 라이선스 토큰을 발행할 수 있습니다.
+
+IP 소유자는 라이선스 조건을 IP에 첨부하지 않고도 자신의 IP에 대한 임의의 라이선스 조건에 대한 라이선스 토큰을 발행할 수 있습니다.
+
+라이선스 조건이나 IP 소유자가 구성한 대로 발행 수수료를 지불해야 할 수 있습니다. 발행 수수료는 라이선스 조건에 명시되거나 IP 소유자가 구성한 발행 수수료 토큰으로 지불됩니다.
+
+**Parameters:**
+
+* `licensorIpId`: 라이선서 IP ID입니다.
+* `licenseTemplate`: 라이선스 템플릿의 주소입니다.
+* `licenseTermsId`: 라이선스 템플릿 내의 라이선스 조건 ID입니다.
+* `amount`: 발행할 라이선스 토큰의 수량입니다.
+* `receiver`: 수신자의 주소입니다.
+* `royaltyContext`: 로열티의 컨텍스트입니다.
+* `maxMintingFee`: 호출자가 지불할 의사가 있는 최대 발행 수수료입니다. 0으로 설정하면 제한이 없습니다.
+* `maxRevenueShare`: 라이선스 토큰 발행에 허용되는 최대 수익 공유 비율입니다.
+
+**Returns:**
+
+* `startLicenseTokenId`: 발행된 라이선스 토큰의 시작 ID입니다.
+
+### registerDerivative
+
+```solidity
+function registerDerivative(
+    address childIpId,
+    address[] calldata parentIpIds,
+    uint256[] calldata licenseTermsIds,
+    address licenseTemplate,
+    bytes calldata royaltyContext,
+    uint256 maxMintingFee,
+    uint32 maxRts,
+    uint32 maxRevenueShare
+) external
+```
+
+라이선스 토큰 없이 부모 IP의 라이선스 조건으로 직접 파생물을 등록하고, 부모 IP의 라이선스 조건을 파생 IP에 첨부합니다.
+
+이 함수를 호출하기 전에 라이선스 조건이 부모 IP에 첨부되어 있어야 합니다. 모든 IP는 기본적으로 기본 라이선스 조건이 첨부되어 있습니다.
+
+파생 IP 소유자가 호출자이거나 승인된 운영자여야 합니다.
+
+**Parameters:**
+
+* `childIpId`: 파생 IP ID입니다.
+* `parentIpIds`: 부모 IP ID들입니다.
+* `licenseTermsIds`: 부모 IP가 지원하는 라이선스 조건의 ID들입니다.
+* `licenseTemplate`: 라이선스 조건 ID의 라이선스 템플릿 주소입니다.
+* `royaltyContext`: 로열티의 컨텍스트입니다.
+* `maxMintingFee`: 호출자가 지불할 의사가 있는 최대 발행 수수료입니다. 0으로 설정하면 제한이 없습니다.
+* `maxRts`: 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수입니다.
+* `maxRevenueShare`: 라이선스 토큰 발행에 허용되는 최대 수익 공유 비율입니다.
+
+### registerDerivativeWithLicenseTokens
+
+```solidity
+function registerDerivativeWithLicenseTokens(
+    address childIpId,
+    uint256[] calldata licenseTokenIds,
+    bytes calldata royaltyContext,
+    uint32 maxRts
+) external
+```
+
+라이선스 토큰으로 파생물을 등록합니다. 파생 IP는 부모 IP의 라이선스 조건에서 발행된 라이선스 토큰으로 등록됩니다.
+
+라이선스 토큰으로 발행된 부모 IP의 라이선스 조건이 파생 IP에 첨부됩니다.
+
+호출자는 파생 IP 소유자이거나 승인된 운영자여야 합니다.
+
+**Parameters:**
+
+* `childIpId`: 파생 IP ID입니다.
+* `licenseTokenIds`: 라이선스 토큰의 ID들입니다.
+* `royaltyContext`: 로열티의 컨텍스트입니다.
+* `maxRts`: 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수입니다.
+
+### setLicensingConfig
+
+```solidity
+function setLicensingConfig(
+    address ipId,
+    address licenseTemplate,
+    uint256 licenseTermsId,
+    Licensing.LicensingConfig memory licensingConfig
+) external
+```
+
+특정 IP의 라이선스 조건에 대한 라이선싱 구성을 설정합니다.
+
+licenseTemplate과 licenseTermsId가 모두 지정되지 않은 경우, 라이선싱 구성은 해당 IP의 모든 라이선스에 적용됩니다.
+
+**Parameters:**
+
+* `ipId`: 구성이 설정되는 IP의 주소입니다.
+* `licenseTemplate`: 사용된 라이선스 템플릿의 주소입니다. 지정되지 않은 경우, 구성은 모든 라이선스에 적용됩니다.
+* `licenseTermsId`: 라이선스 템플릿 내의 라이선스 조건 ID입니다. 지정되지 않은 경우, 구성은 모든 라이선스에 적용됩니다.
+* `licensingConfig`: 라이선스에 대한 라이선싱 구성입니다.
+
+### predictMintingLicenseFee
+
+```solidity
+function predictMintingLicenseFee(
+    address licensorIpId,
+    address licenseTemplate,
+    uint256 licenseTermsId,
+    uint256 amount,
+    address receiver,
+    bytes calldata royaltyContext
+) external view returns (address currencyToken, uint256 tokenAmount)
+```
+
+주어진 IP와 라이선스 조건에 대한 민팅 라이선스 수수료를 사전 계산합니다.
+
+이 함수는 라이선스 토큰을 민팅하기 전에 민팅 라이선스 수수료를 계산하는 데 사용할 수 있습니다.
+
+**Parameters:**
+
+* `licensorIpId`: 라이선서의 IP ID입니다.
+* `licenseTemplate`: 라이선스 템플릿의 주소입니다.
+* `licenseTermsId`: 라이선스 조건의 ID입니다.
+* `amount`: 민팅할 라이선스 토큰의 수량입니다.
+* `receiver`: 수신자의 주소입니다.
+* `royaltyContext`: 로열티의 컨텍스트입니다.
+
+**Returns:**
+
+* `currencyToken`: 민팅 라이선스 수수료에 사용되는 ERC20 토큰의 주소입니다.
+* `tokenAmount`: 라이선스 토큰을 민팅하기 위해 지불해야 할 통화 토큰의 양입니다.
