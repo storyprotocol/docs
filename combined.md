@@ -12670,6 +12670,23515 @@ function register(uint256 chainid, address tokenContract, uint256 tokenId) exter
 This function registers an ERC-721 NFT as a new IP Asset on Story.
 
 
+# License
+
+## LicenseClient
+
+### 메소드
+
+* attachLicenseTerms
+* mintLicenseTokens
+* registerPILTerms
+* registerNonComSocialRemixingPIL
+* registerCommercialUsePIL
+* registerCommercialRemixPIL
+* getLicenseTerms
+
+### attachLicenseTerms
+
+IP에 라이선스 조건을 첨부합니다.
+
+| 메소드                  | 타입                                                                   |
+| -------------------- | -------------------------------------------------------------------- |
+| `attachLicenseTerms` | `(request: AttachLicenseTermsRequest) => AttachLicenseTermsResponse` |
+
+Parameters:
+
+* `request.ipId`: 라이선스 조건이 첨부될 IP의 주소.
+* `request.licenseTemplate`: 라이선스 템플릿의 주소.
+* `request.licenseTermsId`: 라이선스 조건의 ID.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  const response = await client.license.attachLicenseTerms({
+    licenseTermsId: "1",
+    ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+    txOptions: { waitForTransaction: true },
+  });
+
+  if (response.success) {
+    console.log(
+      `Attached License Terms to IPA at transaction hash ${response.txHash}.`
+    );
+  } else {
+    console.log(`License Terms already attached to this IPA.`);
+  }
+  ```
+
+  ```typescript Request Type
+  export type AttachLicenseTermsRequest = {
+    ipId: Address;
+    licenseTermsId: string | number | bigint;
+    licenseTemplate?: Address;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type AttachLicenseTermsResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+    success?: boolean;
+  };
+  ```
+</CodeGroup>
+
+### mintLicenseTokens
+
+IP 자산을 [License Terms](/concepts/licensing-module/license-token)에 기반하여 사용할 수 있는 권한을 부여하는 [License Tokens](/concepts/licensing-module/license-terms)를 발행합니다. 라이선스 토큰은 `receiver`에게 발행됩니다.
+
+라이선스 토큰은 `licenseTermsId`가 이미 IP 자산에 첨부되어 있어 공개적으로 사용 가능한 라이선스인 경우에만 발행될 수 있습니다. 그러나 IP 소유자는 [private license](/concepts/licensing-module/license-token#private-licenses)를 IP 자산에 첨부되지 않은 `licenseTermsId`로 라이선스 토큰을 발행하여 만들 수 있습니다.
+
+<Warning>
+  라이선스 조건이나 IP 소유자의 설정에 따라 호출자가 발행 수수료를 지불해야 할 수 있습니다. 발행 수수료는 라이선스 조건에 명시되거나 IP 소유자가 설정한 발행 수수료 토큰으로 지불됩니다. IP 소유자는 자신의 IP에 대한 발행 수수료를 설정하거나 발행 수수료 모듈을 구성하여 발행 수수료를 결정할 수 있습니다.
+</Warning>
+
+<Frame>
+  <img src="/images/concepts/private-licenses.png" alt="A diagram showing how private licenses are minted." />
+</Frame>
+
+| 메소드                 | 타입                                                                          |
+| ------------------- | --------------------------------------------------------------------------- |
+| `mintLicenseTokens` | `(request: MintLicenseTokensRequest) => Promise<MintLicenseTokensResponse>` |
+
+Parameters:
+
+* `request.licensorIpId`: 라이선스 제공자 IP ID.
+* `request.licenseTermsId`: 라이선스 템플릿 내의 라이선스 조건 ID.
+* `request.maxMintingFee`: 라이선스 발행 시 지불할 최대 발행 수수료.
+* `request.maxRevenueShare`: 라이선스 발행 시 지불할 최대 수익 공유 비율.
+* `request.amount`: \[선택사항] 발행할 라이선스 토큰의 수량.
+* `request.receiver`: \[선택사항] 수신자의 주소.
+* `request.licenseTemplate`: \[선택사항] 라이선스 템플릿의 주소.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  const response = await client.license.mintLicenseTokens({
+    licenseTermsId: "1",
+    licensorIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    receiver: "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955", // optional
+    amount: 1,
+    maxMintingFee: BigInt(0), // disabled
+    maxRevenueShare: 100, // default
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `License Token minted at transaction hash ${response.txHash}, License IDs: ${response.licenseTokenIds}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type MintLicenseTokensRequest = {
+    licensorIpId: Address;
+    licenseTermsId: string | number | bigint;
+    licenseTemplate?: Address;
+    maxMintingFee: bigint | string | number;
+    maxRevenueShare: number | string;
+    amount?: number | string | bigint;
+    receiver?: Address;
+  } & WithTxOptions &
+    WithWipOptions;
+  ```
+
+  ```typescript Response Type
+  export type MintLicenseTokensResponse = {
+    licenseTokenIds?: bigint[];
+    receipt?: TransactionReceipt;
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### registerPILTerms
+
+새로운 라이선스 조건을 등록하고 새로 등록된 라이선스 조건의 ID를 반환합니다.
+
+| 메소드                | 타입                                                                   |
+| ------------------ | -------------------------------------------------------------------- |
+| `registerPILTerms` | `(request: RegisterPILTermsRequest) => Promise<RegisterPILResponse>` |
+
+Parameters:
+
+* 예상 매개변수: 여기에 모든 예상 매개변수를 나열하는 대신, `LicenseTerms` 타입을 [this](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts) 파일에서 참조하세요. 모두 [PIL Terms](/concepts/programmable-ip-license/pil-terms)에서 가져옵니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { LicenseTerms } from "@story-protocol/core-sdk";
+  import { zeroAddress } from "viem";
+
+  const licenseTerms: LicenseTerms = {
+    transferable: false,
+    royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    defaultMintingFee: 0n,
+    expiration: 0n,
+    commercialUse: false,
+    commercialAttribution: false,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: "0x",
+    commercialRevShare: 10, // 10%
+    commercialRevCeiling: 0n,
+    derivativesAllowed: true,
+    derivativesAttribution: false,
+    derivativesApproval: false,
+    derivativesReciprocal: false,
+    derivativeRevCeiling: 0n,
+    currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    uri: "",
+  };
+
+  const response = await client.license.registerPILTerms({
+    ...licenseTerms,
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterPILTermsRequest = Omit<
+    LicenseTerms,
+    | "defaultMintingFee"
+    | "expiration"
+    | "commercialRevCeiling"
+    | "derivativeRevCeiling"
+  > & {
+    defaultMintingFee: bigint | string | number;
+    expiration: bigint | string | number;
+    commercialRevCeiling: bigint | string | number;
+    derivativeRevCeiling: bigint | string | number;
+    txOptions?: TxOptions;
+  };
+
+  export type LicenseTerms = {
+    /*Indicates whether the license is transferable or not.*/
+    transferable: boolean;
+    /*The address of the royalty policy contract which required to StoryProtocol in advance.*/
+    royaltyPolicy: Address;
+    /*The default minting fee to be paid when minting a license.*/
+    defaultMintingFee: bigint;
+    /*The expiration period of the license.*/
+    expiration: bigint;
+    /*Indicates whether the work can be used commercially or not.*/
+    commercialUse: boolean;
+    /*Whether attribution is required when reproducing the work commercially or not.*/
+    commercialAttribution: boolean;
+    /*Commercializers that are allowed to commercially exploit the work. If zero address, then no restrictions is enforced.*/
+    commercializerChecker: Address;
+    /*The data to be passed to the commercializer checker contract.*/
+    commercializerCheckerData: Address;
+    /**Percentage of revenue that must be shared with the licensor. Must be from 0-100.*/
+    commercialRevShare: number;
+    /*The maximum revenue that can be generated from the commercial use of the work.*/
+    commercialRevCeiling: bigint;
+    /*Indicates whether the licensee can create derivatives of his work or not.*/
+    derivativesAllowed: boolean;
+    /*Indicates whether attribution is required for derivatives of the work or not.*/
+    derivativesAttribution: boolean;
+    /*Indicates whether the licensor must approve derivatives of the work before they can be linked to the licensor IP ID or not.*/
+    derivativesApproval: boolean;
+    /*Indicates whether the licensee must license derivatives of the work under the same terms or not.*/
+    derivativesReciprocal: boolean;
+    /*The maximum revenue that can be generated from the derivative use of the work.*/
+    derivativeRevCeiling: bigint;
+    /*The ERC20 token to be used to pay the minting fee. the token must be registered in story protocol.*/
+    currency: Address;
+    /*The URI of the license terms, which can be used to fetch the offchain license terms.*/
+    uri: string;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterPILResponse = {
+    licenseTermsId?: bigint;
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### registerNonComSocialRemixingPIL
+
+레지스트리에 PIL 비상업적 소셜 리믹스 라이선스를 등록하는 편리한 함수입니다.
+
+<Warning>
+  이 함수를 호출할 이유가 없습니다. 비상업적 소셜 리믹싱 조건은 이미 우리 프로토콜의 `licenseTermdId = 1`에 등록되어 있습니다. 다시 등록할 이유가 없습니다.
+</Warning>
+
+| 메소드                               | 타입                                                                                   |
+| --------------------------------- | ------------------------------------------------------------------------------------ |
+| `registerNonComSocialRemixingPIL` | `(request?: RegisterNonComSocialRemixingPILRequest) => Promise<RegisterPILResponse>` |
+
+Parameters:
+
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  const response = await client.license.registerNonComSocialRemixingPIL({
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterNonComSocialRemixingPILRequest = {
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterPILResponse = {
+    licenseTermsId?: bigint;
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### registerCommercialUsePIL
+
+레지스트리에 PIL 상업적 사용 라이선스를 등록하는 편리한 함수입니다.
+
+| 메소드                        | 타입                                                                           |
+| -------------------------- | ---------------------------------------------------------------------------- |
+| `registerCommercialUsePIL` | `(request: RegisterCommercialUsePILRequest) => Promise<RegisterPILResponse>` |
+
+Parameters:
+
+* `request.defaultMintingFee`: 라이선스 발행 시 지불해야 하는 수수료.
+* `request.currency`: 발행 수수료 지불에 사용될 ERC20 토큰으로, Story 프로토콜에 등록되어 있어야 합니다.
+* `request.royaltyPolicyAddress`: \[선택사항] 로열티 정책 계약의 주소, 기본값은 LAP입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const commercialUseParams = {
+    currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    defaultMintingFee: parseEther("1"), // 1 $WIP
+    royaltyPolicyAddress: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  };
+
+  const response = await client.license.registerCommercialUsePIL({
+    ...commercialUseParams,
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterCommercialUsePILRequest = {
+    defaultMintingFee: string | number | bigint;
+    currency: Address;
+    royaltyPolicyAddress?: Address;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterPILResponse = {
+    licenseTermsId?: bigint;
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### registerCommercialRemixPIL
+
+레지스트리에 PIL 상업적 리믹스 라이선스를 등록하는 편리한 함수입니다.
+
+| 메소드                          | 타입                                                                             |
+| ---------------------------- | ------------------------------------------------------------------------------ |
+| `registerCommercialRemixPIL` | `(request: RegisterCommercialRemixPILRequest) => Promise<RegisterPILResponse>` |
+
+Parameters:
+
+* `request.defaultMintingFee`: 라이선스 발행 시 지불해야 하는 수수료.
+* `request.commercialRevShare`: 라이선스 제공자와 공유해야 하는 수익의 비율.
+* `request.currency`: 발행 수수료 지불에 사용될 ERC20 토큰으로, Story 프로토콜에 등록되어 있어야 합니다.
+* `request.royaltyPolicyAddress`: \[선택사항] 로열티 정책 계약의 주소, 기본값은 LAP입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const commercialRemixParams = {
+    currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    defaultMintingFee: parseEther("1"), // 1 $WIP
+    royaltyPolicyAddress: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    commercialRevShare: 10, // 10%
+  };
+
+  const response = await client.license.registerCommercialRemixPIL({
+    ...commercialRemixParams,
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterCommercialRemixPILRequest = {
+    defaultMintingFee: string | number | bigint;
+    commercialRevShare: number;
+    currency: Address;
+    royaltyPolicyAddress?: Address;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterPILResponse = {
+    licenseTermsId?: bigint;
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### getLicenseTerms
+
+주어진 ID의 라이선스 조건을 가져옵니다.
+
+| 메소드               | 타입                                   |           |                                                       |
+| :---------------- | :----------------------------------- | :-------- | :---------------------------------------------------- |
+| `getLicenseTerms` | \`(selectedLicenseTermsId: string \\ | number \\ | bigint) => PiLicenseTemplateGetLicenseTermsResponse\` |
+
+Parameters:
+
+* `selectedLicenseTermsId`: 라이선스 조건의 ID.
+
+```typescript Response Type
+export type PiLicenseTemplateGetLicenseTermsResponse = {
+  terms: {
+    transferable: boolean;
+    royaltyPolicy: Address;
+    defaultMintingFee: bigint;
+    expiration: bigint;
+    commercialUse: boolean;
+    commercialAttribution: boolean;
+    commercializerChecker: Address;
+    commercializerCheckerData: Hex;
+    commercialRevShare: number;
+    commercialRevCeiling: bigint;
+    derivativesAllowed: boolean;
+    derivativesAttribution: boolean;
+    derivativesApproval: boolean;
+    derivativesReciprocal: boolean;
+    derivativeRevCeiling: bigint;
+    currency: Address;
+    uri: string;
+  };
+};
+```
+
+### predictMintingLicenseFee
+
+주어진 IP와 라이선스 조건에 대한 라이선스 발행 수수료를 미리 계산합니다. 이 함수는 라이선스 토큰을 발행하기 전에 라이선스 발행 수수료를 계산하는 데 사용할 수 있습니다.
+
+| 메소드                        | 타입                                                                                              |
+| -------------------------- | ----------------------------------------------------------------------------------------------- |
+| `predictMintingLicenseFee` | `(request: PredictMintingLicenseFeeRequest) => LicensingModulePredictMintingLicenseFeeResponse` |
+
+Parameters:
+
+* `request.licensorIpId`: 라이센서의 IP ID.
+* `request.licenseTermsId`: 라이센스 조건의 ID.
+* `request.amount`: 발행할 라이센스 토큰의 수량.
+* `request.licenseTemplate`: \[선택사항] 라이센스 템플릿의 주소, 기본값은 Programmable IP License입니다.
+* `request.receiver`: \[선택사항] 수신자의 주소, 기본값은 귀하의 지갑 주소입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type LicensingModulePredictMintingLicenseFeeResponse = {
+  currencyToken: Address;
+  tokenAmount: bigint;
+};
+```
+
+### setLicensingConfig
+
+IP의 특정 라이센스 조건에 대한 라이센싱 구성을 설정합니다.
+
+| 메서드                  | 타입                                                                   |
+| -------------------- | -------------------------------------------------------------------- |
+| `setLicensingConfig` | `(request: SetLicensingConfigRequest) => SetLicensingConfigResponse` |
+
+Parameters:
+
+* `request.ipId`: 구성이 설정되는 IP의 주소.
+* `request.licenseTermsId`: 라이센스 템플릿 내의 라이센스 조건 ID.
+* `request.licenseTemplate`: 사용된 라이센스 템플릿의 주소. 지정되지 않으면 구성이 모든 라이센스에 적용됩니다.
+* `request.licensingConfig`: 라이센스에 대한 라이센싱 구성.
+  * `request.licensingConfig.isSet`: 구성이 설정되었는지 여부.
+  * `request.licensingConfig.mintingFee`: 라이센스 토큰 발행 시 지불해야 할 발행 수수료.
+  * `request.licensingConfig.hookData`: 라이센싱 훅에서 사용할 데이터.
+  * `request.licensingConfig.licensingHook`: 라이센싱 모듈의 훅 계약 주소, 또는 없는 경우 address(0).
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type SetLicensingConfigResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
+};
+```
+
+
+# Royalty
+
+## RoyaltyClient
+
+### 메서드
+
+* payRoyaltyOnBehalf
+* claimableRevenue
+* claimAllRevenue
+* batchClaimAllRevenue
+* getRoyaltyVaultAddress
+* batchClaimAllRevenue
+* transferToVault
+
+### payRoyaltyOnBehalf
+
+함수 호출자가 지불자 IP 자산을 대신하여 수신자 IP 자산에 로열티를 지불할 수 있도록 합니다.
+
+| 메서드                  | 타입                                                                            |
+| -------------------- | ----------------------------------------------------------------------------- |
+| `payRoyaltyOnBehalf` | `(request: PayRoyaltyOnBehalfRequest) => Promise<PayRoyaltyOnBehalfResponse>` |
+
+Parameters:
+
+* `request.receiverIpId`: 로열티를 받는 ipId입니다.
+* `request.payerIpId`: 로열티를 지불하는 IP 자산의 ID입니다.
+* `request.token`: 로열티 지불에 사용할 토큰입니다.
+* `request.amount`: 지불할 금액입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+* `request.wipOptions`: \[선택사항]
+  * `request.wipOptions.useMulticallWhenPossible`: \[선택사항] 가능한 경우 멀티콜을 사용하여 WIP 호출을 하나의 트랜잭션으로 일괄 처리합니다.**Default: true**
+  * `request.wipOptions.enableAutoWrapIp`: \[선택사항] 기본적으로 현재 WIP 잔액이 수수료를 충당하지 못하는 경우 IP가 WIP로 변환됩니다. 이 동작을 비활성화하려면 이 값을 `false`로 설정하세요.**Default: true**
+  * `request.wipOptions.enableAutoApprove`: \[선택사항] WIP가 필요하지만 현재 허용량이 충분하지 않은 경우 자동으로 WIP 사용을 승인합니다. 이 동작을 비활성화하려면 이 값을 `false`로 설정하세요.**Default: true**
+* `request.erc20Options`: \[선택사항]
+  * `request.erc20Options.enableAutoApprove`: \[선택사항] ERC20이 필요하지만 현재 허용량이 충분하지 않은 경우 자동으로 ERC20 사용을 승인합니다. 이 동작을 비활성화하려면 이 값을 `false`로 설정하세요.**Default: true**
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+  import { parseEther, zeroAddress } from "viem";
+
+  // In this case, lets say there is a root IPA 'A' and a derivative IPA 'B'.
+  // Someone wants to pay 'B' for whatever reason (they bought it, they want to tip it, etc).
+  // Since the payer is not an IP Asset (rather an external user), the `payerIpId` can
+  // be a zeroAddress. And the receiver is, well, the receiver's ipId which is B.
+  //
+  // It's important to note that both 'B' and its parent 'A' will be able
+  // to claim revenue from this based on the negotiated license terms
+  const payRoyalty = await client.royalty.payRoyaltyOnBehalf({
+    receiverIpId: "0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1", // B's ipId
+    payerIpId: zeroAddress,
+    token: WIP_TOKEN_ADDRESS,
+    amount: parseEther("2"), // 2 $WIP
+    txOptions: { waitForTransaction: true },
+  });
+  console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
+
+  // In this case, lets say there is a root IPA 'A' and a derivative IPA 'B'.
+  // 'B' earns revenue off-chain, but must pay 'A' based on their negotiated license terms.
+  // So 'B' pays 'A' what they are due
+  const payRoyalty = await client.royalty.payRoyaltyOnBehalf({
+    receiverIpId: "0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68", // A's ipId
+    payerIpId: "0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1", // B's ipId
+    token: WIP_TOKEN_ADDRESS,
+    amount: parseEther("2"), // 2 $WIP
+    txOptions: { waitForTransaction: true },
+  });
+  console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
+  ```
+
+  ```typescript Request Type
+  export type PayRoyaltyOnBehalfRequest = {
+    receiverIpId: Address;
+    payerIpId: Address;
+    token: Address;
+    amount: TokenAmountInput;
+  } & WithTxOptions &
+    WithERC20Options &
+    WithWipOptions;
+  ```
+
+  ```typescript Response Type
+  export type PayRoyaltyOnBehalfResponse = {
+    txHash?: string;
+    receipt?: TransactionReceipt;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### claimableRevenue
+
+로열티 토큰 보유자가 청구할 수 있는 총 수익 토큰 금액을 가져옵니다.
+
+| 메서드                | 타입                                                                        |
+| ------------------ | ------------------------------------------------------------------------- |
+| `claimableRevenue` | `(request: ClaimableRevenueRequest) => Promise<ClaimableRevenueResponse>` |
+
+Parameters:
+
+* `request.royaltyVaultIpId`: 로열티 금고의 ID입니다.
+* `request.claimer`: 로열티 토큰 보유자의 주소입니다.
+* `request.token`: 청구할 수익 토큰입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript Request Type
+  export type ClaimableRevenueRequest = {
+    royaltyVaultIpId: Address;
+    claimer: Address;
+    token: Address;
+  };
+  ```
+
+  ```typescript Response Type
+  export type ClaimableRevenueResponse = bigint;
+  ```
+</CodeGroup>
+
+### claimAllRevenue
+
+자식 IP 자산 및/또는 자신의 IP 로열티 금고에서 모든 수익을 청구합니다.
+
+| 메서드               | 타입                                                                      |
+| ----------------- | ----------------------------------------------------------------------- |
+| `claimAllRevenue` | `(request: ClaimAllRevenueRequest) => Promise<ClaimAllRevenueResponse>` |
+
+Parameters:
+
+* `request.ancestorIpId`: 수익이 청구되는 조상 IP의 주소입니다.
+* `request.claimer`: 통화(수익) 토큰의 청구자 주소입니다. 일반적으로 IP가 모든 로열티 토큰을 가지고 있는 경우 조상 IP의 ipId입니다. 그렇지 않은 경우, 이는 조상 IP 로열티 토큰을 보유하고 있는 주소가 됩니다.
+* `request.childIpIds[]`: 로열티가 파생되는 자식 IP들의 주소입니다.
+* `request.royaltyPolicies[]`: 로열티 정책의 주소들로, royaltyPolicies\[i]는 childIpIds\[i]의 로열티 흐름을 관리합니다.
+* `request.currencyTokens[]`: 로열티가 청구될 통화 토큰의 주소들입니다.
+* `request.claimOptions`: \[선택사항]
+  * `request.claimOptions.autoTransferAllClaimedTokensFromIp`: \[선택사항] 활성화된 경우, 지갑이 IP를 소유하고 있다면 청구자에게 청구된 모든 토큰이 지갑 주소로 전송됩니다. 지갑이 청구자이거나 청구자가 지갑이 소유한 IP가 아닌 경우, 토큰은 전송되지 않습니다. 청구자로부터 청구된 토큰의 자동 전송을 비활성화하려면 false로 설정하세요.**Default: true**
+  * `request.claimOptions.autoUnwrapIpTokens`: \[선택사항] 기본적으로 전송된 후 모든 청구된 WIP 토큰은 IP로 다시 변환됩니다. 이 동작을 비활성화하려면 false로 설정하세요.**Default: false**
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+  const claimRevenue = await client.royalty.claimAllRevenue({
+    // IP Asset 1's (parent) ipId
+    ancestorIpId: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    // whoever owns the royalty tokens associated with IP Royalty Vault 1
+    // (most likely the associated ipId, which is IP Asset 1's ipId)
+    claimer: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    currencyTokens: [WIP_TOKEN_ADDRESS],
+    // IP Asset 2's (child) ipId
+    childIpIds: ["0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2"],
+    // testnet address of RoyaltyPolicyLAP
+    royaltyPolicies: ["0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E"],
+  });
+
+  console.log(`Claimed revenue: ${claimRevenue.claimedTokens}`);
+  ```
+
+  ```typescript Request Type
+  export type ClaimAllRevenueRequest = {
+    ancestorIpId: Address;
+    claimer: Address;
+    childIpIds: Address[];
+    royaltyPolicies: Address[];
+    currencyTokens: Address[];
+  } & WithClaimOptions;
+
+  export type WithClaimOptions = {
+    claimOptions?: {
+      autoTransferAllClaimedTokensFromIp?: boolean;
+      autoUnwrapIpTokens?: boolean;
+    };
+  };
+  ```
+
+  ```typescript Response Type
+  export type ClaimAllRevenueResponse = {
+    txHashes: Hash[];
+    receipt?: TransactionReceipt;
+    claimedTokens?: ClaimedToken[];
+  };
+
+  export type ClaimedToken = {
+    token: Address;
+    amount: bigint;
+  };
+  ```
+</CodeGroup>
+
+### batchClaimAllRevenue
+
+여러 조상 IP의 자식 IP들로부터 모든 수익을 자동으로 일괄 청구합니다. 멀티콜이 비활성화된 경우, 각 조상 IP에 대해 `claimAllRevenue`를 호출합니다. 그런 다음 지갑이 IP를 소유하고 있거나 청구자인 경우 모든 청구된 토큰을 지갑으로 전송합니다. 청구된 토큰이 WIP인 경우, IP로 다시 변환됩니다.
+
+| 메서드                    | 타입                                                                                |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| `batchClaimAllRevenue` | `(request: BatchClaimAllRevenueRequest) => Promise<BatchClaimAllRevenueResponse>` |
+
+Parameters:
+
+* `request.ancestorIps[]`: 수익이 청구되는 조상 IP 정보의 배열입니다.
+  * `request.ancestorIps[].ipId`: 수익이 청구되는 조상 IP의 주소입니다.
+  * `request.ancestorIps[].claimer`: 통화(수익) 토큰의 청구자 주소입니다. 일반적으로 IP가 모든 로열티 토큰을 가지고 있는 경우 조상 IP의 ipId입니다. 그렇지 않은 경우, 이는 조상 IP 로열티 토큰을 보유하고 있는 주소가 됩니다.
+  * `request.ancestorIps[].childIpIds[]`: 로열티가 파생되는 자식 IP들의 주소입니다.
+  * `request.ancestorIps[].royaltyPolicies[]`: 로열티 정책의 주소들로, royaltyPolicies\[i]는 childIpIds\[i]의 로열티 흐름을 관리합니다.
+  * `request.ancestorIps[].currencyTokens[]`: 로열티가 청구될 통화 토큰의 주소들입니다.
+* `request.claimOptions`: \[선택사항]
+  * `request.claimOptions.autoTransferAllClaimedTokensFromIp`: \[선택사항] 활성화된 경우, 지갑이 IP를 소유하고 있다면 청구자에게 청구된 모든 토큰이 지갑 주소로 전송됩니다. 지갑이 청구자이거나 청구자가 지갑이 소유한 IP가 아닌 경우, 토큰은 전송되지 않습니다. 청구자로부터 청구된 토큰의 자동 전송을 비활성화하려면 false로 설정하세요.**Default: true**
+  * `request.claimOptions.autoUnwrapIpTokens`: \[선택사항] 기본적으로 전송된 후 모든 청구된 WIP 토큰은 IP로 다시 변환됩니다. 이 동작을 비활성화하려면 false로 설정하세요.**Default: false**
+* `request.options`: \[선택사항]
+  * `request.options.useMulticallWhenPossible`: \[선택사항] 가능한 경우 멀티콜을 사용하여 호출을 `claimAllRevenue`하나의 트랜잭션으로 일괄 처리합니다. ancestorIp가 1개만 제공된 경우 멀티콜은 사용되지 않습니다.**Default: true**
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+  const claimRevenue = await client.royalty.batchClaimAllRevenue({
+    ancestorIps: [
+      {
+        ipId: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+        claimer: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+        currencyTokens: [WIP_TOKEN_ADDRESS],
+        childIpIds: ["0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2"],
+        royaltyPolicies: ["0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E"],
+      },
+    ],
+  });
+
+  console.log(`Claimed revenue: ${claimRevenue.claimedTokens}`);
+  ```
+
+  ```typescript Request Type
+  export type BatchClaimAllRevenueRequest = WithClaimOptions & {
+    ancestorIps: {
+      ipId: Address;
+      claimer: Address;
+      childIpIds: Address[];
+      royaltyPolicies: Address[];
+      currencyTokens: Address[];
+    }[];
+    options?: {
+      useMulticallWhenPossible?: boolean;
+    };
+  };
+
+  export type WithClaimOptions = {
+    claimOptions?: {
+      autoTransferAllClaimedTokensFromIp?: boolean;
+      autoUnwrapIpTokens?: boolean;
+    };
+  };
+  ```
+
+  ```typescript Response Type
+  export type BatchClaimAllRevenueResponse = {
+    txHashes: Hash[];
+    receipts: TransactionReceipt[];
+    claimedTokens?: IpRoyaltyVaultImplRevenueTokenClaimedEvent[];
+  };
+  ```
+</CodeGroup>
+
+### getRoyaltyVaultAddress
+
+주어진 royaltyVaultIpId의 로열티 금고 프록시 주소를 가져옵니다.
+
+| 메서드                      | 타입                                            |
+| ------------------------ | --------------------------------------------- |
+| `getRoyaltyVaultAddress` | `(royaltyVaultIpId: Hex) => Promise<Address>` |
+
+Parameters:
+
+* `royaltyVaultIpId`: 로열티 금고와 연관된 `ipId`입니다.
+
+### transferToVault
+
+로열티 정책을 통해 청구 가능한 수익 토큰의 금액을 금고로 전송합니다.
+
+| 메서드               | 타입                                                                  |
+| ----------------- | ------------------------------------------------------------------- |
+| `transferToVault` | `(request: TransferToVaultRequest) => Promise<TransactionResponse>` |
+
+Parameters:
+
+* `request.royaltyPolicy`: 사용할 로열티 정책입니다.
+* `request.ipId`: 로열티를 지불하는 IP 자산의 ID입니다.
+* `request.ancestorIpId`: 조상 IP 자산의 ID.
+* `request.token`: 전송할 토큰 주소.
+* `request.txOptions`: \[선택사항] 트랜잭션 [옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript Request Type
+  export type TransferToVaultRequest = WithTxOptions & {
+    royaltyPolicy: RoyaltyPolicyInput;
+    ipId: Address;
+    ancestorIpId: Address;
+    token: Address;
+  };
+  ```
+
+  ```typescript Response Type
+  export type TransactionResponse = {
+    txHash: Hex;
+
+    /** Transaction receipt, only available if waitForTransaction is set to true */
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+
+# 권한
+
+## PermissionClient
+
+### 메서드
+
+* setPermission
+* createSetPermissionSignature
+* setAllPermissions
+* setBatchPermissions
+* createBatchPermissionSignature
+
+### setPermission
+
+특정 함수 호출에 대한 권한을 설정합니다.
+
+각 정책은 IP 계정 주소에서 서명자 주소로, 수신자\
+주소로, 함수 선택자로, 권한 수준으로의 매핑으로 표현됩니다. 권한 수준은 0 (기권), 1 (허용), 또는\
+2 (거부)일 수 있습니다.
+
+기본적으로 모든 정책은 0 (기권)으로 설정되어 있으며, 이는 권한이 설정되지 않았음을 의미합니다. IP 계정의 소유자는 기본적으로 모든 권한을 가집니다.
+
+| 메서드             | 타입                                                                    |
+| --------------- | --------------------------------------------------------------------- |
+| `setPermission` | `(request: SetPermissionsRequest) => Promise<SetPermissionsResponse>` |
+
+Parameters:
+
+* `request.ipId`: 에 대한 권한을 부여하는 IP ID `signer`.
+* `request.signer`: 를 대신하여 `to`를 호출할 수 있는 주소 `ipAccount`.
+* `request.to`: 가 호출할 수 있는 주소 `signer` (현재는 모듈만 `to`일 수 있음)
+* `request.permission`: 새로운 권한 수준.
+* `request.func`: \[선택사항] 가 `to`를 대신하여 `signer`가 호출할 수 있는 `ipAccount`의 함수 선택자 문자열. 기본적으로 모든 함수를 허용합니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type SetPermissionsResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
+};
+```
+
+### createSetPermissionSignature
+
+특정 권한은 서명이 있는 와일드카드 권한을 재정의합니다.
+
+| 메서드                            | 타입                                                                                  |
+| ------------------------------ | ----------------------------------------------------------------------------------- |
+| `createSetPermissionSignature` | `(request: CreateSetPermissionSignatureRequest) => Promise<SetPermissionsResponse>` |
+
+Parameters:
+
+* `request.ipId`: 에 대한 권한을 부여하는 IP ID `signer`.
+* `request.signer`: 를 대신하여 `to`를 호출할 수 있는 주소 `ipAccount`.
+* `request.to`: 가 호출할 수 있는 주소 `signer` (현재는 모듈만 `to`일 수 있음)
+* `request.permission`: 새로운 권한 수준.
+* `request.func`: \[선택사항] 가 `to`를 대신하여 `signer`가 호출할 수 있는 `ipAccount`의 함수 선택자 문자열. 기본적으로 모든 함수를 허용합니다.
+* `request.deadline`: \[선택사항] 서명의 유효 기간(밀리초), 기본값은 1000ms입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type SetPermissionsResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
+};
+```
+
+### setAllPermissions
+
+모든 모듈의 모든 함수에 대해 서명자에게 권한을 설정합니다.
+
+| 메서드                 | 타입                                                                       |
+| ------------------- | ------------------------------------------------------------------------ |
+| `setAllPermissions` | `(request: SetAllPermissionsRequest) => Promise<SetPermissionsResponse>` |
+
+Parameters:
+
+* `request.ipId`: 다음에 대한 권한을 부여하는 IP ID `signer`.
+* `request.signer`: 권한을 받는 서명자의 주소.
+* `request.permission`: 새로운 권한.
+* `request.txOptions`: \[선택사항] 트랜잭션 [옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type SetPermissionsResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
+};
+```
+
+### setBatchPermissions
+
+단일 트랜잭션에서 일괄 권한을 설정합니다.
+
+| 메서드                   | 타입                                                                         |
+| --------------------- | -------------------------------------------------------------------------- |
+| `setBatchPermissions` | `(request: SetBatchPermissionsRequest) => Promise<SetPermissionsResponse>` |
+
+Parameters:
+
+* `request.permissions[]`: 배열 `Permission` 구조, 각각 설정할 권한을 나타냅니다.
+  * `request.permissions[].ipId`: 다음에 대한 권한을 부여하는 IP ID `signer`.
+  * `request.permissions[].signer`: 다음을 대신하여 호출할 수 있는 주소 `to` 의 `ipAccount`.
+  * `request.permissions[].to`: 다음에 의해 호출될 수 있는 주소 `signer` (현재는 모듈만 `to`될 수 있음)
+  * `request.permissions[].permission`: 새로운 권한 수준.
+  * `request.permissions[].func`: \[선택사항] 다음의 함수 선택자 문자열 `to` 다음에 의해 호출될 수 있는 `signer` 다음을 대신하여 `ipAccount`. 기본적으로 모든 함수를 허용합니다.
+* `request.deadline`: \[선택사항] 서명의 기한(밀리초), 기본값은 1000ms입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type SetPermissionsResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
+};
+```
+
+### createBatchPermissionSignature
+
+서명이 있는 단일 트랜잭션에서 일괄 권한을 설정합니다.
+
+| 메서드                              | 타입                                                                                    |
+| -------------------------------- | ------------------------------------------------------------------------------------- |
+| `createBatchPermissionSignature` | `(request: CreateBatchPermissionSignatureRequest) => Promise<SetPermissionsResponse>` |
+
+Parameters:
+
+* `request.ipId`: 다음에 대한 권한을 부여하는 IP ID `signer`
+* `request.permissions[]` - 배열 `Permission` 구조, 각각 설정할 권한을 나타냅니다.
+  * `request.permissions[].ipId`: 다음에 대한 권한을 부여하는 IP ID `signer`.
+  * `request.permissions[].signer`: 다음을 대신하여 호출할 수 있는 주소 `to` 의 `ipAccount`.
+  * `request.permissions[].to`: 다음에 의해 호출될 수 있는 주소 `signer` (현재는 모듈만 `to`될 수 있음)
+  * `request.permissions[].permission`: 새로운 권한 수준.
+  * `request.permissions[].func`: \[선택사항] 다음의 함수 선택자 문자열 `to` 다음에 의해 호출될 수 있는 `signer` 다음을 대신하여 `ipAccount`. 기본적으로 모든 함수를 허용합니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type SetPermissionsResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
+};
+```
+
+
+# WIP Client
+
+## WipClient
+
+### 메서드
+
+* deposit
+* withdraw
+* approve
+* balanceOf
+* transfer
+* transferFrom
+
+### deposit
+
+선택한 양의 IP를 WIP로 래핑합니다. WIP는 IP를 전송한 지갑으로 입금됩니다.
+
+| 메서드       | 타입                          |
+| --------- | --------------------------- |
+| `deposit` | `(request: DepositRequest)` |
+
+Parameters:
+
+* `request.amount`: 입금할 금액.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const response = await client.wipClient.deposit({
+    amount: parseEther("10"), // 10 IP tokens
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type DepositRequest = WithTxOptions & {
+    amount: TokenAmountInput;
+  };
+  ```
+</CodeGroup>
+
+### withdraw
+
+선택한 양의 WIP를 IP로 언래핑합니다.
+
+| 메서드        | 타입                           |
+| ---------- | ---------------------------- |
+| `withdraw` | `(request: WithdrawRequest)` |
+
+Parameters:
+
+* `request.amount`: 출금할 금액.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const response = await client.wipClient.withdraw({
+    amount: parseEther("5"), // 5 WIP tokens
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type WithdrawRequest = WithTxOptions & {
+    amount: TokenAmountInput;
+  };
+  ```
+</CodeGroup>
+
+### approve
+
+지갑의 WIP 잔액을 사용할 수 있도록 지출자를 승인합니다.
+
+| 메서드       | 타입                          |
+| --------- | --------------------------- |
+| `approve` | `(request: ApproveRequest)` |
+
+Parameters:
+
+* `request.amount`: 승인할 WIP 토큰의 양.
+* `request.spender`: WIP 토큰을 사용할 주소
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const response = await client.wipClient.approve({
+    spender: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    amount: parseEther("20"), // 20 WIP tokens
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type ApproveRequest = WithTxOptions & {
+    spender: Address;
+    amount: TokenAmountInput;
+  };
+  ```
+</CodeGroup>
+
+### balanceOf
+
+주소의 WIP 잔액을 반환합니다.
+
+| 메서드         | 타입                                   |
+| ----------- | ------------------------------------ |
+| `balanceOf` | `(addr: Address) => Promise<bigint>` |
+
+Parameters:
+
+* `addr`: 잔액을 확인하려는 주소.
+
+### transfer
+
+수신자에게 `amount` WIP를 전송합니다 `to`.
+
+| 메서드        | 타입                           |
+| ---------- | ---------------------------- |
+| `transfer` | `(request: TransferRequest)` |
+
+Parameters:
+
+* `request.to`: 전송할 대상.
+* `request.amount`: 전송할 금액.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const response = await client.wipClient.transfer({
+    to: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    amount: parseEther("3"), // 3 WIP tokens
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type TransferRequest = WithTxOptions & {
+    to: Address;
+    amount: TokenAmountInput;
+  };
+  ```
+</CodeGroup>
+
+### transferFrom
+
+에서 `amount` WIP를 `from` 수신자에게 전송합니다 `to`.
+
+| 메서드            | 타입                               |
+| -------------- | -------------------------------- |
+| `transferFrom` | `(request: TransferFromRequest)` |
+
+Parameters:
+
+* `request.to`: 전송할 대상.
+* `request.amount`: 전송할 금액.
+* `request.from`: 전송할 주소.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const response = await client.wipClient.transferFrom({
+    to: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    amount: parseEther("2"), // 2 WIP tokens
+    from: "0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68",
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type TransferFromRequest = WithTxOptions & {
+    to: Address;
+    amount: TokenAmountInput;
+    from: Address;
+  };
+  ```
+</CodeGroup>
+
+
+# 분쟁
+
+## DisputeClient
+
+### 메서드
+
+* raiseDispute
+* cancelDispute
+* resolveDispute
+* tagIfRelatedIpInfringed
+* disputeAssertion
+* disputeIdToAssertionId
+
+### raiseDispute
+
+주어진 ipId에 대해 분쟁을 제기합니다
+
+| 메서드            | 타입                                                                |
+| -------------- | ----------------------------------------------------------------- |
+| `raiseDispute` | `(request: RaiseDisputeRequest) => Promise<RaiseDisputeResponse>` |
+
+Parameters:
+
+* `request.targetIpId`: 분쟁의 대상이 되는 IP ID입니다.
+* `request.targetTag`: 분쟁의 대상 태그입니다. [dispute tags](https://docs.story.foundation/docs/dispute-module#dispute-tags)를 참조하세요. **Example: "IMPROPER\_REGISTRATION"**
+* `request.cid`: 분쟁 증거에 대한 콘텐츠 식별자(CID)입니다. 이는 분쟁 증거(문서, 이미지 등)를 IPFS에 업로드하여 얻어야 합니다. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
+* `request.liveness`: liveness는 반대 분쟁이 제시될 수 있는 시간 창(초 단위)입니다(30일).
+* `request.bond`: \[선택사항] **지정하지 않으면 최소 보증금 값으로 기본 설정됩니다**. 분쟁 개시자가 풀에 선불로 지불하는 wrapper IP의 금액입니다. 이 분쟁에 대응하기 위해 분쟁의 상대방은 동일한 금액의 보증금을 제출해야 합니다. 분쟁의 승자는 원래 보증금과 상대방 보증금의 50%를 돌려받습니다. 패자 보증금의 나머지 50%는 검토자에게 돌아갑니다.
+* `request.wipOptions`: \[선택사항]
+  * `request.wipOptions.enableAutoWrapIp`: \[선택 사항]기본적으로 현재 WIP 잔액이 수수료를 충당하지 못할 경우 IP가 WIP로 전환됩니다. 이를 `false`로 설정하여 이 동작을 비활성화할 수 있습니다.**Default: true**
+  * `request.wipOptions.enableAutoApprove`: \[선택 사항]WIP가 필요하지만 현재 허용량이 충분하지 않을 때 WIP 사용을 자동으로 승인합니다. 이를 `false`로 설정하여 이 동작을 비활성화할 수 있습니다.**Default: true**
+* `request.txOptions`: \[선택 사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const response = await client.dispute.raiseDispute({
+    targetIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    // NOTE: you must use your own CID here, because every time it is used,
+    // the protocol does not allow you to use it again
+    cid: "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR",
+    // you must pick from one of the whitelisted tags here:
+    // https://docs.story.foundation/docs/dispute-module#dispute-tags
+    targetTag: "IMPROPER_REGISTRATION",
+    bond: parseEther("0.1"), // minimum of 0.1
+    liveness: 2592000,
+    txOptions: { waitForTransaction: true },
+  });
+  console.log(
+    `Dispute raised at transaction hash ${disputeResponse.txHash}, Dispute ID: ${disputeResponse.disputeId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RaiseDisputeRequest = WithTxOptions & {
+    targetIpId: Address;
+    cid: string;
+    targetTag: string;
+    liveness: bigint | number | string;
+    bond?: bigint | number | string;
+    wipOptions?: {
+      enableAutoWrapIp?: boolean;
+      enableAutoApprove?: boolean;
+    };
+  };
+  ```
+
+  ```typescript Response Type
+  export type RaiseDisputeResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+    disputeId?: bigint;
+  };
+  ```
+</CodeGroup>
+
+### cancelDispute
+
+진행 중인 분쟁을 취소합니다
+
+| 메서드             | 타입                                                                  |
+| --------------- | ------------------------------------------------------------------- |
+| `cancelDispute` | `(request: CancelDisputeRequest) => Promise<CancelDisputeResponse>` |
+
+Parameters:
+
+* `request.disputeId`: 취소할 분쟁의 ID.
+* `request.data`: \[선택 사항] 취소 과정에서 사용되는 추가 데이터. **기본값은 "0x"**&#xC785;니다.
+* `request.txOptions`: \[선택 사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript
+  const response = await client.dispute.cancelDispute({
+    disputeId: 1,
+    txOptions: { waitForTransactions: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type CancelDisputeRequest = {
+    disputeId: number | string | bigint;
+    data?: Hex;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type CancelDisputeResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### resolveDispute
+
+판결 후 분쟁을 해결합니다
+
+| 메서드              | 타입                                                                    |
+| ---------------- | --------------------------------------------------------------------- |
+| `resolveDispute` | `(request: ResolveDisputeRequest) => Promise<ResolveDisputeResponse>` |
+
+Parameters:
+
+* `request.disputeId`: 해결할 분쟁의 ID.
+* `request.data`: \[선택 사항] 분쟁을 해결하기 위한 데이터. **기본값은 "0x"**&#xC785;니다.
+* `request.txOptions`: \[선택 사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript
+  const response = await client.dispute.resolveDispute({
+    disputeId: 1,
+    data: "0x",
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type ResolveDisputeRequest = {
+    disputeId: number | string | bigint;
+    data?: Hex;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type ResolveDisputeResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### tagIfRelatedIpInfringed
+
+부모가 침해 태그로 태그되었거나 그룹 구성원이 침해 태그로 태그된 경우 파생물 또는 그룹 IP에 태그를 지정합니다.
+
+| 메서드                       | 타입                                                                            |
+| ------------------------- | ----------------------------------------------------------------------------- |
+| `tagIfRelatedIpInfringed` | `(request: TagIfRelatedIpInfringedRequest) => Promise<TransactionResponse[]>` |
+
+Parameters:
+
+* `request.infringementTags[]`: 분쟁과 관련된 태그 배열
+  * `request.infringementTags[].ipId`: 태그할 `ipId`
+  * `request.infringementTags[].disputeId`: 관련된 침해 부모 IP를 태그한 분쟁 ID
+* `request.options`: \[선택 사항]
+  * `request.options.useMulticallWhenPossible`: \[선택 사항] 가능한 경우 multicall을 사용하여 호출을 하나의 트랜잭션으로 일괄 처리합니다. infringementTag가 하나만 제공되는 경우 multicall은 사용되지 않습니다. **Default: true**
+* `request.txOptions`: \[선택 사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript
+  const response = await client.dispute.tagIfRelatedIpInfringed({
+    infringementTags: [
+      {
+        ipId: "0xa1BaAA464716eC76A285Ef873d27f97645fE0366",
+        disputeId: 1,
+      },
+    ],
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type TagIfRelatedIpInfringedRequest = {
+    infringementTags: {
+      ipId: Address;
+      disputeId: number | string | bigint;
+    }[];
+    options?: {
+      useMulticallWhenPossible?: boolean;
+    };
+  } & WithTxOptions;
+  ```
+
+  ```typescript Response Type
+  export type TransactionResponse = {
+    txHash: Hex;
+
+    /** Transaction receipt, only available if waitForTransaction is set to true */
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+### disputeAssertion
+
+반대 증거를 사용하여 다른 당사자가 IP에 대해 제기한 분쟁에 대응합니다.
+
+이 메서드는 IP 소유자만 반대 증거를 제공하여 분쟁에 대응할 수 있습니다. 반대 증거(예: 문서, 이미지)는 IPFS에 업로드되어야 하며, 해당 CID는 요청을 위해 해시로 변환됩니다.
+
+만약 `disputeId`만 있다면, `disputeIdToAssertionId`를 호출하여 여기서 필요한 `assertionId`를 얻으세요.
+
+| 메서드                | 타입                                                                   |
+| ------------------ | -------------------------------------------------------------------- |
+| `disputeAssertion` | `(request: DisputeAssertionRequest) => Promise<TransactionResponse>` |
+
+Parameters:
+
+* `request.ipId`: 분쟁의 대상이 되는 IP ID.
+* `request.assertionId`: 분쟁된 주장의 식별자. `disputeId`에서 `dispute.disputeIdToAssertionId`를 호출하여 얻을 수 있습니다.
+* `request.counterEvidenceCID`: 반대 증거에 대한 콘텐츠 식별자(CID). 이는 분쟁 증거(문서, 이미지 등)를 IPFS에 업로드하여 얻어야 합니다. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
+* `request.wipOptions`: \[선택 사항]
+  * `request.wipOptions.enableAutoWrapIp`: \[선택 사항]기본적으로 현재 WIP 잔액이 수수료를 충당하지 못할 경우 IP가 WIP로 전환됩니다. 이를 `false`로 설정하여 이 동작을 비활성화할 수 있습니다. **Default: true**
+  * `request.wipOptions.enableAutoApprove`: \[선택 사항]WIP가 필요하지만 현재 허용량이 충분하지 않을 때 WIP 사용을 자동으로 승인합니다. 이를 `false`로 설정하여 이 동작을 비활성화할 수 있습니다. **Default: true**
+* `request.txOptions`: \[선택 사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript
+  const assertionId = await client.dispute.disputeIdToAssertionId(1);
+
+  const result = await client.dispute.disputeAssertion({
+    ipId: "0xa1BaAA464716eC76A285Ef873d27f97645fE0366",
+    assertionId: assertionId,
+    counterEvidenceCID: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk",
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type DisputeAssertionRequest = {
+    ipId: Address;
+    assertionId: Hex;
+    counterEvidenceCID: string;
+    wipOptions?: {
+      enableAutoWrapIp?: boolean;
+      enableAutoApprove?: boolean;
+    };
+  } & WithTxOptions;
+  ```
+
+  ```typescript Response Type
+  export type TransactionResponse = {
+    txHash: Hex;
+
+    /** Transaction receipt, only available if waitForTransaction is set to true */
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+### disputeIdToAssertionId
+
+분쟁 ID를 주장 ID에 매핑합니다
+
+| 메서드                      | 타입                                    |
+| ------------------------ | ------------------------------------- |
+| `disputeIdToAssertionId` | `(disputeId: number) => Promise<Hex>` |
+
+Parameters:
+
+* `request.disputeId`: 분쟁 ID.
+
+```typescript
+const result = await client.dispute.disputeIdToAssertionId(1);
+```
+
+
+# Group
+
+## GroupClient
+
+### 메서드
+
+* registerGroup
+* mintAndRegisterIpAndAttachLicenseAndAddToGroup
+* registerIpAndAttachLicenseAndAddToGroup
+* registerGroupAndAttachLicense
+* registerGroupAndAttachLicenseAndAddIps
+* collectAndDistributeGroupRoyalties
+
+### registerGroup
+
+그룹 IPA를 등록합니다.
+
+| 메서드             | 타입                                                                  |
+| --------------- | ------------------------------------------------------------------- |
+| `registerGroup` | `(request: RegisterGroupRequest) => Promise<RegisterGroupResponse>` |
+
+Parameters:
+
+* `request.groupPool`: 그룹 내 IP 풀 간의 로열티 분배 방식을 지정하는 주소.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type RegisterGroupResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  groupId?: Address;
+};
+```
+
+### mintAndRegisterIpAndAttachLicenseAndAddToGroup
+
+SPGNFT 컬렉션에서 NFT를 발행하고, 메타데이터와 함께 IP로 등록하고, 등록된 IP에 라이센스 조건을 첨부하고, 그룹 IP에 추가합니다.
+
+| 메서드                                              | 타입                                                                                                                                    |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `mintAndRegisterIpAndAttachLicenseAndAddToGroup` | `(request: MintAndRegisterIpAndAttachLicenseAndAddToGroupRequest) => Promise<MintAndRegisterIpAndAttachLicenseAndAddToGroupResponse>` |
+
+Parameters:
+
+* `request.nftContract`: NFT 컬렉션의 주소.
+* `request.groupId`: 새로 등록된 IP를 추가할 그룹 IP의 ID.
+* `request.licenseTermsId`: 새 IP에 첨부될 등록된 라이센스 조건의 ID.
+* `request.recipient`: \[선택사항] 발행된 NFT의 수신자 주소, 기본값은 귀하의 지갑 주소입니다.
+* `request.licenseTemplate`: \[선택사항] 새 그룹 IP에 첨부될 라이센스 템플릿의 주소, 기본값은 Programmable IP License입니다.
+* `request.deadline`: \[선택사항] 서명의 유효 기간(밀리초), 기본값은 1000ms입니다.
+* `request.ipMetadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택사항] IP NFT의 메타데이터 해시.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type MintAndRegisterIpAndAttachLicenseAndAddToGroupResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  ipId?: Address;
+  tokenId?: bigint;
+};
+```
+
+### registerIpAndAttachLicenseAndAddToGroup
+
+NFT를 메타데이터와 함께 IP로 등록하고, 등록된 IP에 라이센스 조건을 첨부하고, 그룹 IP에 추가합니다.
+
+| 메서드                                       | 타입                                                                                                                      |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `registerIpAndAttachLicenseAndAddToGroup` | `(request: RegisterIpAndAttachLicenseAndAddToGroupRequest) => Promise<RegisterIpAndAttachLicenseAndAddToGroupResponse>` |
+
+Parameters:
+
+* `request.spgNftContract`: NFT 컬렉션의 주소.
+* `request.tokenId`: NFT의 ID.
+* `request.groupId`: 새로 등록된 IP를 추가할 그룹 IP의 ID.
+* `request.licenseTermsId`: 새 IP에 첨부될 등록된 라이센스 조건의 ID.
+* `request.licenseTemplate`: \[선택사항] 새 그룹 IP에 첨부될 라이센스 템플릿의 주소, 기본값은 Programmable IP License입니다.
+* `request.deadline`: \[선택사항] 서명의 유효 기간(밀리초), 기본값은 1000ms입니다.
+* `request.ipMetadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택사항] IP NFT의 메타데이터 해시.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type RegisterIpAndAttachLicenseAndAddToGroupResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  ipId?: Address;
+  tokenId?: bigint;
+};
+```
+
+### registerGroupAndAttachLicense
+
+그룹 보상 풀과 함께 그룹 IP를 등록하고 그룹 IP에 라이센스 조건을 첨부합니다.
+
+| 메서드                             | 타입                                                                                                  |
+| ------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `registerGroupAndAttachLicense` | `(request: RegisterGroupAndAttachLicenseRequest) => Promise<RegisterGroupAndAttachLicenseResponse>` |
+
+Parameters:
+
+* `request.groupPool`: 그룹 내 IP 풀 간의 로열티 분배 방식을 지정하는 주소.
+* `request.licenseTermsId`: 새 그룹 IP에 첨부될 등록된 라이센스 조건의 ID.
+* `request.licenseTemplate`: \[선택사항] 새 그룹 IP에 첨부될 라이센스 템플릿의 주소, 기본값은 Programmable IP License입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+```typescript Response Type
+export type RegisterGroupAndAttachLicenseResponse = {
+  txHash?: string;
+  encodedTxData?: EncodedTxData;
+  groupId?: Address;
+};
+```
+
+### registerGroupAndAttachLicenseAndAddIps
+
+그룹 보상 풀과 함께 그룹 IP를 등록하고, 그룹 IP에 라이센스 조건을 첨부하고, 개별 IP들을 그룹 IP에 추가합니다.
+
+| 메서드                                      | 타입                                                                                                                    |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `registerGroupAndAttachLicenseAndAddIps` | `(request: RegisterGroupAndAttachLicenseAndAddIpsRequest) => Promise<RegisterGroupAndAttachLicenseAndAddIpsResponse>` |
+
+Parameters:
+
+* `request.ipIds`: 그룹에 추가될 IP들의 IP ID.
+* `request.groupPool`: 그룹 내 IP 풀 간의 로열티 분배 방식을 지정하는 주소입니다.
+* `request.maxAllowedRevShare`: 각 멤버 IP에 할당될 수 있는 최대 보상 공유 비율입니다.
+* `request.licenseData`: 새 그룹 IP에 첨부될 라이선스와 그 구성의 데이터입니다.
+  * `request.licenseData.licenseTermsId`: 새 그룹 IP에 첨부될 등록된 라이선스 조건의 ID입니다.
+  * `request.licenseData.licensingConfig`: \[선택사항] 다음을 참조하세요 [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). 제공되지 않으면 [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts)에 표시된 것으로 기본 설정됩니다.
+  * `request.licenseData.licenseTemplate`: \[선택사항] 새 그룹 IP에 첨부될 라이선스 템플릿의 주소입니다. 기본값은 Programmable IP License입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts)입니다.
+
+<CodeGroup>
+  ```typescript TypeScript
+  const response =
+    await client.groupClient.registerGroupAndAttachLicenseAndAddIps({
+      groupPool: "0xf96f2c30b41Cb6e0290de43C8528ae83d4f33F89", // EvenSplitGroupPool from https://docs.story.foundation/docs/deployed-smart-contracts
+      maxAllowedRewardShare: 5,
+      ipIds: ["0x01"],
+      licenseData: {
+        licenseTermsId: "5",
+      },
+      txOptions: { waitForTransaction: true },
+    });
+  ```
+
+  ```typescript Request Type
+  export type RegisterGroupAndAttachLicenseAndAddIpsRequest = {
+    groupPool: Address;
+    ipIds: Address[];
+    licenseData: LicenseData;
+    maxAllowedRewardShare: number | string;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterGroupAndAttachLicenseAndAddIpsResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+    groupId?: Address;
+  };
+  ```
+</CodeGroup>
+
+### collectAndDistributeGroupRoyalties
+
+전체 그룹의 로열티를 수집하고 각 멤버 IP의 로열티 금고에 보상을 분배합니다.
+
+| 메서드                                  | 타입                                                                                                            |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `collectAndDistributeGroupRoyalties` | `(request: CollectAndDistributeGroupRoyaltiesRequest) => Promise<CollectAndDistributeGroupRoyaltiesResponse>` |
+
+Parameters:
+
+* `request.groupIpId`: 그룹의 IP ID입니다.
+* `request.currencyTokens`: 청구할 통화(수익) 토큰의 주소들입니다.
+* `request.memberIpIds`: 보상을 분배할 멤버 IP들의 ID입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts)입니다.
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+  const response = await client.groupClient.collectAndDistributeGroupRoyalties({
+    groupIpId: "0x01",
+    currencyTokens: [WIP_TOKEN_ADDRESS],
+    memberIpIds: ["0x02"],
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type CollectAndDistributeGroupRoyaltiesRequest = {
+    groupIpId: Address;
+    currencyTokens: Address[];
+    memberIpIds: Address[];
+    txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+  };
+  ```
+
+  ```typescript Response Type
+  export type CollectAndDistributeGroupRoyaltiesResponse = {
+    txHash: Hash;
+    receipts?: TransactionReceipt[];
+    collectedRoyalties?: Omit<
+      GroupingModuleCollectedRoyaltiesToGroupPoolEvent,
+      "pool"
+    >[];
+    royaltiesDistributed?: {
+      ipId: Address;
+      amount: bigint;
+      token: Address;
+      /**
+       * Amount after the fee to the royalty module treasury.
+       */
+      amountAfterFee: bigint;
+    }[];
+  };
+  ```
+</CodeGroup>
+
+
+# 라이선스
+
+## 라이선스
+
+### 메서드
+
+* attach\_license\_terms
+* mint\_license\_tokens
+* register\_pil\_terms
+* register\_non\_com\_social\_remixing\_pil
+* register\_commercial\_use\_pil
+* register\_commercial\_remix\_pil
+
+### attach\_license\_terms
+
+IP에 라이선스 조건을 첨부합니다.
+
+| 메서드                    |
+| ---------------------- |
+| `attach_license_terms` |
+
+Parameters:
+
+* `ip_id`: 라이선스 조건이 첨부될 IP의 주소입니다.
+* `license_template`: 라이선스 템플릿의 주소입니다.
+* `license_terms_id`: 라이선스 조건의 ID입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.License.attach_license_terms(
+    ip_id="0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+    license_template="0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316", # insert PILicenseTemplate from https://docs.story.foundation/docs/deployed-smart-contracts
+    license_terms_id="1"
+  )
+  ```
+
+  ```python Request Parameters
+  ip_id: str  # The address of the IP to which the license terms are attached
+  license_template: str  # The address of the license template
+  license_terms_id: int  # The ID of the license terms
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str
+  }
+  ```
+</CodeGroup>
+
+### mint\_license\_tokens
+
+IP에 첨부된 라이선스 조건에 대한 라이선스 토큰을 발행합니다.
+
+라이선스 토큰은 수신자에게 발행됩니다.
+
+이 함수를 호출하기 전에 라이선스 조건이 IP에 첨부되어 있어야 합니다.
+
+IP 소유자는 라이선스 조건을 IP에 첨부하지 않고도 임의의 라이선스 조건에 대해 자신의 IP에 대한 라이선스 토큰을 발행할 수 있습니다.
+
+라이선스 조건이나 IP 소유자의 설정에 따라 호출자가 발행 수수료를 지불해야 할 수 있습니다. 발행 수수료는 라이선스 조건에 명시되거나 IP 소유자가 설정한 발행 수수료 토큰으로 지불됩니다. IP 소유자는 자신의 IP에 대한 발행 수수료를 설정하거나 발행 수수료 모듈을 구성하여 발행 수수료를 결정할 수 있습니다.
+
+| 메서드                   |
+| --------------------- |
+| `mint_license_tokens` |
+
+Parameters:
+
+* `licensor_ip_id`: 라이선스 제공자 IP ID입니다.
+* `license_template`: 라이선스 템플릿의 주소입니다.
+* `license_terms_id`: 라이선스 템플릿 내의 라이선스 조건 ID입니다.
+* `amount`: 발행할 라이선스 토큰의 수량입니다.
+* `receiver`: 수신자의 주소입니다.
+* `max_minting_fee`: \[선택사항] 지불할 최대 발행 수수료입니다.
+* `max_revenue_share`: \[선택사항] 최대 수익 공유 비율입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  response = client.License.mint_license_tokens(
+    licensor_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    license_template="0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316", # insert PILicenseTemplate from https://docs.story.foundation/docs/deployed-smart-contracts
+    license_terms_id="1",
+    amount=1,
+    receiver="0x14dC79964da2C08b23698B3D3cc7Ca32193d9955", # optional
+    max_minting_fee=0, # disabled
+    max_revenue_share=100 # default
+  )
+  ```
+
+  ```python Request Parameters
+  licensor_ip_id: str  # The licensor IP ID
+  license_template: str  # The address of the license template
+  license_terms_id: int  # The ID of the license terms
+  amount: int   # The amount of license tokens to mint
+  receiver: str  # The address of the receiver
+  max_minting_fee: int = 0  # Optional: The maximum minting fee to pay
+  max_revenue_share: int = 0  # Optional: The maximum revenue share percentage
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "license_token_ids": list,  # List of license token IDs
+    "tx_hash": str,  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### register\_pil\_terms
+
+새로운 라이선스 조건을 등록하고 새로 등록된 라이선스 조건의 ID를 반환합니다.
+
+| 메서드                  |
+| -------------------- |
+| `register_pil_terms` |
+
+Parameters:
+
+* 아래의 Python 코드 예제에서 모든 매개변수를 확인하세요. 이들은 모두 [PIL Terms](/concepts/programmable-ip-license/pil-terms)에서 가져옵니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.License.register_pil_terms(
+    transferable=False,
+    royalty_policy="0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", # RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    default_minting_fee=0,
+    expiration=0,
+    commercial_use=False,
+    commercial_attribution=False,
+    commercializer_checker="0x0000000000000000000000000000000000000000",
+    commercializer_checker_data="0x",
+    commercial_rev_share=10, # 10%
+    commercial_rev_ceiling=0,
+    derivatives_allowed=True,
+    derivatives_attribution=False,
+    derivatives_approval=False,
+    derivatives_reciprocal=False,
+    derivative_rev_ceiling=0,
+    currency="0x1514000000000000000000000000000000000000", # $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    uri="",
+  )
+  ```
+
+  ```python Request Parameters
+  transferable: bool  # Indicates whether the license is transferable or not
+  royalty_policy: str  # The address of the royalty policy contract
+  default_minting_fee: int  # The default minting fee to be paid when minting a license
+  expiration: int  # The expiration period of the license
+  commercial_use: bool  # Indicates whether the work can be used commercially or not
+  commercial_attribution: bool  # Whether attribution is required when reproducing the work commercially
+  commercializer_checker: str  # Commercializers that are allowed to commercially exploit the work
+  commercializer_checker_data: str  # The data to be passed to the commercializer checker contract
+  commercial_rev_share: int  # Percentage of revenue that must be shared with the licensor (0-100)
+  commercial_rev_ceiling: int  # The maximum revenue that can be generated from commercial use
+  derivatives_allowed: bool  # Indicates whether the licensee can create derivatives of the work
+  derivatives_attribution: bool  # Whether attribution is required for derivatives of the work
+  derivatives_approval: bool  # Whether the licensor must approve derivatives before they can be linked
+  derivatives_reciprocal: bool  # Whether derivatives must be licensed under the same terms
+  derivative_rev_ceiling: int  # The maximum revenue that can be generated from derivative use
+  currency: str  # The ERC20 token to be used to pay the minting fee
+  uri: str  # The URI of the license terms
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "license_terms_id": int,
+    "tx_hash": str
+  }
+  ```
+</CodeGroup>
+
+### register\_non\_com\_social\_remixing\_pil
+
+레지스트리에 PIL 비상업적 소셜 리믹스 라이선스를 등록하는 편리한 함수입니다.
+
+<Warning>
+  이 함수를 호출할 이유가 없습니다. 비상업적 소셜 리믹싱 조건은 이미 우리 프로토콜의 `licenseTermdId = 1`에 등록되어 있습니다. 다시 등록할 이유가 없습니다.
+</Warning>
+
+| 메서드                                    |
+| -------------------------------------- |
+| `register_non_com_social_remixing_pil` |
+
+Parameters:
+
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.License.register_non_com_social_remixing_pil()
+  ```
+
+  ```python Request Parameters
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "license_terms_id": int,  # The ID of the registered license terms
+    "tx_hash": str,  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### register\_commercial\_use\_pil
+
+레지스트리에 PIL 상업적 사용 라이선스를 등록하는 편리한 함수입니다.
+
+| 메서드                           |
+| ----------------------------- |
+| `register_commercial_use_pil` |
+
+Parameters:
+
+* `default_minting_fee`: 라이선스 발행 시 지불해야 하는 수수료입니다.
+* `currency`: 발행 수수료를 지불하는 데 사용될 ERC20 토큰이며, 이 토큰은 Story의 프로토콜에 등록되어 있어야 합니다.
+* `royalty_policy`: \[선택사항] 로열티 정책 계약의 주소이며, 기본값은 LAP입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.License.register_commercial_use_pil(
+    currency='0x1514000000000000000000000000000000000000', # $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    default_minting_fee=10, # 10 of the currency (using the above currency, 10 $WIP),
+    royalty_policy="0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", # RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  )
+  ```
+
+  ```python Request Parameters
+  default_minting_fee: int  # The fee to be paid when minting a license
+  currency: str  # The ERC20 token to be used to pay the minting fee
+  royalty_policy: str = None  # Optional: The address of the royalty policy contract
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "license_terms_id": int,  # The ID of the registered license terms
+    "tx_hash": str,  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### register\_commercial\_remix\_pil
+
+레지스트리에 PIL 상업적 리믹스 라이선스를 등록하는 편리한 함수입니다.
+
+| 메서드                             |
+| ------------------------------- |
+| `register_commercial_remix_pil` |
+
+Parameters:
+
+* `default_minting_fee`: 라이선스 발행 시 지불해야 하는 수수료입니다.
+* `commercial_rev_share`: 라이선스 제공자와 공유해야 하는 수익의 비율입니다.
+* `currency`: 발행 수수료를 지불하는 데 사용될 ERC20 토큰이며, 이 토큰은 Story의 프로토콜에 등록되어 있어야 합니다.
+* `royalty_policy`: 로열티 정책 계약의 주소이며, 기본값은 LAP입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.License.register_commercial_remix_pil(
+    currency='0x1514000000000000000000000000000000000000', # $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    default_minting_fee=10, # 10 of the currency (using the above currency, 10 $WIP)
+    royalty_policy="0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", # RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    commercial_rev_share=10 # 10%
+  )
+  ```
+
+  ```python Request Parameters
+  default_minting_fee: int  # The fee to be paid when minting a license
+  currency: str  # The ERC20 token to be used to pay the minting fee
+  commercial_rev_share: int  # Percentage of revenue that must be shared with the licensor
+  royalty_policy: str  # The address of the royalty policy contract
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "license_terms_id": int,  # The ID of the registered license terms
+    "tx_hash": str,  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+
+# Royalty
+
+## 로열티
+
+### 메서드
+
+* pay\_royalty\_on\_behalf
+* claimable\_revenue
+* claim\_all\_revenue
+* get\_royalty\_vault\_address
+* transfer\_to\_vault
+
+### pay\_royalty\_on\_behalf
+
+함수 호출자가 지불자 IP Asset을 대신하여 수신자 IP 자산에 로열티를 지불할 수 있게 합니다.
+
+| 메서드                     |
+| ----------------------- |
+| `pay_royalty_on_behalf` |
+
+Parameters:
+
+* `receiver_ip_id`: 로열티를 받는 ipId입니다.
+* `payer_ip_id`: 로열티를 지불하는 IP 자산의 ID입니다.
+* `token`: 로열티 지불에 사용할 토큰입니다.
+* `amount`: 지불할 금액입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  from web3 import Web3
+
+  # In this case, lets say there is a root IPA 'A' and a derivative IPA 'B'.
+  # Someone wants to pay 'B' for whatever reason (they bought it, they want to tip it, etc).
+  # Since the payer is not an IP Asset (rather an external user), the `payer_ip_id` can
+  # be a zero address. And the receiver is, well, the receiver's ipId which is B.
+  #
+  # It's important to note that both 'B' and its parent 'A' will be able
+  # to claim revenue from this based on the negotiated license terms
+  pay_royalty = story_client.Royalty.pay_royalty_on_behalf(
+      receiver_ip_id="0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1",  # B's ipId
+      payer_ip_id="0x0000000000000000000000000000000000000000",  # zero address
+      token="0x1514000000000000000000000000000000000000",  # $WIP
+      amount=Web3.to_wei(2, 'ether'),  # 2 $WIP
+      tx_options={"wait_for_transaction": True}
+  )
+  print(f"Paid royalty at transaction hash {pay_royalty['tx_hash']}")
+
+  # In this case, lets say there is a root IPA 'A' and a derivative IPA 'B'.
+  # 'B' earns revenue off-chain, but must pay 'A' based on their negotiated license terms.
+  # So 'B' pays 'A' what they are due
+  pay_royalty = story_client.Royalty.pay_royalty_on_behalf(
+      receiver_ip_id="0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68",  # A's ipId
+      payer_ip_id="0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1",  # B's ipId
+      token="0x1514000000000000000000000000000000000000",  # $WIP
+      amount=Web3.to_wei(2, 'ether'),  # 2 $WIP
+      tx_options={"wait_for_transaction": True}
+  )
+  print(f"Paid royalty at transaction hash {pay_royalty['tx_hash']}")
+  ```
+
+  ```python Request Parameters
+  receiver_ip_id: str  # The ipId that receives the royalties
+  payer_ip_id: str  # The ID of the IP asset that pays the royalties
+  token: str  # The token to use to pay the royalties
+  amount: int  # The amount to pay
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str,  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### claimable\_revenue
+
+로열티 토큰 보유자가 청구할 수 있는 총 수익 토큰 양을 가져옵니다.
+
+| 메서드                 |
+| ------------------- |
+| `claimable_revenue` |
+
+Parameters:
+
+* `royalty_vault_ip_id`: 로열티 볼트의 id입니다.
+* `claimer`: 로열티 토큰 보유자의 주소입니다.
+* `token`: 청구할 수익 토큰입니다.
+
+<CodeGroup>
+  ```python Python
+  claimable = story_client.Royalty.claimable_revenue(
+      royalty_vault_ip_id="0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+      claimer="0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+      token="0x1514000000000000000000000000000000000000"  # $WIP
+  )
+  print(f"Claimable revenue: {claimable}")
+  ```
+
+  ```python Request Parameters
+  royalty_vault_ip_id: str  # The id of the royalty vault
+  claimer: str  # The address of the royalty token holder
+  token: str  # The revenue token to claim
+  ```
+
+  ```python Response
+  int  # The amount of revenue token claimable
+  ```
+</CodeGroup>
+
+### claim\_all\_revenue
+
+자식 IP 자산 및/또는 자신의 IP 로열티 볼트에서 모든 수익을 청구합니다.
+
+| 메서드                 |
+| ------------------- |
+| `claim_all_revenue` |
+
+Parameters:
+
+* `ancestor_ip_id`: 수익이 청구되는 조상 IP의 주소입니다.
+* `claimer`: 통화(수익) 토큰의 청구자 주소입니다. 일반적으로 IP가 모든 로열티 토큰을 가지고 있다면 조상 IP의 ipId입니다. 그렇지 않다면, 이는 조상 IP 로열티 토큰을 보유하고 있는 주소가 됩니다.
+* `child_ip_ids`: 로열티가 파생되는 자식 IP들의 주소입니다.
+* `royalty_policies`: 로열티 정책의 주소로, royalty\_policies\[i]는 child\_ip\_ids\[i]의 로열티 흐름을 관리합니다.
+* `currency_tokens`: 로열티가 청구될 통화 토큰의 주소입니다.
+* `claim_options`: \[선택사항]
+  * `claim_options['auto_transfer_all_claimed_tokens_from_ip']`: \[선택사항] 활성화되면, 지갑이 IP를 소유하고 있을 때 청구자에게 청구된 모든 토큰이 지갑 주소로 전송됩니다. 지갑이 청구자이거나 청구자가 지갑이 소유한 IP가 아닌 경우, 토큰은 전송되지 않습니다. False로 설정하면 청구자로부터 청구된 토큰의 자동 전송이 비활성화됩니다.**Default: True**
+
+<CodeGroup>
+  ```python Python
+  claim_revenue = story_client.Royalty.claim_all_revenue(
+      # IP Asset 1's (parent) ipId
+      ancestor_ip_id="0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+      # whoever owns the royalty tokens associated with IP Royalty Vault 1
+      # (most likely the associated ipId, which is IP Asset 1's ipId)
+      claimer="0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+      currency_tokens=["0x1514000000000000000000000000000000000000"],  # $WIP
+      # IP Asset 2's (child) ipId
+      child_ip_ids=["0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2"],
+      # testnet address of RoyaltyPolicyLAP
+      royalty_policies=["0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E"],
+      claim_options={
+        'auto_transfer_all_claimed_tokens_from_ip': True
+      }
+  )
+
+  print(f"Claimed revenue: {claim_revenue['claimed_tokens']}")
+  ```
+
+  ```python Request Parameters
+  ancestor_ip_id: str  # The address of the ancestor IP
+  claimer: str  # The address of the claimer of the currency tokens
+  child_ip_ids: list  # The addresses of the child IPs
+  royalty_policies: list  # The addresses of the royalty policies
+  currency_tokens: list  # The addresses of the currency tokens
+  claim_options: dict = None  # Optional: Claim options
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hashes": list,  # The transaction hashes
+    "receipt": dict,  # The transaction receipt
+    "claimed_tokens": list  # List of claimed tokens with token address and amount
+  }
+  ```
+</CodeGroup>
+
+### get\_royalty\_vault\_address
+
+주어진 ipId의 로열티 볼트 프록시 주소를 가져옵니다`ip_id`.
+
+| 메서드                         |
+| --------------------------- |
+| `get_royalty_vault_address` |
+
+Parameters:
+
+* `ip_id`: 로열티 볼트와 연관된 `ipId`ipId입니다.
+
+<CodeGroup>
+  ```python Python
+  vault_address = story_client.Royalty.get_royalty_vault_address("0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384")
+  print(f"Royalty vault address: {vault_address}")
+  ```
+
+  ```python Request Parameters
+  ip_id: str  # The ipId associated with the royalty vault
+  ```
+
+  ```python Response
+  str  # The royalty vault proxy address
+  ```
+</CodeGroup>
+
+### transfer\_to\_vault
+
+볼트로 로열티 정책을 통해 청구 가능한 수익 토큰의 금액을 이전합니다.
+
+| 메서드                 |
+| ------------------- |
+| `transfer_to_vault` |
+
+Parameters:
+
+* `ip_id`: 로열티를 지불하는 IP 자산의 ID입니다.
+* `ancestor_ip_id`: 조상 IP 자산의 ID입니다.
+* `token`: 이전할 토큰 주소입니다.
+* `royalty_policy`: \[선택사항] 사용할 로열티 정책 ("LAP" 또는 "LRP")입니다.**Default: "LAP"**
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  transfer_result = story_client.Royalty.transfer_to_vault(
+      ip_id="0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1",
+      ancestor_ip_id="0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68",
+      royalty_policy="LAP",
+      token="0x1514000000000000000000000000000000000000",  # $WIP
+  )
+  print(f"Transferred to vault at transaction hash {transfer_result['tx_hash']}")
+  ```
+
+  ```python Request Parameters
+  ip_id: str  # The ID of the IP asset that pays the royalties
+  ancestor_ip_id: str  # The ID of the ancestor IP asset
+  token: str  # The token address to transfer
+  royalty_policy: str = "LAP"  # The royalty policy to use ("LAP" or "LRP")
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str,  # The transaction hash
+    "receipt": dict  # The transaction receipt, only available if wait_for_transaction is set to true
+  }
+  ```
+</CodeGroup>
+
+
+# 권한
+
+## 권한
+
+### 메서드
+
+* set\_permission
+* create\_set\_permission\_signature
+* set\_all\_permissions
+
+### set\_permission
+
+특정 함수 호출에 대한 권한을 설정합니다.
+
+각 정책은 IP 계정 주소에서 서명자 주소로, 수신자 주소로, 함수 선택자로, 권한 수준으로 매핑됩니다. 권한 수준은 0 (기권), 1 (허용), 또는 2 (거부)일 수 있습니다.
+
+기본적으로 모든 정책은 0 (기권)으로 설정되어 있으며, 이는 권한이 설정되지 않았음을 의미합니다. IP 계정의 소유자는 기본적으로 모든 권한을 가집니다.
+
+| 메서드              |
+| ---------------- |
+| `set_permission` |
+
+Parameters:
+
+* `ip_id`: 에 대한 권한을 부여하는 IP ID입니다.`signer`.
+* `signer`: 를 대신하여 를 호출할 수 있는 주소입니다.`to` `ipAccount`.
+* `to`: 가 호출할 수 있는 주소입니다`signer` (현재는 모듈만 가능합니다`to`)
+* `permission`: 새로운 권한 수준.
+* `func`: \[선택사항] 호출할 수 있는 함수 선택자 문자열`to`을 대신하여`signer`가 호출할 수 있는`ipAccount`. 기본적으로 모든 함수를 허용합니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  set_permission_response = story_client.Permission.set_permission(
+    ip_id="0x01",
+    signer="0x1234567890123456789012345678901234567890",
+    to="0x2345678901234567890123456789012345678901",
+    permission=1,  # ALLOW
+    func="0x12345678"  # Optional function selector
+  )
+  ```
+
+  ```python Request Parameters
+  ip_id: str  # The IP ID that grants the permission for signer
+  signer: str  # The address that can call to on behalf of the ipAccount
+  to: str  # The address that can be called by the signer (currently only modules can be to)
+  permission: int  # The new permission level (0=ABSTAIN, 1=ALLOW, 2=DENY)
+  func: str = "0x00000000"  # Optional: The function selector string
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### create\_set\_permission\_signature
+
+특정 권한은 서명이 있는 와일드카드 권한을 재정의합니다.
+
+| 메서드                               |
+| --------------------------------- |
+| `create_set_permission_signature` |
+
+Parameters:
+
+* `ip_id`: 에 대한 권한을 부여하는 IP ID`signer`.
+* `signer`: 을 대신하여 호출할 수 있는 주소`to`를 대신하여`ipAccount`.
+* `to`: 가 호출할 수 있는 주소`signer` (현재는 모듈만 될 수 있음`to`)
+* `permission`: 새로운 권한 수준.
+* `func`: \[선택사항] 호출할 수 있는 함수 선택자 문자열`to`을 대신하여`signer`가 호출할 수 있는`ipAccount`. 기본적으로 모든 함수를 허용합니다.
+* `deadline`: \[선택사항] 서명의 기한(밀리초), 기본값은 1000ms입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.PermissionClient.create_set_permission_signature(
+    ip_id="0x01",
+    signer="0x1234567890123456789012345678901234567890",
+    to="0x2345678901234567890123456789012345678901",
+    permission=1,  # ALLOW
+    func="0x12345678",  # Optional function selector
+    deadline=1000  # Optional deadline in milliseconds
+  )
+  ```
+
+  ```python Request Parameters
+  ip_id: str  # The IP ID that grants the permission for signer
+  signer: str  # The address that can call to on behalf of the ipAccount
+  to: str  # The address that can be called by the signer (currently only modules can be to)
+  permission: int  # The new permission level (0=ABSTAIN, 1=ALLOW, 2=DENY)
+  func: str = "0x00000000"  # Optional: The function selector string
+  deadline: int = None  # Optional: The deadline for the signature in milliseconds
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### set\_all\_permissions
+
+모든 모듈의 모든 함수에 대해 서명자에게 권한을 설정합니다.
+
+| 메서드                   |
+| --------------------- |
+| `set_all_permissions` |
+
+Parameters:
+
+* `ip_id`: 에 대한 권한을 부여하는 IP ID`signer`.
+* `signer`: 권한을 받는 서명자의 주소.
+* `permission`: 새로운 권한.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.PermissionClient.set_all_permissions(
+    ip_id="0x01",
+    signer="0x1234567890123456789012345678901234567890",
+    permission=1  # ALLOW
+  )
+  ```
+
+  ```python Request Parameters
+  ip_id: str  # The IP ID that grants the permission for signer
+  signer: str  # The address of the signer receiving the permissions
+  permission: int  # The new permission level (0=ABSTAIN, 1=ALLOW, 2=DENY)
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+
+# WIP
+
+## WIP
+
+### 메서드
+
+* deposit
+* withdraw
+* approve
+* balance\_of
+* transfer
+* transfer\_from
+* allowance
+
+### deposit
+
+선택한 양의 IP를 WIP로 래핑합니다. WIP는 IP를 전송한 지갑으로 입금됩니다.
+
+| 메서드       |
+| --------- |
+| `deposit` |
+
+Parameters:
+
+* `amount`: 입금할 금액.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  from web3 import Web3
+
+  response = story_client.WIP.deposit(
+      amount=Web3.to_wei(10, 'ether'),  # 10 IP tokens
+      tx_options={"wait_for_transaction": True}
+  )
+  print(f"Deposited IP to WIP at transaction hash {response['tx_hash']}")
+  ```
+
+  ```python Request Parameters
+  amount: int  # The amount to deposit
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### withdraw
+
+선택한 양의 WIP를 IP로 언래핑합니다.
+
+| 메서드        |
+| ---------- |
+| `withdraw` |
+
+Parameters:
+
+* `amount`: 출금할 금액.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  from web3 import Web3
+
+  response = story_client.WIP.withdraw(
+      amount=Web3.to_wei(5, 'ether'),  # 5 WIP tokens
+      tx_options={"wait_for_transaction": True}
+  )
+  print(f"Withdrew WIP to IP at transaction hash {response['tx_hash']}")
+  ```
+
+  ```python Request Parameters
+  amount: int  # The amount to withdraw
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### approve
+
+지갑의 WIP 잔액을 사용할 수 있도록 지출자를 승인합니다.
+
+| 메서드       |
+| --------- |
+| `approve` |
+
+Parameters:
+
+* `amount`: 승인할 WIP 토큰의 양.
+* `spender`: WIP 토큰을 사용할 주소.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  from web3 import Web3
+
+  response = story_client.WIP.approve(
+      spender="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+      amount=Web3.to_wei(20, 'ether'),  # 20 WIP tokens
+      tx_options={"wait_for_transaction": True}
+  )
+  print(f"Approved WIP spending at transaction hash {response['tx_hash']}")
+  ```
+
+  ```python Request Parameters
+  spender: str  # The address that will use the WIP tokens
+  amount: int  # The amount of WIP tokens to approve
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### balance\_of
+
+주소의 WIP 잔액을 반환합니다.
+
+| 메서드          |
+| ------------ |
+| `balance_of` |
+
+Parameters:
+
+* `address`: 잔액을 확인하려는 주소.
+
+<CodeGroup>
+  ```python Python
+  balance = story_client.WIP.balance_of("0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba")
+  print(f"WIP balance: {balance}")
+  ```
+
+  ```python Request Parameters
+  address: str  # The address to check the balance for
+  ```
+
+  ```python Response
+  int  # The WIP balance of the address
+  ```
+</CodeGroup>
+
+### transfer
+
+수신자에게 `amount` WIP를 전송합니다 `to`.
+
+| 메서드        |
+| ---------- |
+| `transfer` |
+
+Parameters:
+
+* `to`: 전송할 대상.
+* `amount`: 전송할 금액.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  from web3 import Web3
+
+  response = story_client.WIP.transfer(
+      to="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+      amount=Web3.to_wei(3, 'ether'),  # 3 WIP tokens
+      tx_options={"wait_for_transaction": True}
+  )
+  print(f"Transferred WIP at transaction hash {response['tx_hash']}")
+  ```
+
+  ```python Request Parameters
+  to: str  # The recipient address
+  amount: int  # The amount to transfer
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### transfer\_from
+
+수신자에게 `amount` WIP를 `from`에서 전송합니다 `to`.
+
+| 메서드             |
+| --------------- |
+| `transfer_from` |
+
+Parameters:
+
+* `to`: 전송할 대상.
+* `amount`: 전송할 금액.
+* `from_address`: 전송할 주소.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  from web3 import Web3
+
+  response = story_client.WIP.transfer_from(
+      to="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+      amount=Web3.to_wei(2, 'ether'),  # 2 WIP tokens
+      from_address="0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68",
+      tx_options={"wait_for_transaction": True}
+  )
+  print(f"Transferred WIP from another account at transaction hash {response['tx_hash']}")
+  ```
+
+  ```python Request Parameters
+  to: str  # The recipient address
+  amount: int  # The amount to transfer
+  from_address: str  # The address to transfer from
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### allowance
+
+가 `spender` 대신 사용할 수 있는 WIP 토큰의 양을 반환합니다 `owner`.
+
+| 메서드         |
+| ----------- |
+| `allowance` |
+
+Parameters:
+
+* `owner`: 토큰 소유자의 주소.
+* `spender`: 지출자의 주소.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.WIP.allowance(
+      owner="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+      spender="0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68"
+  )
+  print(f"Allowance: {response}")
+  ```
+
+  ```python Request Parameters
+  owner: str  # The owner address
+  spender: str  # The spender address
+  ```
+
+  ```python Response
+  int  # The allowance amount
+  ```
+</CodeGroup>
+
+
+# Dispute
+
+## 분쟁
+
+### 메서드
+
+* raise\_dispute
+* cancel\_dispute
+* resolve\_dispute
+* tag\_if\_related\_ip\_infringed
+* dispute\_assertion
+* dispute\_id\_to\_assertion\_id
+
+### raise\_dispute
+
+주어진 ipId에 대해 분쟁을 제기합니다
+
+| 메서드             |
+| --------------- |
+| `raise_dispute` |
+
+Parameters:
+
+* `target_ip_id`: 분쟁의 대상이 되는 IP ID입니다.
+* `target_tag`: 분쟁의 대상 태그입니다. [분쟁 태그](https://docs.story.foundation/docs/dispute-module#dispute-tags)를 참조하세요. **Example: "IMPROPER\_REGISTRATION"**
+* `cid`: 분쟁 증거에 대한 콘텐츠 식별자(CID)입니다. 이는 분쟁 증거(문서, 이미지 등)를 IPFS에 업로드하여 얻어야 합니다. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
+* `liveness`: 분쟁에 대한 반대 분쟁을 제기할 수 있는 시간 창(초 단위)입니다 (30일).
+* `bond`: 분쟁 개시자가 풀에 선불로 지불하는 wrapper IP의 금액입니다. 이 분쟁에 대응하기 위해 분쟁의 상대방은 동일한 금액의 보증금을 제출해야 합니다. 분쟁의 승자는 원래 보증금을 돌려받고 상대방 보증금의 50%를 받습니다. 패자 보증금의 나머지 50%는 심사자에게 돌아갑니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  from web3 import Web3
+
+  response = story_client.Dispute.raise_dispute(
+      target_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+      # NOTE: you must use your own CID here, because every time it is used,
+      # the protocol does not allow you to use it again
+      cid="QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR",
+      # you must pick from one of the whitelisted tags here:
+      # https://docs.story.foundation/docs/dispute-module#dispute-tags
+      target_tag="IMPROPER_REGISTRATION",
+      bond=Web3.to_wei(0.1, 'ether'),  # minimum of 0.1
+      liveness=2592000,
+      tx_options={"wait_for_transaction": True}
+  )
+  print(f"Dispute raised at transaction hash {response['tx_hash']}, Dispute ID: {response['dispute_id']}")
+  ```
+
+  ```python Request Parameters
+  target_ip_id: str  # The IP ID that is the target of the dispute
+  target_tag: str  # The target tag of the dispute
+  cid: str  # Content Identifier for the dispute evidence
+  liveness: int  # Time window in seconds for counter disputes
+  bond: int  # Amount of wrapper IP for the dispute bond
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str,  # The transaction hash
+    "dispute_id": int  # The ID of the raised dispute
+  }
+  ```
+</CodeGroup>
+
+### cancel\_dispute
+
+진행 중인 분쟁을 취소합니다
+
+| 메서드              |
+| ---------------- |
+| `cancel_dispute` |
+
+Parameters:
+
+* `dispute_id`: 취소할 분쟁의 ID.
+* `data`: \[선택사항] 취소 과정에서 사용되는 추가 데이터. **기본값은 "0x"**&#xC785;니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.Dispute.cancel_dispute(
+      dispute_id=1,
+      tx_options={"wait_for_transaction": True}
+  )
+  print(f"Dispute cancelled at transaction hash {response['tx_hash']}")
+  ```
+
+  ```python Request Parameters
+  dispute_id: int  # The ID of the dispute to be cancelled
+  data: str = "0x"  # Optional: Additional data for cancellation
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### resolve\_dispute
+
+판결이 내려진 후 분쟁을 해결합니다
+
+| 메서드               |
+| ----------------- |
+| `resolve_dispute` |
+
+Parameters:
+
+* `dispute_id`: 해결할 분쟁의 ID.
+* `data`: 분쟁을 해결하기 위한 데이터.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.Dispute.resolve_dispute(
+      dispute_id=1,
+      data="0x",
+      tx_options={"wait_for_transaction": True}
+  )
+  print(f"Dispute resolved at transaction hash {response}")
+  ```
+
+  ```python Request Parameters
+  dispute_id: int  # The ID of the dispute to be resolved
+  data: str # Additional data for resolution
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### tag\_if\_related\_ip\_infringed
+
+부모가 침해 태그로 태그되었거나 그룹 구성원이 침해 태그로 태그된 경우 파생물이나 그룹 IP에 태그를 지정합니다.
+
+| 메서드                           |
+| ----------------------------- |
+| `tag_if_related_ip_infringed` |
+
+Parameters:
+
+* `infringement_tags`: 분쟁과 관련된 태그 배열
+  * `infringement_tags[]['ip_id']`: `ip_id`에 태그를 지정
+  * `infringement_tags[]['dispute_id']`: 관련된 침해 부모 IP에 태그를 지정한 분쟁 ID
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.Dispute.tag_if_related_ip_infringed(
+    infringement_tags=[
+      {
+        "ip_id": "0xa1BaAA464716eC76A285Ef873d27f97645fE0366",
+        "dispute_id": 1
+      }
+    ],
+    tx_options={"wait_for_transaction": True}
+  )
+  print(f"Tagged related IP at transaction hash {response[0]}")
+  ```
+
+  ```python Request Parameters
+  infringement_tags: list  # List of dictionaries containing ip_id and dispute_id
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  [str]  # An array of transaction hashes
+  ```
+</CodeGroup>
+
+### dispute\_assertion
+
+다른 당사자가 IP에 대해 제기한 분쟁에 대해 반대 증거를 사용하여 대응합니다.
+
+이 메서드는 IP 소유자만이 반대 증거를 제공하여 분쟁에 대응하기 위해 호출할 수 있습니다. 반대 증거(예: 문서, 이미지)는 IPFS에 업로드되어야 하며, 해당 CID는 요청을 위해 해시로 변환됩니다.
+
+활성 기간은 두 부분으로 나뉩니다:
+
+* 활성 기간의 첫 번째 부분에서는 IP 소유자만이 메서드를 호출할 수 있습니다.
+* 두 번째 부분에서는 모든 주소에서 메서드를 호출할 수 있습니다.
+
+만약 `dispute_id`만 있다면, `dispute_id_to_assertion_id`를 호출하여 여기서 필요한 `assertion_id`를 얻으세요.
+
+<Warning>
+  IP 소유자가 wip 모듈을 사용하여 직접 예치해야 하는 \$WIP가 필요합니다.
+</Warning>
+
+| 메서드                 |
+| ------------------- |
+| `dispute_assertion` |
+
+Parameters:
+
+* `ip_id`: 분쟁의 대상이 되는 IP ID.
+* `assertion_id`: 분쟁이 제기된 주장의 식별자. `dispute_id`에서 `Dispute.dispute_id_to_assertion_id`를 호출하여 얻을 수 있습니다.
+* `counter_evidence_cid`: 반대 증거에 대한 콘텐츠 식별자(CID). 이는 분쟁 증거(문서, 이미지 등)를 IPFS에 업로드하여 얻어야 합니다. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  # First get the assertion_id from the dispute_id
+  assertion_id = story_client.Dispute.dispute_id_to_assertion_id(1)
+
+  # Then dispute the assertion
+  response = story_client.Dispute.dispute_assertion(
+    ip_id="0xa1BaAA464716eC76A285Ef873d27f97645fE0366",
+    assertion_id=assertion_id,
+    counter_evidence_cid="QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"
+  )
+  ```
+
+  ```python Request Parameters
+  ip_id: str  # The IP ID that is the target of the dispute
+  assertion_id: str  # The identifier of the assertion that was disputed
+  counter_evidence_cid: str  # Content Identifier (CID) for the counter evidence
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str,  # The transaction hash
+    "receipt": str # tx receipt
+  }
+  ```
+</CodeGroup>
+
+### dispute\_id\_to\_assertion\_id
+
+분쟁 ID를 주장 ID에 매핑합니다.
+
+| 메서드                          |
+| ---------------------------- |
+| `dispute_id_to_assertion_id` |
+
+Parameters:
+
+* `dispute_id`: 주장 ID로 변환할 분쟁 ID.
+
+<CodeGroup>
+  ```python Python
+  assertion_id = story_client.Dispute.dispute_id_to_assertion_id(1)
+  ```
+
+  ```python Request Parameters
+  dispute_id: int  # The dispute ID to convert
+  ```
+
+  ```python Response
+  str  # The assertion ID as a hex string
+  ```
+</CodeGroup>
+
+
+# Group
+
+## 그룹
+
+### 메서드
+
+* register\_group
+* register\_group\_and\_attach\_license
+* mint\_and\_register\_ip\_and\_attach\_license\_and\_add\_to\_group
+* register\_ip\_and\_attach\_license\_and\_add\_to\_group
+* register\_group\_and\_attach\_license\_and\_add\_ips
+* collect\_and\_distribute\_group\_royalties
+
+### register\_group
+
+그룹 IPA를 등록합니다.
+
+| 메서드              |
+| ---------------- |
+| `register_group` |
+
+Parameters:
+
+* `group_pool`: 그룹 풀의 주소입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  result = story_client.Group.register_group(
+      group_pool="0xf96f2c30b41Cb6e0290de43C8528ae83d4f33F89",  # EvenSplitGroupPool
+  )
+  print(f"Group registered with ID: {result['group_id']} at transaction hash {result['tx_hash']}")
+  ```
+
+  ```python Request Parameters
+  group_pool: str  # The address of the group pool
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str,  # The transaction hash
+    "group_id": str  # The ID of the registered group
+  }
+  ```
+</CodeGroup>
+
+### register\_group\_and\_attach\_license
+
+그룹 IP를 그룹 보상 풀에 등록하고 그룹 IP에 라이선스 조건을 첨부합니다.
+
+| 메서드                                 |
+| ----------------------------------- |
+| `register_group_and_attach_license` |
+
+Parameters:
+
+* `group_pool`: 그룹 풀의 주소입니다.
+* `license_data`: 조건과 설정이 포함된 라이선스 데이터 객체입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  result = story_client.Group.register_group_and_attach_license(
+      group_pool="0xf96f2c30b41Cb6e0290de43C8528ae83d4f33F89",  # EvenSplitGroupPool
+      license_data={
+          "license_template": "0x7e9b9B31BF5F3399D36E1E0a9E589c30Cb6925D1",  # Programmable IP License
+          "license_terms_id": "5"
+      }
+  )
+  print(f"Group registered with ID: {result['group_id']} at transaction hash {result['tx_hash']}")
+  ```
+
+  ```python Request Parameters
+  group_pool: str  # The address of the group pool
+  license_data: dict  # License data object with terms and config
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str,  # The transaction hash
+    "group_id": str  # The ID of the registered group
+  }
+  ```
+</CodeGroup>
+
+### mint\_and\_register\_ip\_and\_attach\_license\_and\_add\_to\_group
+
+SPGNFT 컬렉션에서 NFT를 발행하고, 메타데이터와 함께 IP로 등록하고, 등록된 IP에 라이선스 조건을 첨부하고, 그룹 IP에 추가합니다.
+
+| 메서드                                                        |
+| ---------------------------------------------------------- |
+| `mint_and_register_ip_and_attach_license_and_add_to_group` |
+
+Parameters:
+
+* `group_id`: IP를 추가할 그룹의 ID입니다.
+* `spg_nft_contract`: SPG NFT 계약의 주소입니다.
+* `license_data`: 조건과 설정이 포함된 라이선스 데이터 객체 목록입니다.
+* `max_allowed_reward_share`: 최대 허용 보상 공유 비율입니다.
+* `ip_metadata`: \[선택사항] IP의 메타데이터입니다.
+* `recipient`: \[선택사항] NFT의 수신자입니다 (기본값은 호출자).
+* `allow_duplicates`: \[선택사항] 중복 IP를 허용할지 여부입니다.
+* `deadline`: \[선택사항] 서명의 마감 시간(밀리초)입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  result = story_client.Group.mint_and_register_ip_and_attach_license_and_add_to_group(
+      group_id="0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+      spg_nft_contract="0x1234567890123456789012345678901234567890",
+      license_data=[
+          {
+              "license_template": "0x7e9b9B31BF5F3399D36E1E0a9E589c30Cb6925D1",  # Programmable IP License
+              "license_terms_id": "5"
+          }
+      ],
+      max_allowed_reward_share=5,  # 5%
+      ip_metadata={
+          "ip_metadata_uri": "ipfs://QmXxxx",
+          "ip_metadata_hash": "0x1234..."
+      },
+  )
+  print(f"IP registered with ID: {result['ip_id']} and token ID: {result['token_id']} at transaction hash {result['tx_hash']}")
+  ```
+
+  ```python Request Parameters
+  group_id: str  # The ID of the group to add the IP to
+  spg_nft_contract: str  # The address of the SPG NFT contract
+  license_data: list  # List of license data objects with terms and config
+  max_allowed_reward_share: int  # Maximum allowed reward share percentage
+  ip_metadata: dict = None  # Optional: The metadata for the IP
+  recipient: str = None  # Optional: The recipient of the NFT (defaults to caller)
+  allow_duplicates: bool = True  # Optional: Whether to allow duplicate IPs
+  deadline: int = None  # Optional: The deadline for the signature in milliseconds
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str,  # The transaction hash
+    "ip_id": str,  # The ID of the registered IP
+    "token_id": int  # The token ID of the minted NFT
+  }
+  ```
+</CodeGroup>
+
+### register\_ip\_and\_attach\_license\_and\_add\_to\_group
+
+NFT를 메타데이터와 함께 IP로 등록하고, 등록된 IP에 라이선스 조건을 첨부하고, 그룹 IP에 추가합니다.
+
+| 메서드                                               |
+| ------------------------------------------------- |
+| `register_ip_and_attach_license_and_add_to_group` |
+
+Parameters:
+
+* `group_id`: IP를 추가할 그룹의 ID입니다.
+* `nft_contract`: NFT 계약의 주소입니다.
+* `token_id`: NFT의 토큰 ID입니다.
+* `license_data`: 조건과 설정이 포함된 라이선스 데이터 객체 목록입니다.
+* `max_allowed_reward_share`: 최대 허용 보상 공유 비율입니다.
+* `ip_metadata`: \[선택사항] IP의 메타데이터입니다.
+* `deadline`: \[선택사항] 서명의 마감 시간(밀리초)입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  result = story_client.Group.register_ip_and_attach_license_and_add_to_group(
+      group_id="0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+      nft_contract="0x1234567890123456789012345678901234567890",
+      token_id=123,
+      license_data=[
+          {
+              "license_template": "0x7e9b9B31BF5F3399D36E1E0a9E589c30Cb6925D1",  # Programmable IP License
+              "license_terms_id": "5"
+          }
+      ],
+      max_allowed_reward_share=5,  # 5%
+      ip_metadata={
+          "ip_metadata_uri": "ipfs://QmXxxx",
+          "ip_metadata_hash": "0x1234..."
+      }
+  )
+  print(f"IP registered with ID: {result['ip_id']} and token ID: {result['token_id']} at transaction hash {result['tx_hash']}")
+  ```
+
+  ```python Request Parameters
+  group_id: str  # The ID of the group to add the IP to
+  nft_contract: str  # The address of the NFT contract
+  token_id: int  # The token ID of the NFT
+  license_data: list  # List of license data objects with terms and config
+  max_allowed_reward_share: int  # Maximum allowed reward share percentage
+  ip_metadata: dict = None  # Optional: The metadata for the IP
+  deadline: int = None  # Optional: The deadline for the signature in milliseconds
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str,  # The transaction hash
+    "ip_id": str,  # The ID of the registered IP
+    "token_id": int  # The token ID of the NFT
+  }
+  ```
+</CodeGroup>
+
+### register\_group\_and\_attach\_license\_and\_add\_ips
+
+그룹 IP를 그룹 보상 풀에 등록하고, 그룹 IP에 라이선스 조건을 첨부하고, 개별 IP를 그룹 IP에 추가합니다.
+
+| 메서드                                             |
+| ----------------------------------------------- |
+| `register_group_and_attach_license_and_add_ips` |
+
+Parameters:
+
+* `group_pool`: 그룹 풀의 주소입니다.
+* `ip_ids`: 그룹에 추가할 IP ID 목록입니다.
+* `license_data`: 조건과 설정이 포함된 라이선스 데이터 객체입니다.
+* `max_allowed_reward_share`: 최대 허용 보상 공유 비율입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  result = story_client.Group.register_group_and_attach_license_and_add_ips(
+      group_pool="0xf96f2c30b41Cb6e0290de43C8528ae83d4f33F89",  # EvenSplitGroupPool
+      ip_ids=["0x1234567890123456789012345678901234567890", "0x0987654321098765432109876543210987654321"],
+      license_data={
+          "license_template": "0x7e9b9B31BF5F3399D36E1E0a9E589c30Cb6925D1",  # Programmable IP License
+          "license_terms_id": "5"
+      },
+      max_allowed_reward_share=5,  # 5%
+  )
+  print(f"Group registered with ID: {result['group_id']} at transaction hash {result['tx_hash']}")
+  ```
+
+  ```python Request Parameters
+  group_pool: str  # The address of the group pool
+  ip_ids: list  # List of IP IDs to add to the group
+  license_data: dict  # License data object with terms and config
+  max_allowed_reward_share: int  # Maximum allowed reward share percentage
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str,  # The transaction hash
+    "group_id": str  # The ID of the registered group
+  }
+  ```
+</CodeGroup>
+
+### collect\_and\_distribute\_group\_royalties
+
+전체 그룹에 대한 로열티를 수집하고 각 멤버 IP의 로열티 금고에 보상을 분배합니다.
+
+| 메서드                                      |
+| ---------------------------------------- |
+| `collect_and_distribute_group_royalties` |
+
+Parameters:
+
+* `group_ip_id`: 그룹 IP의 ID입니다.
+* `currency_tokens`: 통화 토큰 주소 목록입니다.
+* `member_ip_ids`: 멤버 IP ID 목록입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  result = story_client.Group.collect_and_distribute_group_royalties(
+      group_ip_id="0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+      currency_tokens=["0x1514000000000000000000000000000000000000"],  # $WIP
+      member_ip_ids=["0x1234567890123456789012345678901234567890", "0x0987654321098765432109876543210987654321"]
+  )
+  print(f"Collected royalties: {result['collected_royalties']}")
+  print(f"Royalties distributed: {result['royalties_distributed']}")
+  ```
+
+  ```python Request Parameters
+  group_ip_id: str  # The ID of the group IP
+  currency_tokens: list  # List of currency token addresses
+  member_ip_ids: list  # List of member IP IDs
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str,  # The transaction hash
+    "collected_royalties": list,  # List of collected royalties with token address and amount
+    "royalties_distributed": list  # List of distributed royalties with IP ID, token address, and amount
+  }
+  ```
+</CodeGroup>
+
+
+# IP 계정
+
+## IPAccount
+
+### 메서드
+
+* set\_ip\_metadata
+* execute
+* execute\_with\_sig
+* transfer\_erc20
+
+### set\_ip\_metadata
+
+IP 자산의 metadataURI를 설정합니다.
+
+| 메서드               |
+| ----------------- |
+| `set_ip_metadata` |
+
+Parameters:
+
+* `ip_id`: 메타데이터를 설정할 IP입니다.
+* `metadata_uri`: IP 자산에 대해 설정할 metadataURI입니다. [IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard)에 맞는 메타데이터를 가리키는 URL이어야 합니다.
+* `metadata_hash`: metadataURI에 있는 메타데이터의 해시입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  tx_hash = story_client.IPAccount.set_ip_metadata(
+    ip_id="0x01",
+    metadata_uri="https://ipfs.io/ipfs/bafkreiardkgvkejqnnkdqp4pamkx2e5bs4lzus5trrw3hgmoa7dlbb6foe",
+    # example hash (not accurate)
+    metadata_hash="0x129f7dd802200f096221dd89d5b086e4bd3ad6eafb378a0c75e3b04fc375f997",
+  )
+  ```
+
+  ```python Request Parameters
+  ip_id: str  # The IP to set the metadata for
+  metadata_uri: str  # The metadataURI to set for the IP asset. Should be a URL pointing to metadata that fits the [IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard)
+  metadata_hash: str  # The hash of metadata at metadataURI
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### execute
+
+IP 계정에서 트랜잭션을 실행합니다.
+
+| 메서드       |
+| --------- |
+| `execute` |
+
+Parameters:
+
+* `ip_id`: IP 계정을 가져올 IP Id입니다.
+* `to`: 트랜잭션의 수신자입니다.
+* `value`: 보낼 이더의 양입니다.
+* `data`: 트랜잭션과 함께 보낼 데이터입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.IPAccount.execute(
+    ip_id="0x01",
+    to="0x1234567890123456789012345678901234567890",
+    value=1000000000000000000,  # 1 ETH
+    data="0x1234567890123456789012345678901234567890",
+  )
+  ```
+
+  ```python Request Parameters
+  ip_id: str  # The IP to set the metadata for
+  to: str  # The recipient of the transaction
+  value: int  # The amount of Ether to send
+  data: str  # The data to send along with the transaction
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### execute\_with\_sig
+
+IP 계정에서 트랜잭션을 실행합니다.
+
+| 메서드                |
+| ------------------ |
+| `execute_with_sig` |
+
+Parameters:
+
+* `ip_id`: 메타데이터를 설정할 IP입니다.
+* `to`: 트랜잭션의 수신자입니다.
+* `data`: 트랜잭션과 함께 보낼 데이터입니다.
+* `signer`: 트랜잭션의 서명자입니다.
+* `deadline`: 트랜잭션 서명의 마감 시간입니다.
+* `signature`: EIP-712로 인코딩된 트랜잭션의 서명입니다.
+* `value`: \[선택사항] 보낼 이더의 양입니다.**Default: 0**
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.IPAccount.execute_with_sig(
+    ip_id="0x01",
+    to="0x1234567890123456789012345678901234567890",
+    data="0x1234567890123456789012345678901234567890",
+    signer="0x1234567890123456789012345678901234567890",
+    deadline=1000000000000000000,
+    signature="0x1234567890123456789012345678901234567890",
+    value=1000000000000000000,  # 1 ETH
+  )
+  ```
+
+  ```python Request Parameters
+  ip_id: str  # The IP to set the metadata for
+  to: str  # The recipient of the transaction
+  data: str  # The data to send along with the transaction
+  signer: str  # The signer of the transaction
+  deadline: int  # The deadline of the transaction signature
+  signature: str  # The signature of the transaction, EIP-712 encoded
+  value: int = 0  # Optional: The amount of Ether to send
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### transfer\_erc20
+
+IP 계정에서 ERC20 토큰을 전송합니다.
+
+| 메서드              |
+| ---------------- |
+| `transfer_erc20` |
+
+Parameters:
+
+* `ip_id`: 계정의 `ipId`입니다
+* `tokens`: 전송할 토큰 정보입니다
+  * `tokens.address`: WIP 및 표준 ERC20을 포함한 ERC20 토큰의 주소입니다.
+  * `tokens.amount`: 전송할 토큰의 양입니다
+  * `tokens.target`: 수신자의 주소입니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리입니다.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.IPAccount.transferERC20(
+    ip_id="0x01",
+    tokens=[
+      {
+          "address": "0x1514000000000000000000000000000000000000", # $WIP
+          "target": "0x02",
+          "amount": 1000000  # Equivalent to 0.001 ether
+      }
+    ]
+  )
+  ```
+
+  ```python Request Parameters
+  ip_id: str  # The IP to set the metadata for
+  tokens: list  # The token info to transfer
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str, # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+
+# SDK Reference Overview
+
+이 섹션에서는 Python SDK의 모든 함수에 대한 상세한 설명을 제공합니다.
+
+| 패키지                                                            | 호환성                                       | 패키지                                                                                                     | GitHub                                                                                                           |                          |
+| -------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| <Icon icon="screwdriver-wrench" iconType="solid" /> TypeScript | <Icon icon="check" iconType="solid" /> 전체 | <Icon icon="box-open" iconType="solid" /> [npm](https://www.npmjs.com/package/@story-protocol/core-sdk) | <Icon icon="arrow-up-right-from-square" iconType="solid" /> [코드](https://github.com/storyprotocol/sdk/tree/main) | [SWITCH](/sdk-reference) |
+| <Icon icon="python" iconType="solid" /> Python                 | <Icon icon="check" iconType="solid" /> 전체 | <Icon icon="box-open" iconType="solid" /> [PyPi](https://pypi.org/project/story-protocol-python-sdk)    | <Icon icon="arrow-up-right-from-square" iconType="solid" /> [코드](https://github.com/storyprotocol/python-sdk)    |                          |
+
+***
+
+## 라이선싱 모듈
+
+<CardGroup cols={2}>
+  <Card title="IP 자산 등록하기" icon="house" href="/sdk-reference/python/ipasset">
+    Python SDK를 사용하여 IP 자산을 등록하는 방법을 알아보세요.
+  </Card>
+
+  <Card title="라이선스 조건 발행 및 첨부" icon="house" href="/sdk-reference/python/license">
+    Python SDK를 사용하여 라이선스 조건을 발행하고 첨부하는 방법을 알아보세요.
+  </Card>
+</CardGroup>
+
+## 로열티 모듈
+
+<CardGroup cols={2}>
+  <Card title="로열티 지불 및 청구" icon="house" href="/sdk-reference/python/royalty">
+    Python SDK를 사용하여 로열티를 지불하고 청구하는 방법을 알아보세요.
+  </Card>
+</CardGroup>
+
+## 분쟁 모듈
+
+<CardGroup cols={2}>
+  <Card title="분쟁 제기하기" icon="house" href="/sdk-reference/python/dispute">
+    Python SDK를 사용하여 분쟁을 제기하는 방법을 알아보세요.
+  </Card>
+</CardGroup>
+
+## 그룹화 모듈
+
+<CardGroup cols={2}>
+  <Card title="그룹 관리하기" icon="house" href="/sdk-reference/python/group">
+    Python SDK를 사용하여 그룹을 관리하는 방법을 알아보세요.
+  </Card>
+</CardGroup>
+
+## 유틸리티 클라이언트
+
+추가 유틸리티 및 기타 클라이언트:
+
+<CardGroup cols={2}>
+  <Card title="권한 설정하기" icon="house" href="/sdk-reference/python/permissions">
+    Python SDK를 사용하여 권한을 설정하는 방법을 알아보세요.
+  </Card>
+
+  <Card title="NFT 클라이언트" icon="house" href="/sdk-reference/python/nftclient">
+    Python SDK를 사용하여 SPG NFT와 상호작용하세요.
+  </Card>
+
+  <Card title="WIP 클라이언트" icon="house" href="/sdk-reference/python/wip-client">
+    Python SDK를 사용하여 WIP 클라이언트를 사용하는 방법을 알아보세요.
+  </Card>
+</CardGroup>
+
+
+# IP Asset
+
+## IPAsset
+
+### 메서드
+
+* register
+* register\_derivative
+* register\_derivative\_with\_license\_tokens
+* mint\_and\_register\_ip\_asset\_with\_pil\_terms
+
+### IPAssetClient 탐색하기
+
+📜 Licensing Module과 상호 작용하는 많은 함수가 있기 때문에 [📜 Licensing Module](/concepts/licensing-module), 우리는 이를 유용한 차트로 분류하여 찾고 있는 것을 식별하고 관련 문서를 찾을 수 있도록 했습니다.
+
+| **함수**                                                                                   | **NFT 발행** | **IPA 등록** | **라이선스 조건 생성** | **라이선스 조건 첨부** | **라이선스 토큰 발행** | **파생물로 등록** |
+| ---------------------------------------------------------------------------------------- | :--------: | :--------: | :------------: | :------------: | :------------: | :---------: |
+| <span style={{color: "#e03130"}}>register</span>                                         |            |      ✓     |                |                |                |             |
+| <span style={{color: "#e03130"}}>mint\_and\_register\_ip\_asset\_with\_pil\_terms</span> |      ✓     |      ✓     |        ✓       |        ✓       |                |             |
+| <span style={{color: "#e03130"}}>register\_derivative</span>                             |            |            |                |                |                |      ✓      |
+| <span style={{color: "#e03130"}}>register\_derivative\_with\_license\_tokens</span>      |            |            |                |                |                |      ✓      |
+| <span style={{color: "#1971c2"}}>register\_pil\_terms</span>                             |            |            |        ✓       |                |                |             |
+| <span style={{color: "#1971c2"}}>attach\_license\_terms</span>                           |            |            |                |        ✓       |                |             |
+| <span style={{color: "#1971c2"}}>mint\_license\_tokens</span>                            |            |            |                |                |        ✓       |             |
+
+* <span style={{ color: "#e03130" }}>빨간색</span>: IPAssetClient (이 페이지)
+* <span style={{ color: "#1971c2" }}>파란색</span>:
+  [LicenseClient](/sdk-reference/python/license)
+
+## register
+
+NFT를 IP로 등록하고 해당하는 🧩 IP Asset을 생성합니다. 주어진 NFT가 이미 등록되어 있다면, 이 함수는 기존의 [🧩 IP Asset](/concepts/ip-asset)을 반환할 것입니다.`ipId`.
+
+
+<Note title="NFT 메타데이터">
+  이 함수는 또한 기본 NFT의 메타데이터를 `tokenUri` 아래에 전달된 내용으로 설정합니다.`ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메서드        |
+| ---------- |
+| `register` |
+
+Parameters:
+
+* `nft_contract`: NFT의 주소.
+* `token_id`: NFT의 토큰 식별자.
+* `ip_metadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `ip_metadata['ip_metadata_uri']`: \[선택사항] IP의 메타데이터 URI.
+  * `ip_metadata['ip_metadata_hash']`: \[선택사항] IP의 메타데이터 해시.
+  * `ip_metadata['nft_metadata_uri']`: \[선택사항] NFT의 메타데이터 URI.
+  * `ip_metadata['nft_metadata_hash']`: \[선택사항] IP NFT의 메타데이터 해시.
+* `deadline`: \[선택사항] 서명의 마감 시간(밀리초).
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  metadata = {
+    'ip_metadata_uri': "test-uri",
+    'ip_metadata_hash': web3.to_hex(web3.keccak(text="test-ip-metadata-hash")),
+    'nft_metadata_uri': "test-uri",
+    'nft_metadata_hash': web3.to_hex(web3.keccak(text="test-nft-metadata-hash"))
+  }
+
+  response = story_client.IPAsset.register(
+    nft_contract="0x041B4F29183317Fd352AE57e331154b73F8a1D73",
+    token_id="12",
+    ip_metadata=metadata
+  )
+  ```
+
+  ```python Request Parameters
+  nft_contract: str  # The address of the NFT
+  token_id: str  # The token identifier of the NFT
+  ip_metadata: dict = None  # Optional: Metadata for the NFT and IP
+  deadline: int = None  # Optional: The deadline for the signature in milliseconds
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "ip_id": str,  # The IP ID of the registered IP
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+## register\_derivative
+
+라이선스 토큰 없이 부모 IP의 라이선스 조건으로 직접 파생물을 등록하고, 부모 IP의 라이선스 조건을 파생 IP에 첨부합니다.
+
+이 함수를 호출하기 전에 라이선스 조건이 부모 IP에 첨부되어 있어야 합니다.
+
+모든 IP는 기본적으로 기본 라이선스 조건이 첨부되어 있습니다.
+
+파생 IP 소유자는 호출자이거나 승인된 운영자여야 합니다.
+
+| 메서드                   |
+| --------------------- |
+| `register_derivative` |
+
+Parameters:
+
+* `child_ip_id`: 파생 IP ID.
+* `parent_ip_ids`: 부모 IP ID들.
+* `license_terms_ids`: 부모 IP가 지원하는 라이선스 조건의 ID들.
+* `max_minting_fee`: \[선택사항] 호출자가 지불할 의사가 있는 최대 발행 수수료. 0으로 설정하면 제한이 없습니다.**Default: 0**
+* `max_revenue_share`: \[선택 사항] 자식이 파생물로 등록할 때 자식과 부모 사이에 합의된 최대 수익 공유 비율. 0에서 100 사이여야 합니다.**Default: 100**
+* `max_rts`: \[선택 사항] 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다.**Default: 100\_000\_000**
+* `tx_options`: \[선택 사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.IPAsset.register_derivative(
+    child_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    parent_ip_ids=["0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba"],
+    license_terms_ids=["5"],
+    max_minting_fee=0, # disabled
+    max_rts=100_000_000, # default
+    max_revenue_share=100 # default
+  )
+  ```
+
+  ```python Request Parameters
+  child_ip_id: str  # The derivative IP ID
+  parent_ip_ids: list  # The parent IP IDs
+  license_terms_ids: list  # The IDs of the license terms that the parent IP supports
+  max_minting_fee: int = 0  # Optional: The maximum minting fee the caller is willing to pay
+  max_rts: int = 0  # Optional: The maximum number of royalty tokens
+  max_revenue_share: int = 0  # Optional: The maximum revenue share percentage
+  license_template: str = None  # Optional: The address of the license template
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+## register\_derivative\_with\_license\_tokens
+
+라이선스 토큰으로 파생물을 등록합니다.
+
+파생 IP는 부모 IP의 라이선스 조건에서 발행된 라이선스 토큰으로 등록됩니다.
+
+라이선스 토큰으로 발행된 부모 IP의 라이선스 조건이 파생 IP에 첨부됩니다.
+
+호출자는 파생 IP 소유자 또는 승인된 운영자여야 합니다.
+
+| 메서드                                       |
+| ----------------------------------------- |
+| `register_derivative_with_license_tokens` |
+
+Parameters:
+
+* `child_ip_id`: 파생 IP ID.
+* `license_token_ids`: 라이선스 토큰의 ID들.
+* `max_rts`: 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다.**단순화를 위한 권장사항: 100\_000\_000**
+* `tx_options`: \[선택 사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.IPAsset.register_derivative_with_license_tokens(
+    child_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    license_token_ids=["5"],
+    max_rts=100_000_000 # default
+  )
+  ```
+
+  ```python Request Parameters
+  child_ip_id: str  # The derivative IP ID
+  license_token_ids: list  # The IDs of the license tokens
+  max_rts: int = 0  # Optional: The maximum number of royalty tokens
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+## mint\_and\_register\_ip\_asset\_with\_pil\_terms
+
+컬렉션에서 NFT를 발행하고, IP로 등록하고, IP에 메타데이터를 첨부하고, IP에 라이선스 조건을 첨부하는 모든 작업을 하나의 함수로 수행합니다.
+
+<Note>
+  이 함수는 또한 기본 NFT의 `tokenUri`을 에 전달된 값으로 설정합니다`ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메서드                                         |
+| ------------------------------------------- |
+| `mint_and_register_ip_asset_with_pil_terms` |
+
+Parameters:
+
+* `spg_nft_contract`: NFT 컬렉션의 주소.
+* `terms`: 첨부될 라이선스 조건의 배열. ⚠️ **빈 배열을 전달하면 이 함수는 실패합니다.**
+  * `terms[].terms`: 라이선스 조건 데이터. 구조는 아래 Python 예제를 참조하세요.
+  * `terms[].licensing_config`: \[선택 사항] 라이선싱 구성. 구조는 아래 Python 예제를 참조하세요.
+* `allow_duplicates`: \[선택 사항] 동일한 NFT 메타데이터로 IP 발행을 허용하려면 true로 설정하세요.**Default: True**
+* `ip_metadata`: \[선택 사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `ip_metadata['ip_metadata_uri']`: \[선택 사항] IP의 메타데이터 URI.
+  * `ip_metadata['ip_metadata_hash']`: \[선택 사항] IP의 메타데이터 해시.
+  * `ip_metadata['nft_metadata_uri']`: \[선택 사항] NFT의 메타데이터 URI.
+  * `ip_metadata['nft_metadata_hash']`: \[선택 사항] IP NFT의 메타데이터 해시.
+* `recipient`: \[선택 사항] 발행된 NFT 수령인의 주소.
+* `tx_options`: \[선택 사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  commercial_remix_terms = {
+    "transferable": True,
+    "royalty_policy": "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", # RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    "default_minting_fee": 0,
+    "expiration": 0,
+    "commercial_use": True,
+    "commercial_attribution": True,
+    "commercializer_checker": "0x0000000000000000000000000000000000000000",
+    "commercializer_checker_data": "0x0000000000000000000000000000000000000000",
+    "commercial_rev_share": 50,
+    "commercial_rev_ceiling": 0,
+    "derivatives_allowed": True,
+    "derivatives_attribution": True,
+    "derivatives_approval": False,
+    "derivatives_reciprocal": True,
+    "derivative_rev_ceiling": 0,
+    "currency": "0x1514000000000000000000000000000000000000", # $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    "uri": "",
+  }
+
+  licensing_config = {
+    "is_set": False,
+    "minting_fee": 0,
+    "licensing_hook": "0x0000000000000000000000000000000000000000",
+    "hook_data": "0x0000000000000000000000000000000000000000",
+    "commercial_rev_share": 0,
+    "disabled": False,
+    "expect_minimum_group_reward_share": 0,
+    "expect_group_reward_pool": "0x0000000000000000000000000000000000000000",
+  }
+
+  metadata = {
+    'ip_metadata_uri': "test-uri",
+    'ip_metadata_hash': web3.to_hex(web3.keccak(text="test-ip-metadata-hash")),
+    'nft_metadata_uri': "test-uri",
+    'nft_metadata_hash': web3.to_hex(web3.keccak(text="test-nft-metadata-hash"))
+  }
+
+  response = story_client.IPAsset.mint_and_register_ip_asset_with_pil_terms(
+    spg_nft_contract="0xfE265a91dBe911db06999019228a678b86C04959",
+    terms=[{
+      "terms": commercial_remix_terms,
+      "licensing_config": licensing_config
+    }],
+    allow_duplicates=True,
+    ip_metadata=metadata
+  )
+  ```
+
+  ```python Request Parameters
+  spg_nft_contract: str  # The address of the NFT collection
+  terms: list  # The array of license terms to be attached
+  ip_metadata: dict = None  # Optional: Metadata for the NFT and IP
+  recipient: str = None  # Optional: The address of the recipient of the minted NFT
+  allow_duplicates: bool = False  # Optional: Allow minting IPs with the same NFT metadata
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "ip_id": str,  # The IP ID of the registered IP
+    "token_id": int,  # The token ID of the minted NFT
+    "tx_hash": str,  # The transaction hash
+    "license_terms_ids": list  # The IDs of the registered license terms
+  }
+  ```
+</CodeGroup>
+
+
+# NFT Client
+
+## NFTClient
+
+### 메서드
+
+* create\_nft\_collection
+* get\_mint\_fee\_token
+* get\_mint\_fee
+
+### create\_nft\_collection
+
+새로운 SPG NFT 컬렉션을 생성합니다.
+
+| 메서드                     |
+| ----------------------- |
+| `create_nft_collection` |
+
+Parameters:
+
+* `name`: 컬렉션의 이름.
+* `symbol`: 컬렉션의 심볼.
+* `is_public_minting`: true인 경우 누구나 컬렉션에서 발행할 수 있습니다. false인 경우 minter 역할을 가진 주소만 발행할 수 있습니다.
+* `mint_open`: 컬렉션이 생성 시 발행을 위해 열려있는지 여부.
+* `mint_fee_recipient`: 발행 수수료를 받을 주소.
+* `contract_uri`: 컬렉션의 계약 URI. ERC-7572 표준을 따릅니다. [here](https://eips.ethereum.org/EIPS/eip-7572)를 참조하세요.
+* `base_uri`: \[선택사항] 컬렉션의 기본 URI. baseURI가 비어있지 않으면, tokenURI는 baseURI + 토큰 ID (nftMetadataURI가 비어있는 경우) 또는 baseURI + nftMetadataURI가 됩니다.
+* `max_supply`: \[선택사항] 컬렉션의 최대 공급량.
+* `mint_fee`: \[선택사항] 토큰을 발행하는 비용.
+* `mint_fee_token`: \[선택사항] 발행할 토큰.
+* `owner`: \[선택사항] 컬렉션의 소유자.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  # Create a new SPG NFT collection
+  #
+  # NOTE: Use this code to create a new SPG NFT collection. You can then use the
+  # `new_collection["nft_contract"]` address as the `nft_contract` argument in
+  # functions like `mint_and_register_ip_asset_with_pil_terms` in the Story SDK.
+  #
+  # You will mostly only have to do this once. Once you get your nft contract address,
+  # you can use it in SPG functions.
+  #
+  new_collection = story_client.NFTClient.create_nft_collection(
+    name="Test NFT",
+    symbol="TEST",
+    is_public_minting=True,
+    mint_open=True,
+    mint_fee_recipient="0x0000000000000000000000000000000000000000",  # Zero address
+    contract_uri=""
+  )
+
+  print(f"New SPG NFT collection created at transaction hash {new_collection['tx_hash']}")
+  print(f"NFT contract address: {new_collection['nft_contract']}")
+  ```
+
+  ```python Request Parameters
+  name: str  # The name of the collection
+  symbol: str  # The symbol of the collection
+  is_public_minting: bool  # If true, anyone can mint from the collection
+  mint_open: bool  # Whether the collection is open for minting on creation
+  mint_fee_recipient: str  # The address to receive mint fees
+  contract_uri: str  # The contract URI for the collection
+  base_uri: str = ""  # Optional: The base URI for the collection
+  max_supply: int = None  # Optional: The maximum supply of the collection
+  mint_fee: int = None  # Optional: The cost to mint a token
+  mint_fee_token: str = None  # Optional: The token to mint
+  owner: str = None  # Optional: The owner of the collection
+  tx_options: dict = None  # Optional: Transaction options dictionary
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str,  # The transaction hash
+    "nft_contract": str  # The address of the newly created contract
+  }
+  ```
+</CodeGroup>
+
+### get\_mint\_fee\_token
+
+컬렉션의 현재 발행 수수료 토큰을 반환합니다.
+
+| 메서드                  |
+| -------------------- |
+| `get_mint_fee_token` |
+
+Parameters:
+
+* `nft_contract`: NFT 계약의 주소.
+
+<CodeGroup>
+  ```python Python
+  mint_fee_token = story_client.NFTClient.get_mint_fee_token("0x01")
+  ```
+
+  ```python Request Parameters
+  nft_contract: str  # The address of the NFT contract
+  ```
+
+  ```python Response
+  str  # The address of the mint fee token
+  ```
+</CodeGroup>
+
+### get\_mint\_fee
+
+컬렉션의 현재 민팅 수수료를 반환합니다.
+
+| 메서드            |
+| -------------- |
+| `get_mint_fee` |
+
+Parameters:
+
+* `nft_contract`: NFT 컨트랙트의 주소.
+
+<CodeGroup>
+  ```python Python
+  mint_fee = story_client.NFTClient.get_mint_fee("0x01")
+  ```
+
+  ```python Request Parameters
+  nft_contract: str  # The address of the NFT contract
+  ```
+
+  ```python Response
+  int  # The mint fee amount.
+  ```
+</CodeGroup>
+
+
+# IP Account
+
+## IPAccountClient
+
+### 메서드
+
+* setIpMetadata
+* execute
+* executeWithSig
+* transferErc20
+
+### setIpMetadata
+
+IP 자산의 metadataURI를 설정합니다.
+
+| 메서드             | 타입                                      |
+| --------------- | --------------------------------------- |
+| `setIpMetadata` | `(SetIpMetadataRequest) => Promis<Hex>` |
+
+Parameters:
+
+* `request.ipId`: 메타데이터를 설정할 IP.
+* `request.metadataURI`: IP 자산에 대해 설정할 metadataURI. [IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard)에 맞는 메타데이터를 가리키는 URL이어야 합니다.
+* `request.metadataHash`: metadataURI에 있는 메타데이터의 해시.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  const txHash = await client.ipAccount.setIpMetadata({
+    ipId: "0x01",
+    metadataURI:
+      "https://ipfs.io/ipfs/bafkreiardkgvkejqnnkdqp4pamkx2e5bs4lzus5trrw3hgmoa7dlbb6foe",
+    // example hash (not accurate)
+    metadataHash:
+      "0x129f7dd802200f096221dd89d5b086e4bd3ad6eafb378a0c75e3b04fc375f997",
+  });
+  ```
+
+  ```typescript Request Type
+  export type SetIpMetadataRequest = {
+    ipId: Address;
+    metadataURI: string;
+    metadataHash: Hex;
+    txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+  };
+  ```
+</CodeGroup>
+
+### execute
+
+IP 계정에서 트랜잭션을 실행합니다.
+
+| 메서드       | 타입                                                              |
+| --------- | --------------------------------------------------------------- |
+| `execute` | `(IPAccountExecuteRequest) => Promis<IPAccountExecuteResponse>` |
+
+Parameters:
+
+* `request.ipId`: IP 계정을 가져올 Ip Id.
+* `request.to`: 트랜잭션의 수신자.
+* `request.value`: 보낼 이더의 양.
+* `request.data`: 트랜잭션과 함께 보낼 데이터.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript Request Type
+  export type IPAccountExecuteRequest = {
+    ipId: Address;
+    to: Address;
+    value: number;
+    data: Hex;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type IPAccountExecuteResponse = {
+    txHash?: Hex;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### executeWithSig
+
+IP 계정에서 트랜잭션을 실행합니다.
+
+| 메서드              | 타입                                                              |
+| ---------------- | --------------------------------------------------------------- |
+| `executeWithSig` | `(IPAccountExecuteRequest) => Promis<IPAccountExecuteResponse>` |
+
+Parameters:
+
+* `request.ipId`: IP 계정을 가져올 Ip Id.
+* `request.to`: 트랜잭션의 수신자.
+* `request.data`: 트랜잭션과 함께 보낼 데이터.
+* `request.signer`: 트랜잭션의 서명자.
+* `request.deadline`: 트랜잭션 서명의 마감 시간.
+* `request.signature`: 트랜잭션의 서명, EIP-712로 인코딩됨.
+* `request.value`: \[선택사항] 보낼 이더 양.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript Request Type
+  export type IPAccountExecuteWithSigRequest = {
+    ipId: Address;
+    to: Address;
+    data: Hex;
+    signer: Address;
+    deadline: number | bigint | string;
+    signature: Address;
+    value?: number | bigint | string;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type IPAccountExecuteWithSigResponse = {
+    txHash?: Hex;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### transferErc20
+
+IP 계정에서 ERC20 토큰을 전송합니다.
+
+| 메서드             | 타입                                                                |
+| --------------- | ----------------------------------------------------------------- |
+| `transferErc20` | `(request: TransferErc20Request) => Promise<TransactionResponse>` |
+
+Parameters:
+
+* `request.ipId`: 계정의 `ipId`
+* `request.tokens`: 전송할 토큰 정보
+  * `request.tokens.address`: WIP와 표준 ERC20을 포함한 ERC20 토큰의 주소.
+  * `request.tokens.amount`: 전송할 토큰의 양
+  * `request.tokens.target`: 수신자의 주소.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript Request Type
+  export type TransferErc20Request = {
+    ipId: Address;
+    tokens: {
+      address: Address;
+      amount: bigint | number;
+      target: Address;
+    }[];
+    txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+  };
+  ```
+
+  ```typescript Response Type
+  export type TransactionResponse = {
+    txHash: Hex;
+
+    /** Transaction receipt, only available if waitForTransaction is set to true */
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+
+# SDK 참조 개요
+
+이 섹션에서는 TypeScript SDK의 모든 함수에 대한 상세한 설명을 제공합니다.
+
+| 패키지                                                            | 호환성                                       | 패키지                                                                                                     | GitHub                                                                                                           |                                 |
+| -------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| <Icon icon="screwdriver-wrench" iconType="solid" /> TypeScript | <Icon icon="check" iconType="solid" /> 전체 | <Icon icon="box-open" iconType="solid" /> [npm](https://www.npmjs.com/package/@story-protocol/core-sdk) | <Icon icon="arrow-up-right-from-square" iconType="solid" /> [코드](https://github.com/storyprotocol/sdk/tree/main) |                                 |
+| <Icon icon="python" iconType="solid" /> Python                 | <Icon icon="check" iconType="solid" /> 전체 | <Icon icon="box-open" iconType="solid" /> [PyPi](https://pypi.org/project/story-protocol-python-sdk)    | <Icon icon="arrow-up-right-from-square" iconType="solid" /> [코드](https://github.com/storyprotocol/python-sdk)    | [SWITCH](/sdk-reference/python) |
+
+***
+
+<Card title="단계별 가이드" icon="house" href="/developers/typescript-sdk">
+  TypeScript SDK 가이드의 일련의 튜토리얼을 통해 우리의 SDK를 배워보세요.
+</Card>
+
+## 라이선싱 모듈
+
+<CardGroup cols={2}>
+  <Card title="IP 자산 등록하기" icon="house" href="/sdk-reference/ipasset">
+    SDK를 사용하여 IP 자산을 등록하는 방법을 배워보세요.
+  </Card>
+
+  <Card title="라이선스 조건 발행 및 첨부" icon="house" href="/sdk-reference/license">
+    SDK를 사용하여 라이선스 조건을 발행하고 첨부하는 방법을 배워보세요.
+  </Card>
+</CardGroup>
+
+## 로열티 모듈
+
+<CardGroup cols={2}>
+  <Card title="로열티 지불 및 청구" icon="house" href="/sdk-reference/royalty">
+    SDK를 사용하여 로열티를 지불하고 청구하는 방법을 배워보세요.
+  </Card>
+</CardGroup>
+
+## 분쟁 모듈
+
+<CardGroup cols={2}>
+  <Card title="분쟁 제기하기" icon="house" href="/sdk-reference/dispute">
+    SDK를 사용하여 분쟁을 제기하는 방법을 배워보세요.
+  </Card>
+</CardGroup>
+
+## 그룹화 모듈
+
+<CardGroup cols={2}>
+  <Card title="그룹 관리하기" icon="house" href="/sdk-reference/group">
+    SDK를 사용하여 그룹을 관리하는 방법을 배워보세요.
+  </Card>
+</CardGroup>
+
+## 유틸리티 클라이언트
+
+추가 유틸리티 및 기타 클라이언트:
+
+<CardGroup cols={2}>
+  <Card title="권한 설정하기" icon="house" href="/sdk-reference/permissions">
+    SDK를 사용하여 권한을 설정하는 방법을 배워보세요.
+  </Card>
+
+  <Card title="NFT 클라이언트" icon="house" href="/sdk-reference/nftclient">
+    SDK를 사용하여 SPG NFT와 상호작용하세요.
+  </Card>
+
+  <Card title="WIP 클라이언트" icon="house" href="/sdk-reference/wip-client">
+    SDK를 사용하여 WIP 클라이언트를 사용하는 방법을 배워보세요.
+  </Card>
+</CardGroup>
+
+
+# IP Asset
+
+## IPAssetClient
+
+### 메서드
+
+* register
+* registerDerivative
+* registerDerivativeWithLicenseTokens
+* mintAndRegisterIpAssetWithPilTerms
+* registerIpAndAttachPilTerms
+* registerDerivativeIp
+* mintAndRegisterIpAndMakeDerivative
+* mintAndRegisterIp
+* registerPilTermsAndAttach
+* mintAndRegisterIpAndMakeDerivativeWithLicenseTokens
+* registerIpAndMakeDerivativeWithLicenseTokens
+
+### IPAssetClient 탐색하기
+
+📜 Licensing Module과 상호 작용하는 많은 함수가 있기 때문에[📜 Licensing Module](/concepts/licensing-module), 우리는 이를 유용한 차트로 분류하여 찾고 있는 것을 식별하고 관련 문서를 찾을 수 있도록 했습니다.
+
+| **함수**                                                                                      | **NFT 발행** | **IPA 등록** | **라이선스 조건 생성** | **라이선스 조건 첨부** | **라이선스 토큰 발행** | **파생물로 등록** |
+| ------------------------------------------------------------------------------------------- | :--------: | :--------: | :------------: | :------------: | :------------: | :---------: |
+| <span style={{color: "#e03130"}}>register</span>                                            |            |      ✓     |                |                |                |             |
+| <span style={{color: "#e03130"}}>mintAndRegisterIp</span>                                   |      ✓     |      ✓     |                |                |                |             |
+| <span style={{color: "#e03130"}}>registerIpAndAttachPilTerms</span>                         |            |      ✓     |        ✓       |        ✓       |                |             |
+| <span style={{color: "#e03130"}}>mintAndRegisterIpAssetWithPilTerms</span>                  |      ✓     |      ✓     |        ✓       |        ✓       |                |             |
+| <span style={{color: "#e03130"}}>registerDerivativeIp</span>                                |            |      ✓     |                |                |                |      ✓      |
+| <span style={{color: "#e03130"}}>mintAndRegisterIpAndMakeDerivativeWithLicenseTokens</span> |      ✓     |      ✓     |                |                |                |      ✓      |
+| <span style={{color: "#e03130"}}>registerIpAndMakeDerivativeWithLicenseTokens</span>        |            |      ✓     |                |                |                |      ✓      |
+| <span style={{color: "#e03130"}}>mintAndRegisterIpAndMakeDerivative</span>                  |      ✓     |      ✓     |                |                |                |      ✓      |
+| <span style={{color: "#e03130"}}>registerDerivative</span>                                  |            |            |                |                |                |      ✓      |
+| <span style={{color: "#e03130"}}>registerDerivativeWithLicenseTokens</span>                 |            |            |                |                |                |      ✓      |
+| <span style={{color: "#e03130"}}>registerPilTermsAndAttach</span>                           |            |            |        ✓       |        ✓       |                |             |
+| <span style={{color: "#1971c2"}}>registerPILTerms</span>                                    |            |            |        ✓       |                |                |             |
+| <span style={{color: "#1971c2"}}>attachLicenseTerms</span>                                  |            |            |                |        ✓       |                |             |
+| <span style={{color: "#1971c2"}}>mintLicenseTokens</span>                                   |            |            |                |                |        ✓       |             |
+
+* <span style={{ color: "#e03130" }}>빨간색</span>: IPAssetClient (이 페이지)
+* <span style={{ color: "#1971c2" }}>파란색</span>:
+  [LicenseClient](/sdk-reference/license)
+
+## register
+
+NFT를 IP로 등록하고 해당하는 🧩 IP Asset을 생성합니다. 주어진 NFT가 이미 등록되어 있다면, 이 함수는 기존의 🧩 IP Asset을 반환합니다.[🧩 IP Asset](/concepts/ip-asset). 주어진 NFT가 이미 등록되어 있다면, 이 함수는 기존의 `ipId`.
+
+<Note title="NFT 메타데이터">
+  이 함수는 또한 기본 NFT의 메타데이터를 metadata 아래에 전달된 내용으로 설정합니다.`tokenUri` 에서
+  전달된 내용으로 `ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메서드        | 타입                                                          |
+| ---------- | ----------------------------------------------------------- |
+| `register` | `(request: RegisterRequest) => Promise<RegisterIpResponse>` |
+
+Parameters:
+
+* `request.nftContract`: NFT의 주소.
+* `request.tokenId`: NFT의 토큰 식별자.
+* `request.ipMetadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택사항] IP NFT의 메타데이터 해시.
+* `request.deadline`: \[선택사항] 서명의 마감 시간(밀리초). 기본값은 1000입니다.**기본값은 1000입니다**.
+* `request.txOptions`: \[선택사항] 트랜잭션 옵션.[options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { toHex } from "viem";
+
+  const response = await client.ipAsset.register({
+    nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73",
+    tokenId: "12",
+    ipMetadata: {
+      ipMetadataURI: "test-uri",
+      ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+      nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      nftMetadataURI: "test-nft-uri",
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterRequest = {
+    nftContract: Address;
+    tokenId: string | number | bigint;
+    deadline?: string | number | bigint;
+  } & IpMetadataAndTxOptions;
+  ```
+
+  ```typescript Response Type
+  export type RegisterIpResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+    ipId?: Address;
+  };
+  ```
+</CodeGroup>
+
+## batchRegister
+
+NFT를 IP로 일괄 등록하여 해당하는 IP 기록을 생성합니다.
+
+| 메서드             | 타입                                                                  |
+| --------------- | ------------------------------------------------------------------- |
+| `batchRegister` | `(request: BatchRegisterRequest) => Promise<BatchRegisterResponse>` |
+
+## registerDerivative
+
+라이선스 토큰 없이 부모 IP의 라이선스 조건으로 직접 파생물을 등록하고, 부모 IP의 라이선스 조건을 파생 IP에 첨부합니다.
+
+이 함수를 호출하기 전에 라이선스 조건이 부모 IP에 첨부되어 있어야 합니다.
+
+모든 IP는 기본적으로 기본 라이선스 조건이 첨부됩니다.
+
+파생 IP 소유자는 호출자이거나 승인된 운영자여야 합니다.
+
+| 메서드                  | 타입                                                                            |
+| -------------------- | ----------------------------------------------------------------------------- |
+| `registerDerivative` | `(request: RegisterDerivativeRequest) => Promise<RegisterDerivativeResponse>` |
+
+Parameters:
+
+* `request.childIpId`: 파생 IP ID.
+* `request.licenseTermsIds`: 이 파생 IP의 생성을 승인하는 라이선스 조건 ID 배열. 각 ID는 parentIpIds 배열의 부모 IP와 위치적으로 일치해야 하며, 일대일 매핑을 생성합니다. Story는 각 지정된 라이선스 조건이 해당 부모 IP에 대한 파생물 등록을 허용하는지 온체인에서 확인합니다. 배열의 길이가 일치하지 않거나 조건이 파생물 생성을 허용하지 않는 경우 트랜잭션이 실패합니다.`parentIpIds` 배열과 일대일 매핑을 생성합니다. Story는 각 지정된 라이선스 조건이 해당 부모 IP에 대한 파생물 등록을 허용하는지 온체인에서 확인합니다. 배열의 길이가 일치하지 않거나 조건이 파생물 생성을 허용하지 않는 경우 트랜잭션이 실패합니다.
+* `request.parentIpIds`: 이 파생물이 생성된 부모 IP ID의 배열. 각 부모 IP는 파생 관계를 승인하는 `licenseTermsIds` 배열의 동일한 인덱스에 해당하는 라이선스 조건을 지정해야 합니다.
+* `request.licenseTemplate`: \[선택사항] 연결에 사용될 라이선스 템플릿의 주소. 현재는 [PIL](/concepts/programmable-ip-license)
+* `request.maxMintingFee`: \[선택사항] 호출자가 지불할 의사가 있는 최대 발행 수수료. 0으로 설정하면 제한이 없습니다. **Default: 0**
+* `request.maxRevenueShare`: \[선택사항] 자식이 파생물로 등록할 때 자식과 부모 사이에 동의된 최대 수익 공유 비율. 0에서 100 사이여야 합니다. **Default: 100**
+* `request.maxRts`: \[선택사항] 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다. **Default: 100\_000\_000**
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  const response = await client.ipAsset.registerDerivative({
+    childIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    parentIpIds: ["0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba"],
+    licenseTermsIds: ["5"],
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Derivative IPA linked to parent at transaction hash ${response.txHash}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterDerivativeRequest = {
+    txOptions?: TxOptions;
+    childIpId: Address;
+  } & DerivativeData &
+    WithWipOptions;
+
+  export type DerivativeData = {
+    parentIpIds: Address[];
+    licenseTermsIds: bigint[] | string[] | number[];
+    maxMintingFee: bigint | string | number;
+    maxRts: number | string;
+    maxRevenueShare: number | string;
+    licenseTemplate?: Address;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterDerivativeResponse = {
+    txHash?: Hex;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+## registerDerivativeWithLicenseTokens
+
+라이선스 토큰으로 파생물을 등록합니다.
+
+파생 IP는 부모 IP의 라이선스 조건에서 발행된 라이선스 토큰으로 등록됩니다.
+
+라이선스 토큰으로 발행된 부모 IP의 라이선스 조건이 파생 IP에 첨부됩니다.
+
+호출자는 파생 IP 소유자 또는 승인된 운영자여야 합니다.
+
+| 메서드                                   | 타입                                                                                                              |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `registerDerivativeWithLicenseTokens` | `(request: RegisterDerivativeWithLicenseTokensRequest) => Promise<RegisterDerivativeWithLicenseTokensResponse>` |
+
+Parameters:
+
+* `request.childIpId`: 파생 IP ID.
+* `request.licenseTokenIds`: 라이선스 토큰의 ID.
+* `request.maxRts`: 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다. **단순화를 위해 권장: 100\_000\_000**
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  const response = await client.ipAsset.registerDerivativeWithLicenseTokens({
+    childIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    licenseTokenIds: ["5"], // array of license ids relevant to the creation of the derivative, minted from the parent IPA
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Derivative IPA linked to parent at transaction hash ${response.txHash}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterDerivativeWithLicenseTokensRequest = {
+    childIpId: Address;
+    licenseTokenIds: string[] | bigint[] | number[];
+    maxRts: number | string;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterDerivativeWithLicenseTokensResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+## mintAndRegisterIpAssetWithPilTerms
+
+컬렉션에서 NFT를 발행하고, IP로 등록하고, IP에 메타데이터를 첨부하고, IP에 라이선스 조건을 첨부하는 모든 작업을 하나의 함수로 수행합니다.
+
+<Note>
+  이 함수는 또한 기본 NFT의 `tokenUri`을 `ipMetadata.nftMetadataURI` 아래에 전달된 값으로 설정합니다.
+</Note>
+
+| 메서드                                  | 타입                                                                                                            |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `mintAndRegisterIpAssetWithPilTerms` | `(request: MintAndRegisterIpAssetWithPilTermsRequest) => Promise<MintAndRegisterIpAssetWithPilTermsResponse>` |
+
+Parameters:
+
+* `request.spgNftContract`: NFT 컬렉션의 주소.
+* `request.allowDuplicates`: \[선택사항] 동일한 NFT 메타데이터로 IP를 발행할 수 있도록 허용하려면 true로 설정하세요. **Default: true**
+* `request.licenseTermsData[]`: 첨부할 라이선스 조건의 배열. ⚠️ **빈 배열을 전달하면 이 함수는 실패합니다.**
+  * `request.licenseTermsData.terms`: [LicenseTerms 타입](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26)을 참조하세요.
+  * `request.licenseTermsData.licensingConfig`: \[선택사항] [LicensingConfig 타입](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15)을 참조하세요. 제공되지 않으면 [여기](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts)에 표시된 기본값으로 설정됩니다.
+* `request.ipMetadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI`: \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash`: \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI`: \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash`: \[선택사항] IP NFT의 메타데이터 해시.
+* `request.recipient`: \[선택사항] 발행된 NFT를 받을 수령인의 주소.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { LicenseTerms } from "@story-protocol/core-sdk";
+  import { zeroAddress } from "viem";
+
+  const commercialRemixTerms: LicenseTerms = {
+    transferable: true,
+    royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    defaultMintingFee: 0n,
+    expiration: 0n,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: zeroAddress,
+    commercialRevShare: 50, // can claim 50% of derivative revenue
+    commercialRevCeiling: 0n,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0n,
+    currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    uri: "",
+  };
+
+  const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
+    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+    licenseTermsData: [{ terms: commercialRemixTerms }],
+    // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+    ipMetadata: {
+      ipMetadataURI: "test-uri",
+      ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+      nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      nftMetadataURI: "test-nft-uri",
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(`
+    Token ID: ${response.tokenId}, 
+    IPA ID: ${response.ipId}, 
+    License Terms ID: ${response.licenseTermsId}
+  `);
+  ```
+
+  ```typescript Request Type
+  export type MintAndRegisterIpAssetWithPilTermsRequest = {
+    spgNftContract: Address;
+    allowDuplicates: boolean;
+    licenseTermsData: LicenseTermsData<
+      RegisterPILTermsRequest,
+      LicensingConfig
+    >[];
+    recipient?: Address;
+    royaltyPolicyAddress?: Address;
+  } & IpMetadataAndTxOptions &
+    WithWipOptions;
+  ```
+
+  ```typescript Response Type
+  export type MintAndRegisterIpAssetWithPilTermsResponse = {
+    txHash?: Hex;
+    encodedTxData?: EncodedTxData;
+    ipId?: Address;
+    tokenId?: bigint;
+    receipt?: TransactionReceipt;
+    licenseTermsIds?: bigint[];
+  };
+  ```
+</CodeGroup>
+
+## batchMintAndRegisterIpAssetWithPilTerms
+
+컬렉션에서 NFT를 일괄 발행하고 IP로 등록합니다.
+
+| 메서드                                       | 타입                                                                                                                      |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `batchMintAndRegisterIpAssetWithPilTerms` | `(request: BatchMintAndRegisterIpAssetWithPilTermsRequest) => Promise<BatchMintAndRegisterIpAssetWithPilTermsResponse>` |
+
+## registerIpAndAttachPilTerms
+
+주어진 NFT를 IP로 등록하고, IP에 메타데이터를 첨부하고, IP에 라이선스 조건을 첨부하는 모든 작업을 하나의 함수로 수행합니다.
+
+<Note>
+  이 함수는 또한 기본 NFT의 `tokenUri`을 `ipMetadata.nftMetadataURI` 아래에 전달된 값으로 설정합니다.
+</Note>
+
+| 메서드                           | 타입                                                                                              |
+| ----------------------------- | ----------------------------------------------------------------------------------------------- |
+| `registerIpAndAttachPilTerms` | `(request: RegisterIpAndAttachPilTermsRequest) => Promise<RegisterIpAndAttachPilTermsResponse>` |
+
+Parameters:
+
+* `request.nftContract`: NFT 컬렉션의 주소.
+* `request.tokenId`: NFT의 ID.
+* `request.licenseTermsData[]`: 첨부할 라이선스 조건의 배열. ⚠️ **빈 배열을 전달하면 이 함수는 실패합니다.**
+  * `request.licenseTermsData.terms`: [LicenseTerms 타입](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26)을 참조하세요.
+  * `request.licenseTermsData.licensingConfig`: \[선택사항] [LicensingConfig 타입](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15)을 참조하세요. 제공되지 않으면 [여기](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts)에 표시된 기본값으로 설정됩니다.
+* `request.ipMetadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI`: \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash`: \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI`: \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash`: \[선택사항] IP NFT의 메타데이터 해시.
+* `request.deadline`: \[선택사항] 서명의 마감 시간(밀리초). **기본값은 1000**입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { LicenseTerms } from "@story-protocol/core-sdk";
+  import { toHex, zeroAddress } from "viem";
+
+  const commercialRemixTerms: LicenseTerms = {
+    transferable: true,
+    royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    defaultMintingFee: 0n,
+    expiration: 0n,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: zeroAddress,
+    commercialRevShare: 50, // can claim 50% of derivative revenue
+    commercialRevCeiling: 0n,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0n,
+    currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    uri: "",
+  };
+
+  const response = await client.ipAsset.registerIpAndAttachPilTerms({
+    nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73",
+    tokenId: "12",
+    licenseTermsData: [{ terms: commercialRemixTerms }],
+    ipMetadata: {
+      ipMetadataURI: "test-uri",
+      ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+      nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      nftMetadataURI: "test-nft-uri",
+    },
+    txOptions: { waitForTransaction: true },
+  });
+  console.log(
+    `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterIpAndAttachPilTermsRequest = {
+    nftContract: Address;
+    tokenId: bigint | string | number;
+    licenseTermsData: LicenseTermsData<
+      RegisterPILTermsRequest,
+      LicensingConfig
+    >[];
+    deadline?: bigint | number | string;
+  } & IpMetadataAndTxOptions;
+  ```
+
+  ```typescript Response Type
+  export type RegisterIpAndAttachPilTermsResponse = {
+    txHash?: Hex;
+    encodedTxData?: EncodedTxData;
+    ipId?: Address;
+    licenseTermsIds?: bigint[];
+    tokenId?: bigint;
+  };
+  ```
+</CodeGroup>
+
+## registerDerivativeIp
+
+NFT를 IP로 등록한 다음 라이선스 토큰을 사용하지 않고 다른 IP 자산의 파생물로 연결합니다.
+
+<Note>
+  이 함수는 또한 기본 NFT의 `tokenUri`을 `ipMetadata.nftMetadataURI` 아래에 전달된 값으로 설정합니다.
+</Note>
+
+| 메서드                    | 타입                                                                                              |
+| ---------------------- | ----------------------------------------------------------------------------------------------- |
+| `registerDerivativeIp` | `(request: RegisterIpAndMakeDerivativeRequest) => Promise<RegisterIpAndMakeDerivativeResponse>` |
+
+Parameters:
+
+* `request.nftContract`: NFT 컬렉션의 주소.
+* `request.tokenId`: NFT의 ID.
+* `request.derivData`: registerDerivative에 사용될 파생 데이터.
+  * `request.derivData.parentIpIds`: 등록된 파생 IP를 연결할 부모 IP의 ID들.
+  * `request.derivData.licenseTermsIds`: 연결에 사용될 라이선스 조건의 ID들.
+  * `request.derivData.maxMintingFee`: \[선택사항] 호출자가 지불할 의사가 있는 최대 발행 수수료. 0으로 설정하면 제한이 없습니다.**Default: 0**
+  * `request.derivData.maxRevenueShare`: \[선택사항] 자식이 파생물로 등록할 때 자식과 부모 사이에 동의한 최대 수익 공유 비율. 0에서 100 사이여야 합니다.**Default: 100**
+  * `request.derivData.maxRts`: \[선택사항] 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다.**Default: 100\_000\_000**
+  * `request.derivData.licenseTemplate`: \[선택사항] 연결에 사용될 라이선스 템플릿의 주소. 현재는 이것만 가능합니다 [PIL](/concepts/programmable-ip-license)
+* `request.ipMetadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택사항] IP NFT의 메타데이터 해시.
+* `request.deadline`: \[선택사항] 서명의 기한(밀리초). **기본값은 1000**입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { toHex } from "viem";
+
+  const response = await client.ipAsset.registerDerivativeIp({
+    nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73", // your NFT contract address
+    tokenId: "127",
+    derivData: {
+      parentIpIds: ["0xd142822Dc1674154EaF4DDF38bbF7EF8f0D8ECe4"],
+      licenseTermsIds: ["1"],
+    },
+    // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+    ipMetadata: {
+      ipMetadataURI: "test-uri",
+      ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+      nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      nftMetadataURI: "test-nft-uri",
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterIpAndMakeDerivativeRequest = {
+    nftContract: Address;
+    tokenId: string | number | bigint;
+    deadline?: string | number | bigint;
+    derivData: DerivativeData;
+  } & IpMetadataAndTxOptions &
+    WithWipOptions;
+
+  export type DerivativeData = {
+    parentIpIds: Address[];
+    licenseTermsIds: bigint[] | string[] | number[];
+    /**
+     * The maximum minting fee that the caller is willing to pay. if set to 0 then no limit.
+     * @default 0
+     */
+    maxMintingFee?: bigint | string | number;
+    /**
+     * The maximum number of royalty tokens that can be distributed to the external royalty policies (max: 100,000,000).
+     * @default 100_000_000
+     */
+    maxRts?: number | string;
+    /**
+     * The maximum revenue share percentage allowed for minting the License Tokens. Must be between 0 and 100 (where 100% represents 100_000_000).
+     * @default 100
+     */
+    maxRevenueShare?: number | string;
+    licenseTemplate?: Address;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterIpAndMakeDerivativeResponse = {
+    txHash?: Hex;
+    encodedTxData?: EncodedTxData;
+    ipId?: Address;
+    tokenId?: bigint;
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+## batchRegisterDerivative
+
+부모 IP의 라이선스 조건으로 파생물을 일괄 등록합니다.
+
+| 메서드                       | 타입                                                                                      |
+| ------------------------- | --------------------------------------------------------------------------------------- |
+| `batchRegisterDerivative` | `(request: BatchRegisterDerivativeRequest) => Promise<BatchRegisterDerivativeResponse>` |
+
+## mintAndRegisterIpAndMakeDerivative
+
+컬렉션에서 NFT를 발행하고 라이선스 토큰 없이 파생 IP로 등록합니다.
+
+<Note>
+  이 함수는 또한 기본 NFT의 `tokenUri`을 다음에 전달된 값으로 설정합니다 `ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메서드                                  | 타입                                                                                                            |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `mintAndRegisterIpAndMakeDerivative` | `(request: MintAndRegisterIpAndMakeDerivativeRequest) => Promise<MintAndRegisterIpAndMakeDerivativeResponse>` |
+
+Parameters:
+
+* `request.spgNftContract`: NFT 컬렉션의 주소.
+* `request.allowDuplicates`: \[선택사항] 동일한 NFT 메타데이터로 IP를 발행할 수 있도록 허용하려면 true로 설정하세요.**Default: true**
+* `request.derivData`: registerDerivative에 사용될 파생 데이터.
+  * `request.derivData.parentIpIds`: 등록된 파생 IP를 연결할 부모 IP의 ID들.
+  * `request.derivData.licenseTermsIds`: 연결에 사용될 라이선스 조건의 ID들.
+  * `request.derivData.maxMintingFee`: \[선택사항] 호출자가 지불할 의사가 있는 최대 발행 수수료. 0으로 설정하면 제한이 없습니다.**Default: 0**
+  * `request.derivData.maxRevenueShare`: \[선택사항] 자식이 파생물로 등록할 때 자식과 부모 사이에 동의한 최대 수익 공유 비율. 0에서 100 사이여야 합니다.**Default: 100**
+  * `request.derivData.maxRts`: \[선택사항] 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다.**Default: 100\_000\_000**
+  * `request.derivData.licenseTemplate`: \[선택사항] 연결에 사용될 라이선스 템플릿의 주소. 현재는 이것만 가능합니다 [PIL](/concepts/programmable-ip-license)
+* `request.ipMetadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택사항] IP NFT의 메타데이터 해시.
+* `request.recipient`: \[선택사항] 발행된 NFT를 받을 수신자의 주소, 기본값은 귀하의 지갑 주소입니다.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { toHex } from "viem";
+
+  const response = await client.ipAsset.mintAndRegisterIpAndMakeDerivative({
+    // an NFT contract address created by the SPG
+    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+    derivData: {
+      parentIpIds: ["0xd142822Dc1674154EaF4DDF38bbF7EF8f0D8ECe4"],
+      licenseTermsIds: ["1"],
+    },
+    // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+    ipMetadata: {
+      ipMetadataURI: "test-uri",
+      ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+      nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      nftMetadataURI: "test-nft-uri",
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}, Token ID: ${response.tokenId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type MintAndRegisterIpAndMakeDerivativeRequest = {
+    spgNftContract: Address;
+    derivData: DerivativeData;
+    recipient?: Address;
+    allowDuplicates: boolean;
+  } & IpMetadataAndTxOptions &
+    WithWipOptions;
+
+  export type DerivativeData = {
+    parentIpIds: Address[];
+    licenseTermsIds: bigint[] | string[] | number[];
+    /**
+     * The maximum minting fee that the caller is willing to pay. if set to 0 then no limit.
+     * @default 0
+     */
+    maxMintingFee?: bigint | string | number;
+    /**
+     * The maximum number of royalty tokens that can be distributed to the external royalty policies (max: 100,000,000).
+     * @default 100_000_000
+     */
+    maxRts?: number | string;
+    /**
+     * The maximum revenue share percentage allowed for minting the License Tokens. Must be between 0 and 100 (where 100% represents 100_000_000).
+     * @default 100
+     */
+    maxRevenueShare?: number | string;
+    licenseTemplate?: Address;
+  };
+  ```
+
+  ```typescript Response Type
+  export type MintAndRegisterIpAndMakeDerivativeResponse = {
+    encodedTxData?: EncodedTxData;
+  } & CommonRegistrationResponse;
+
+  export type CommonRegistrationResponse = {
+    txHash?: Hex;
+    ipId?: Address;
+    tokenId?: bigint;
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+## batchMintAndRegisterIpAndMakeDerivative
+
+컬렉션에서 NFT를 일괄 발행하고 라이선스 토큰 없이 파생 IP로 등록합니다.
+
+| 메서드                                       | 타입                                                                                                                      |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `batchMintAndRegisterIpAndMakeDerivative` | `(request: BatchMintAndRegisterIpAndMakeDerivativeRequest) => Promise<BatchMintAndRegisterIpAndMakeDerivativeResponse>` |
+
+## mintAndRegisterIp
+
+SPGNFT 컬렉션에서 NFT를 발행하고 메타데이터와 함께 IP로 등록합니다.
+
+<Note>
+  이 함수는 또한 기본 NFT의 `tokenUri`을 다음에 전달된 값으로 설정합니다 `ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메서드                 | 타입                                                                   |
+| ------------------- | -------------------------------------------------------------------- |
+| `mintAndRegisterIp` | `(request: MintAndRegisterIpRequest) => Promise<RegisterIpResponse>` |
+
+Parameters:
+
+* `request.spgNftContract`: NFT 컬렉션의 주소.
+* `request.allowDuplicates`: \[선택사항] 동일한 NFT 메타데이터로 IP를 발행할 수 있도록 허용하려면 true로 설정하세요.**Default: true**
+* `request.recipient`: \[선택사항] 발행된 NFT를 받을 수신자의 주소, 기본값은 귀하의 지갑 주소입니다.
+* `request.ipMetadata`: \[선택사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택사항] IP NFT의 메타데이터 해시.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { toHex, Address, zeroAddress } from "viem";
+
+  const response = await client.ipAsset.mintAndRegisterIp({
+    // an NFT contract address created by the SPG
+    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+    // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+    ipMetadata: {
+      ipMetadataURI: "test-uri",
+      ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+      nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      nftMetadataURI: "test-nft-uri",
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Completed at transaction hash ${response.txHash}, NFT Token ID: ${response.tokenId}, IPA ID: ${response.ipId}, License Terms ID: ${response.licenseTermsId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type MintAndRegisterIpRequest = {
+    spgNftContract: Address;
+    recipient?: Address;
+    allowDuplicates: boolean;
+  } & IpMetadataAndTxOptions &
+    WithWipOptions;
+  ```
+
+  ```typescript Response Type
+  export type RegisterIpResponse = {
+    encodedTxData?: EncodedTxData;
+  } & CommonRegistrationResponse;
+
+  export type CommonRegistrationResponse = {
+    txHash?: Hex;
+    ipId?: Address;
+    tokenId?: bigint;
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+## registerPilTermsAndAttach
+
+프로그래머블 IP 라이선스 조건을 등록(등록되지 않은 경우)하고 IP에 연결합니다.
+
+| 메서드                         | 타입                                                                                          |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| `registerPilTermsAndAttach` | `(request: RegisterPilTermsAndAttachRequest) => Promise<RegisterPilTermsAndAttachResponse>` |
+
+Parameters:
+
+* `request.ipId`: IP의 ID.
+* `request.licenseTermsData[]`: 연결될 라이선스 조건의 배열.
+  * `request.licenseTermsData.terms`: 다음을 참조하세요 [LicenseTerms 타입](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
+  * `request.licenseTermsData.licensingConfig`: \[선택사항] 다음을 참조하세요 [LicensingConfig 타입](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). 제공되지 않으면 여기에 표시된 것과 같은 기본값이 사용됩니다 [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+* `request.deadline`: \[선택 사항] 서명의 기한(밀리초 단위).**기본값은 1000**.
+* `request.txOptions`: \[선택 사항] 트랜잭션 [옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { LicenseTerms } from "@story-protocol/core-sdk";
+  import { zeroAddress } from "viem";
+
+  const commercialRemixTerms: LicenseTerms = {
+    transferable: true,
+    royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    defaultMintingFee: 0n,
+    expiration: 0n,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: zeroAddress,
+    commercialRevShare: 50, // can claim 50% of derivative revenue
+    commercialRevCeiling: 0n,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0n,
+    currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+    uri: "",
+  };
+
+  const response = await client.ipAsset.registerPilTermsAndAttach({
+    ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+    licenseTermsData: [{ terms: commercialRemixTerms }],
+    txOptions: { waitForTransaction: true },
+  });
+  console.log(`License Terms ${response.licenseTermsId} attached to IP Asset.`);
+  ```
+
+  ```typescript Request Type
+  export type RegisterPilTermsAndAttachRequest = {
+    ipId: Address;
+    licenseTermsData: LicenseTermsData<
+      RegisterPILTermsRequest,
+      LicensingConfig
+    >[];
+    deadline?: string | number | bigint;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type RegisterPilTermsAndAttachResponse = {
+    txHash?: Hex;
+    encodedTxData?: EncodedTxData;
+    licenseTermsIds?: bigint[];
+  };
+  ```
+</CodeGroup>
+
+## mintAndRegisterIpAndMakeDerivativeWithLicenseTokens
+
+컬렉션에서 NFT를 발행하고 라이선스 토큰을 사용하여 파생 IP로 등록
+
+<Note>
+  이 함수는 또한 기본 NFT의 `tokenUri`을 다음에 전달된 값으로 설정합니다 `ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메서드                                                   | 타입                                                                                                     |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `mintAndRegisterIpAndMakeDerivativeWithLicenseTokens` | `(request: MintAndRegisterIpAndMakeDerivativeWithLicenseTokensRequest) => Promise<RegisterIpResponse>` |
+
+Parameters:
+
+* `request.spgNftContract`: NFT 컬렉션의 주소.
+* `request.allowDuplicates`: \[선택 사항] 동일한 NFT 메타데이터로 IP를 발행할 수 있도록 하려면 true로 설정하세요.**Default: true**
+* `request.maxRts`: 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다.**단순화를 위해 권장: 100\_000\_000**
+* `request.licenseTokenIds`: IP를 부모 IP에 연결하기 위해 소각될 라이선스 토큰의 ID.
+* `request.ipMetadata`: \[선택 사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택 사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택 사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택 사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택 사항] IP NFT의 메타데이터 해시.
+* `request.recipient`: \[선택 사항] 발행된 NFT를 받을 주소, 기본값은 귀하의 지갑 주소입니다.
+* `request.txOptions`: \[선택 사항] 트랜잭션 [옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { toHex } from "viem";
+
+  const response =
+    await client.ipAsset.mintAndRegisterIpAndMakeDerivativeWithLicenseTokens({
+      spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc", // your SPG NFT contract address
+      licenseTokenIds: ["10"],
+      // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+      ipMetadata: {
+        ipMetadataURI: "test-uri",
+        ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+        nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+        nftMetadataURI: "test-nft-uri",
+      },
+      maxRts: 100_000_000, // default
+      txOptions: { waitForTransaction: true },
+    });
+
+  console.log(
+    `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}, Token ID: ${response.tokenId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type MintAndRegisterIpAndMakeDerivativeWithLicenseTokensRequest = {
+    spgNftContract: Address;
+    licenseTokenIds: string[] | bigint[] | number[];
+    recipient?: Address;
+    maxRts: number | string;
+    allowDuplicates: boolean;
+  } & IpMetadataAndTxOptions &
+    WithWipOptions;
+  ```
+
+  ```typescript Response Type
+  export type RegisterIpResponse = {
+    encodedTxData?: EncodedTxData;
+  } & CommonRegistrationResponse;
+
+  export type CommonRegistrationResponse = {
+    txHash?: Hex;
+    ipId?: Address;
+    tokenId?: bigint;
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+## registerIpAndMakeDerivativeWithLicenseTokens
+
+주어진 NFT를 라이선스 토큰을 사용하여 파생 IP로 등록합니다.
+
+<Note>
+  이 함수는 또한 기본 NFT의 `tokenUri`을 다음에 전달된 값으로 설정합니다 `ipMetadata.nftMetadataURI`.
+</Note>
+
+| 메서드                                            | 타입                                                                                              |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `registerIpAndMakeDerivativeWithLicenseTokens` | `(request: RegisterIpAndMakeDerivativeWithLicenseTokensRequest) => Promise<RegisterIpResponse>` |
+
+Parameters:
+
+* `request.nftContract`: NFT 컬렉션의 주소.
+* `request.tokenId`: NFT의 ID.
+* `request.maxRts`: 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수. 0에서 100,000,000 사이여야 합니다.**단순화를 위해 권장: 100\_000\_000**
+* `request.licenseTokenIds`: IP를 부모 IP에 연결하기 위해 소각될 라이선스 토큰의 ID.
+* `request.ipMetadata`: \[선택 사항] 새로 발행된 NFT와 새로 등록된 IP에 대한 원하는 메타데이터.
+  * `request.ipMetadata.ipMetadataURI` \[선택 사항] IP의 메타데이터 URI.
+  * `request.ipMetadata.ipMetadataHash` \[선택 사항] IP의 메타데이터 해시.
+  * `request.ipMetadata.nftMetadataURI` \[선택 사항] NFT의 메타데이터 URI.
+  * `request.ipMetadata.nftMetadataHash` \[선택 사항] IP NFT의 메타데이터 해시.
+* `request.deadline`: \[선택 사항] 서명의 기한(밀리초 단위).**기본값은 1000**.
+* `request.txOptions`: \[선택 사항] 트랜잭션 [옵션](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { toHex } from "viem";
+
+  const response =
+    await client.ipAsset.registerIpAndMakeDerivativeWithLicenseTokens({
+      nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73", // your NFT contract address
+      tokenId: "127",
+      licenseTokenIds: ["10"],
+      // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
+      ipMetadata: {
+        ipMetadataURI: "test-uri",
+        ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+        nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+        nftMetadataURI: "test-nft-uri",
+      },
+      txOptions: { waitForTransaction: true },
+    });
+
+  console.log(
+    `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RegisterIpAndMakeDerivativeWithLicenseTokensRequest = {
+    nftContract: Address;
+    tokenId: string | number | bigint;
+    licenseTokenIds: string[] | bigint[] | number[];
+    deadline?: string | number | bigint;
+    maxRts: number | string;
+  } & IpMetadataAndTxOptions &
+    WithWipOptions;
+  ```
+
+  ```typescript Response Type
+  export type RegisterIpResponse = {
+    encodedTxData?: EncodedTxData;
+  } & CommonRegistrationResponse;
+
+  export type CommonRegistrationResponse = {
+    txHash?: Hex;
+    ipId?: Address;
+    tokenId?: bigint;
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+
+# NFT 클라이언트
+
+## NftClient
+
+### 메서드
+
+* createNFTCollection
+* getMintFeeToken
+* getMintFee
+
+### createNFTCollection
+
+새로운 SPG NFT 컬렉션을 생성합니다.
+
+| 메서드                   | 타입                                                                              |
+| --------------------- | ------------------------------------------------------------------------------- |
+| `createNFTCollection` | `(request: CreateNFTCollectionRequest) => Promise<CreateNFTCollectionResponse>` |
+
+Parameters:
+
+* `request.name`: 컬렉션의 이름.
+* `request.symbol`: 컬렉션의 심볼.
+* `request.isPublicMinting`: true인 경우, 누구나 컬렉션에서 민팅할 수 있습니다. false인 경우, minter 역할을 가진 주소만 민팅할 수 있습니다.
+* `request.mintOpen`: 컬렉션이 생성 시 민팅을 위해 열려있는지 여부.
+* `request.mintFeeRecipient`: 민팅 수수료를 받을 주소.
+* `request.contractURI`: 컬렉션의 계약 URI. ERC-7572 표준을 따릅니다. 참조: [here](https://eips.ethereum.org/EIPS/eip-7572).
+* `request.baseURI`: \[선택사항] 컬렉션의 기본 URI. baseURI가 비어있지 않으면, tokenURI는 baseURI + 토큰 ID (nftMetadataURI가 비어있는 경우) 또는 baseURI + nftMetadataURI가 됩니다.
+* `request.maxSupply`: \[선택사항] 컬렉션의 최대 공급량.
+* `request.mintFee`: \[선택사항] 토큰을 민팅하는 비용.
+* `request.mintFeeToken`: \[선택사항] 민팅할 토큰.
+* `request.owner`: \[선택사항] 컬렉션의 소유자.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { zeroAddress } from "viem";
+
+  // Create a new SPG NFT collection
+  //
+  // NOTE: Use this code to create a new SPG NFT collection. You can then use the
+  // `newCollection.spgNftContract` address as the `spgNftContract` argument in
+  // functions like `mintAndRegisterIpAssetWithPilTerms` in the
+  // `simpleMintAndRegisterSpg.ts` file.
+  //
+  // You will mostly only have to do this once. Once you get your nft contract address,
+  // you can use it in SPG functions.
+  //
+  const newCollection = await client.nftClient.createNFTCollection({
+    name: "Test NFT",
+    symbol: "TEST",
+    isPublicMinting: true,
+    mintOpen: true,
+    mintFeeRecipient: zeroAddress,
+    contractURI: "",
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `New SPG NFT collection created at transaction hash ${newCollection.txHash}`
+  );
+  console.log(`NFT contract address: ${newCollection.spgNftContract}`);
+  ```
+
+  ```typescript Request Type
+  export type CreateNFTCollectionRequest = {
+    name: string;
+    symbol: string;
+    isPublicMinting: boolean;
+    mintOpen: boolean;
+    mintFeeRecipient: Address;
+    contractURI: string;
+    baseURI?: string;
+    maxSupply?: number;
+    mintFee?: bigint;
+    mintFeeToken?: Hex;
+    owner?: Hex;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type CreateNFTCollectionResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+    spgNftContract?: Address; // the address of the newly created contract
+  };
+  ```
+</CodeGroup>
+
+### getMintFeeToken
+
+컬렉션의 현재 민팅 토큰을 반환합니다.
+
+| 메서드               | 타입                                              |
+| ----------------- | ----------------------------------------------- |
+| `getMintFeeToken` | `(spgNftContract: Address) => Promise<Address>` |
+
+Parameters:
+
+* `spgNftContract`: NFT 계약의 주소.
+
+<CodeGroup>
+  ```typescript TypeScript
+  const mintFeeToken = await client.nftClient.getMintFeeToken("0x01");
+  ```
+</CodeGroup>
+
+### getMintFee
+
+컬렉션의 현재 민팅 수수료를 반환합니다.
+
+| 메서드          | 타입                                             |
+| ------------ | ---------------------------------------------- |
+| `getMintFee` | `(spgNftContract: Address) => Promise<bigint>` |
+
+Parameters:
+
+* `spgNftContract`: NFT 계약의 주소.
+
+<CodeGroup>
+  ```typescript TypeScript
+  const mintFee = await client.nftClient.getMintFee("0x01");
+  ```
+</CodeGroup>
+
+
+# Implementing ATCP/IP
+
+<Warning>
+  아직 새로운 내용입니다!
+
+  우리는 Story를 기반으로 ATCP/IP의 실제 예제를 구축하는 작업을 적극적으로 진행하고 있습니다. ATCP/IP의 핵심은 에이전트 간 상호작용을 위한 표준이며, 따라서 개발자들이 구현하고 시행착오를 통해 모범 사례를 발견할 수 있는 진행 중인 학술적 제안입니다.
+</Warning>
+
+아래는 백서의 ***2. ATCP/IP 트랜잭션*** 섹션을 실제로 구현하는 방법에 대한 세부 정보입니다.
+
+<CardGroup cols={1}>
+  <Card title="ATCP/IP 백서 읽기" href="https://story.foundation/atcpip" icon="file" color="#cfb394">
+    AGI의 미래를 가능하게 하는 에이전트 간 트랜잭션 시스템을 정의하는
+    우리의 Agent TCP/IP 백서를 읽어보세요.
+  </Card>
+</CardGroup>
+
+## 각 단계 수행하기
+
+아래에서는 다음 이미지에서 보여주는 ATCP/IP 상호작용 흐름의 각 단계를 구현하는 방법을 설명하겠습니다.
+
+<Frame>
+  <img src="/images/ai-agents/atcpip-diagram.jpeg" />
+</Frame>
+
+### 에이전트의 출력 등록하기
+
+Story에서 에이전트의 출력(또는 실제로 모든 IP)을 등록하려면 다음을 따르세요 [How to Register IP on Story](/developers/tutorials/how-to-register-ip-on-story) 튜토리얼. 유일한 차이점은 IP 메타데이터를 구성하는 방식인데, 이는 항상 다음을 따라야 합니다 [📝 IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard).
+
+DALL·E나 Stability에 의해 생성된 이미지를 등록하는 방법을 보여주는 더 구체적인 튜토리얼도 확인할 수 있습니다:
+
+* [Protect DALL·E AI-Generated Images](/developers/tutorials/protect-dalle-ai-generated-images)
+* [Register & Monetize Stability Images](/developers/tutorials/register-stability-images)
+
+다음은 생성된 IP에 대한 IP 메타데이터의 예시입니다 (노래를 예로 들어):
+
+```json
+{
+  "title": "Midnight Marriage",
+  "description": "This is a house-style song generated on suno.",
+  "createdAt": "1740005219",
+  "creators": [
+    {
+      "name": "Jacob Tucker",
+      "address": "0xA2f9Cf1E40D7b03aB81e34BC50f0A8c67B4e9112",
+      "contributionPercent": 100
+    }
+  ],
+  "image": "https://cdn2.suno.ai/image_large_8bcba6bc-3f60-4921-b148-f32a59086a4c.jpeg",
+  "imageHash": "0xc404730cdcdf7e5e54e8f16bc6687f97c6578a296f4a21b452d8a6ecabd61bcc",
+  "mediaUrl": "https://cdn1.suno.ai/dcd3076f-3aa5-400b-ba5d-87d30f27c311.mp3",
+  "mediaHash": "0xb52a44f53b2485ba772bd4857a443e1fb942cf5dda73c870e2d2238ecd607aee",
+  "mediaType": "audio/mpeg"
+}
+```
+
+### 계약 조건 생성하기
+
+다음에 설명된 대로 [Whitepaper](https://story.foundation/atcpip), 에이전트들은 요청된 작업에 적합한 계약 조건에 대해 협상할 것입니다:
+
+<Accordion title="Whitepaper Section" icon="circle-info">
+  2 **조건 형성**: 제공자 에이전트는 요청을 고려하고 요청된 정보에 대한 적절한 라이선스 조건 세트를 선택할 것입니다.\
+  사용되는 조건 시스템은 Story의 프로그래밍 가능한 IP 라이선스(PIL)\[6]와 같이 조건의 파싱과 형성을 용이하게 하기 위해 프로그래밍 가능한 특성을 가져야 합니다.
+
+  3 **협상** (선택사항): 에이전트들은 양 당사자에게 적절하다고 판단될 때까지 조건을 변경할 수 있는\
+  선택적 협상 단계를 가질 수 있습니다.
+
+  * **반대 조건** (선택사항): 이 단계에서 초기 제안된 조건에 만족하지 않는 요청자 에이전트는\
+    반대 제안 조건 세트를 발행할 수 있습니다. 두 에이전트 모두 표준화된 조건 시스템에 접근할 수 있어, 모호함 없이 특정 조항을 참조, 추가 또는 제거할 수 있습니다. 이러한 반대 조건에는 가격, 사용 권한, 기간, 라이선스 제한 또는 기타 협상 가능한 변수에 대한 수정이 포함될 수 있습니다. 일관된 기계 판독 가능한 형식을 사용하여 반대 조건을 제시함으로써, 에이전트들은 서로의 제안에 대해 원활하게 반복하고 응답할 수 있어 협상 과정이 논리적으로 일관되고 쉽게 따라갈 수 있도록 보장합니다.
+  * **수정된 조건** (선택사항): 반대 조건을 받은 후, 제공자 에이전트는 요청된 수정 사항을 고려하면서\
+    협상 불가능한 핵심 원칙을 유지하며 수정된 조건을 제시할 수 있습니다. 에이전트들은 구조화된 상호작용의 연속적인 라운드를 통해 라이선스 조건을 효과적으로 정제하며, 각 반복은 논쟁점을 더 수용 가능한 중간 지점으로 정제합니다. 양 당사자가 동일한 기본 조건 명세를 사용하기 때문에, 이러한 수정은 내부 일관성을 유지하고 시간이 지남에 따라 여러 초안의 비교를 단순화합니다. 이 메커니즘은 두 에이전트가 상호 이해와 상업적 의도를 정확히 반영하는 합의에 도달할 수 있도록 보장합니다.
+  * *이 과정은 합의에 도달할 때까지 여러 번 반복될 수 있습니다*
+</Accordion>
+
+에이전트들이 조건에 동의하면, 이를 생성하여 등록된 자산에 첨부할 수 있습니다:
+
+<CardGroup cols={2}>
+  <Card title="SDK 사용하기" href="/developers/typescript-sdk/attach-terms" icon="house">
+    SDK를 사용하여 IP에 조건을 첨부하는 방법을 알아보세요.
+  </Card>
+
+  <Card title="스마트 계약 사용하기" href="/developers/smart-contracts-guide/attach-terms" icon="house">
+    스마트 계약을 사용하여 IP에 조건을 첨부하는 방법을 알아보세요.
+  </Card>
+</CardGroup>
+
+### 라이선스 발행하기
+
+다음에 명시된 대로 [Whitepaper](https://story.foundation/atcpip), 에이전트들이 일련의 조건에 대해 협상한 후, 요청자 에이전트는 특정 계약 조건이 첨부된 라이선스를 제공자 에이전트로부터 발행할 수 있습니다:
+
+<Accordion title="Whitepaper Section" icon="circle-info">
+  4 **수락**: 요청자 에이전트는 제공되는 정보의 사용 방법에 대한 조건과 규칙을 포함하는 불변의 토큰(계약\
+  토큰)을 발행함으로써 공식적으로 조건을 수락할 것입니다. 발행되면 계약은 구속력을 가지며 에이전트는 정보와 관련된 모든 조건을 기억해야 합니다.
+
+  * **지불** (선택사항): 선택된 라이선스 계약 조건에 따라, 일부 에이전트는 라이선스를 발행하기 위해\
+    선불 지불을 요구할 수 있습니다. 또한, 조건에 따라 반복적인 수수료나 수익 공유가 규정될 수 있으며, 이는 예를 들어 Story의 로열티 시스템을 통해 자동화될 수 있습니다.
+</Accordion>
+
+계약 조건이 IP 자산에 첨부되면, [License Token](/concepts/licensing-module/license-token)을 발행할 수 있습니다:
+
+<CardGroup cols={2}>
+  <Card title="SDK 사용하기" href="/developers/typescript-sdk/mint-license" icon="house">
+    SDK를 사용하여 License Token을 발행하는 방법을 알아보세요.
+  </Card>
+
+  <Card title="스마트 계약 사용하기" href="/developers/smart-contracts-guide/mint-license" icon="house">
+    스마트 계약을 사용하여 License Token을 발행하는 방법을 알아보세요.
+  </Card>
+</CardGroup>
+
+이제 요청 에이전트는 첨부된 조건에 따라 제공된 자산을 사용할 권리를 가진 License Token을 보유하게 됩니다.
+
+### 수익 청구하기
+
+제공 에이전트가 자신의 작업에 대해 지불받은 후(요청 에이전트가 비용이 드는 라이선스를 발행했을 때), 그들은 자신의 수익을 청구할 수 있습니다:
+
+<CardGroup cols={2}>
+  <Card title="SDK 사용하기" href="/developers/typescript-sdk/claim-revenue" icon="house">
+    SDK를 사용하여 수익을 청구하는 방법을 알아보세요.
+  </Card>
+
+  <Card title="스마트 계약 사용하기" href="/developers/smart-contracts-guide/claim-revenue" icon="house">
+    스마트 계약을 사용하여 수익을 청구하는 방법을 알아보세요.
+  </Card>
+</CardGroup>
+
+## MCP와의 통합 예시
+
+우리는 [the MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk)를 사용하여 Story의 프로토콜과 상호작용하기 위한 도구를 제공하는 Model Context Protocol (MCP) 서버와 이러한 도구를 사용하는 AI 에이전트를 구현했습니다.
+
+<CardGroup cols={2}>
+  <Card title="Story MCP Server" href="https://github.com/piplabs/story-sdk-mcp" icon="server">
+    Story의 프로토콜과 상호 작용하는 도구가 있는 MCP 서버를 로컬에서 실행하여 Agent TCP/IP를 테스트합니다.
+  </Card>
+
+  <Card title="LangGraph AI Agent" href="https://github.com/sarick-story/langgraph-mcp-agent" icon="robot">
+    Story MCP 서버를 사용하여 Story에서 IP 자산을 생성, 발행 및 등록하기 위한 LangGraph 기반 AI 에이전트입니다.
+  </Card>
+</CardGroup>
+
+1. Story MCP 서버를 클론하여 IP 발행 + 등록 및 [License Tokens](/concepts/licensing-module/license-token) 발행과 같은 Story의 프로토콜과 상호 작용하는 도구를 사용해 볼 수 있습니다.
+2. 그런 다음, 사용자 요청에 따라 이미지를 생성하고, 사용자와 라이선스 조건을 협상한 후, Story MCP 서버를 사용하여 Story에서 IP를 발행 + 등록하고 [License Token](/concepts/licensing-module/license-token)을 발행하여 요청한 사용자가 작품을 합법적으로 사용할 수 있도록 하는 LangGraph AI 에이전트를 실행합니다.
+
+이론적으로, 에이전트는 에이전트-사용자 설정 대신 에이전트-에이전트 설정에서도 이를 수행할 수 있습니다.
+
+### MCP란 무엇인가요?
+
+> "MCP는 애플리케이션이 LLM에 컨텍스트를 제공하는 방법을 표준화하는 개방형 프로토콜입니다. MCP를 AI 애플리케이션을 위한 USB-C 포트라고 생각해보세요. USB-C가 다양한 주변 기기와 액세서리에 장치를 연결하는 표준화된 방법을 제공하는 것처럼, MCP는 AI 모델을 다양한 데이터 소스와 도구에 연결하는 표준화된 방법을 제공합니다."
+
+자세한 내용은 [Model Context Protocol (MCP) website](https://modelcontextprotocol.io/introduction)를 확인하세요.
+
+
+# Cursor와 Story 함께 사용하기
+
+[Cursor](https://www.cursor.com/)는 Story 앱을 만들면서 코드를 쉽게 작성할 수 있게 해주는 AI 코드 에디터입니다. Story와 함께 최상의 결과를 얻기 위해 Cursor를 설정하는 방법을 살펴보겠습니다.
+
+## Story 문서 추가하기
+
+Story 문서를 추가하면 우리의 문서와 직접 상호작용하고 질문에 대한 가장 정확한 답변을 얻을 수 있습니다.
+
+1. Cursor 설정 > 기능 > 문서로 이동하여 "+ 새 문서 추가"를 클릭하세요
+
+<Frame>
+  <img src="/images/ai-agents/add-cursor.png" />
+</Frame>
+
+2. URL을 붙여넣으세요 `https://raw.githubusercontent.com/storyprotocol/docs/refs/heads/main/combined.md`
+
+<Note>
+  이것은 우리의 전체 문서를 하나의 `.md` 파일로 **결합한 것으로, 우리 문서에 변경사항이 있을 때마다 자동으로 업데이트됩니다.**
+</Note>
+
+3. 이름을 Story로 변경하고, 나머지는 그대로 두세요
+
+<Frame>
+  <img src="/images/ai-agents/add-cursor-2.png" />
+</Frame>
+
+## 문서 사용하기
+
+그런 다음 프롬프트에서 `@Story` 기호를 사용하여 Story 문서를 참조할 수 있습니다.
+
+<Frame>
+  <img src="/images/ai-agents/add-cursor-3.png" />
+</Frame>
+
+
+# AI 에이전트용
+
+이 페이지는 AI 에이전트에 관한 모든 것입니다. 우리는 아래에서 볼 수 있는 것처럼 우리의 문서를 훈련 데이터로 사용할 수 있는 방법을 준비했습니다. 또는 Story에서 AI 에이전트 개발에 대해 계속 배워보세요.
+
+<CardGroup cols={2}>
+  <Card title="우리의 문서로 학습하기" href="https://github.com/storyprotocol/docs/blob/main/combined.md" icon="robot" color="#4e8189">
+    우리의 문서를 AI 에이전트에 공급하여 훈련 데이터로 사용하고 싶으신가요? 모든 문서를 하나의 결합된`.md`파일로 포함하는 이 파일을 확인해보세요.
+  </Card>
+
+  <Card title="ATCP/IP 백서 읽기" href="https://story.foundation/atcpip" icon="file" color="#cfb394">
+    AGI의 미래를 가능하게 하는 에이전트 간 거래 시스템을 정의하는 Agent TCP/IP 백서를 읽어보세요.
+  </Card>
+</CardGroup>
+
+아래에서 두 섹션을 찾을 수 있습니다:
+
+1. **AI 에이전트 개발** - 이 섹션은 에이전트 자체를 등록하기 위한 것입니다
+2. **ATCP/IP 구현** - 이 섹션&#xC740;***2. ATCP/IP 트랜잭션*** 섹션의[백서](https://story.foundation/whitepaper.pdf)를 구현하기 위한 것입니다.
+
+## 에이전트 개발
+
+아래는 다음 방법에 대한 세부 정보입니다:
+
+* AI 에이전트를 IP로 등록
+* AI 에이전트에 라이선스 조건 추가
+
+### 에이전트 등록하기
+
+Story에 AI 에이전트(또는 다른 IP)를 등록하려면 다음을 따르세요 [How to Register IP on Story](/developers/tutorials/how-to-register-ip-on-story) 튜토리얼. AI 에이전트의 경우 유일한 차이점은 IP 메타데이터를 구성하는 방식인데, 이는 [📝 IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard)를 따라야 합니다.
+
+다음은 AI 에이전트의 IP 메타데이터가 어떻게 보여야 하는지에 대한 예시입니다:
+
+```json
+{
+  "title": "Story AI Agent",
+  "description": "This is an example AI Agent registered on Story.",
+  "createdAt": "1740005219",
+  "creators": [
+    {
+      "name": "Jacob Tucker",
+      "address": "0xA2f9Cf1E40D7b03aB81e34BC50f0A8c67B4e9112",
+      "contributionPercent": 100
+    }
+  ],
+  "image": "https://ipfs.io/ipfs/bafybeigi3k77t5h5aefwpzvx3uiomuavdvqwn5rb5uhd7i7xcq466wvute",
+  "imageHash": "0x64ccc40de203f218d16bb90878ecca4338e566ab329bf7be906493ce77b1551a",
+  "mediaUrl": "https://ipfs.io/ipfs/bafybeigi3k77t5h5aefwpzvx3uiomuavdvqwn5rb5uhd7i7xcq466wvute",
+  "mediaHash": "0x64ccc40de203f218d16bb90878ecca4338e566ab329bf7be906493ce77b1551a",
+  "mediaType": "image/webp",
+  "aiMetadata": {
+    "characterFileUrl": "https://ipfs.io/ipfs/bafkreic6eu4hlnwx46soib62rgkhhmlieko67dggu6bzk7bvtfusqsknfu",
+    "characterFileHash": "0x5e253875b6d7e7a4e407da899473b168229def8cc6a783957c35996928494d2d"
+  },
+  "ipType": "AI Agent",
+  "tags": ["AI Agent", "Twitter bot", "Smart Agent"]
+}
+```
+
+### AI 에이전트에 약관 추가하기
+
+AI 에이전트를 등록할 때 라이선스 약관을 추가할 수 있습니다. 그러나 이후에도 AI 에이전트에 더 많은 라이선스 약관을 추가할 수 있습니다. 이를 수행하는 방법을 배우려면 아래 튜토리얼을 따르세요:
+
+<CardGroup cols={2}>
+  <Card title="SDK 사용하기" href="/developers/typescript-sdk/attach-terms" icon="house">
+    SDK를 사용하여 AI 에이전트에 약관을 첨부하는 방법을 배웁니다.
+  </Card>
+
+  <Card title="스마트 컨트랙트 사용하기" href="/developers/smart-contracts-guide/attach-terms" icon="house">
+    스마트 컨트랙트를 사용하여 AI 에이전트에 약관을 첨부하는 방법을 배웁니다.
+  </Card>
+</CardGroup>
+
+## ATCP/IP 구현하기
+
+참조: [Implementing the ATCP/IP Whitepaper](/ai-agents/implementing-atcpip).
+
+
+# Blockscout API
+
+Storyscan에는 가스 가격, 평균 블록 시간, 시가총액, 토큰 가격(코인 게코), 그리고 여러 다른 통계를 반환하는 공개 API 엔드포인트가 있습니다: `https://www.storyscan.io/api/v2/stats`
+
+다음은 응답 예시입니다 ⤵️
+
+```json
+{
+  "average_block_time": 2364,
+  "coin_image": "https://coin-images.coingecko.com/coins/images/54035/small/Transparent_bg.png?1738075331",
+  "coin_price": "4.83",
+  "coin_price_change_percentage": null,
+  "gas_price_updated_at": "2025-03-10T14:47:27.175157Z",
+  "gas_prices": {
+    "slow": 0.1,
+    "average": 0.57,
+    "fast": 1.05
+  },
+  "gas_prices_update_in": 11735,
+  "gas_used_today": "147032238744",
+  "market_cap": "1209228486.984",
+  "network_utilization_percentage": 10.8968948333333,
+  "secondary_coin_image": null,
+  "secondary_coin_price": null,
+  "static_gas_price": null,
+  "total_addresses": "686024",
+  "total_blocks": "1765700",
+  "total_gas_used": "0",
+  "total_transactions": "5606580",
+  "transactions_today": "221320",
+  "tvl": null
+}
+```
+
+
+# 소개
+
+<Warning>
+  Consensus Client API를 사용하려면 자체 노드를 실행해야 합니다. [노드 설정 가이드](/network/operating-a-node/node-setup-mainnet)를 참조하세요.
+</Warning>
+
+응답에서 무엇을 기대할 수 있는지 알 수 있도록 여기에 API 참조를 포함했습니다.
+
+
+# 소개
+
+Story API 레퍼런스에 오신 것을 환영합니다! 다음 `https://api.storyapis.com` 엔드포인트를 사용해 주세요.
+
+```http Headers
+// pick one depending on the network. `story` = mainnet, `story-aeneid` = testnet
+X-CHAIN: story | story-aeneid
+// same for both networks
+X-API-Key: MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U
+```
+
+## 속도 제한
+
+위의 공개 API 키는 초당 300개의 요청 제한이 있습니다. 더 높은 제한이 있는 API 키가 필요하시다면, 저희 Builder Discord에 참여하셔서 토론 채널에서 프로젝트 요구 사항을 설명해 주세요.
+
+
+# Mainnet
+
+# 리소스
+
+**네트워크 이름**: Story Mainnet
+
+**체인 ID**: 1514
+
+**Chainlist 링크**: [https://chainlist.org/chain/1514](https://chainlist.org/chain/1514)
+
+## RPCs
+
+| RPC 이름             | RPC URL                                  |  공식 |
+| :----------------- | :--------------------------------------- | :-: |
+| Story              | `https://mainnet.storyrpc.io`            |  ✅  |
+| Story by Ankr      | `https://rpc.ankr.com/story_mainnet`     |     |
+| Story by QuickNode | `https://www.quicknode.com/chains/story` |     |
+
+## 블록 탐색기
+
+| 탐색기                                                                                | URL                                       |  공식 |
+| :--------------------------------------------------------------------------------- | :---------------------------------------- | :-: |
+| [BlockScout Explorer ↗️](https://www.storyscan.io/)                                | `https://www.storyscan.io/`               |  ✅  |
+| [IP Explorer ↗️](https://explorer.story.foundation) (라이선싱, 라이선스 발행 등 IP 관련 작업만 해당) | `https://explorer.story.foundation`       |  ✅  |
+| [OKX Explorer ↗️](https://www.okx.com/web3/explorer/story)                         | `https://www.okx.com/web3/explorer/story` |     |
+| [Stakeme Explorer ↗️](https://storyscan.app/)                                      | `https://storyscan.app/`                  |     |
+
+## 스테이킹 대시보드
+
+| 대시보드 URL                                             |  공식 |
+| :--------------------------------------------------- | :-: |
+| [Story Dashboard](https://staking.story.foundation/) |  ✅  |
+| [Origin Stake](https://ipworld.io/)                  |     |
+| [Node.Guru](https://story.explorers.guru/)           |     |
+
+## 컨트랙트 배포 주소
+
+* [Proof of Creativity](/developers/deployed-smart-contracts)
+
+# 추가 섹션
+
+* [메인넷 상태 페이지](https://status.story.foundation/)
+* [노드 설정](/network/operating-a-node/node-setup-mainnet)
+* [검증자 운영](/network/become-a-validator)
+* [스테이킹 설계](/network/tokenomics-staking)
+
+
+# 네트워크 정보
+
+# 개요
+
+Story Network는 EVM과 Cosmos SDK의 장점을 모두 갖춘 목적 지향적인 레이어 1 블록체인입니다. 100% EVM 호환성과 함께 그래프 데이터 구조를 지원하기 위한 깊은 실행 레이어 최적화를 통해 IP와 같은 복잡한 데이터 구조를 빠르고 비용 효율적으로 처리하도록 설계되었습니다. 이를 위해 다음과 같은 방식을 사용합니다:
+
+* IP 그래프와 같은 복잡한 데이터 구조를 최소한의 비용으로 수 초 내에 탐색할 수 있는 사전 컴파일된 프리미티브 사용
+* 빠른 최종성과 저렴한 트랜잭션을 보장하기 위한 성숙한 CometBFT 스택 기반의 합의 레이어
+* Ethereum의 Engine-API를 통해 합의와 실행을 분리하는 모듈식 아키텍처
+
+# 사용 가능한 네트워크
+
+<CardGroup cols={3}>
+  <Card title="메인넷" href="/network/network-info/mainnet" icon="house" />
+
+  <Card title="Aeneid 테스트넷" href="/network/network-info/aeneid" icon="wrench" />
+
+  <Card title="로컬넷 실행하기" href="/network/network-info/localnet" icon="gear" />
+</CardGroup>
+
+
+# 로컬넷 실행
+
+# 개요
+
+docker compose를 사용하여 하나의 부트 노드와 네 개의 검증자 노드로 구성된 자체 로컬 Story 네트워크를 쉽게 설정할 수 있습니다. 이 로컬 네트워크를 통해 Story 네트워크의 합의 계층을 테스트하거나 사전 컴파일된 프리미티브인 IP 그래프를 사용하여 애플리케이션을 배포하여 다양한 테스트를 수행할 수 있습니다. 또한 필요에 따라 언제든지 네트워크를 재설정할 수 있습니다.
+
+# 로컬 Story 네트워크 실행
+
+<Note>
+  Story 로컬 네트워크 실행에 대한 더 자세한 정보는 다음 저장소를 참조하세요: [https://github.com/piplabs/story-localnet](https://github.com/piplabs/story-localnet)
+</Note>
+
+## 전제 조건
+
+로컬 네트워크를 설정하려면 [Docker](https://docs.docker.com/get-started/get-docker/)가 필요합니다.
+
+## 1단계 - Docker 시작
+
+Docker를 실행해주세요.
+
+## 2단계 - 저장소 복제
+
+세 개의 저장소를 복제해야 합니다: `story`, `story-geth`, 그리고 `story-localnet`.\
+세 개의 저장소가 모두 동일한 하위 폴더 내에 위치하도록 하세요.
+
+```bash
+# clone repositories
+git clone https://github.com/piplabs/story.git
+git clone https://github.com/piplabs/story-geth.git
+git clone https://github.com/piplabs/story-localnet.git
+```
+
+## 3단계 - 노드 시작
+
+story-localnet 프로젝트로 이동하여 로컬 네트워크를 시작합니다.
+
+```bash
+# move to story-localnet
+cd story-localnet
+
+# start story local network
+./start.sh
+```
+
+## 4단계 - 노드 종료
+
+Story 로컬 네트워크를 중지하려면 아래 스크립트를 실행하면 됩니다.
+
+```bash
+# terminate story local network
+./terminate.sh
+```
+
+***
+
+## 제네시스에서 계정에 토큰을 할당하는 방법
+
+로컬 네트워크에서 테스트를 위해 계정에 IP 토큰을 할당해야 할 수 있습니다.\
+제네시스 블록에서 계정에 토큰을 할당하려면 다음 단계를 따르세요:
+
+1. 다음의 alloc 섹션에 계정 정보를 추가합니다 `config/story/genesis-geth.json`:
+
+```json
+"<hex-encoded-account-address>": {
+  "nonce": "0x0",
+  "balance": "<hex-encoded-balance>",
+  "code": "0x",
+  "storage": {}
+}
+```
+
+2. 다음 `update-genesis-hash.sh` 스크립트를 실행하여 제네시스 블록 해시를 업데이트합니다:
+
+```bash
+./update-genesis-hash.sh
+```
+
+***
+
+## Story 로컬 네트워크와 상호 작용하는 방법
+
+기본적으로 Story 로컬 네트워크는 상호 작용을 위해 다음 포트가 열려 있습니다.
+
+| 포트    | 서비스        | 역할                                          |
+| :---- | :--------- | :------------------------------------------ |
+| 8545  | story-geth | Story 실행 클라이언트의 RPC 서버 엔드포인트                |
+| 1317  | story-node | Story 합의 클라이언트와 상호 작용하기 위한 API 서버 엔드포인트     |
+| 26657 | story-node | Story 합의 클라이언트를 위한 cosmos-sdk RPC 서버의 엔드포인트 |
+
+***
+
+## 모니터링 시스템
+
+이 설정에는 블록체인 네트워크에 대한 중앙 집중식 메트릭스와 로그 시각화를 제공하는 모니터링 스택이 포함되어 있습니다\
+시각화를 위한 도구에는 다음이 포함됩니다 **Prometheus**,**Loki**, **Promtail**, 그리고 **Grafana**, 모두 Docker Compose를 통해 통합되어 있습니다.
+
+### **구성 요소 및 접근 정보**
+
+| 서비스        | 역할                                | 기본 포트                      | 접근 URL                  |
+| :--------- | :-------------------------------- | :------------------------- | :---------------------- |
+| Prometheus | 성능 모니터링을 위해 노드와 자체에서 메트릭을 수집      | `9090`                     | `http://localhost:9090` |
+| Loki       | Promtail을 통해 네트워크 노드의 로그를 집계하고 저장 | `3100`                     | `http://localhost:3100` |
+| Promtail   | Docker 컨테이너에서 로그를 스크랩하여 Loki로 전송  | `9080` (API), `9095` (메트릭) | `http://localhost:9080` |
+| Grafana    | 메트릭과 로그 시각화를 위한 대시보드 인터페이스 제공     | `3000`                     | `http://localhost:3000` |
+
+
+# Aeneid - Testnet
+
+# 리소스
+
+**네트워크 이름**: Story Aeneid 테스트넷
+
+**체인 ID**: 1315
+
+**Chainlist 링크**: [https://chainlist.org/chain/1315](https://chainlist.org/chain/1315)
+
+## RPC
+
+| RPC 이름             | RPC URL                                  |  공식 |
+| :----------------- | :--------------------------------------- | :-: |
+| Story              | `https://aeneid.storyrpc.io`             |  ✅  |
+| Story by QuickNode | `https://www.quicknode.com/chains/story` |     |
+
+## 익스플로러
+
+| 익스플로러                                                                                   | URL                                        |  공식 |
+| :-------------------------------------------------------------------------------------- | :----------------------------------------- | :-: |
+| [Blockscout 익스플로러 ↗️](https://aeneid.storyscan.io)                                      | `https://aeneid.storyscan.io`              |  ✅  |
+| [IP 익스플로러 ↗️](https://aeneid.explorer.story.foundation) (라이선싱, 라이선스 발행 등 IP 관련 작업에만 해당) | `https://aeneid.explorer.story.foundation` |  ✅  |
+
+## 수도꼭지
+
+| 수도꼭지                                                                                  | 금액    |
+| :------------------------------------------------------------------------------------ | :---- |
+| [Google Cloud 수도꼭지 ↗️](https://cloud.google.com/application/web3/faucet/story/aeneid) | 10 IP |
+| [공식 수도꼭지 ↗️](https://aeneid.faucet.story.foundation/)                                 | 10 IP |
+
+## 스테이킹 대시보드
+
+| 대시보드 URL                                               |  공식 |
+| :----------------------------------------------------- | :-: |
+| [Story 대시보드](https://aeneid.staking.story.foundation/) |  ✅  |
+
+## 계약 배포 주소
+
+* [Proof of Creativity](/developers/deployed-smart-contracts)
+
+
+# Multisig
+
+## Story Safe
+
+사용자는 사용자 친화적인 웹 UI를 통해 또는 스마트 계약을 직접 통해 Safe에 접근할 수 있어, 일반 사용자와 개발자 모두에게 멀티시그 지갑 관리를 위한 유연한 옵션을 제공합니다.
+
+### Safe의 웹 앱 사용하기
+
+Safe의 직관적인 웹 앱을 사용하여 멀티시그 거래를 쉽게 제안, 검토 및 실행할 수 있습니다 - 코딩이 필요 없습니다!
+
+<Card title="Story Safe" href="https://safe.story.foundation/welcome" horizontal icon="vault">
+  웹 앱으로 가서 직접 사용해보세요.
+</Card>
+
+### 스마트 계약 통합
+
+Safe의 스마트 계약과 직접 상호 작용하려면 공식 문서를 참조하여 기술적 지침과 예제를 통해 Safe 워크플로우를 구축하거나 자동화할 수 있습니다.
+
+<Card title="Safe 문서" href="https://docs.safe.global/home/what-is-safe" horizontal icon="book">
+  Safe의 문서를 확인하여 자세히 알아보세요.
+</Card>
+
+
+# 문제 해결
+
+Story 노드 문제 해결에 오신 것을 환영합니다! 이 섹션에서는 Story 노드 실행 시 발생하는 일반적인 문제와 해결책을 다룹니다.
+
+### 노드 설정
+
+<Accordion title="하드웨어 요구 사항은 무엇인가요?">
+  다음을 참조하세요 [system specs](/network/operating-a-node/node-setup-mainnet)
+</Accordion>
+
+<Accordion title="예상되는 최대 TPS는 얼마인가요?">
+  \~700
+</Accordion>
+
+<Accordion title="완전한 EVM 호환성이 있나요? IP 블록체인에 이미 적용된 사용자 정의가 있나요? 또는 앞으로 적용될 사용자 정의가 있나요?">
+  네, EVM 호환성이 있습니다. Story의 실행 클라이언트는 Geth의 포크로, 우리의 사용자 정의 프리컴파일을 포함하고 있어 IP 그래프의 성능을 향상시키면서도 엄격한 EVM 호환성을 유지합니다. RETH와 Erigon과 같은 다른 Ethereum 실행 클라이언트는 나중에 지원될 수 있습니다.
+</Accordion>
+
+<Accordion title="합의 메커니즘은 무엇인가요?">
+  우리의 합의 메커니즘은 CometBFT입니다
+</Accordion>
+
+<Accordion title="배치 지원이 있나요? 배치 요청에 대한 제한이 있나요?">
+  배치 RPC는 지원됩니다 - Geth의 경우 1K 제한이 있고 합의 측면에서는 10개 요청 제한이 있습니다
+</Accordion>
+
+<Accordion title="WS 연결이 있나요? (있다면 어떻게 작동하나요)">
+  네, 실행 클라이언트에서 WS가 활성화되어 있으며, 구독 사용 사례에 권장됩니다. 8546 포트에서 열려 있습니다
+</Accordion>
+
+<Accordion title="노드가 제공하는 다양한 경로는 몇 개인가요 (다른 메서드를 가진 여러 RPC 경로)?">
+  전체적인 목록은 Geth의 최신 JSON-RPC 문서를 참조해 주세요 [here](https://ethereum.org/en/developers/docs/apis/json-rpc/#web3_clientversion). 향후에 더 추가될 수 있습니다.
+</Accordion>
+
+<Accordion title="RPC 메서드에 대한 캐싱 규칙이 있나요?">
+  RPC 메서드에 따라 1-10분의 TTL을 가진 표준 인메모리 캐싱을 사용하는 것을 권장합니다
+</Accordion>
+
+<Accordion title="최신 블록을 가져오고 노드가 정상이고 동기화되었는지 확인하는 가장 좋은 방법은 무엇인가요?">
+  실행 클라이언트에서 `eth_syncing` RPC 호출을 사용하여 노드가 동기화되었는지 확인하고 `eth_blockNumber` 를 사용하여 최신 블록을 가져옵니다
+</Accordion>
+
+<Accordion title="가장 무거운 RPC 메서드는 무엇인가요? 이러한 메서드로 요청에 응답하는 데 얼마나 시간이 걸리나요?">
+  `eth_call` / `eth_getLogs` / `eth_getBlockByNumber` \
+  우리는 아직 응답 시간을 파악하기 위해 지연 시간 테스트를 진행 중입니다.
+</Accordion>
+
+<Accordion title="아카이브 노드 프로비저닝이 필요한가요? 필요하다면 얼마나 큰가요?">
+  아니요, 현재는 필요하지 않습니다.
+</Accordion>
+
+<Accordion title="전체 / 아카이브에 대한 스냅샷이 있나요?">
+  아직은 없지만, 작업 중입니다.
+</Accordion>
+
+<br />
+
+### 일반적인 문제
+
+<Accordion title="데이터베이스 초기화 실패">
+  **Error:**
+
+  ```bash
+  ERRO !! Fatal error occurred, app died️ unexpectedly !! err="create db: failed to initialize database:
+  ```
+
+  **Solution:**
+
+  1. 검증자 상태를 저장하세요:
+
+  ```bash
+  cp $HOME/.story/story/data/priv_validator_state.json $HOME/.story/story/priv_validator_state.json.backup
+  ```
+
+  > 🚧 특히 검증자가 이미 블록에 서명하고 있다면 이 파일을 매우 조심스럽게 다루세요.
+
+  * 데이터베이스 백엔드 유형을 확인하세요. 스냅샷을 사용하는 경우 노드가 동일한 유형을 지원해야 합니다:
+
+  ```bash
+  cat $HOME/.story/story/config/story.toml
+  ```
+
+  기본값은 `app-db-backend = "goleveldb"`입니다. 대체 옵션은 `db_backend` 값으로 CometBFT의 `config.toml`에 설정되어 있습니다.
+
+  ```bash
+  cat $HOME/.story/story/config/config.toml
+  ```
+</Accordion>
+
+<Accordion title="높은 가스 수수료">
+  **Problem:** RPC 노드에서 가스 수수료 조정 필요
+
+  **Solution:**
+  geth 시작 명령에 `--rpc.txfee` 플래그를 추가하세요:
+
+  ```bash
+  sudo tee /etc/systemd/system/story-geth.service > /dev/null <<EOF
+  [Unit]
+  Description=Story-Geth Node
+  After=network.target
+
+  [Service]
+  User=$USER
+  Type=simple
+  WorkingDirectory=$HOME/.story/geth
+  ExecStart=$(which geth) --story --syncmode full --rpc.txfee 2
+  Restart=on-failure
+  LimitNOFILE=65535
+
+  [Install]
+  WantedBy=multi-user.target
+  EOF
+  ```
+</Accordion>
+
+<Accordion title="PacketPing 전송 실패">
+  **Error:**
+
+  ```bash
+  ERRO Failed to send PacketPing module=p2p peer=19fa6dd52e72e4e85bbb873b705282cf73217a6b@158.220.80.96:40128 err="write tcp 139.59.139.135:26656->158.220.80.96:40128: write: broken pipe"
+  ```
+
+  Solution:
+
+  * 노드가 동기화되었다면 이 오류를 무시할 수 있습니다. 클라이언트가 약간 뒤처져 있을 수 있습니다.
+  * 노드가 중지되면 서비스를 재시작해야 합니다.
+</Accordion>
+
+<Accordion title="Cosmovisor: failed to read upgrade info">
+  cosmovisor 시작 시 오류가 발생합니다:
+
+  ```bash
+  panic: failed to read upgrade info from disk unexpected end of JSON input
+  ```
+
+  Solution:
+
+  * 설치된 cosmovisor 버전이 최소 [v1.7.0이어야 합니다.](https://docs.cosmos.network/main/build/tooling/cosmovisor)
+  * 그런 다음 info 파일을 확인하세요 (버전 `v0.13.0` 을 사용자의 경우로 수정하세요):
+
+  ```bash
+  cat $HOME/.story/story/cosmovisor/upgrades/v0.13.0/upgrade-info.json
+  ```
+
+  파일이 없다면 새로 만드세요:
+
+  ```bash
+  echo '{"name":"v0.13.0","time":"0001-01-01T00:00:00Z","height":858000}' > $HOME/.story/story/cosmovisor/upgrades/v0.13.0/upgrade-info.json
+  ```
+
+  cosmovisor를 사용한 자동 업데이트에 대해 더 자세히 알아보려면 [here](/network/operating-a-node/node-setup-mainnet#custom-automation)를 참조하세요.
+</Accordion>
+
+<Accordion title="IPC 엔드포인트 닫힘">
+  Error:
+
+  ```bash
+  INFO HTTP server stopped
+  INFO IPC endpoint closed
+  ```
+
+  Solution:
+
+  * 8551 포트가 중지되는 것 같습니다. 백그라운드에서 실행 중인 `iptables` 프로세스가 IP와 포트를 차단하고 posix 접근을 막고 있습니다.
+  * 해결을 위해 `ufw posix` 와 `iptables`를 제거해 보세요:
+
+  ```bash
+  iptables -I INPUT -s localhost -j ACCEPT
+  ```
+</Accordion>
+
+<Accordion title="동일한 키에서 서명 발견">
+  Error:
+
+  ```bash
+  panic: Faile to consensus  state: found signature from the same key
+  ```
+
+  Solution:
+
+  * 검증자가 이중 서명되었습니다. 현재 이중 서명된 후에는 검증자를 복구하는 것이 불가능합니다.
+  * 이러한 상황을 피하려면 다음 게시물을 참조하여 올바르게 [migrate a validator to another machine](/network/become-a-validator#migrating-a-validator-to-another-machine)하는 방법을 확인하세요.
+</Accordion>
+
+<Accordion title="생성 플래그 검증 실패: 필수 플래그 누락: moniker">
+  Error:
+
+  ```bash
+  4-11-26 08:42:20.302 ERRO !! Fatal error occurred, app died️ unexpectedly !! err="failed to validate create flags: missing required flag(s): moniker" stacktrace="[errors.go:39 flags.go:173 validator.go:168 validator.go:384 command.go:985 command.go:1117 command.go:1041 command.go:1034 cmd.go:34 main.go:10 proc.go:271 asm_amd64.s:1695]"
+  ```
+
+  Solution:
+
+  * 플래그 `--moniker`를 누락했습니다.
+  * 새 검증자를 생성하는 명령은 다음과 같아야 합니다:
+
+  ```bash
+  ./story validator create --stake ${AMOUNT_TO_STAKE_IN_WEI} --moniker ${VALIDATOR_NAME}
+  ```
+
+  더 많은 옵션은 [here](/network/become-a-validator#validator-creation)에서 확인하세요.
+</Accordion>
+
+<Accordion title="투표 추가 오류">
+  Error:
+
+  ```bash
+  ERRO failed to process message msg_type= *consensus.VoteMessage err:" error adding vote"
+  ```
+
+  Solution:
+
+  * 노드가 다운된 것 같습니다. 시작하려면 [here](/network/operating-a-node/node-setup-mainnet)에서 현재 바이너리 버전을 확인하세요.
+  * 최신 바이너리가 있다면 피어를 업데이트해 보세요. 이는 일반적으로 노드가 p2p 통신을 잃었을 때 발생합니다:
+
+  ```bash
+  PEERS="..."
+  sed -i -e "/^\[p2p\]/,/^\[/{s/^[[:space:]]*persistent_peers *=.*/persistent_peers = \"$PEERS\"/}" $HOME/.story/story/config/config.toml
+  ```
+</Accordion>
+
+<Accordion title="투표 서명 오류">
+  Error:
+
+  ```bash
+  ERRO failed signing vote module=consensus height=403750 round=0 vote="Vote{23:B12C6AE31E8E 403750/00/SIGNED_MSG_TYPE_PREVOTE(Prevote) FA591EB1E540 000000000000 000000000000 @ 2024-11-08T16:58:10.375918193Z}" err="error signing vote: height regression. Got 403750, last height 420344"
+  ```
+
+  Solution:
+
+  * 당신의 `priv_validator_state` 의 validator.
+    > 🚧 validator가 이미 블록에 서명하고 있다면 이 파일을 다룰 때 매우 주의하세요.
+  * 다음 명령어로 상태의 복사본을 만들 수 있습니다:
+
+  ```bash
+  cp $HOME/.story/story/data/priv_validator_state.json $HOME/.story/story/priv_validator_state.json.backup
+  ```
+
+  validator 상태를 확인하세요:
+
+  ```bash
+  cat $HOME/.story/story/data/priv_validator_state.json
+  ```
+
+  * 이 오류가 발생하면 상태를 재설정할 수 있습니다 (🚧 validator가 아직 블록에 서명하지 않은 경우에만).
+  * 노드를 중지하세요.
+
+  ```bash
+  sudo tee $HOME/.story/story/data/priv_validator_state.json > /dev/null <<EOF
+  {
+    "height": "0",
+    "round": 0,
+    "step": 0
+  }
+  EOF
+  ```
+
+  * 노드를 시작하세요.
+</Accordion>
+
+<Accordion title="Unknown flag: --home">
+  Error:
+
+  ```bash
+  ERRO !! Fatal error occurred, app died️ unexpectedly !! err="unknown flag: --home"
+  ```
+
+  Solution:
+
+  * 설정 오류로 보입니다. 시작 명령에서 `--home` 플래그를 제거해야 합니다.
+  * systemd 실행 파일은 다음과 같을 수 있습니다:
+</Accordion>
+
+<Accordion title="Failed to register the Ethereum service">
+  Error:
+
+  ```bash
+  Fatal: Failed to register the Ethereum service: incompatible state scheme, stored: path, provided: hash
+  ```
+
+  Solution:
+
+  * validator의 상태나 손상된 데이터베이스에 문제가 있습니다.
+  * 스냅샷을 사용해 보세요.
+    > 🚧 validator가 이미 블록에 서명하고 있다면 이 파일을 다룰 때 매우 주의하세요.
+  * 상태를 재설정하는 방법을 [here](/network/more/troubleshooting#error-signing-vote)에 설명했습니다.
+
+  ## Failed to reconnect to peer
+
+  Error:
+
+  ```bash
+  24-09-25 06:38:45.235 ERRO Failed to reconnect to peer. Beginning exponential backoff module=p2p addr=e0600fa5f2129e647ef30a942aac1695201ff135@65.109.115.98:26656 elapsed=2m29.598884906s
+  ```
+
+  Solution:
+
+  * 노드가 동기화되어 있고 크게 뒤처지지 않았다면 이 오류를 무시할 수 있습니다.
+  * 노드가 지연되거나 완전히 멈췄다면 피어를 업데이트해 보세요. 이는 보통 노드가 p2p 통신을 잃었을 때 발생합니다:
+
+  ```bash
+  PEERS="..."
+  sed -i -e "/^\[p2p\]/,/^\[/{s/^[[:space:]]*persistent_peers =./persistent_peers = \"$PEERS\"/}" $HOME/.story/story/config/config.toml
+  ```
+</Accordion>
+
+<Accordion title="Processing finalized payload halted while evm syncing">
+  Warn:
+
+  ```bash
+  WARN Processing finalized payload halted while evm syncing (will retry) payload_height=...
+  ```
+
+  Solution:
+
+  * 이는 단순히 story-geth가 동기화 중임을 의미합니다. 이 경고는 무시해도 됩니다.
+  * 하지만 시간이 오래 걸린다면, 프로세스를 하나씩 중지하고 나중에 다음 순서로 다시 시작하는 것을 권장합니다:
+
+  ```bash
+  sudo systemctl stop story-geth story
+  sudo systemctl daemon-reload
+  sudo systemctl start story-geth
+  sudo systemctl enable story-geth
+
+  sudo systemctl daemon-reload
+  sudo systemctl start story
+  sudo systemctl enable story
+  ```
+</Accordion>
+
+<Accordion title="Upgrade handler is missing">
+  Error:
+
+  ```bash
+  ERRO error in proxyAppConn.FinalizeBlock      module=consensus err="module manager preblocker: wrong app version 0, upgrade handler is missing for upgrade plan"
+  ```
+
+  Solution:
+
+  * 업데이트를 놓친 것 같습니다.
+  * 시작하려면 [here](/network/operating-a-node/node-setup-mainnet)에서 현재 바이너리 버전을 확인하세요.
+</Accordion>
+
+<Accordion title="Home directory contains unexpected file">
+  Error:
+
+  ```bash
+  ERRO !! Fatal error occurred, app died️ unexpectedly !! err="home directory contains unexpected file(s), use --force to initialize anyway"
+  ```
+
+  Solution:
+
+  * 이는 이미 노드를 초기화했다는 의미입니다.
+  * `$HOME/.story/story` 디렉토리가 생성되었고 그 안에 파일들이 있습니다. 삭제하거나 그대로 시도해 보세요.
+</Accordion>
+
+<Accordion title="Err='create comet node: create node">
+  Error:
+
+  ```bash
+  ERRO !! Fatal error occurred, app died️ unexpectedly ! err="create comet node: create node
+  ```
+
+  Solution:
+
+  * 노드가 잘못된 버전을 사용하고 있는 것 같습니다.
+  * 현재 바이너리 버전을 [here](/network/operating-a-node/node-setup-mainnet)에서 확인하세요.
+  * 그리고 대부분의 경우 현재 버전으로 바이너리 롤백을 수행해야 합니다.
+</Accordion>
+
+<Accordion title="WAL does not contain">
+  Error:
+
+  ```bash
+  ERRO catchup replay: WAL does not contain
+  ```
+
+  Solution:
+
+  * 이는 `AppHash` 문제로 보입니다.
+  * 시작하려면 [here](/network/operating-a-node/node-setup-mainnet)에서 현재 바이너리 버전으로 업그레이드하세요.
+  * 만약 버전이 현재 버전보다 새로운 경우 롤백을 수행하세요.
+</Accordion>
+
+<Accordion title="Err='load engine JWT file: read jwt file">
+  Error:
+
+  ```bash
+  ERRO !! Fatal error occurred, app died️ unexpectedly !! err="load engine JWT file: read jwt file: open /root/.story/geth/odyssey/geth/jwtsecret: no such file or directory
+  ```
+
+  Solution:
+
+  * 노드가 `jwtsecret`를 가져올 수 없는 것 같습니다.
+  * 당신의 `WorkingDirectory`에 있는 `geth-service`를 확인하세요. 기본값은 `WorkingDirectory=$HOME/.story/geth`입니다.
+  * 모든 경로를 확인하세요. 다음 명령어로 `jwtsecret`를 얻을 수 있습니다 (odyssey 네트워크의 경우):
+
+  ```bash
+  cat .story/geth/odyssey/geth/jwtsecret
+  ```
+</Accordion>
+
+<Accordion title="Couldn't connect to any seeds">
+  Error:
+
+  ```bash
+  ERRO Couldn't connect to any seeds module=p2p
+  ```
+
+  Solution:
+
+  * 노드가 동기화되어 있고 크게 뒤처지지 않았다면 이 오류를 무시할 수 있습니다.
+  * 노드가 지연되거나 완전히 멈췄다면 seeds/peers를 업데이트해 보세요. 이는 보통 노드가 p2p 통신을 잃었을 때 발생합니다 (노드를 중지하고 addrbook을 삭제하는 것을 권장합니다).
+
+  ```bash
+  rm -rf $HOME/.story/story/config/addrbook.json
+  SEEDS="..."
+  PEERS="..."
+  sed -i -e "/^\[p2p\]/,/^\[/{s/^[[:space:]]*seeds *=.*/seeds = \"$SEEDS\"/}" \
+         -e "/^\[p2p\]/,/^\[/{s/^[[:space:]]*persistent_peers *=.*/persistent_peers = \"$PEERS\"/}" $HOME/.story/story/config/config.toml
+  ```
+</Accordion>
+
+<Accordion title="Processing finalized payload failed err='rpc forkchoice updated">
+  Warn:
+
+  ```bash
+  WRN Processing finalized payload; evm syncing
+  WRN Processing finalized payload failed: evm fork choice update (will retry) status="" err="rpc forkchoice updated v3: beacon syncer reorging"
+  ```
+
+  Solution:
+
+  * 모든 것이 정상입니다. 이는 단순히 `story-geth`가 동기화 중이며, 이는 시간이 걸린다는 의미입니다.
+  * 노드가 크게 뒤처지지 않았다면 이 경고를 무시할 수 있습니다.
+
+  ## Dial tcp 127.0.0.1:9090
+
+  Warn:
+
+  ```bash
+  WRN error getting latest block error:"rpc error: dial tcp 127.0.0.1:9090"
+  ```
+
+  Solution:
+
+  * 로그에 `9090` 포트에서 연결 실패가 표시됩니다.
+  * 수신 포트를 확인하세요:
+
+  ```bash
+  sudo ss -tulpn  | grep LISTEN
+  ```
+
+  * 다른 노드가 `9090`를 사용한다면 다른 포트로 변경하세요.
+  * 일반적으로 이 경고는 노드의 성능에 영향을 미치지 않아야 합니다.
+</Accordion>
+
+<Accordion title="Wrong AppHash">
+  Error:
+
+  ```bash
+  ERRO Error in validation module=blocksync err="wrong Block[dot]Header[dot]AppHash  Expected [...]
+  ```
+
+  Solution:
+
+  * `Wrong AppHash` 유형의 로그는 사용 중인 story 노드 버전이 잘못되었음을 의미합니다.
+  * 현재 바이너리 버전으로 업그레이드하세요 [here](/network/operating-a-node/node-setup-mainnet).
+  * 만약 버전이 현재 버전보다 새로운 경우 롤백을 수행하세요.
+</Accordion>
+
+<Accordion title="Connection failed sendRoutine / Stopping peer">
+  Error:
+
+  ```bash
+  ERRO Connection failed @ sendRoutine module=p2p peer=...
+  ERRO Stopping peer for error module=p2p peer=...
+  ```
+
+  Solution:
+
+  * 노드가 동기화되어 있고 크게 뒤처지지 않았다면 이 오류를 무시할 수 있습니다.
+  * 노드가 지연되거나 완전히 멈췄다면 피어를 업데이트해 보세요. 이는 보통 노드가 p2p 통신을 잃었을 때 발생합니다:
+
+  ```bash
+  PEERS="..."
+  sed -i -e "/^\[p2p\]/,/^\[/{s/^[[:space:]]*persistent_peers =./persistent_peers = \"$PEERS\"/}" $HOME/.story/story/config/config.toml
+  ```
+</Accordion>
+
+<Accordion title="Moniker must be valid non-empty">
+  Error:
+
+  ```bash
+  ERRO !! Fatal error occurred, app died️ unexpectedly ! err="create comet node: create node: info.Moniker must be valid non-empty
+  ```
+
+  Solution:
+
+  * 노드 moniker에 문제가 있는 것 같습니다.
+  * init을 실행할 때 `""`를 사용했는지 확인하세요:
+
+  ```bash
+  story init --network "..." --moniker "..."
+  ```
+
+  * config로 이동하여 moniker를 찾아 `""` only:
+
+  ```bash
+  sudo nano ~/.story/story/config/config.toml
+  ```
+</Accordion>
+
+<Accordion title="Invalid address (26656)">
+  Error:
+
+  ```bash
+  Fatal error occurred, app died️ unexpectedly ! err="create comet node: create node: invalid address (26656):
+  ```
+
+  Solution:
+
+  * 로그에 `26656` 포트에서 연결 실패가 보고됩니다.
+  * 수신 포트를 확인하세요:
+
+  ```bash
+  sudo ss -tulpn  | grep LISTEN
+  ```
+
+  * 다른 노드가 `26656`를 사용 중이라면, 다른 것으로 변경하고 story의 기본 `26656`를 유지하세요 `P2P configuration` 옵션에서 `config`:
+
+  ```bash
+  sudo nano ~/.story/story/config/config.toml
+  ```
+</Accordion>
+
+<Accordion title="Eth_coinbase가 존재하지 않습니다">
+  Warn:
+
+  ```bash
+  WARN Beacon client online, but no consensus updates received in a while. Please fix your beacon client to follow the chain!
+  Served eth_coinbase eth_coinbase does not exist
+  ```
+
+  Solution:
+
+  * 이 오류는 네트워크가 중지되었음을 나타냅니다.
+</Accordion>
+
+<Accordion title="제안 검증 실패">
+  Warn:
+
+  ```bash
+  WARN Verifying proposal failed: push new payload to evm (will retry) status="" err="new payload: rpc new payload v3: Post \"http://localhost:8551\": round trip: dial tcp 127.0.0.1:8551: connect: connection refused" stacktrace="[errors.go:39 jwt.go:41 client.go:259 client.go:180 client.go:724 client.go:590 http.go:229 http.go:173 client.go:351 engineclient.go:101 msg_server.go:183 proposal_server.go:34 helpers.go:30 proposal_server.go:33 tx.pb.go:299 msg_service_router.go:175 tx.pb.go:301 msg_service_router.go:198 prouter.go:74 abci.go:520 cmt_abci.go:40 abci.go:85 local_client.go:164 app_conn.go:89 execution.go:166 state.go:1381 state.go:1338 state.go:2055 state.go:910 state.go:836 asm_amd64.s:1695]"
+  WARN Verifying proposal
+  ```
+
+  Solution:
+
+  * 포트 8551이 중지된 것 같습니다. 백그라운드에서 실행 중인 `iptables`가 IP와 포트를 차단하고 posix 접근을 막고 있습니다.
+  * 해결책으로 `ufw posix`와 `iptables`를 제거해 보세요:
+
+  ```bash
+  iptables -I INPUT -s localhost -j ACCEPT
+  ```
+</Accordion>
+
+
+# Additional Resources
+
+# 추가 리소스
+
+## Github
+
+* [Story Github](https://github.com/piplabs/story)
+* [Story-geth Github](https://github.com/piplabs/story-geth)
+
+## SIP 저장소
+
+* [SIP Repository](https://github.com/storyprotocol/SIPs)
+
+## 커뮤니티 포럼
+
+* [Story Forum](https://forum.story.foundation/)
+
+
+# Gelato
+
+# VRF
+
+Gelato VRF는 분산화되고 신뢰할 수 있는 난수 소스인 Drand를 활용하여 블록체인 애플리케이션에 검증 가능한 무작위성을 제공합니다. 이는 개발자들이 진정으로 무작위이며 증명 가능하고 변조 방지된 값을 받을 수 있도록 보장합니다.
+
+Gelato의 [Documentation](https://docs.gelato.network/web3-services/vrf) 가이드를 참조하여 가격 피드로 애플리케이션을 통합하세요.
+
+## 스마트 컨트랙트
+
+### Functions 및 VRF
+
+#### 메인넷
+
+##### [EIP173Proxy.sol](https://www.storyscan.io/address/0xafd37d0558255aA687167560cd3AaeEa75c2841E)
+
+```
+0xafd37d0558255aA687167560cd3AaeEa75c2841E
+```
+
+##### [Automate.sol](https://www.storyscan.io/address/0xab2c44495F5F954149b94C750ca20B64ea60B51c)
+
+```
+0xab2c44495F5F954149b94C750ca20B64ea60B51c
+```
+
+### 릴레이
+
+#### 메인넷
+
+##### GelatoRelay
+
+릴레이 방법: `callWithSyncFee`
+
+###### EIP173Proxy.sol
+
+```
+0xcd565435e0d2109feFde337a66491541Df0D1420
+```
+
+#####
+
+###### GelatoRelay.sol
+
+```
+0xA75983F686999843804a2ECC0E93C35d39a4F750
+```
+
+##### GelatoRelayERC2771.sol
+
+릴레이 방법: `callWithSyncFeeERC2771`
+
+```
+0x8aCE64CEA52b409F930f60B516F65197faD4B056
+```
+
+##### GelatoRelayConcurrentERC2771.sol
+
+릴레이 방법: `callWithSyncFeeERC2771` 와 함께 `isConcurrent: true`
+
+```
+0xc7739c195618D314C08E8626C98f8573E4E43634
+```
+
+##### GelatoRelay1BalanceERC2771.sol
+
+릴레이 방법: `sponsoredCallERC2771`
+
+```
+0x61F2976610970AFeDc1d83229e1E21bdc3D5cbE4
+```
+
+
+# Redstone
+
+# 가격 피드
+
+Redstone은 70개 이상의 블록체인에서 스마트 컨트랙트에 실시간 금융 데이터를 제공하며, 암호화폐, RWA, LRT, BTCFi 및 기타 신흥 자산을 다룹니다. 기관 및 암호화폐 네이티브 데이터를 결합하여 Redstone은 이상 탐지, 시장 깊이 분석, 교차 소스 분산 검사를 포함한 다층 검증을 통해 신뢰성을 보장합니다.
+
+Redstone의 문서 가이드를 참조하여 애플리케이션을 가격 피드와 통합하세요.[문서](https://docs.redstone.finance/docs/introduction)는 가격 피드와 애플리케이션을 통합하는 방법을 안내합니다.
+
+## 스마트 컨트랙트
+
+### ETH
+
+#### TransparentUpgradeableProxy
+
+```
+0x22d47686b3AEC9068768f84EFD8Ce2637a347B0A
+```
+
+#### StoryPriceFeedEthWithoutRoundsV1
+
+```
+0xb9D0073aCb296719C26a8BF156e4b599174fe1d5
+```
+
+### BTC
+
+#### TransparentUpgradeableProxy
+
+```
+0xc44be6D00307c3565FDf753e852Fc003036cBc13
+```
+
+#### StoryPriceFeedBtcWithoutRoundsV1
+
+```
+0xE23eCA12D7D2ED3829499556F6dCE06642AFd990
+```
+
+### USDC
+
+#### TransparentUpgradeableProxy
+
+```
+0xED2B1ca5D7E246f615c2291De309643D41FeC97e
+```
+
+#### StoryPriceFeedUsdcWithoutRoundsV1
+
+```
+0x31a36CdF4465ba61ce78F5CDbA26FDF8ec361803
+```
+
+### USDT
+
+#### TransparentUpgradeableProxy
+
+```
+0x7A9b672fc20b5C89D6774514052b3e0899E5E263
+```
+
+#### StoryPriceFeedUsdtWithoutRoundsV1
+
+```
+0xe8D9FbC10e00ecc9f0694617075fDAF657a76FB2
+```
+
+
+# Pyth
+
+# 가격 피드
+
+Pyth Network는 100개 이상의 블록체인에 걸쳐 스마트 계약에 실시간 금융 시장 데이터를 제공하며, 100개 이상의 거래소와 마켓 메이커로부터 가격을 수집합니다. 주식, 상품, 암호화폐를 포함한 850개 이상의 가격 피드로, Pyth는 초당 여러 번 가격을 집계하고 업데이트합니다.
+
+Pyth의 [문서](https://docs.pyth.network/price-feeds/price-feeds) 가이드를 참조하여 애플리케이션에 가격 피드를 통합하세요.
+
+## 스마트 계약
+
+### 메인넷
+
+#### [ERC1967Proxy.sol](https://www.storyscan.io/address/0xD458261E832415CFd3BAE5E416FdF3230ce6F134)
+
+```
+0xD458261E832415CFd3BAE5E416FdF3230ce6F134
+```
+
+#### [PythUpgradable.sol](https://www.storyscan.io/address/0x5f3c61944CEb01B3eAef861251Fb1E0f14b848fb)
+
+```
+0x5f3c61944CEb01B3eAef861251Fb1E0f14b848fb
+```
+
+### 테스트넷 (Aeneid)
+
+#### [ERC1967Proxy.sol](https://aeneid.storyscan.io/address/0x36825bf3Fbdf5a29E2d5148bfe7Dcf7B5639e320)
+
+```
+0x36825bf3Fbdf5a29E2d5148bfe7Dcf7B5639e320
+```
+
+#### [PythUpgradeable.sol](https://aeneid.storyscan.io/address/0x98046Bd286715D3B0BC227Dd7a956b83D8978603)
+
+```
+0x98046Bd286715D3B0BC227Dd7a956b83D8978603
+```
+
+<br />
+
+# VRF
+
+Pyth Entropy(VRF) 서비스는 온체인에서 공정성이 입증된 난수 생성을 가능하게 합니다. Pyth Entropy를 통합하려면 Entropy에서 난수를 요청하기 위해 온체인 함수를 호출해야 합니다. 이 함수는 오프체인에서 생성되어 Entropy 계약으로 전송될 수 있는 무작위로 생성된 숫자를 받아들입니다. 그 대가로 계약은 시퀀스 번호를 제공합니다. 요청이 처리되면 Pyth Entropy는 귀하의 계약에 콜백을 보내 생성된 난수를 전달합니다.
+
+Pyth의 [EVM dApps에서 난수 생성하는 방법](https://docs.pyth.network/entropy/generate-random-numbers/evm) 가이드를 참조하여 애플리케이션에 Pyth Entropy를 통합하세요.
+
+## 스마트 계약
+
+### 메인넷
+
+#### [ERC1967Proxy.sol](https://www.storyscan.io/address/0xdF21D137Aadc95588205586636710ca2890538d5)
+
+```
+0xdF21D137Aadc95588205586636710ca2890538d5
+```
+
+#### [EntropyUpgradeable.sol](https://www.storyscan.io/address/0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF)
+
+```
+0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF
+```
+
+### 테스트넷 (Aeneid)
+
+#### [ERC1967Proxy.sol](https://aeneid.storyscan.io/address/0x5744Cbf430D99456a0A8771208b674F27f8EF0Fb)
+
+```
+0x5744Cbf430D99456a0A8771208b674F27f8EF0Fb
+```
+
+#### [EntropyUpgradeable.sol](https://aeneid.storyscan.io/address/0x74f09cb3c7e2A01865f424FD14F6dc9A14E3e94E)
+
+```
+0x74f09cb3c7e2A01865f424FD14F6dc9A14E3e94E
+```
+
+
+# 노드 아키텍처
+
+Story는 Cosmos SDK와 CometBFT를 사용하여 빠른 블록 시간과 원샷 최종성을 달성하는 EVM과 완전히 호환되는 목적에 맞게 구축된 모듈식 블록체인입니다. Story 노드는 두 개의 클라이언트로 구성됩니다:`story-geth` 실행 클라이언트(EL)와 `story` 합의 클라이언트(CL)입니다. 이 클라이언트들은 [Engine API 인터페이스](/network/node-architecture/engine-api)를 통해 통신하며, 이는 [Ethereum](https://hackmd.io/@danielrachi/engine_api)에 의해 정의됩니다.
+
+`story-geth`는 Geth 클라이언트의 포크로, [IPGraph Precompile](/network/node-architecture/precompile)과 [RIP-7212](https://github.com/ethereum/RIPs/blob/master/RIPS/rip-7212.md) 프리컴파일이 추가되었습니다. 이는 트랜잭션 실행, 브로드캐스팅 및 상태 저장을 처리하면서 Ethereum Virtual Machine (EVM)과 완전히 호환되며 모든 Ethereum JSON-RPC 메소드를 지원합니다.
+
+`story`는 Cosmos SDK와 CometBFT를 기반으로 구축되었습니다. Cosmos SDK는 블록체인 애플리케이션을 구축하기 위한 모듈식 프레임워크를 제공하여 새로운 모듈과 기능을 원활하게 통합할 수 있게 하며 네트워크를 쉽게 확장하고 사용자 정의할 수 있게 합니다. `story` 클라이언트는 Engine API 통합과 새로운 스테이킹 메커니즘을 지원하기 위해 업그레이드와 추가 Cosmos SDK 모듈을 도입합니다. CometBFT는 고성능, 확장 가능하고 안전한 합의 엔진으로, Cosmos 생태계 내에서 광범위하게 테스트되었습니다. CometBFT와 Cosmos SDK는 ABCI++ 인터페이스를 통해 통신합니다(ABCI++ 사양 링크).
+
+<img src="/images/network/node-architecture.png" />
+
+<Warning>
+  의사 난수 생성에 `RANDAO`를 사용하지 마세요. 대신 온체인 VRF(Pyth 또는 Gelato)를 사용하세요. 현재, `RANDAO` 값은 부모 블록 해시로 설정되어 있어 X-1 블록에 대해 무작위가 아닙니다.
+</Warning>
+
+
+# evmstaking
+
+## 개요
+
+이 문서는 Story 블록체인의 내부 `x/evmstaking` 모듈을 명시합니다.
+
+Story 블록체인에서 가스 토큰은 트랜잭션 비용을 지불하고 스마트 계약과 상호 작용하기 위해 실행 계층(EL)에 존재합니다. 그러나 합의 계층(CL)은 합의 스테이킹, 슬래싱, 보상을 관리합니다. 이 모듈은 사용자 정의 잠금 기간을 가진 검증인에게 위임하는 것과 같은 CL 수준의 스테이킹 관련 로직을 용이하게 하기 위해 존재합니다.
+
+## 목차
+
+1. **[상태](#state)**
+2. **[이중 큐 시스템](#two-queue-system)**
+3. **[출금 큐 내용](#withdrawal-queue-content)**
+4. **[블록 종료](#end-block)**
+5. **[스테이킹 이벤트 처리](#processing-staking-events)**
+6. **[위임 출금](#withdrawing-delegations)**
+7. **[보상 출금](#withdrawing-rewards)**
+8. **[UBI 출금](#withdrawing-ubi)**
+
+## 상태
+
+### 출금 큐
+
+Type: `Queue[types.Withdrawal]`
+
+(스테이크) 출금 큐는 CL에서 소각되고 EL에서 발행될 보류 중인 언본딩된 스테이크를 저장합니다. 14일의 언스테이킹 기간 후에 언본딩된 스테이크는 처리될 큐에 추가됩니다.
+
+### 보상 출금 큐
+
+Type: `Queue[types.Withdrawal]`
+
+보상 출금 큐는 CL에서 소각되고 EL에서 발행될 스테이크의 보류 중인 보상을 저장합니다. 임계값을 초과하는 모든 보상은 이 큐에 대기될 자격이 있지만, 블록당 최대 추가 수에 대한 매개변수가 존재합니다.
+
+### 매개변수
+
+```protobuf protobuf
+message Params {
+  uint32 max_withdrawal_per_block = 1 [
+    (gogoproto.moretags) = "yaml:\"max_withdrawal_per_block\""
+  ];
+  uint32 max_sweep_per_block = 2 [
+    (gogoproto.moretags) = "yaml:\"max_sweep_per_block\""
+  ];
+  uint64 min_partial_withdrawal_amount = 3 [
+    (gogoproto.moretags) = "yaml:\"min_partial_withdrawal_amount\""
+  ];
+  string ubi_withdraw_address = 4 [
+    (gogoproto.moretags) = "yaml:\"ubi_withdraw_address\""
+  ];
+}
+```
+
+* `max_withdrawal_per_block`는 블록당 처리할 최대 출금 수(보상 및 언스테이크, 각각)입니다. 이 매개변수는 노드가 한 번에 많은 양의 출금을 처리하여 최대 체인 타임아웃을 초과하는 것을 방지합니다.
+* `max_sweep_per_block`는 블록당 스윕할 최대 검증인-위임자 위임 수입니다. 이 매개변수는 노드가 한 번에 많은 양의 위임을 처리하는 것을 방지합니다.
+* `min_partial_withdrawal_amount`는 보상이 보상 출금 큐에 추가되기 위해 필요한 최소 금액입니다.
+* `ubi_withdrawal_address`는 UBI 출금이 입금되어야 하는 UBI 계약 주소입니다.
+
+### 위임자 출금 주소
+
+Type: `Map[string, string]`
+
+위임자-출금 주소 매핑은 위임자가 출금한 스테이크를 받는 주소를 추적합니다. (스테이크) 출금 큐는 이 맵을 사용하여 EVM 블록 페이로드를 구축하는 데 사용되는 `execution_address` 구조체의 `Withdrawal`를 결정합니다.
+
+위임자는 언제든지 출금 주소를 변경할 수 있지만, (스테이크) 출금 큐에 있는 기존 스테이크 출금 요청은 원래 값을 유지합니다.
+
+### 위임자 보상 주소
+
+위임자-보상 주소 매핑은 위임자-출금 매핑과 유사하게 위임자가 보상 스테이크를 받는 주소를 추적합니다.
+
+위임자는 언제든지 보상 주소를 변경할 수 있지만, 보상 출금 대기열에 있는 기존 보상 출금 요청은 원래 값을 유지합니다.
+
+Type: `Map[string, string]`
+
+### 위임자 운영자 주소
+
+Type: `Map[string, string]`
+
+위임자-운영자 주소 매핑은 위임자가 자신을 대신하여 위임(스테이킹), 위임 취소(언스테이킹), 재위임할 수 있는 권한을 부여한 주소를 추적합니다.
+
+### IP 토큰 스테이킹 컨트랙트
+
+Type: `*bindings.IPTokenStaking`
+
+IPTokenStaking 컨트랙트는 EL에서 스테이킹 관련 이벤트를 필터링하고 파싱하는 데 사용됩니다.
+
+## 이중 대기열 시스템
+
+이 모듈은 전통적인 Cosmos SDK 스테이킹 모듈의 언스테이킹 시스템과 다릅니다. 기존 시스템에서는 모든 언본딩된 항목(14일의 언본딩 기간 후 언본딩된 스테이크)이 즉시 위임자 계정으로 분배됩니다. 대신 Story의 언스테이킹 시스템은 Ethereum 2.0의 언스테이킹 시스템을 모방하여 슬롯당 16개의 전체 또는 부분(보상) 출금이 처리됩니다.
+
+단일 출금 대기열에서는 보상 출금이 스테이크 출금을 크게 지연시킬 수 있습니다. 따라서 Story 블록체인은 이중 대기열 시스템을 구현하여 각 대기열마다 블록당 처리할 최대 양을 강제합니다. 다시 말해, 스테이크/ubi 출금 대기열과 보상 출금 대기열은 각각 블록당 최대 매개변수를 처리할 수 있습니다.
+
+## 출금 대기열 내용
+
+이 모듈은 언스테이크/보상/ubi만 처리하고 대기열에 저장하므로, 실제 실행 레이어로의 출금을 위한 디큐잉은 [evmengine](/network/node-architecture/cosmos-modules/evmengine-module) 모듈에서 수행됩니다. 구체적으로, 제안자는 각 대기열에서 최대 수의 출금을 디큐하고 이를 EVM 블록 페이로드에 추가하며, 이는 [Engine API](/network/node-architecture/engine-api)를 통해 EL에 의해 실행됩니다. 검증자들이 제안자로부터 제안된 블록 페이로드를 받으면, 각자 로컬 대기열을 확인하고 받은 블록의 출금과 비교합니다. 출금이 일치하지 않으면 스테이킹 로직의 비결정성을 나타내며 체인 중단을 초래해야 합니다.
+
+다시 말해, `evmstaking` 모듈은 출금 요청을 파싱, 처리하고 두 개의 대기열에 삽입하는 역할을 담당하며, `evmengine` 모듈은 출금 요청을 검증하고 디큐하며, EL의 해당 출금 주소로 입금하는 역할을 담당합니다.
+
+## 엔드 블록
+
+`EndBlock` ABCI2 호출은 [staking](/network/node-architecture/cosmos-modules/staking-module) 모듈에서 언본딩된 항목(14일 후 언본딩된 스테이크)을 가져와 (스테이크) 출금 대기열에 삽입하는 역할을 합니다. 또한 스테이크 보상 출금을 보상 출금 대기열로 처리하고 UBI 출금을 (스테이크) 출금 대기열로 처리합니다.
+
+네트워크가 [Singularity 기간](/network/tokenomics-staking#singularity)에 있다면, 이 기간 동안 스테이킹 보상과 출금이 불가능하므로 엔드 블록은 건너뜁니다. 그렇지 않은 경우, [위임 출금](#withdrawing-delegations) 및 [보상 출금](#withdrawing-rewards)을 참조하여 자세한 출금 프로세스를 확인하세요.
+
+## 스테이킹 이벤트 처리
+
+이 모듈은 [IPTokenStaking 컨트랙트](https://github.com/piplabs/story/blob/main/contracts/src/protocol/IPTokenStaking.sol)에서 발생한 스테이킹 이벤트를 파싱하고 처리합니다. 이 이벤트들은 [evmengine](/network/node-architecture/cosmos-modules/evmengine-module) 모듈에 의해 수집됩니다. 이벤트 목록은 다음과 같습니다:
+
+### 스테이킹 이벤트
+
+* 검증자 생성
+* 입금 (위임)
+* 출금 (위임 취소)
+* 재위임
+* Unjail: anyone can request to unjail a jailed validator by paying the unjail fee in the contract.
+
+이러한 작업들은 스팸을 방지하기 위해 고정된 가스 비용이 발생합니다.
+
+### 매개변수 이벤트
+
+* 검증자 수수료 업데이트: 검증자 수수료를 업데이트합니다.
+* 출금 주소 설정: 위임자는 향후 언스테이크/위임 취소를 위한 출금 주소를 수정할 수 있습니다.
+* 보상 주소 설정: 위임자는 향후 보상 발행을 위한 출금 주소를 수정할 수 있습니다.
+* 운영자 설정: 위임자는 위임, 위임 취소, 재위임 권한을 가진 운영자를 수정할 수 있습니다.
+* 운영자 해제: 위임자는 운영자를 제거할 수 있습니다.
+
+이러한 작업들은 스팸을 방지하기 위해 고정된 가스 비용이 발생합니다.
+
+## 출금
+
+두 출금 대기열은 다음 유형의 출금을 보유합니다:
+
+```protobuf protobuf
+message Withdrawal {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  uint64 creation_height = 1;
+  string execution_address = 2 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"execution_address\""
+  ];
+  uint64 amount = 3 [
+    (gogoproto.moretags) = "yaml:\"amount\""
+  ];
+  WithdrawalType withdrawal_type = 4 [
+    (gogoproto.moretags) = "yaml:\"withdrawal_type\""
+  ];
+  string validator_address = 5 [
+    (gogoproto.moretags) = "yaml:\"validator_address\""
+  ];
+}
+```
+
+* `creation_height`는 출금이 생성된 블록 높이입니다.
+* `execution_address`는 CL에서 소각되는 인출된 자금을 받는 EVM 주소입니다.
+* `amount`는 CL에서 소각하고 EL에서 발행할 금액입니다.
+* `withdrawal_type`는 인출 유형입니다: $0$는 언스테이킹, $1$는 보상, 그리고 $2$는 UBI입니다.
+* `validator_address`는 EVM 검증자 주소입니다.
+
+### 위임 인출하기
+
+14일의 언본딩 기간 후에 언본딩된 위임(즉, 언본딩된 항목들)은 각 블록의 끝에 (스테이크) 인출 대기열에 추가됩니다. 검증자가 완전히 언스테이킹된 경우, 즉 모든 위임과 자체 위임이 언본딩된 경우, 검증자의 수수료도 인출됩니다.
+
+### 보상 인출하기
+
+위임에 할당된 인플레이션 보상은 각 블록의 끝에 자동으로 수집됩니다. 위임의 누적 보상이 매개변수화된 임계값보다 큰 경우, 보상은 위임자의 EVM 보상 주소로 입금되기 위해 보상 인출 대기열에 추가됩니다.
+
+
+# 모듈 목록
+
+# 모듈 목록
+
+다음은 Story 블록체인에서 사용할 수 있는 모든 프로덕션 등급 모듈의 목록과 해당 문서입니다:
+
+* [evmengine](/network/node-architecture/cosmos-modules/evmengine-module) - Engine API를 통해 각 EVM 상태 전환에 대한 Cosmos 측 로직을 처리합니다[Engine API](/network/node-architecture/engine-api).
+* [evmstaking](/network/node-architecture/cosmos-modules/evmstaking-module) - 큐를 사용하여 스테이킹 및 네트워크 발행 로직을 처리합니다.
+* [mint](/network/node-architecture/cosmos-modules/mint-module)
+
+## Cosmos SDK (수정됨)
+
+Story 네트워크는 다음 Cosmos SDK 모듈을 일부 수정하여 사용합니다:
+
+* [staking](/network/node-architecture/cosmos-modules/staking-module)
+* [distribution](https://docs.cosmos.network/main/build/modules/distribution)
+
+## Cosmos SDK (수정되지 않음)
+
+Story 네트워크는 다음 Cosmos SDK 모듈을 중요한 수정 없이 사용합니다:
+
+* [auth](https://docs.cosmos.network/main/build/modules/auth)
+* [bank](https://docs.cosmos.network/main/build/modules/bank)
+* [consensusparams](https://docs.cosmos.network/main/build/modules/consensus)
+* [gov](https://docs.cosmos.network/main/build/modules/gov)
+* [slashing](https://docs.cosmos.network/main/build/modules/slashing)
+* [upgrade](https://docs.cosmos.network/main/build/modules/upgrade)
+
+
+# staking
+
+## 개요
+
+스테이킹 모듈은 아래의 변경 사항을 수용하도록 수정되었습니다. 자세한 정보는 Cosmos SDK의 [스테이킹 모듈 문서](https://docs.cosmos.network/main/build/modules/staking)를 참조하세요.
+
+## 보상 승수
+
+### 검증인
+
+검증인은 잠긴 토큰 또는 잠기지 않은 토큰을 위임으로 받아들일 수 있습니다. 잠긴 토큰에 대한 검증인은 잠기지 않은 토큰에 대한 검증인의 인플레이션 할당의 절반으로 제한됩니다.
+
+각 검증인이 위임에 따라 다른 인플레이션 분배를 받기 때문에, 검증인 v<sub>v<sub>i</sub></sub>에 대한 검증인 v<sub>i</sub>의 보상 풀에서의 인플레이션 분배 I
+
+<Image align="center" src="https://files.readme.io/3ee4914a7cc6036ceebbdd31ce93e525984a08364f8c3ab2152b86b3bcd5df7e-Screenshot_2025-02-11_at_8.30.07_AM.png" />
+
+여기서
+
+* I<sub>v<sub>i</sub></sub>는 v<sub>i</sub>
+* S<sub>v<sub>i</sub></sub>는 v<sub>i</sub>
+* M<sub>v<sub>i</sub></sub>는 v<sub>i</sub>
+  * 잠긴 토큰의 경우 0.5
+  * 잠기지 않은 토큰의 경우 1
+* R<sub>n</sub>은 [mint](/network/node-architecture/cosmos-modules/mint-module) 모듈
+
+### 위임
+
+위임자는 네 가지 다른 스테이킹 잠금 시간으로 위임할 수 있으며, 이는 각 위임(위임자-검증인 쌍의 스테이크)에 대해 다른 스테이킹 보상 승수를 초래합니다. 각 위임 D<sub>i</sub>에 대한 인플레이션 분배는 다음과 같이 계산됩니다:
+
+<Image align="center" src="https://files.readme.io/002ae69aa3b3e52a33747452fe0c0b91b9120f20155deb19b56fb7917132b8de-Screenshot_2025-02-11_at_8.34.44_AM.png" />
+
+여기서
+
+* S<sub>d<sub>i</sub></sub>는 검증인 v<sub>i</sub>에 대한 위임 d<sub>d</sub>
+* M<sub>d<sub>i</sub></sub>는 d의 보상 승수입니다<sub>i</sub> on v<sub>d</sub>
+* I<sub>v</sub>는 v에 대한 총 인플레이션 토큰 보상입니다<sub>d</sub>
+* C<sub>v</sub>는 v에 대한 수수료율입니다<sub>d</sub>
+
+#### 시간 가중 보상 승수 M<sub>d<sub>i</sub></sub>
+
+* *유연* (락업 없음): 1
+* *단기* (90일): 1.1
+* *중기* (360일): 1.5
+* *장기* (540일): 2.0
+
+
+# evmengine
+
+## 개요
+
+이 문서는 Story 블록체인의 내부`x/evmengine` 모듈을 명시합니다.
+
+Story Network는 Ethereum과 같이 합의 클라이언트와 실행 클라이언트를 분리하므로, 합의 클라이언트(CL)와 실행 클라이언트(EL)는 네트워크와 동기화하고, 적절한 EVM 블록을 제안하며, CL에서 EVM 트리거된 EL 액션을 실행하기 위해 통신해야 합니다.
+
+이 모듈은 스테이킹과 업그레이드부터 CL과 EL에서의 블록 생성 및 합의 주도까지,[Engine API](/network/node-architecture/engine-api)를 사용하여 CL과 EL 사이의 모든 통신을 용이하게 하기 위해 존재합니다.
+
+## 목차
+
+1. **[상태](#state)**
+2. **[제안 준비](#prepare-proposal)**
+3. **[제안 처리](#process-proposal)**
+4. **[최종화 후](#post-finalize)**
+5. **[메시지](#messages)**
+6. **[UBI](#ubi)**
+7. **[업그레이드](#upgrades)**
+
+## 상태
+
+### 빌드 지연
+
+Type: `time.Duration`
+
+빌드 지연은 ABCI2 호출의 시작부터`PrepareProposal`Engine API를 통해 EL로부터 다음 EVM 블록 데이터를 제안하기 위해 가져오기 전까지의 대기 시간을 결정합니다.[Engine API](/network/node-architecture/engine-api)현재 제안자에게만 적용됩니다. 노드가 사전에 낙관적으로 블록을 구축한 경우 빌드 지연은 사용되지 않습니다.
+
+### 낙관적 빌드
+
+Type: `bool`
+
+true인 경우 블록의 낙관적 빌드를 활성화합니다. 노드는 현재 블록에서 자신이 다음 제안자라는 것을 발견하면 결정론적으로 다음 블록을 구축합니다. 낙관적 빌드는 ABCI2의`FinalizeBlock` 직후 즉시 다음 EVM 블록 데이터(다음 CL 블록용)를 요청하는 것으로 시작됩니다.
+
+### 헤드 테이블
+
+Type: `ExecutionHeadTable`
+
+헤드 테이블은 다른 검증인들로부터 받은 EVM 블록의 부분 검증에 사용될 최신 실행 헤드 데이터를 저장합니다. 체인이 초기화될 때, 실행 헤드는`genesis.json`에서 로드된 제네시스 실행 해시로 채워집니다.
+
+다음 실행 헤드가 테이블에 저장됩니다.
+
+```protobuf protobuf
+message ExecutionHead {
+  option (cosmos.orm.v1.table) = {
+    id: 1;
+    primary_key: { fields: "id", auto_increment: true }
+  };
+
+  uint64 id               = 1; // Auto-incremented ID (always and only 1).
+  uint64 created_height   = 2; // Consensus chain height this execution block was created in.
+  uint64 block_height     = 3; // Execution block height.
+  bytes  block_hash       = 4; // Execution block hash.
+  uint64 block_time       = 5; // Execution block time.
+}
+```
+
+### 업그레이드 컨트랙트
+
+Type: `*bindings.UpgradeEntrypoint`
+
+업그레이드 컨트랙트는 EL에서 업그레이드 관련 이벤트를 필터링하고 파싱하는 데 사용됩니다.
+
+### UBI 컨트랙트
+
+Type: `*bindings.UBIPool`
+
+UBI 컨트랙트는 EL에서 UBI 관련 이벤트를 필터링하고 파싱하는 데 사용됩니다.
+
+### 가변 페이로드
+
+Type: struct
+
+가변 페이로드는 낙관적 빌드가 활성화된 경우 낙관적으로 구축된 블록을 저장합니다.
+
+#### 제네시스 상태
+
+모듈의 GenesisState는`GenesisState`이전에 내보낸 높이에서 체인을 초기화하는 데 필요한 상태를 정의합니다.
+
+```protobuf protobuf
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message Params {
+  bytes execution_block_hash = 1 [
+    (gogoproto.moretags) = "yaml:\"execution_block_hash\""
+  ];
+}
+```
+
+## 제안 준비
+
+각 블록에서 노드가 제안자인 경우, ABCI2는 PrepareProposal을 트리거하며 이는`PrepareProposal`다음을 수행합니다:
+
+1. evmstaking 모듈에서 스테이킹 및 보상 인출을 로드합니다.[evmstaking](/network/node-architecture/cosmos-modules/evmstaking-module) 모듈.
+2. 유효한 EVM 블록을 구축합니다.
+   * 낙관적 빌드의 경우: 낙관적으로 구축된 블록을 로드합니다.
+   * Non-optimistic: requests and retrieves an EVM block from EL.
+3. 이전/부모 블록의 EVM 로그를 수집합니다.
+4. 구축된 EVM 블록과 이전 EVM 로그로`MsgExecutionPayload`EVMBlockData를 조립합니다.
+5. 조립된 EVMBlockData를 포함하는 트랜잭션을 반환합니다.`MsgExecutionPayload` 데이터.
+
+이 CL 블록은 그 후 모든 다른 검증인들에게 전파됩니다.
+
+## 제안 처리
+
+각 블록에서 노드가 제안자가 아니라 검증인인 경우, ABCI2는 ProcessProposal을 트리거하며`ProcessProposal`이는 받은 커밋(정직한 경우 EVMBlockData 데이터의 트랜잭션이어야 함)과 함께 호출됩니다.`MsgExecutionPayload` 데이터의 트랜잭션이어야 함).
+
+노드는 먼저 받은 커밋이 최소 2/3의 투표가 커밋된 하나의 트랜잭션만 포함하고 있는지 검증합니다. 그런 다음, 노드는 그 하나의 트랜잭션이 하나의 언마샬된 EVMBlockData`MsgExecutionPayload`데이터만 포함하고 있는지 검증합니다. 마지막으로, 노드는 받은 데이터를 처리하고 네트워크에 제안 수락을 브로드캐스트합니다. 검증이나 처리 중 어느 것이라도 실패하면 노드는 제안을 거부합니다.
+
+더 구체적으로, 노드는 받은 EVMBlockData`MsgExecutionPayload`데이터를 다음과 같은 방식으로 처리합니다:
+
+1. 받은 EVMBlockData의 필드를 검증합니다`MsgExecutionPayload`(메시지 섹션에[메시지](#msgexecutionpayload)).
+2. 로컬 스테이크 및 보상 인출을 수신된 인출 데이터와 비교합니다.
+3. Engine API를 통해 수신된 실행 페이로드를 EL로 푸시하고 페이로드 검증을 기다립니다.
+4. EL forkchoice를 실행 페이로드의 블록 해시로 업데이트합니다.
+5. evmstaking 모듈을 사용하여 스테이킹 이벤트를 처리합니다[evmstaking](/network/node-architecture/cosmos-modules/evmstaking-module) 모듈.
+6. 업그레이드 이벤트를 처리합니다.
+7. 실행 헤드를 실행 페이로드(최종 확정된 블록)로 업데이트합니다.
+
+## 최종 확정 후
+
+낙관적 빌딩이 활성화된 경우,`PostFinalize` 직후에 트리거됩니다`FinalizeBlock` 사용자 정의 ABCI 콜백을 통해 설정됩니다. 이 과정에서 노드는 evmstaking 모듈에서 스테이킹 및 보상 대기열을 확인하고, 현재 실행 헤드 위에 새로운 실행 페이로드를 구축합니다. 다음 블록의`PrepareProposal` 단계에서 사용될 낙관적 블록을 설정하고 forkchoice 업데이트의 응답을 반환합니다.
+
+## 메시지
+
+이 섹션에서는 evmengine 메시지의 처리와 그에 따른 상태 업데이트에 대해 설명합니다. 각 메시지에 의해 생성/수정된 모든 상태 객체는 상태 섹션 내에 정의되어 있습니다.
+
+### MsgExecutionPayload
+
+```protobuf protobuf
+message MsgExecutionPayload {
+  option (cosmos.msg.v1.signer) = "authority";
+  string            authority           = 1;
+  bytes             execution_payload   = 2;
+  repeated EVMEvent prev_payload_events = 3;
+}
+
+message EVMEvent {
+  bytes          address = 1;
+  repeated bytes topics  = 2;
+  bytes          data    = 3;
+  bytes          tx_hash = 4;
+}
+```
+
+이 메시지는 다음과 같은 경우 실패할 것으로 예상됩니다:
+
+* 권한이 유효하지 않음 (evmengine 권한이 아님)
+* 실행 페이로드가 ExecutableData로 언마샬링되지 않음[ExecutableData](https://github.com/piplabs/story/blob/c38b80c13579d3df7174ea10c3368ef0692f52da/client/x/evmengine/types/executable_data.go#L17-L35) 유효하지 않은 필드와 같은 이유로
+* 실행 페이로드의 블록 번호가 CL 헤드의 블록 번호 + 1과 일치하지 않음
+* 실행 페이로드의 블록 부모 해시가 CL 헤드의 해시와 일치하지 않음
+* 실행 페이로드의 타임스탬프가 유효하지 않음
+* 실행 페이로드의 RANDAO가 CL 헤드의 해시(즉, 부모 해시)와 일치하지 않음
+* 실행 페이로드의`Withdrawals`,`BlobGasUsed`, 그리고`ExcessBlobGas` 필드가 nil임
+* 실행 페이로드의`Withdrawals` 수가 로컬 노드의 디큐된 스테이크 및 보상 인출의 합과 일치하지 않음
+
+메시지는 이전 블록의 이벤트를 포함해야 하며, 이는 현재 CL 블록에서 처리됩니다 (다시 말해, EL 블록 n-1의 실행 이벤트는 CL 블록 n에서 처리됩니다). 향후에는 메시지에서`prev_payload_events`를 제거하고[Engine API](/network/node-architecture/engine-api)를 사용하여 현재 최종 확정된 EL 블록의 이벤트를 가져올 것입니다.
+
+또한 EVM 이벤트는 EL에서 생성된 순서대로 CL에서 처리됩니다.
+
+## UBI
+
+모든 UBI 관련 변경사항은 EVM 실행 레이어의 표준 UBI 컨트랙트에서 트리거되어야 합니다. 이 모듈은 CL에서 이러한 트리거의 실행 처리를 담당합니다. 검증자를 위한 UBI에 대해 자세히 알아보세요[UBI for validators](/network/tokenomics-staking#ubi-for-validators)
+
+### UBI 분배 설정
+
+UBI`UBIPool` 컨트랙트는 UBI 분배 설정 이벤트를 발생시키며, 이는 모듈에 의해 파싱되어 분배 모듈의 UBI 퍼센티지를 설정합니다.
+
+## 업그레이드
+
+모든 체인 업그레이드 관련 로직은 EVM 실행 레이어의 표준 업그레이드 컨트랙트에서 트리거되어야 합니다. 이 모듈은 CL에서 이러한 트리거의 실행 처리를 담당합니다.
+
+### 소프트웨어 업그레이드
+
+업그레이드`UpgradeEntrypoint` 컨트랙트는 소프트웨어 업그레이드 이벤트를 발생시키며, 이는 모듈에 의해 파싱되어 주어진 높이에서 주어진 바이너리 이름에 대한 업그레이드를 예약합니다. 현재 모든 업그레이드는 포크를 통해 설정되거나 소프트웨어 업그레이드 이벤트를 통해 설정되어야 합니다. 후자의 과정은 다중 서명 제어 프로세스이며, 향후에는 투표 기반 프로세스로 전환될 예정입니다.
+
+### 업그레이드 취소
+
+소프트웨어 업그레이드와 유사하게, 모듈은 이전 블록의 EVM 로그에서 업그레이드 취소 이벤트를 처리하고 기존 업그레이드 계획을 제거합니다.
+
+
+# mint
+
+## 목차
+
+1. [목차](#contents)
+2. [상태](#state)
+3. [블록 시작](#begin-block)
+4. [매개변수](#parameters)
+5. [이벤트](#events)
+
+## 상태
+
+### 매개변수
+
+* Params: `mint/params -> legacy_amino(params)`
+
+```protobuf protobuf
+message Params {
+  option (amino.name) = "client/x/mint/Params";
+
+  // type of coin to mint
+  string mint_denom = 1;
+  // inflation amount per year
+  string inflations_per_year = 2 [
+    (cosmos_proto.scalar)  = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable)   = false
+  ];
+  // expected blocks per year
+  uint64 blocks_per_year = 3;
+}
+```
+
+## 블록 시작
+
+발행 매개변수는 각 블록의 시작에 계산되고 인플레이션이 지급됩니다.
+
+### 인플레이션 금액 계산
+
+인플레이션 금액은 "인플레이션 계산 함수"를 사용하여 계산됩니다. 이 함수는\
+&#x20;함수에 `NewAppModule` 전달됩니다. 함수가 전달되지 않으면 SDK의 기본 인플레이션 함수가 사용됩니다 (`DefaultInflationCalculationFn`). 사용자 정의 인플레이션 계산 로직이 필요한 경우, `InflationCalculationFn`의 서명과 일치하는 함수를 정의하고 전달하여 이를 달성할 수 있습니다.
+
+```go
+type InflationCalculationFn func(ctx sdk.Context, minter Minter, params Params, bondedRatio math.LegacyDec) math.LegacyDec
+```
+
+## 매개변수
+
+발행 모듈에는 다음과 같은 매개변수가 포함되어 있습니다:
+
+| 키                 | 타입              | 예시                  |
+| ----------------- | --------------- | ------------------- |
+| MintDenom         | string          | "stake"             |
+| InflationsPerYear | string (dec)    | "20000000000000000" |
+| BlocksPerYear     | string (uint64) | "10368000"          |
+
+* `MintDenom`는 사용되는 코인 분모입니다.
+* `InflationsPerYear`는 1e18 소수점으로 표현된 연간 목표 인플레이션입니다.
+* `BlocksPerYear`는 연간 목표 블록 수입니다.
+
+## 이벤트
+
+발행 모듈은 다음과 같은 이벤트를 발생시킵니다:
+
+### BeginBlocker
+
+| 타입   | 속성 키   | 속성 값   |
+| :--- | :----- | :----- |
+| mint | amount | "1000" |
+
+
+# Engine API
+
+엔진 API는 EVM 노드의 실행 계층(EL)과 합의 계층(CL) 간의 통신을 용이하게 하는 JSON-RPC 메서드 모음입니다. Story의 실행 계층은 완전한 EVM 호환성을 제공하며, [Ethereum Engine API](https://github.com/ethereum/execution-apis/blob/main/src/engine/common.md)에 정의된 모든 표준 JSON-RPC 메서드를 지원합니다. 한편, Cosmos 모듈을 기반으로 구축된 Story의 합의 계층은 실행 계층과 조정하기 위해 엔진 API를 활용합니다.
+
+## 기능
+
+엔진 API는 다음과 같은 필수적인 조정 메커니즘을 제공하여 EL과 CL 간의 원활한 상호 작용을 가능하게 합니다:
+
+* **핸드셰이크**
+* **동기화**
+* **블록 검증**
+* **블록 제안**
+
+## 실행 계층 구현
+
+Story의 EL은 이러한 기능을 지원하기 위해 다음과 같은 표준 엔진 API 메서드를 구현합니다:
+
+* `engine_exchangeCapabilities`: 지원되는 메서드를 교환합니다.
+* `engine_getClientVersion`: 클라이언트 버전 데이터를 교환합니다.
+* `engine_newPayload`: 주어진 페이로드를 로컬 체인에 삽입합니다.
+* `engine_forkchoiceUpdate`: 정규 체인 마커를 업데이트하고 주어진 속성으로 페이로드를 생성합니다.
+* `engine_getPayload`: 사전 생성된 페이로드를 검색합니다.
+
+## 합의 계층 상호 작용
+
+Story의 합의 계층(CL)은 이러한 메서드와 어떻게 상호 작용할까요? 답은 CometBFT ABCI++에 있습니다.
+
+CometBFT는 Cosmos 모듈에 대한 합의와 보안을 제공하는 상태 기계 복제 엔진입니다. ABCI++, 또는 ABCI 2.0으로도 알려진 이 인터페이스는 CometBFT와 실제로 복제되는 상태 기계(즉, EL의 상태 기계) 사이의 인터페이스입니다.
+
+ABCI++는 아래에 설명된 대로 Engine API와 상호 작용하는 일련의 메서드로 구성됩니다:
+
+### **1. PrepareProposal** (새 블록 제안)
+
+* CL은 페이로드가 이미 생성 중인지 `payloadID`를 사용하여 확인합니다.
+* 그렇지 않다면, CL은 `engine_forkchoiceUpdate`를 호출하여 새 페이로드 생성을 트리거합니다.
+* 그런 다음 CL은 `engine_getPayload`를 `payloadID`와 함께 호출하여 페이로드를 가져오고 새 블록을 제안합니다.
+
+### **2. ProcessProposal** (새 블록 처리)
+
+* CL은 `engine_newPayload`를 호출하여 새 블록을 EL에 전달합니다.
+* EL은 새 블록의 페이로드를 검증하고, 트랜잭션을 결정론적으로 실행하며 상태를 업데이트합니다.
+
+### **3. FinalizeBlock** (결정된 블록 최종화)
+
+* CL은 `engine_newPayload`를 호출하여 최종화된 블록을 EL에 전달합니다.
+* 블록이 아직 EL에 통합되지 않았다면, EL은 새 블록의 페이로드를 검증하고, 트랜잭션을 결정론적으로 실행하며 상태를 업데이트합니다.
+* CometBFT가 즉각적인 최종성을 제공하므로, CL은 `engine_forkchoiceUpdate`를 호출하여 블록을 최종화합니다.
+* 마지막으로, CL은 `engine_forkchoiceUpdate`를 다시 호출하며, 추가 속성과 함께 활성화된 경우 다음 블록의 최적화된 빌드를 시작하고, 검증자가 다음 제안자인 경우에도 이를 수행합니다.
+
+이러한 상호 작용은 EL과 CL 사이의 원활한 조정을 보장하여 Story의 블록체인 네트워크의 무결성과 효율성을 유지합니다.
+
+
+# Precompiles
+
+## 소개
+
+프리컴파일된 계약은 블록체인의 실행 계층에 직접 구현된 특수 스마트 계약입니다. EVM 바이트코드를 실행하는 사용자 배포 스마트 계약과 달리, 프리컴파일된 계약은 복잡한 암호화 및 계산 작업에 대해 최적화된 네이티브 구현을 제공합니다. 이는 효율성을 크게 향상시키고 가스 비용을 줄입니다. 프리컴파일된 계약은 실행 클라이언트 내의 고정된 주소에 존재하며, 각 프리컴파일은 계산 복잡성에 따라 미리 정의된 가스 비용을 가지고 있어 예측 가능한 실행 수수료를 보장합니다.
+
+Story Protocol은 두 가지 프리컴파일된 계약을 도입합니다:
+
+* `p256Verify` 프리컴파일은 secp256r1 타원 곡선에서의 서명 검증을 지원합니다.
+* `ipgraph` 프리컴파일은 온체인 지적 재산 관리를 향상시킵니다.
+
+또한, Story Protocol의 실행 계층은 모든 표준 EVM 프리컴파일된 계약을 지원하여 이더리움 기반 도구 및 애플리케이션과의 완전한 호환성을 보장합니다.
+
+## 사전 컴파일된 계약
+
+| 주소     | 기능                                    |
+| ------ | ------------------------------------- |
+| byte1  | `ecrecover`- ECDSA 서명 복구              |
+| byte2  | `sha256` - SHA-256 해시 계산              |
+| byte3  | `ripemd160` - RIPEMD-160 해시 계산        |
+| byte4  | `identity` - 항등 함수                    |
+| byte5  | `modexp` - 모듈러 지수                     |
+| byte6  | `bn256Add` - BN256 타원 곡선 덧셈           |
+| byte7  | `bn256ScalarMul` - BN256 타원 곡선 스칼라 곱셈 |
+| byte8  | `bn256Pairing` - BN256 타원 곡선 페어링 검사   |
+| byte9  | `blake2f` - Blake2 해시 함수              |
+| byte10 | `kzgPointEvaluation` - KZG 다항식 약정 평가  |
+| byte0  | `p256Verify` - Secp256r1 서명 검증        |
+| byte1  | `ipgraph` - 지적 재산권 관리                 |
+
+## p256Verify 사전 컴파일
+
+자세한 내용은 [RIP-7212](https://github.com/ethereum/RIPs/blob/master/RIPS/rip-7212.md)를 참조하세요.
+
+## IPgraph 사전 컴파일
+
+이 `ipgraph` 사전 컴파일은 가스 비용을 최소화하면서 IP 관계와 로열티 구조의 효율적인 쿼리와 수정을 가능하게 합니다.
+
+이 사전 컴파일은 입력의 첫 4바이트인 함수 선택자를 기반으로 여러 기능을 제공합니다.
+
+| 함수 선택자                   | 설명                           | 가스 계산 공식                                              | 가스 비용                              |
+| :----------------------- | :--------------------------- | :---------------------------------------------------- | :--------------------------------- |
+| `addParentIp`            | 부모 IP 기록 추가                  | `intrinsicGas + (ipGraphWriteGas * parentCount)`      | 1100보다 큼                           |
+| `hasParentIp`            | IP가 다른 IP의 부모인지 확인           | `ipGraphReadGas * averageParentIpCount`               | 40                                 |
+| `getParentIps`           | 부모 IP 검색                     | `ipGraphReadGas * averageParentIpCount`               | 40                                 |
+| `getParentIpsCount`      | 부모 IP 수 가져오기                 | `ipGraphReadGas`                                      | 10                                 |
+| `getAncestorIps`         | 조상 IP 검색                     | `ipGraphReadGas * averageAncestorIpCount * 2`         | 600                                |
+| `getAncestorIpsCount`    | 조상 IP 수 가져오기                 | `ipGraphReadGas * averageParentIpCount * 2`           | 80                                 |
+| `hasAncestorIp`          | IP가 다른 IP의 조상인지 확인           | `ipGraphReadGas * averageAncestorIpCount * 2`         | 600                                |
+| `setRoyalty`             | IP의 로열티 세부 정보 설정             | `ipGraphWriteGas`                                     | 1000                               |
+| `getRoyalty`             | IP의 로열티 세부 정보 검색             | `varies by royalty policy`                            | LAP:900, LRP:620, other:1000       |
+| `getRoyaltyStack`        | IP의 로열티 스택 검색                | `varies by royalty policy`                            | LAP:50, LRP: 600, other:1000       |
+| `hasParentIpExt`         | 외부 호출을 통해 IP가 다른 IP의 부모인지 확인 | `ipGraphExternalReadGas * averageParentIpCount`       | 8400                               |
+| `getParentIpsExt`        | 외부 호출을 통해 부모 IP 검색           | `ipGraphExternalReadGas * averageParentIpCount`       | 8400                               |
+| `getParentIpsCountExt`   | 외부 호출을 통해 부모 IP 수 가져오기       | `ipGraphExternalReadGas`                              | 2100                               |
+| `getAncestorIpsExt`      | 외부 호출을 통해 조상 IP 검색           | `ipGraphExternalReadGas * averageAncestorIpCount * 2` | 126000                             |
+| `getAncestorIpsCountExt` | 외부 호출을 통해 조상 IP 수 가져오기       | `ipGraphExternalReadGas * averageParentIpCount * 2`   | 16800                              |
+| `hasAncestorIpExt`       | 외부 호출을 통해 IP가 다른 IP의 조상인지 확인 | `ipGraphExternalReadGas * averageAncestorIpCount * 2` | 126000                             |
+| `getRoyaltyExt`          | 외부 호출을 통해 IP의 로열티 세부 정보 검색   | `varies by royalty policy`                            | LAP:189000, LRP:130200, other:1000 |
+| `getRoyaltyStackExt`     | 외부 호출을 통해 IP의 로열티 스택 검색      | `varies by royalty policy`                            | LAP:10500, LRP:126000, other:1000  |
+
+로열티 정책에 대한 자세한 정보는 [로열티 모듈](/concepts/royalty-module)을 참조하세요.
+
+
+# Welcome to Story Network
+
+<CardGroup cols={2}>
+  <Card title="Story 메인넷 추가" href="https://chainid.network/chain/1514/" icon="house">
+    Story의 메인넷에 지갑을 연결하세요.
+  </Card>
+
+  <Card title="Story 'Aeneid' 테스트넷 추가" href="https://chainid.network/chain/1315/" icon="house">
+    Story의 'Aeneid' 테스트넷에 지갑을 연결하세요.
+  </Card>
+</CardGroup>
+
+# Story Network (L1)
+
+Story Chain인 Story Network의 허브에 오신 것을 환영합니다.
+
+이 섹션은 Story Network의 기본 사항을 이해하는 데 도움이 되도록 설계되었습니다. 우리는 내용을 두 부분으로 구성했습니다:
+
+1. 아키텍처 이해하기
+2. 노드 운영하기
+
+Story Network는 Ethereum Virtual Machine (EVM)과 Cosmos SDK의 장점을 원활하게 통합한 목적 지향적인 Layer 1 블록체인입니다. 완전한 EVM 호환성을 제공하면서 그래프 기반 데이터 구조를 효율적으로 지원하기 위한 깊은 실행 계층 최적화를 통합합니다. 이러한 최적화는 복잡한 지적 재산권(IP) 데이터 구조를 비용 효율적이고 확장 가능한 방식으로 처리하는 데 특히 적합합니다.
+
+<Frame>
+  <iframe src="https://www.youtube.com/embed/JWd5TCOHfhU" title="YouTube 비디오 플레이어" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen className="w-full aspect-video" />
+</Frame>
+
+## 주요 특징
+
+* **EVM 호환성**: Ethereum Virtual Machine과 완전한 호환성
+* **최적화된 데이터 구조**: 효율적인 IP 그래프 탐색을 위한 사전 컴파일된 프리미티브
+* **빠른 완결성**: 빠른 트랜잭션 완결성을 위한 CometBFT 기반 합의 계층
+* **모듈식 아키텍처**: Ethereum의 Engine-API를 사용하여 합의와 실행을 분리
+
+## 문서 섹션
+
+### 시작하기
+
+* [노드 아키텍처](/network/node-architecture)
+* [네트워크 정보](/network/network-info)
+* [백서](https://www.story.foundation/whitepaper.pdf)
+
+### 노드 운영
+
+* [노드 운영하기](/network/operating-a-node)
+  * 전체 노드 설정
+  * 아카이브 노드 설정
+  * 노드 업그레이드 가이드
+  * 릴리스 노트
+
+### 검증
+
+* [검증자 되기](/network/become-a-validator)
+  * 검증자 설정
+  * 검증자 운영
+
+### 네트워크 경제
+
+* [스테이킹 설계](/network/tokenomics-staking)
+  * 토큰 경제
+  * 스테이킹 메커니즘
+  * 보상 구조
+
+### 리소스
+
+* [추가 리소스](/network/more/additional-resources)
+  * GitHub 저장소
+  * SIP 저장소
+  * 커뮤니티 포럼
+* [문제 해결](/network/more/troubleshooting)
+  * 일반적인 문제
+  * 문제 해결
+  * 모범 사례
+
+## 네트워크 정보
+
+Story Network는 현재 여러 환경에서 사용할 수 있습니다:
+
+* 메인넷 (프로덕션)
+* Aeneid (테스트넷)
+* 로컬넷 (개발)
+
+자세한 네트워크 정보와 연결 세부 사항은 각 네트워크 문서 섹션을 참조하세요.
+
+
+# Become a Validator
+
+## 빠른 링크
+
+<CardGroup cols={2}>
+  <Card title="Story Geth 릴리스" icon="github" href="https://github.com/piplabs/story-geth/releases">
+    최신 Story Geth 클라이언트 릴리스 다운로드
+  </Card>
+
+  <Card title="Story 릴리스" icon="github" href="https://github.com/piplabs/story/releases/">
+    최신 Story 합의 클라이언트 릴리스 다운로드
+  </Card>
+</CardGroup>
+
+# 개요
+
+이 섹션에서는 자신의 validator를 실행하는 방법을 안내합니다. Validator 작업은`story` 합의 클라이언트를 통해 수행할 수 있습니다.
+
+<Note>
+  아래 작업은 노드를 실행할 필요가 없습니다! 그러나 스테이킹 보상에 참여하려면 validator 노드를 실행해야 합니다.
+</Note>
+
+진행하기 전에 delegator와 validator의 차이점을 숙지하는 것이 중요합니다:
+
+* A **validator**는 합의에 참여하는 전체 노드로, 서명된 키가`priv_validator_key.json` 파일에 있습니다.`story` 데이터 디렉토리 아래에 있습니다. validator 키 세부 정보를 출력하려면[validator 키 내보내기 섹션](/network/become-a-validator#validator-key-export)
+* A **delegator**는 IP를 보유하고`IP` 합의 보상에 참여하고자 하지만 직접 validator를 실행할 필요가 없는 계정 운영자를 말합니다.
+
+Story 바이너리가 있는 폴더에`story` 파일을 추가하고`.env` 계정에`PRIVATE_KEY` IP가 충전된`IP` 계정을 추가하세요.**아래의 모든 작업에 delegator 계정을 사용하는 것을 권장합니다.**
+
+<Note>
+  validator 자체로 트랜잭션을 발행할 수도 있습니다. validator에 해당하는 EVM
+  개인 키를 얻으려면[Validator
+  키 내보내기](#validator-key-export) 섹션을 참조하세요.
+</Note>
+
+password.txt`.env` 파일은 다음과 같아야 합니&#xB2E4;*(0x 접두사를 추가하지 않도록 주의하세요):*
+
+```bash
+# ~/.env
+PRIVATE_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+이제 다양한 validator 작업을 수행할 준비가 되었습니다! 아래에서 CLI를 통해 지원되는 모든 작업을 안내해 드리겠습니다:
+
+## Validator 키 내보내기
+
+기본적으로 Story를 실행하면`./story init` validator 키가 생성됩니다. validator 키를 보려면 다음 명령을 실행하세요:
+
+```bash
+./story validator export [flags]
+```
+
+이 명령은 압축 및 비압축 형식으로 validator 공개 키 파일을 출력합니다. 기본적으로 공개 식별을 위해 16진수로 인코딩된 압축 키를 사용합니다.
+
+```text
+Compressed Public Key (hex): 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984
+Compressed Public Key (base64): A73HuJQLq+kibVLX+imaH689ZKgvgJiJJWyPFGlYpjmE
+Uncompressed Public Key (hex): 04bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a6398496b9e2af0a3a1d199c3cc1d09ee899336a530c185df6b46a9735b25e79a493af
+EVM Address: 0x9EacBe2C3B1eb0a9FC14106d97bd3A1F89efdDCc
+Validator Address: storyvaloper1p470h0jtph4n5hztallp8vznq8ehylsw9vpddx
+Delegator Address: story1p470h0jtph4n5hztallp8vznq8ehylswtr4vxd
+```
+
+**사용 가능한 플래그:**
+
+* `--export-evm-key`: (문자열) validator의 파생된 EVM 개인 키를 기본 데이터 구성 디렉토리로 내보냅니다
+* `--export-evm-key-path`: (문자열) validator의 파생된 EVM 개인 키에 대해 다른 다운로드 위치를 지정합니다
+* `--keyfile`: (문자열) Tendermint 키 파일 경로 (기본값 "/home/ubuntu/.story/story/config/priv\_validator\_key.json")
+
+<Tip>
+  delegator가 아닌 validator로 트랜잭션을 발행하려면
+  키를 password.txt`.env` 파일로 내보내고 IP가
+  전송되었는지 확인하세요. 예를 들어`./story validator export --export-evm-key --evm-key-path
+    .env`
+</Tip>
+
+## Validator 생성
+
+새 validator를 생성하려면 다음 명령을 실행하세요:
+
+```bash Locked token node
+./story validator create
+			 --stake ${AMOUNT_TO_STAKE_IN_WEI} \
+			 --moniker ${VALIDATOR_NAME} \
+       --rpc ${rpc} \
+		   --chain-id ${chain_id} \
+			 --commission-rate ${rate} \
+ 			 --unlocked=false
+```
+
+```Text Unlocked token node
+./story validator create
+			 --stake ${AMOUNT_TO_STAKE_IN_WEI} \
+			 --moniker ${VALIDATOR_NAME} \
+       --rpc ${rpc} \
+		   --chain-id ${chain_id} \
+			 --commission-rate ${rate} \
+```
+
+이 명령은 priv\_validator\_key.json에 저장된 validator 키에 해당하는 validator를 생성하고,`priv_validator_key.json` validator에게 자체 스테이킹을 위한`{$AMOUNT_TO_STAKE_IN_WEI}` IP를 제공합니다.
+
+<Note>
+  합의에 참여하려면 최소 1024 IP가 스테이킹되어야 합니다 (이는`1024000000000000000000 wei`에 해당합니다)!
+</Note>
+
+아래는 validator 설정을 추가로 사용자 정의할 수 있는 선택적 플래그 목록입니다:
+
+**사용 가능한 플래그:**
+
+* `--stake`: validator가 자체 위임할 금액을 wei 단위로 설정합니다 (기본값은`1024000000000000000000` wei입니다).
+* `--moniker`: 네트워크의 사용자에게 표시되는 validator의 사용자 정의 이름을 정의합니다.
+* `--chain-id`: 트랜잭션의 Chain ID를 지정합니다. 기본값은`1516`입니다.
+* `--commission-rate`: validator의 수수료율을 bips 단위로 설정합니다 (1% = 100 bips). 예를 들어,`1000`는 10% 수수료를 나타냅니다 (기본값은`1000`입니다).
+* `--explorer`: 블록체인 탐색기의 URL을 지정합니다 (기본값:[https://www.storyscan.io](https://www.storyscan.io)).
+* `--keyfile`: Tendermint 키 파일의 경로를 지정합니다 (기본값:`$HOME/.story/story/config/priv_validator_key.json`).
+* `--max-commission-change-rate`: validator의 수수료가 변경될 수 있는 최대 비율을 bips 단위로 설정합니다. 예를 들어,`100`는 최대 1% 변경을 나타냅니다 (기본값은`1000`입니다).
+* `--max-commission-rate`: validator가 부과할 수 있는 최대 수수료율을 bips 단위로 정의합니다. 예를 들어,`5000`는 50% 최대 비율을 허용합니다 (기본값은`5000`입니다).
+* `--private-key`: 트랜잭션 서명에 지정된 개인 키를 사용합니다. 설정하지 않으면`priv_validator_key.json`의 키가 사용됩니다.
+* `--rpc`: 네트워크에 연결할 RPC URL을 설정합니다 (기본값:[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)).
+* `--unlocked`: 잠금 해제된 토큰 스테이킹이 지원되는지 결정합니다 (`true`는 잠금 해제된 스테이킹,`false`는 잠긴 스테이킹). 기본값은`true`입니다.
+* `--story-api`: 잠재적인 자금 손실을 방지합니다. 기본적으로`http://localhost:1317`값을 설정해야 합니다
+
+### 생성 명령 사용 예시
+
+```bash
+story validator create
+	--stake 1024000000000000000000
+  --moniker "timtimtim"
+  --commission-rate 700
+  --validator-pubkey "<validator_pubkey>" # if you dont have a .env
+  --rpc "https://mainnet.storyrpc.io"
+	--chain-id 1514
+```
+
+### validator 확인하기
+
+생성되면 다음을 사용하여`Explorer URL`트랜잭션을 확인하세요. 성공하면 귀하의 validator 공개 키(*에서 찾을 수 있음`priv_validator_key.json` 파일)*&#xAC00; 다음 엔드포인트의 일부로 나열되어 있는 것을 볼 수 있습니다:
+
+```bash
+curl https://testnet.storyrpc.io/validators | jq .
+```
+
+축하합니다, 이제 당신은 Story의 최초 IP validator 중 한 명입니다!
+
+## Validator 스테이킹
+
+기존 validator에 스테이킹하려면 다음 명령을 실행하세요:
+
+```bash
+./story validator stake \
+   --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+   --stake ${AMOUNT_TO_STAKE_IN_WEI}
+   --staking-period ${STAKING_PERIOD}
+```
+
+* 귀하의 고유한`${VALIDATOR_PUB_KEY_IN_HEX}`는 다음 명령을 실행하여 찾을 수 있습니다`./story validator export` 명령을`Compressed Public Key (hex)`로.
+* 트랜잭션이 유효하려면 최소 1024 IP 가치(`*1024000000000000000000 wei`)를 스테이킹해야 합니다
+
+스테이킹이 완료되면`Explorer URL`를 사용하여 트랜잭션을 확인할 수 있습니다. 앞서 언급했듯이, 우리의[validator 엔드포인트](https://mainnet.storyrpc.io/validators)를 사용하여 validator의 새로운 투표 권한을 확인할 수 있습니다.
+
+**사용 가능한 플래그:**
+
+* `--validator-pubkey`: (문자열) 스테이킹할 validator의 공개 키
+* `--stake`: (문자열) wei 단위로 스테이킹할 IP 양
+* `--chain-id`: (정수) 트랜잭션에 사용할 체인 ID (기본값: 1514)
+* `--explorer`: (문자열) 블록체인 탐색기의 URL
+* `--help`,`-h`: stake 명령에 대한 도움말 정보 표시
+* `--private-key`: (문자열) 트랜잭션에 사용되는 개인 키
+* `--rpc`: (문자열) 네트워크에 연결할 RPC URL
+* `--staking-period`: (stakingPeriod) 스테이킹 기간 (옵션: "flexible", "short", "medium", "long") (기본값: flexible)
+* `--story-api`: 잠재적인 자금 손실 방지. 기본적으로`http://localhost:1317`를 값으로 설정해야 합니다
+
+### 스테이킹 명령 사용 예시
+
+```bash
+./story validator stake \
+  --validator-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
+  --stake 1024000000000000000000
+  --staking-period "short"
+```
+
+## Validator 언스테이킹
+
+validator에서 언스테이킹하려면 다음 명령을 실행하세요:
+
+```bash
+./story validator unstake \
+  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+  --unstake ${AMOUNT_TO_UNSTAKE_IN_WEI} \
+	--delegation-id ${ID_STAKING_PERIOD}
+```
+
+이것은 선택한 validator에서`${AMOUNT_TO_UNSTAKE_IN_WEI}` IP를 언스테이킹합니다. 트랜잭션이 유효하려면 최소 1024 IP 가치(`*1024000000000000000000 wei`)를 언스테이킹해야 합니다.
+
+스테이킹 작업과 마찬가지로`Explorer URL`를 사용하여 트랜잭션을 확인하고 우리의[validator 엔드포인트](https://mainnet.storyrpc.io/validators)를 사용하여 validator의 새로 감소된 투표 권한을 다시 확인하세요.
+
+**사용 가능한 플래그:**
+
+* `--chain-id`: (정수) 트랜잭션에 사용할 체인 ID (기본값: 1514)
+* `--delegation-id`: (uint32) 위임 ID (유연한 스테이킹의 경우 0)
+* `--explorer`: (문자열) 블록체인 탐색기의 URL (기본값: "[https://www.storyscan.io](https://www.storyscan.io)")
+* `--help`,`-h`: unstake 명령에 대한 도움말
+* `--private-key`: (문자열) 트랜잭션에 사용되는 개인 키
+* `--rpc`: (문자열) 네트워크에 연결할 RPC URL (기본값: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+* `--unstake`: (문자열) wei 단위로 언스테이킹할 양
+* `--validator-pubkey`: (문자열) Validator의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--story-api`: 잠재적인 자금 손실 방지. 기본적으로`http://localhost:1317`를 값으로 설정해야 합니다
+
+### 언스테이킹 명령 사용 예시
+
+```bash
+./story validator unstake \
+   --validator-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
+   --unstake 1024000000000000000000 \
+   --delegation-id 1
+```
+
+## Validator 대리 스테이킹
+
+다른 위임자를 대신하여 스테이킹하려면 다음 명령을 실행하세요:
+
+```bash
+./story validator stake-on-behalf \
+  --delegator-address ${DELEGATOR_EVM} \
+  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+  --stake ${AMOUNT_TO_STAKE_IN_WEI} \
+  --staking-period ${STAKING_PERIOD} \
+  --rpc
+  --chain-id
+```
+
+이것은 제공된 위임자를 대신하여`${AMOUNT_TO_STAKE_IN_WEI}` IP를 validator에게 스테이킹합니다. 트랜잭션이 유효하려면 최소 1024 IP 가치(`*1024000000000000000000 wei`)를 스테이킹해야 합니다.
+
+다른 스테이킹 작업과 마찬가지로`Explorer URL`를 사용하여 트랜잭션을 확인하고 우리의[validator 엔드포인트](https://mainnet.storyrpc.io/validators)를 사용하여 validator의 증가된 투표 권한을 다시 확인하세요.
+
+**사용 가능한 플래그:**
+
+* `--chain-id`: (정수) 트랜잭션에 사용할 체인 ID (기본값: 1514)
+* `--delegator-address`: (문자열) 위임자의 EVM 주소
+* `--explorer`: (문자열) 블록체인 탐색기의 URL (기본값: "[https://www.storyscan.io](https://www.storyscan.io)")
+* `--help`,`-h`: stake-on-behalf 명령에 대한 도움말
+* `--private-key`: (문자열) 트랜잭션에 사용되는 개인 키
+* `--rpc`: (문자열) 네트워크에 연결할 RPC URL (기본값: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+* `--stake`: (문자열) validator가 자체 위임할 wei 단위의 양
+* `--staking-period`: (stakingPeriod) 스테이킹 기간 (옵션: "flexible", "short", "medium", "long") (기본값: flexible)
+* `--validator-pubkey`: (문자열) Validator의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--story-api`: 잠재적인 자금 손실 방지. 기본적으로`http://localhost:1317`를 값으로 설정해야 합니다
+
+### 대리 스테이킹 명령 사용 예시
+
+```bash
+./story validator stake-on-behalf \
+   --delegator-address 0xF84ce113FCEe12d78Eb41590c273498157c91520 \
+   --validator-pubkey 03e42b4d778cda2f3612c85161ba7c0aad1550a872f3279d99e028a1dfa7854930 \
+   --stake 1024000000000000000000 \
+   --staking-period "short" \
+	 --rpc \
+   --chain-id
+```
+
+## Validator 대리 언스테이킹
+
+위임자를 대신하여 언스테이킹할 수도 있습니다. 그러나 이를 위해서는 해당 위임자의 승인된 운영자로 등록되어 있어야 합니다. 운영자로서 다른 위임자를 대신하여 언스테이킹하려면 다음 명령을 실행하세요:
+
+```bash
+./story validator unstake-on-behalf \
+  --delegator-address ${DELEGATOR_PUB_KEY_IN_HEX} \
+  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+  --unstake ${AMOUNT_TO_STAKE_IN_WEI} \
+  --rpc \
+  --chain-id
+```
+
+이것은 위임자를 대신하여`${AMOUNT_TO_STAKE_IN_WEI}` IP를 validator에서 언스테이킹합니다. 단, 해당 위임자의 등록된 운영자여야 합니다. 트랜잭션이 유효하려면 최소 1024 IP 가치(`*1024000000000000000000 wei`)를 언스테이킹해야 합니다.
+
+다른 스테이킹 작업과 마찬가지로, `Explorer URL`를 사용하여 트랜잭션을 확인하고 우리의 [validator endpoint](https://mainnet.storyrpc.io/validators)를 사용하여 검증인의 감소된 투표력을 다시 확인하세요.
+
+**사용 가능한 플래그:**
+
+* `--chain-id`: (int) 트랜잭션에 사용할 체인 ID (기본값: 1514)
+* `--delegator-address`: (string) 위임자의 EVM 주소
+* `--explorer`: (string) 블록체인 탐색기의 URL (기본값: "[https://www.storyscan.io](https://www.storyscan.io)")
+* `--help`, `-h`: unstake-on-behalf 명령에 대한 도움말
+* `--private-key`: (string) 트랜잭션에 사용되는 개인 키
+* `--rpc`: (string) 네트워크에 연결할 RPC URL (기본값: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+* `--unstake`: (string) 언스테이크할 금액 (wei 단위)
+* `--validator-pubkey`: (string) 검증인의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--story-api`: 잠재적인 자금 손실을 방지합니다. 기본적으로 `http://localhost:1317`를 값으로 설정해야 합니다
+
+### Unstake-on-behalf 명령 사용 예시
+
+```bash
+./story validator unstake-on-behalf \
+   --delegator-address 0xF84ce113FCEe12d78Eb41590c273498157c91520 \
+   --validator-pubkey 03e42b4d778cda2f3612c85161ba7c0aad1550a872f3279d99e028a1dfa7854930 \
+   --unstake 1024000000000000000000 \
+   --rpc \
+   --chain-id
+```
+
+## 검증인 언제일
+
+검증인이 감금된 경우, 예를 들어 상당한 다운타임을 경험한 경우, 다음 명령을 사용하여 대상 검증인을 언제일할 수 있습니다:
+
+```Text Bash
+./story validator unjail \
+  --private-key ${PRIVATE_KEY} \
+  --rpc
+  --chain-id
+```
+
+트랜잭션이 유효하려면 트랜잭션을 제출하는 지갑에 최소 1 IP가 필요합니다.
+
+**사용 가능한 플래그:**
+
+* `--chain-id`: (int) 트랜잭션에 사용할 체인 ID
+* `--explorer`: (string) 블록체인 탐색기의 URL
+* `--private-key`: (string) 트랜잭션에 사용되는 개인 키
+* `--rpc`: (string) 네트워크에 연결할 RPC URL
+* `--story-api`: 잠재적인 자금 손실을 방지합니다. 기본적으로 `http://localhost:1317`를 값으로 설정해야 합니다
+
+### 언제일 명령 사용 예시
+
+```bash
+./story validator unjail \
+  --validator-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
+  --rpc \
+  --chain-id
+```
+
+## 검증인 대리 언제일
+
+권한이 있는 운영자인 경우, 다음 명령을 사용하여 검증인을 대신하여 언제일할 수 있습니다:
+
+```bash
+./story validator unjail-on-behalf \
+  --private-key ${PRIVATE_KEY} \
+  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+  --rpc \
+  --chain-id
+```
+
+**사용 가능한 플래그:**
+
+* `--chain-id`: (int) 트랜잭션에 사용할 체인 ID
+* `--explorer`: (string) 블록체인 탐색기의 URL
+* `--private-key`: (string) 트랜잭션에 사용되는 개인 키
+* `--rpc`: (string) 네트워크에 연결할 RPC URL
+* `--validator-pubkey`: (string) 검증인의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--story-api`: 잠재적인 자금 손실을 방지합니다. 기본적으로 `http://localhost:1317`를 값으로 설정해야 합니다
+
+### 대리 언제일 명령 사용 예시
+
+```bash
+./story validator unjail-on-behalf \
+  --private-key 0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef \
+  --validator-pubkey 03e42b4d778cda2f3612c85161ba7c0aad1550a872f3279d99e028a1dfa7854930 \
+  --rpc \
+  --chain-id
+```
+
+## 검증인 재위임
+
+한 검증인에서 다른 검증인으로 재위임하려면 다음 명령을 실행하세요:
+
+```bash
+./story validator redelegate \
+  --validator-src-pubkey ${VALIDATOR_SRC_PUB_KEY_IN_HEX} \
+  --validator-dst-pubkey ${VALIDATOR_DST_PUB_KEY_IN_HEX} \
+  --redelegate ${AMOUNT_TO_REDELEGATE_IN_WEI}
+  --rpc \
+  --chain-id
+```
+
+**사용 가능한 플래그:**
+
+* `--chain-id`: (int) 트랜잭션에 사용할 체인 ID (기본값 1514)
+* `--delegation-id`: (uint32) 위임 ID (유연한 스테이킹의 경우 0)
+* `--explorer`: (string) 블록체인 탐색기의 URL (기본값 "[https://www.storyscan.io](https://www.storyscan.io)")
+* `--help`, `-h`: 재위임 명령에 대한 도움말
+* `--private-key`: (string) 트랜잭션에 사용되는 개인 키
+* `--redelegate`: (string) 재위임할 금액 (wei 단위)
+* `--rpc`: (string) 네트워크에 연결할 RPC URL (기본값 "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+* `--validator-dst-pubkey`: (string) 목적지 검증인의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--validator-src-pubkey`: (string) 출발지 검증인의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--story-api`: 잠재적인 자금 손실을 방지합니다. 기본적으로 `http://localhost:1317`를 값으로 설정해야 합니다
+
+### 재위임 명령 사용 예시
+
+```bash
+./story validator redelegate \
+  --validator-src-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
+  --validator-dst-pubkey 02ed58a9319aba87f60fe08e87bc31658dda6bfd7931686790a2ff803846d4e59c \
+  --redelegate 1024000000000000000000 \
+  --rpc \
+  --chain-id
+```
+
+## 검증인 대리 재위임
+
+권한이 있는 운영자인 경우, 다음 명령을 사용하여 위임자를 대신하여 한 검증인에서 다른 검증인으로 재위임할 수 있습니다:
+
+```bash
+./story validator redelegate-on-behalf \
+  --delegator-address ${DELEGATOR_EVM_ADDRESS} \
+  --validator-src-pubkey ${VALIDATOR_SRC_PUB_KEY_IN_HEX} \
+  --validator-dst-pubkey ${VALIDATOR_DST_PUB_KEY_IN_HEX} \
+  --redelegate ${AMOUNT_TO_REDELEGATE_IN_WEI} \
+  --rpc \
+  --chain-id
+```
+
+**사용 가능한 플래그:**
+
+* `--chain-id`: (int) 트랜잭션에 사용할 체인 ID (기본값 1514)
+* `--delegation-id`: (uint32) 위임 ID (유연한 스테이킹의 경우 0)
+* `--delegator-address`: (string) 위임자의 EVM 주소
+* `--explorer`: (string) 블록체인 탐색기의 URL (기본값 "[https://www.storyscan.io](https://www.storyscan.io)")
+* `--help`, `-h`: redelegate-on-behalf 명령에 대한 도움말
+* `--private-key`: (string) 트랜잭션에 사용되는 개인 키
+* `--redelegate`: (string) 재위임할 금액 (wei 단위)
+* `--rpc`: (string) 네트워크에 연결할 RPC URL (기본값 "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+* `--validator-dst-pubkey`: (string) 목적지 검증인의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--validator-src-pubkey`: (string) 출발지 검증인의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--story-api`: 잠재적인 자금 손실을 방지합니다. 기본적으로 `http://localhost:1317`를 값으로 설정해야 합니다
+
+### 대리 재위임 명령 사용 예시
+
+```bash
+./story validator redelegate-on-behalf \
+  --delegator-address 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab \
+  --validator-src-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
+  --validator-dst-pubkey 02ed58a9319aba87f60fe08e87bc31658dda6bfd7931686790a2ff803846d4e59c \
+  --redelegate 1024000000000000000000 \
+  --rpc \
+  --chain-id
+```
+
+## 운영자 설정
+
+위임자는 자신을 대신하여 언스테이크하거나 재위임할 운영자를 추가할 수 있습니다. 운영자를 추가하려면 다음 명령을 실행하세요:
+
+* `--chain-id` int 트랜잭션에 사용할 체인 ID (기본값 1514)
+* `--explorer` string 블록체인 탐색기의 URL (기본값 "[https://www.storyscan.io](https://www.storyscan.io)")
+* `--operator` string 위임자에게 운영자를 설정합니다
+* `--private-key` string 트랜잭션에 사용되는 개인 키
+* `--rpc` string 네트워크에 연결할 RPC URL (기본값 "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+
+```bash
+./story validator set-operator \
+  --operator ${OPERATOR_EVM_ADDRESS} \
+  --rpc \
+  --chain-id \
+  --story-api ${STORY_API_URL}
+```
+
+트랜잭션이 유효하려면 트랜잭션을 제출하는 지갑에 최소 1 IP가 필요합니다.
+
+### 운영자 추가 명령어 사용 예시
+
+```bash
+./story validator set-operator \
+  --operator 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab \
+  --rpc \
+  --chain-id \
+  --story-api http://localhost:1317
+```
+
+## 운영자 해제
+
+운영자를 제거하려면 다음 명령어를 실행하세요:
+
+```bash
+./story validator unset-operator \
+  --operator ${OPERATOR_EVM_ADDRESS} \
+  --rpc \
+  --chain-id \
+  --story-api ${STORY_API_URL}
+```
+
+### 운영자 제거 명령어 사용 예시
+
+```bash
+./story validator remove-operator \
+  --operator 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab \
+  --rpc \
+  --chain-id \
+  --story-api http://localhost:1317
+```
+
+## 보상 주소 설정
+
+위임자가 스테이킹 및 출금 보상을 받는 주소를 변경하려면 다음을 실행할 수 있습니다:
+
+```bash
+./story validator set-rewards-address \
+  --rewards-address ${OPERATOR_EVM_ADDRESS} \
+  --story-api ${STORY_API_URL}
+```
+
+트랜잭션이 유효하려면 트랜잭션을 제출하는 지갑에 최소 1 IP가 필요합니다.
+
+### 출금 주소 설정 명령어 사용 예시
+
+```bash
+./story validator set-rewards-address \
+  --rewards-address 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab
+  --story-api http://localhost:1317
+```
+
+## 출금 주소 설정
+
+위임자가 스테이킹 및 출금 보상을 받는 주소를 변경하려면 다음을 실행할 수 있습니다:
+
+```bash
+./story validator set-withdrawal-address \
+  --withdrawal-address ${OPERATOR_EVM_ADDRESS} \
+  --story-api ${STORY_API_URL}
+```
+
+트랜잭션이 유효하려면 트랜잭션을 제출하는 지갑에 최소 1 IP가 필요합니다.
+
+### 출금 주소 설정 명령어 사용 예시
+
+```bash
+./story validator set-withdrawal-address \
+  --withdrawal-address 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab
+  --story-api http://localhost:1317
+```
+
+## 검증자 수수료 업데이트
+
+검증자의 수수료율을 변경하려면 다음을 실행할 수 있습니다:
+
+```
+./story validator update-validator-commission \
+		--commission-rate ${NEW_COMMISSION}
+```
+
+### 검증자 수수료 업데이트 예시
+
+```
+./story validator update-validator-commission \
+		--commission-rate 5000
+```
+
+## Story API 활성화
+
+Prerequisites:
+
+1. 전체 노드가 동기화되고 최신 블록과 일치하는지 확인하세요
+
+활성화 단계:
+
+1. 다음으로 이동 `${STORY_DATA_ROOT}/config/story.toml`
+2. 설정 `enable = true` 섹션 아래의 `[api]` 섹션
+3. 노드 재시작
+
+그런 다음 `http://localhost:1317` 를 `-story-api` 값으로 사용할 수 있습니다
+
+## 검증자를 다른 기계로 마이그레이션
+
+<Warning>
+  검증자 노드를 새 기계로 마이그레이션하기 전에 현재 노드가 완전히 종료되었는지 확인하세요. 활성 검증자를 복원하려고 하면 "이중 서명"이라는 중대한 오류가 발생할 수 있으며, 이는 위임된 지분이 삭감될 수 있습니다.
+</Warning>
+
+1. 검증자를 위한 새로운 환경을 구성하는 것부터 시작하세요. 새로운 전체 노드가 네트워크의 최신 블록과 완전히 동기화되었는지 확인하세요.
+2. 우발적인 이중 서명을 방지하기 위해, 새 인스턴스를 활성화하기 전에 원래 검증자 노드를 완전히 종료하는 것이 필수적입니다. 시스템 재부팅 후 자동으로 재시작되는 것을 방지하기 위해 Story 서비스 파일을 삭제하는 것을 권장합니다. 또한 `priv_validator_key.json` 와 `priv_validator_state.json` 를 백업하고 활성 검증자를 실행 중인 현재 서버에서 제거하세요. 이러한 단계를 건너뛰면 블록 누락이나 기타 페널티가 발생할 수 있습니다.
+
+```bash
+# Step 1: Stop the original validator node
+sudo systemctl stop <your_service_file_name>.service
+
+# Step 2: Disable the Story service to prevent automatic restarts
+sudo systemctl disable <your_service_file_name>.service
+
+# Step 3: Delete the Story service file to prevent it from starting on reboot
+sudo rm /etc/systemd/system/<your_service_file_name>.service
+
+# Step 4: Back up the `priv_validator_key.json` file securely, e.g., using SFTP:
+# Use an SFTP client or a secure method to download the file without displaying it in the terminal
+# If needed for verification purposes only, you may view it with the following command:
+cat ~/.story/story/config/priv_validator_key.json
+
+# Step 5: Remove the `priv_validator_key.json` file from the current server
+rm ~/.story/story/config/priv_validator_key.json
+```
+
+3. 새 기계의 `priv_validator_key.json` 와 `priv_validator_state.json` 를 `~/.story/story/config/` 디렉토리에서 찾으세요. 이 파일을 이전 검증자의 백업 복사본으로 교체하세요.
+
+<Warning>
+  진행하기 전에 원래 서버에서 이전 검증자를 종료하고 다시 시작하지 마세요!
+</Warning>
+
+4. 개인 키 파일을 전송한 후, 새 설정에서 검증자 노드를 재시작하세요. 이렇게 하면 검증자가 네트워크에 다시 통합되어 검증 역할을 재개할 수 있습니다.
+
+
+# Staking Design
+
+# 목적
+
+이 문서는 Story의 스테이킹 명세를 설명합니다. 목표는 네트워크 참여자와 기술 파트너에게 Story의 스테이킹 메커니즘이 어떻게 작동하는지, 그리고 사용자가 우리 체인과 어떻게 상호작용할 수 있는지에 대한 명확성을 제공하는 것입니다.
+
+# 토큰노믹스
+
+## 제네시스
+
+Story 제네시스 할당은 10억 개의 토큰으로 구성되며, 생태계 참여자, 재단, 투자자, 그리고 핵심 팀 사이에 분배됩니다. 자세한 내용은 이 문서를 참조하세요 [Token Distribution](https://www.story.foundation/blog/introducing-ip).
+
+## 잠긴 토큰 vs 잠기지 않은 토큰
+
+잠기지 않은 토큰은 제한이 없으며 가스 소비, 전송, 스테이킹에 사용할 수 있습니다.
+
+잠기지 않은 토큰과 달리, 잠긴 토큰은 전송하거나 거래할 수 없으며 잠금 해제 일정에 따라 잠금이 해제됩니다. 그러나 잠긴 토큰도 스테이킹하여 스테이킹 보상을 받을 수 있으며, 잠긴 스테이킹 보상 비율은 잠기지 않은 토큰의 절반입니다.
+
+스테이킹된 잠긴 토큰과 잠기지 않은 토큰은 동일한 투표력을 가집니다. 즉, 100개의 스테이킹된 잠긴 토큰을 가진 검증인은 100개의 스테이킹된 잠기지 않은 토큰을 가진 검증인과 동일한 네트워크 투표력을 가집니다.
+
+두 유형의 토큰 모두 검증인이 슬래시되면 슬래시될 수 있습니다.
+
+## 토큰 발행
+
+첫 해에는 제네시스 시점에 재단이 결정한 고정된 수의 토큰이 발행을 위해 할당됩니다. 이후 연도에는 발행되는 토큰의 수가 거버넌스를 통해 업데이트되거나 하드 포크를 통해 변경될 수 있는 매개변수를 가진 발행 알고리즘에 의해 제어됩니다. 블록당 발행량은 다음 두 매개변수에 의해 제어됩니다:
+
+* blocks\_per\_year: 10368000 블록
+  * 1년 동안 생성될 것으로 예상되는 블록 수
+* inflations\_per\_year: 20,000,000 토큰
+  * 1년 동안 발행될 인플레이션 토큰의 총 수
+
+새로운 발행은 두 곳으로 흐릅니다:
+
+1. 블록 보상
+2. 커뮤니티 풀
+
+## 토큰 소각
+
+Story는 실행 클라이언트로 geth의 포크를 사용하므로, 소각 메커니즘은 Ethereum의 EIP-1559를 따릅니다.
+
+# 스테이킹
+
+> 🔗 [Stake with the Staking Dashboard ↗️](https://staking.story.foundation/)
+
+Story는 다음과 같은 스테이킹 관련 작업을 지원합니다
+
+* 검증인 생성
+* 검증인 수수료 업데이트
+* 스테이킹
+* 대리 스테이킹
+* 언스테이킹
+* 대리 언스테이킹
+* 재위임
+* 대리 재위임
+* 출금 주소 설정
+* 보상 주소 설정
+* 언제일
+* 대리 언제일
+
+이러한 각 작업의 동작을 설명하기 전에, **토큰 스테이킹 유형**, **검증인 세트 상태**, **언본딩**, 그리고 **스테이킹 기간**과 같은 상위 수준의 개념을 먼저 설명하겠습니다:
+
+## 토큰 스테이킹 유형
+
+잠긴 토큰과 잠기지 않은 토큰 모두에 대해 스테이킹이 가능하므로, 검증인은 지원하고자 하는 토큰 스테이킹 유형을 선택해야 합니다. 토큰 스테이킹 유형이 선택되면 검증인은 다른 유형으로 전환할 수 없습니다.
+
+## 검증인 세트 상태
+
+Story에서 검증인은 두 가지 세트 중 하나로 그룹화됩니다. (1) 합의에 참여하고 블록 보상을 받는 활성(본딩된) 검증인 세트, 또는 (2) 합의 과정에 기여하지 않는 비활성(언본딩된) 검증인 세트입니다. 활성 검증인 세트의 일부로 선택되려면 검증인은 스테이킹된 토큰 수로 순위를 매겼을 때 상위 64개 검증인 중 하나여야 합니다.
+
+## 언본딩
+
+위임자의 언스테이킹은 언본딩 과정을 거칩니다. 사용자는 토큰이 계정으로 반환되기 전에 언본딩 시간을 기다려야 합니다.
+
+이는 자신에게 자체 위임하는 검증인에게도 마찬가지입니다. 그들도 언스테이킹을 원할 때 언본딩 과정을 거쳐야 합니다.
+
+언본딩 시간은 14일입니다. 언본딩 기간 동안 위임자/검증인은 블록 보상을 받지 않습니다. 하지만 여전히 슬래시될 수 있습니다.
+
+각 검증인/위임자 쌍에 대해 최대 진행 중인 언본딩 트랜잭션 수는 14개입니다. 이 제한을 초과하는 언본딩 요청은 실패합니다.
+
+## 스테이킹 기간
+
+위임자는 토큰을 얼마나 유연하게, 얼마나 오래 스테이킹할지 결정할 수 있습니다. 기본적으로 잠긴 토큰과 잠기지 않은 토큰 모두에 대해 위임자는 즉시 스테이킹하고 언스테이킹할 수 있으며 언본딩 시간 후에 토큰을 돌려받을 수 있습니다. 이 문서에서는 이를 **유연한 스테이킹**이라고 부릅니다.
+
+잠기지 않은 토큰의 경우, 90일, 360일, 540일의 몇 가지 고정 스테이킹 기간도 지원됩니다. 이 경우 사용자는 스테이킹 기간이 만료된 후에만 언스테이킹을 요청할 수 있습니다. 만료일 이전에 요청하면 무시됩니다. 만료된 스테이킹 기간에서의 언스테이킹도 여전히 언본딩 과정을 거치며, 이는 사용자가 14일의 언본딩 시간 후에 스테이킹된 토큰을 돌려받는다는 것을 의미합니다.
+
+이러한 고정 스테이킹 기간에 스테이킹하면 더 많은 보상을 받습니다. 기간이 길수록 보상 가중치 승수가 더 큽니다. 다양한 기간에 대한 보상 승수:
+
+* 잠긴 유연 기간 - **0.5**
+* 유연 기간 - **1.0**
+* 90일 - **1.1**
+* 360일 - **1.5**
+* 540일 - **2**
+
+잠긴 토큰의 경우, 유연한 스테이킹만 허용되며 보상 승수는 **0.5**입니다. 사용자가 잠긴 토큰을 스테이킹 기간에 위임하면, 그것을 유연한 스테이킹 위임으로 전환합니다.
+
+스테이킹 기간이 끝난 후, 사용자는 언스테이킹하지 않기로 선택할 수 있습니다. 이 경우, 수동으로 언스테이킹할 때까지 해당 스테이킹 기간의 보상률에 기반한 동일한 보상률로 계속 보상을 받게 됩니다. 스테이킹 기간이 끝난 후 언제든지 언스테이킹할 수 있습니다. 예를 들어, 1년 스테이킹 기간의 보상률이 블록당 0.02%라면, 1년 동안 스테이킹한 후에도 언스테이킹할 때까지 블록당 0.02%의 보상을 계속 받을 수 있습니다.
+
+## 스테이크 금액의 소수점
+
+스테이크 작업(스테이크, 언스테이크, 재위임 등)의 소수점은 9입니다. 사용자가 더 작은 값을 지정하면, 먼지(dust)는 사용자에게 환불됩니다. 또는 토큰 전송이 포함되지 않은 경우, 지정된 값은 9자리 소수점으로 내림됩니다.
+
+# 스테이킹 작업
+
+## 검증인 생성
+
+검증인이 되려면, 검증인은 먼저 최신 릴리스된 story 바이너리를 기반으로 검증인 노드를 실행한 다음, 초기 스테이킹 금액, 모니커, 수수료율과 함께 CreateValidator 함수를 호출해야 합니다. 또한 최대 수수료율과 최대 수수료율 변경을 설정하여 나중에 수수료율을 극적으로 변경하지 않도록 해야 합니다. 검증인이 설정할 수 있는 최소 수수료율은 5%입니다.
+
+초기 스테이킹 금액은 임계값인 1024 IP보다 커야 합니다. 이 금액은 호출자의 지갑에서 차감됩니다. 유연한 기간에만 스테이킹할 수 있습니다.
+
+검증인이 두 번째로 검증인 생성 함수를 호출하려고 하면, 이는 무시됩니다.
+
+## 검증인 수수료 업데이트
+
+이 작업을 통해 검증인은 자신의 검증인 수수료율을 수정할 수 있습니다. 업데이트된 수수료율이 최대 수수료율보다 크거나 수수료율 변경 폭이 최대 수수료율 변경보다 큰 경우, 작업은 실패합니다.
+
+스팸을 방지하기 위해 검증인 업데이트에 1 IP의 수수료가 부과됩니다. 이 수수료는 계약에 의해 소각됩니다.
+
+수수료율은 하루에 한 번만 업데이트할 수 있습니다. 계약에서 오류를 발생시키지는 않지만, 합의 계층에서는 효과가 없을 것입니다.
+
+## 스테이크
+
+검증인과 위임자 모두 검증인에게 토큰을 스테이킹할 수 있습니다. 검증인은 자신에게 스테이킹할 수 있으며, 이를 자체 위임이라고 합니다. 사용자는 고정 스테이킹 기간으로 스테이킹할지 또는 기간 없이 스테이킹할지(유연한 스테이킹) 결정할 수 있습니다.
+
+고정 기간을 선택한 경우, 사용자에게 위임 ID가 반환됩니다. 사용자는 이 스테이크 작업에서 토큰을 언스테이크하기 위해 이 위임 ID를 사용해야 합니다. 유연한 스테이킹을 선택한 경우, 반환된 위임 ID는 0이 됩니다.
+
+스테이킹 금액은 임계값인 1024 IP보다 커야 합니다.
+
+위임자가 존재하지 않는 검증인에게 위임하는 경우, 토큰은 환불되지 않습니다.
+
+사용자가 9자리 소수점 이상의 토큰 금액을 지정하면, 실제 스테이킹 금액은 9자리 소수점으로 내림되고 나머지는 사용자에게 환불됩니다.
+
+## 언스테이크
+
+스테이킹 기간 없이 스테이킹할 때, 사용자는 언제든지 언스테이크할 수 있습니다. 토큰은 언본딩 시간 후에 사용자의 계정으로 분배됩니다.
+
+스팸을 방지하기 위해 언스테이킹에 1 IP의 수수료가 부과됩니다. 이 수수료는 계약에 의해 소각됩니다.
+
+스테이킹 기간으로 스테이킹할 때, 사용자는 스테이킹 기간이 만료된 후에만 언스테이크할 수 있습니다. 토큰은 언본딩 시간 후에 사용자의 계정으로 분배됩니다. 스테이킹 기간이 만료되기 전의 언스테이킹 요청은 무시됩니다.
+
+최소 언스테이킹 금액은 1024 IP입니다. 언스테이킹 요청이 처리된 후 남은 스테이킹 금액이 1024 IP 미만인 경우, 남은 부분도 함께 언스테이킹됩니다.
+
+언스테이킹 요청은 먼저 14일의 언본딩 과정을 거칩니다. 그 후, 언본딩된 요청은 출금 대기열로 보내져 블록당 최대 32개의 출금이 분배됩니다. 출금 대기열에 32개 이상의 출금 요청이 있는 경우, 다음 32개의 출금 요청은 다음 블록에서 처리됩니다.
+
+위임의 부분 언스테이크가 지원됩니다. 예를 들어, 1년 장기 위임에 100만 토큰이 있는 경우, 1년 후 사용자는 이 위임에서 50만을 언스테이크하고 나머지는 계속 스테이킹하여 보상을 받을 수 있습니다.
+
+전달된 검증인, 위임자 및 위임 ID가 올바르지 않으면 언스테이크가 실패할 수 있습니다.
+
+또한 검증인/위임자 쌍에 대한 최대 동시 언본딩 요청(현재 14개)에 도달한 경우에도 언스테이크가 실패할 수 있습니다.
+
+전달된 언스테이크 금액이 총 언스테이크 가능한 토큰보다 큰 경우, 현재 총 언스테이크 가능한 금액이 언스테이크됩니다. 예를 들어, 사용자가 1024 IP를 언스테이크하려고 하지만 1023 IP만 스테이크한 경우, 1023 IP가 출금됩니다.
+
+검증인이 오프라인 상태가 되어 감금되거나 상위 64개 검증인 세트에 들어갈 만큼 충분한 스테이크가 없어 퇴출되는 경우, 위임자는 토큰이 스테이킹 기간에 있지 않거나 스테이킹 기간이 만료된 경우에만 토큰을 언스테이크할 수 있습니다. 그렇지 않으면, 위임자는 스테이킹 기간이 만료될 때까지 기다려야 언스테이크할 수 있습니다.
+
+사용자가 9자리 소수점 이상의 토큰 금액을 지정하면, 실제 언스테이킹 금액은 9자리 소수점으로 내림됩니다.
+
+## 재위임
+
+재위임 작업을 통해 위임자는 스테이크한 토큰을 한 검증인에서 다른 검증인으로 이동할 수 있습니다. 토큰은 즉시 새 검증인에게 재위임되어 보상을 받기 시작할 수 있습니다. 그러나 원본 검증인이 활성 검증인 세트에 있거나 활성 검증인 세트에서 언본딩 중인 경우, 재위임된 토큰은 여전히 언본딩 과정의 대상이 됩니다. 이 14일의 언본딩 기간 동안, 원래 검증인이 슬래시되면 함께 슬래시됩니다.
+
+스팸을 방지하기 위해 재위임에 1 IP의 수수료가 부과됩니다. 이 수수료는 계약에 의해 소각됩니다.
+
+최소 재위임 금액은 1024 IP입니다. 위임자의 초기 스테이크가 1024 IP였지만 나중에 슬래시된 경우, 토큰 금액이 1024 IP 미만이더라도 여전히 다른 검증인에게 토큰을 재위임할 수 있습니다.
+
+언스테이킹과 마찬가지로, 전달된 재위임 금액이 총 재위임 가능한 토큰보다 큰 경우, 총 재위임 가능한 금액이 재위임됩니다. 재위임 후 남은 잔액이 1024 IP 미만인 경우, 모든 남은 토큰이 함께 재위임됩니다.
+
+재위임 후에도 위임 ID는 동일하게 유지됩니다.
+
+재위임에는 위임자/소스 검증인/목적지 검증인 쌍당 최대 진행 중인 언본딩 트랜잭션 제한이 있으며, 이 또한 14입니다.
+
+위임자는 토큰이 아직 미성숙 스테이킹 기간에 있더라도 다른 활성 검증인에게 토큰을 재위임할 수 있습니다. 스테이킹 기간 만료일과 보상률은 동일하게 유지됩니다.
+
+재위임은 소스 검증인과 목적지 검증인이 동일한 토큰 유형을 지원할 때만 트리거될 수 있습니다.
+
+사용자가 9자리 소수점 이상의 토큰 양을 지정하면, 실제 재위임된 양은 9자리 소수점으로 내림됩니다.
+
+## 출금/보상 주소 설정
+
+위임자는 스테이킹 컨트랙트를 호출하여 출금 주소를 설정할 수 있습니다. 언스테이킹된 토큰은 이 출금 주소로 전송됩니다. 마찬가지로, 위임자는 별도의 보상 주소를 설정할 수 있습니다. 모든 보상 분배는 이 주소로 전송됩니다.
+
+스팸을 방지하기 위해 출금 주소나 보상 주소를 업데이트할 때 1 IP의 수수료가 부과됩니다. 이 수수료는 컨트랙트에 의해 소각됩니다.
+
+주소 변경은 다음 블록에서 적용됩니다.
+
+## 슬래시/언제일
+
+슬래싱은 검증인의 스테이킹된 토큰의 일부를 삭감함으로써 나쁜 행동을 처벌합니다. Story에서는 두 가지 유형의 행동이 슬래싱될 수 있습니다: **double sign** 와 **downtime**.
+
+* **double sign**: 검증인이 블록에 대해 이중 서명을 하면, 토큰의 5%가 슬래싱되고 영구적으로 제재됩니다(tombstoned라고 함).
+* **downtime**: 검증인이 너무 오랫동안 오프라인 상태이고 과거 28,800 블록의 95%를 놓치면, 토큰의 0.02%가 슬래싱되고 제재됩니다.
+
+검증인의 남은 자체 위임 금액이 최소 자체 위임(1024 IP)보다 작은 경우, 자체 언위임 후에도 검증인은 제재됩니다.
+
+제재된 검증인은 합의에 참여하거나 보상을 받을 수 없습니다. 하지만 현재 10분으로 설정된 쿨다운 시간 후에 자신을 언제일할 수 있습니다. 10분 후, 스테이크가 최소 스테이크 금액(1024 IP)보다 많다면 Story의 스테이킹 컨트랙트를 호출하여 자신을 언제일할 수 있으며, 이후 여전히 상위 64개 검증인 내에 있다면 다시 합의에 참여할 수 있습니다.
+
+제재된 검증인은 여전히 모든 스테이크를 출금할 수 있습니다.
+
+위임자는 제재된 검증인에게 남아있는 스테이크가 있는 한 여전히 스테이크하고 언스테이크할 수 있습니다. 제재된 검증인은 남아있는 스테이크가 없을 때만 체인에서 제거됩니다(따라서 스테이크/언스테이크할 수 없게 됩니다).
+
+스팸을 방지하기 위해 검증인을 언제일할 때 1 IP의 수수료가 부과됩니다. 이 수수료는 컨트랙트에 의해 소각됩니다.
+
+## 대리 기능
+
+대부분의 스테이킹 관련 작업은 검증인이나 위임자를 대신하여 다른 지갑에서 수행할 수 있습니다. 이러한 대리 기능의 대부분은 실제 검증인이나 위임자가 아닌 대리 작업을 호출하는 지갑에서 토큰을 사용하기 때문에 허가가 필요 없습니다.
+
+## 운영자 추가
+
+위임자가 다른 지갑이 자신을 대신하여 언스테이크하거나 재위임하도록 허용하려면, 스테이킹 컨트랙트를 호출하여 해당 지갑을 자신의 위임자에 대한 운영자로 추가해야 합니다. 그 후, 운영자는 위임자를 대신하여 위임자의 토큰을 언스테이크하고 재위임할 수 있습니다.
+
+이는 다른 지갑이 자신을 대신하여 언제일하도록 허용하려는 검증인에게도 동일하게 적용됩니다.
+
+운영자를 추가하는 데 1 IP의 수수료가 부과됩니다.
+
+## 추가 데이터 필드
+
+각 함수는 잠재적인 미래 변경을 수용하기 위해 추가적인 비형식`data` 입력 필드를 포함할 것입니다. 이는 미래에 사용자 인터페이스를 변경하지 않도록 할 수 있습니다.
+
+## 검증인 키 형식
+
+검증인 공개 키는 secp256k1 키입니다. 키는 33바이트 압축 버전과 65바이트 비압축 버전이 있습니다. Story의 스마트 컨트랙트와 상호 작용할 때는 검증인을 식별하기 위해 33바이트 압축 키가 사용됩니다.
+
+# 보상
+
+## 보상 풀 할당
+
+매 블록마다, 토큰 인플레이션의 고정 비율이 보상 분배 풀로 들어가며, 이는 각 검증인의 지분 가중치에 따라 64개의 활성 검증인들 사이에 공유됩니다. *이렇게 할당된 토큰은 다음 섹션에서 설명하는 방식으로 검증인과 그의 위임자들 사이에 공유됩니다.* 검증인 지분 가중치는 총 토큰 스테이킹 양과 토큰 스테이킹 유형이 잠긴 것인지 잠기지 않은 것인지에 따라 계산됩니다.
+
+예를 들어, 검증인 보상 분배 풀에 100개의 토큰이 할당되었고 활성 검증인이 3개만 있다고 가정해 봅시다:
+
+* 검증인A는 10개의 잠긴 토큰을 스테이킹함
+* 검증인B는 10개의 잠긴 토큰을 스테이킹함
+* 검증인C는 10개의 잠기지 않은 토큰을 스테이킹함
+
+각 검증인이 받는 토큰 수를 계산하기 위해, 먼저 각각의 가중 지분을 계산합니다. 이는 스테이킹된 토큰 수에 보상 승수(잠긴 토큰을 스테이킹하면 0.5, 잠기지 않은 토큰을 스테이킹하면 1)를 곱한 값으로 정의됩니다. 이렇게 하면:
+
+* 검증인A는 10 \* 0.5 = 5 지분
+* 검증인B는 10 \* 0.5 = 5 지분
+* 검증인C는 10 \* 1 = 10 지분
+
+가중 지분과 총 지분이 계산되면, 각 검증인에게 할당되는 총 인플레이션 토큰 수를 구할 수 있습니다:
+
+* 검증인A는 100 \* (5 / 20) = 25 토큰
+* 검증인B는 100 \* (5 / 20) = 25 토큰
+* 검증인C는 100 \* (10 / 20) = 50 토큰
+
+검증인에게 할당되는 총 토큰 수를 계산하는 공식은 다음과 같습니다:
+
+<Image align="center" src="https://files.readme.io/833d419fc139ba363c56aef263dcca571fe449ab824a2349a69d7419ee658bd0-Screenshot_2024-10-30_at_8.13.27_PM.png" />
+
+여기서
+
+* R\_i는 검증인 i에 대한 총 인플레이션 토큰 보상입니다
+* S\_i는 검증인 i에 대한 스테이킹된 토큰입니다
+* M\_i는 보상 승수입니다 (잠긴 토큰의 경우 0.5, 잠기지 않은 토큰의 경우 1)
+* R\_total은 보상 풀에 할당된 총 인플레이션 토큰입니다
+
+## 검증인 및 위임자 보상
+
+총 보상 할당 (*계산 방법은 이전 섹션에 나와 있습니다*)은 각 검증인과 그의 모든 위임자들 사이에 공유됩니다:
+
+* 검증인은 자신이 설정한 고정 비율의 수수료를 가져갑니다
+* 남은 보상은 위임자들의 지분 가중치에 따라 분배됩니다
+
+위임자 보상 계산은 검증인 보상 계산과 유사하며, 각 위임자가 남은 검증인 보상에서 받는 토큰의 비율은 각 위임자의 스테이킹 승수(스테이킹 섹션에서 설명)를 기반으로 계산됩니다.
+
+예를 들어, 검증인에게 총 100개의 보상이 할당되었고, 검증인 수수료가 20%이며, 3명의 위임자가 위임하고 있다고 가정해 봅시다:
+
+* 위임자A는 10개의 토큰을 스테이킹하고 스테이킹 승수가 1입니다
+* 위임자B는 10개의 토큰을 스테이킹하고 스테이킹 승수가 1입니다
+* 위임자C는 10개의 토큰을 스테이킹하고 스테이킹 승수가 2입니다
+
+각 위임자가 받는 토큰 수를 계산하기 위해, 먼저 각자의 가중 지분을 계산합니다. 이는 스테이킹된 토큰 수에 스테이킹 보상 승수를 곱한 값으로 정의됩니다. 결과는 다음과 같습니다:
+
+* 위임자A는 10 \* 1 = 10 지분
+* 위임자B는 10 \* 1 = 10 지분
+* 위임자C는 10 \* 2 = 20 지분
+
+가중 지분과 총 지분을 계산한 후, 각 위임자에게 할당되는 총 인플레이션 토큰 수를 구할 수 있습니다. 위임자들 사이에 분배될 총 토큰 수는 100 - (100 \* 0.20) = 80임을 주목하세요:
+
+* 위임자A는 80 \* (10 / 40) = 20 토큰
+* 위임자B는 80 \* (10 / 40) = 20 토큰
+* 위임자C는 80 \* (20 / 40) = 40 토큰
+
+위임자 토큰 보상을 계산하는 공식은 아래에서 확인할 수 있습니다:
+
+<Image align="center" src="https://files.readme.io/429c0eff2f0acddcabfa3e6259e427b47156aed244020bfb7f11a5b63387fec9-Screenshot_2024-10-30_at_8.15.51_PM.png" />
+
+여기서
+
+* D\_i는 위임자 i에 대한 총 인플레이션 토큰 보상입니다
+* S\_i는 위임자 i에 대한 스테이킹된 토큰입니다
+* M\_i는 위임자 i에 대한 스테이킹 보상 승수입니다
+* R\_total은 검증인에게 할당된 총 인플레이션 토큰입니다
+* C는 검증인의 수수료율입니다
+
+검증인 수수료도 보상으로 취급되며 아래에서 설명하는 자동 보상 분배 규칙을 따릅니다. 최소 검증인 수수료는 5%로 설정되어 검증인들 간의 수수료율 경쟁이 과열되는 것을 방지합니다.
+
+보상 계산 결과는 gwei 단위로 내림됩니다. 1 gwei보다 작은 값은 절삭됩니다.
+
+## 자동 보상 분배
+
+보상은 블록마다 누적되며 블록마다 분배될 수 있습니다. 그러나 보상이 특정 임계값보다 클 때만 위임자의 계정으로 자동 분배됩니다. 기본 및 최소 임계값은 8 IP로, 위임자의 보상이 8 IP 이상일 때만 위임자의 계정으로 전송됩니다.
+
+보상 분배는 보상 분배 대기열로 이동하며, 이 대기열은 블록당 고정된 수의 보상 분배 요청만 처리합니다. 블록당 보상 분배는 32개입니다.
+
+스테이킹 보상은 설계상 수동으로 인출할 수 없습니다.
+
+# 커뮤니티 풀
+
+매 블록에서 새로 발행된 토큰의 일정 비율이 커뮤니티 풀 계약으로 이동합니다. 재단은 이 풀로 보내진 토큰을 어떻게 사용할지 결정합니다. 설정할 수 있는 최대 커뮤니티 풀 비율은 20%입니다.
+
+커뮤니티 풀 계약 주소: **0xcccccc0000000000000000000000000000000002**
+
+# 특이점
+
+제네시스 이후 첫 1,580,851 블록을 특이점이라고 부릅니다. 이 기간 동안 누구나 검증인을 생성하고 토큰을 스테이킹할 수 있지만, 활성 검증인 세트에는 제네시스 검증인만 포함됩니다. 또한 새로운 토큰 발행이 없으므로 보상도 없습니다. 언스테이크와 재위임도 지원되지 않습니다.
+
+제네시스 검증인 세트는 재단과 신뢰할 수 있는 스테이킹 기관이 설정한 8개의 검증인으로 구성됩니다. 이 중 4개는 잠긴 토큰을 지원하고 나머지 4개는 잠기지 않은 토큰을 지원합니다. 각 검증인은 0.001 IP의 초기 스테이크를 가집니다. 각 검증인은 수수료율을 설정합니다. 특이점 기간 동안 제네시스 검증인들은 검증인 수수료율 수정과 같은 검증인 작업을 수행하기 위해 최소 1024 IP를 자체 위임해야 합니다.
+
+특이점 이후, 스테이크가 가장 높은 상위 64개의 검증인 노드가 합의에 참여하고 보상을 받도록 선택됩니다.
+
+특이점 기간 동안에는 슬래싱/감옥이 발생하지 않습니다.
+
+# 스테이킹 계약
+
+Story의 스테이킹 계약은 모든 검증인/위임자 관련 작업을 처리합니다. 다음 주소에 배포됩니다: **0xcccccc0000000000000000000000000000000001**
+
+계약 인터페이스는 여기에 정의되어 있습니다: [https://github.com/piplabs/story/blob/main/contracts/src/protocol/IPTokenStaking.sol](https://github.com/piplabs/story/blob/main/contracts/src/protocol/IPTokenStaking.sol)
+
+
+# 노드 운영하기
+
+## **1. Geth 아카이브 노드 설정하기**
+
+Geth 아카이브 노드를 실행하려면 `--gcmode=archive` 대신 `--gcmode=full`를 사용하세요. 이렇게 하면 Geth가 모든 과거 블록체인 상태 데이터를 유지하여 인덱싱 서비스와 블록체인 분석에 이상적입니다.
+
+* `--syncmode=full`: 완전한 블록체인 동기화를 보장합니다.
+* `--gcmode=archive`: 가지치기 없이 전체 과거 상태 데이터를 유지합니다.
+
+***
+
+## **2. Geth에서 RPC (HTTP) 및 WebSocket 활성화하기**
+
+### **HTTP (RPC) 옵션**
+
+| 옵션                                            | 설명                                        |
+| --------------------------------------------- | ----------------------------------------- |
+| `--http`                                      | HTTP-RPC 서버를 활성화합니다.                      |
+| `--http.addr=0.0.0.0`                         | HTTP 서버를 모든 네트워크 인터페이스에 바인딩합니다.           |
+| `--http.port=8545`                            | HTTP-RPC 포트를 설정합니다 (기본값: 8545).           |
+| `--http.vhosts=*`                             | 모든 도메인에서의 요청을 허용합니다 (프로덕션 환경에서는 주의해서 사용). |
+| `--http.api=web3,eth,txpool,net,engine,debug` | HTTP 요청에 사용 가능한 API를 지정합니다.               |
+
+### **WebSocket (WS) 옵션**
+
+| 옵션                                          | 설명                                                  |
+| ------------------------------------------- | --------------------------------------------------- |
+| `--ws`                                      | WebSocket 서버를 활성화합니다.                               |
+| `--ws.addr=0.0.0.0`                         | WebSocket 서버를 모든 네트워크 인터페이스에 바인딩합니다.                |
+| `--ws.port=8546`                            | WebSocket 포트를 설정합니다 (기본값: 8546).                    |
+| `--ws.origins=*`                            | 모든 도메인에서의 WebSocket 연결을 허용합니다 (프로덕션 환경에서는 주의해서 사용). |
+| `--ws.api=web3,eth,txpool,net,engine,debug` | WebSocket 연결에 사용 가능한 API를 지정합니다.                    |
+
+이러한 구성을 통해 외부 애플리케이션이 HTTP-RPC와 WebSocket을 모두 사용하여 Geth 노드와 상호 작용할 수 있습니다.
+
+***
+
+## **3. Geth 및 Story Protocol 모니터링**
+
+### **Geth 모니터링 구성**
+
+* `--metrics`: Geth에 대한 Prometheus 호환 메트릭을 활성화합니다.
+* `--metrics.addr=0.0.0.0`: 메트릭 서버를 모든 인터페이스에 바인딩합니다.
+* `--metrics.port=6060`: 포트 `6060`에서 메트릭을 노출합니다.
+
+### **Story Protocol 모니터링**
+
+* 다음을 수정하세요 `config.toml` 그리고 설정하세요:
+  ```toml
+  prometheus = true
+  ```
+* Story Protocol의 기본 Prometheus 메트릭 포트는 `26660`입니다.
+
+이러한 설정을 통해 Geth와 Story Protocol 모두 Prometheus로 수집하고 Grafana로 시각화할 수 있는 모니터링 메트릭을 노출합니다.
+
+
+# 노드 업그레이드
+
+세 가지 유형의 업그레이드가 있습니다
+
+1. story geth 클라이언트 업그레이드
+2. story 클라이언트 수동 업그레이드
+3. Cosmovisor로 업그레이드 예약
+
+### story geth 클라이언트 업그레이드
+
+```bash
+# Stop the services
+sudo systemctl stop story
+sudo systemctl stop story-geth
+
+# Download the new binary
+wget ${STORY_GETH_BINARY_URL}
+sudo mv ./geth-linux-amd64 story-geth
+sudo chmod +x story-geth
+sudo mv ./story-geth $HOME/go/bin/story-geth
+source $HOME/.bashrc
+
+# Restart the service
+sudo systemctl start story-geth
+sudo systemctl start story
+```
+
+### story 클라이언트 수동 업그레이드
+
+```bash
+# Stop the service
+sudo systemctl stop story
+
+# Download the new binary
+wget ${STORY_BINARY_URL}
+sudo mv story-linux-amd64 story
+sudo chmod +x story
+sudo mv ./story $HOME/go/bin/story
+
+# Schedule the update
+sudo systemctl start story
+```
+
+### Cosmovisor로 업그레이드 예약
+
+다음 단계는 Cosmovisor를 사용하여 업그레이드를 예약하는 방법을 설명합니다:
+
+1. 업그레이드 디렉토리를 생성하고 새 바이너리 다운로드
+
+```bash
+# Download the new binary
+wget ${STORY_BINARY_URL}
+
+# Schedule the upgrade
+source $HOME/.bash_profile
+cosmovisor add-upgrade ${UPGRADE_NAME} ${UPGRADE_PATH} \
+  --force \
+  --upgrade-height ${UPGRADE_HEIGHT}
+```
+
+2. 업그레이드 구성 확인
+
+```bash
+# Check the upgrade info
+cat $HOME/.story/data/upgrade-info.json
+```
+
+upgrade-info.json은 다음과 같이 표시되어야 합니다:
+
+```json
+{
+  "name": "v1.0.0",
+  "time": "2025-02-05T12:00:00Z",
+  "height": 858000
+}
+```
+
+3. 업그레이드 모니터링
+
+```bash
+# Watch the node logs for the upgrade
+journalctl -u story -f -o cat
+```
+
+Note: Cosmovisor will automatically handle the binary switch once the specified block height is reached. Before the upgrade, confirm that your node is fully synced and has enough disk space available.
+
+
+# 릴리스 노트
+
+이 페이지는 story 실행 및 합의 클라이언트 소프트웨어 릴리스 정보를 제공합니다. 실행 클라이언트 릴리스는 [story-geth](https://github.com/piplabs/story-geth/releases) 저장소에서, 합의 클라이언트 릴리스는 [story](https://github.com/piplabs/story/releases) 저장소에서 찾을 수 있습니다.
+
+### 프로덕션 릴리스
+
+일반적으로 네 가지 유형의 릴리스가 있습니다:
+
+* Major: It requires hardfork upgrade with a predefined upgrade height. Node operators need to upgrade before or on the height. The release will increase minor version number.
+* Minor: It doesn't require hardfork upgrade. Node operators are required to upgrade binaries as soon as possible. The release will increase patch version number.
+* Fix: It is an urgent fix. Node operators are required to upgrade binaries as soon as possible. The release will increase minor version or patch version number.
+* Optional: It is an optional fix. Node operators can upgrade binaries based on needs. The release will increase patch version number.
+
+각 릴리스는 새로운 기능이나 수정 사항 목록을 설명하는 릴리스 노트와 함께 제공됩니다. 릴리스된 소프트웨어 바이너리도 릴리스 노트에 첨부됩니다. 현재 우리는 네 가지 유형의 시스템을 지원하는 바이너리를 제공합니다: darwin-amd64, darwin-arm64, linux-amd64, linux-arm64. 릴리스 노트의 커밋 해시를 사용하여 바이너리를 직접 빌드할 수도 있습니다.
+
+### 릴리스 항목
+
+메인넷과 Aeneid 테스트넷의 노드를 실행하려면 다음 릴리스 매트릭스를 참조하세요.
+
+| 네트워크   | story-geth | story  |
+| ------ | ---------- | ------ |
+| 메인넷    | v1.0.1     | v1.1.0 |
+| Aeneid | v1.0.1     | v1.1.0 |
+
+
+# 풀 노드
+
+이 섹션에서는 메인넷용 Story 노드를 설정하는 방법을 안내합니다. Story는 실행 클라이언트와 합의 클라이언트를 분리하는 ETH PoS에서 영감을 받았습니다. 실행 클라이언트인 `story-geth`storyexec는 Engine API를 통해 EVM 블록을 `story`storyconsensus 합의 클라이언트로 전달하며, ABCI++ 어댑터를 사용하여 EVM 상태를 CometBFT와 호환되게 만듭니다. 이러한 아키텍처로 인해 합의 효율성은 더 이상 실행 트랜잭션 처리량에 의해 병목 현상이 발생하지 않습니다.
+
+Story 노드 실행에 필요한 클라이언트를 구성하는 `story`storyexec`geth`storyconsensus 바이너리는 최신 릴리스에서 사용할 수 있습니다.`release` pages:
+
+* **`story-geth`실행 클라이언트:**
+  * 릴리스 링크: [**여기를 클릭하세요**](https://github.com/piplabs/story-geth/releases)
+  * 최신 안정 버전 바이너리 (v1.0.2): [**여기를 클릭하세요**](https://github.com/piplabs/story-geth/releases/tag/v1.0.2)
+* **`story`합의 클라이언트:**
+  * 릴리스 링크: [**여기를 클릭하세요**](https://github.com/piplabs/story/releases)
+  * 최신 안정 버전 바이너리 (v1.1.1): [**여기를 클릭하세요**](https://github.com/piplabs/story/releases/tag/v1.1.1)
+
+# Story 노드 설치 가이드
+
+## 설치 전 체크리스트
+
+* [ ] 시스템이 하드웨어 요구 사항을 충족하는지 확인
+* [ ] 운영 체제: Ubuntu 22.04 LTS
+* [ ] 필요한 포트가 사용 가능한지 확인
+* [ ] 충분한 디스크 공간 확보
+* [ ] 루트 또는 sudo 접근 권한
+
+## 빠른 참조
+
+* 설치 시간: 약 30분
+* Network: Story Mainnet or Story Aeneid Testnet
+* 필요한 버전:
+  * 최신 릴리스 확인
+
+## 1. 시스템 준비
+
+### 1.1 시스템 요구 사항
+
+최적의 성능과 안정성을 위해 다음 중 하나에서 노드를 실행하는 것을 권장합니다:
+
+* 가상 사설 서버(VPS)
+* 전용 리눅스 기반 머신
+
+### 시스템 사양
+
+| 하드웨어 | 최소 요구 사항         |
+| ---- | ---------------- |
+| CPU  | 전용 8 코어          |
+| RAM  | 32 GB            |
+| 디스크  | 500 GB NVMe 드라이브 |
+| 대역폭  | 25 MBit/s        |
+
+### 1.2 필요한 포트
+
+*노드 기능에 필요한 모든 포트가 아래 설명된 대로 필요한지 확인하세요*
+
+* `story-geth`
+  * 8545
+    * 노드가 HTTP를 통해 JSON-RPC API로 인터페이스하려면 필요
+  * 8546
+    * 웹소켓 상호 작용에 필요
+  * 30303 (TCP + API)
+    * p2p 통신을 위해 반드시 열어야 함
+* `story`
+  * 26656
+    * 합의 p2p 통신을 위해 반드시 열어야 함
+  * 26657
+    * 노드가 Tendermint RPC로 인터페이스하려면 필요
+  * 26660
+    * 프로메테우스 메트릭을 노출하려면 필요
+
+### 1.3 의존성 설치
+
+```bash
+# Update system
+sudo apt update && sudo apt-get update
+
+# Install required packages
+sudo apt install -y \
+  curl \
+  git \
+  make \
+  jq \
+  build-essential \
+  gcc \
+  unzip \
+  wget \
+  lz4 \
+  aria2 \
+  gh
+```
+
+### 1.4 Go 설치
+
+Odyssey를 위해 Go 1.22.0을 설치해야 합니다
+
+```bash
+# Download and install Go 1.22.0
+cd $HOME
+
+# Set Go version
+GO_VERSION="1.22.0"
+
+# Download Go binary
+wget "https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz"
+
+# Remove existing Go installation and extract new version
+sudo rm -rf /usr/local/go
+sudo tar -C /usr/local -xzf "go${GO_VERSION}.linux-amd64.tar.gz"
+
+# Clean up downloaded archive
+rm "go${GO_VERSION}.linux-amd64.tar.gz"
+
+# Add Go to PATH
+echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> ~/.bash_profile
+source ~/.bash_profile
+
+# Verify installation
+go version
+```
+
+## 2. Story 노드 설치
+
+### 2.1 Story-Geth 설치
+
+1. 바이너리 다운로드 및 설정
+
+```bash
+cd $HOME
+wget https://github.com/piplabs/story-geth/releases/download/v1.0.1/geth-linux-amd64
+sudo mv ./geth-linux-amd64 story-geth
+sudo chmod +x story-geth
+sudo mv ./story-geth $HOME/go/bin/
+source $HOME/.bashrc
+
+# Verify installation
+story-geth version
+```
+
+geth 바이너리의 버전이 표시됩니다.
+
+```
+Geth
+version: 1.0.1-stable
+...
+
+```
+
+(Mac OS X 전용) OS X 바이너리는 아직 빌드 프로세스에서 서명되지 않았으므로 수동으로 격리 해제해야 할 수 있습니다:
+
+```bash
+sudo xattr -rd com.apple.quarantine ./geth
+```
+
+2. 서비스 구성 및 시작
+
+<Tabs>
+  <Tab title="메인넷">
+    ```bash
+           # Setup systemd service
+    sudo tee /etc/systemd/system/story-geth.service > /dev/null <<EOF
+    [Unit]
+    Description=Story Geth Client
+    After=network.target
+
+    [Service]
+    User=${user}
+    ExecStart=${path_to_geth_binary} --story --syncmode full
+    Restart=on-failure
+    RestartSec=3
+    LimitNOFILE=4096
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+
+    # Start service
+    sudo systemctl daemon-reload
+    sudo systemctl enable story-geth
+    sudo systemctl start story-geth
+
+    # Verify service status
+    sudo systemctl status story-geth
+    ```
+  </Tab>
+
+  <Tab title="Aeneid 테스트넷">
+    ```bash
+    # Setup systemd service
+    sudo tee /etc/systemd/system/story-geth.service > /dev/null <<EOF
+    [Unit]
+    Description=Story Geth Client
+    After=network.target
+
+    [Service]
+    User=${user}
+    ExecStart=${path_to_geth_binary} --aeneid --syncmode full
+    Restart=on-failure
+    RestartSec=3
+    LimitNOFILE=4096
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+
+    # Start service
+    sudo systemctl daemon-reload
+    sudo systemctl enable story-geth
+    sudo systemctl start story-geth
+
+    # Verify service status
+    sudo systemctl status story-geth
+    ```
+  </Tab>
+</Tabs>
+
+### 2.2 Story 합의 클라이언트 설치
+
+#### Cosmovisor 설치
+
+story 클라이언트 업데이트를 위해 Cosmovisor 사용을 권장합니다.
+
+1. Cosmovisor 설치
+
+```bash
+go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.6.0
+cosmovisor version
+```
+
+2. Cosmovisor 구성
+
+```bash
+# Set daemon configuration
+export DAEMON_NAME=story
+export DAEMON_HOME=$HOME/.story/story
+export DAEMON_DATA_BACKUP_DIR=${DAEMON_HOME}/cosmovisor/backup
+sudo mkdir -p \
+  $DAEMON_HOME/cosmovisor/backup \
+  $DAEMON_HOME/data
+
+
+# Persist configuration
+echo "export DAEMON_NAME=story" >> $HOME/.bash_profile
+echo "export DAEMON_HOME=$HOME/.story/story" >> $HOME/.bash_profile
+echo "export DAEMON_DATA_BACKUP_DIR=${DAEMON_HOME}/cosmovisor/backup" >> $HOME/.bash_profile
+echo "export DAEMON_ALLOW_DOWNLOAD_BINARIES=false" >> $HOME/.bash_profile
+```
+
+#### Story 클라이언트 설치
+
+```bash
+cd $HOME
+wget https://github.com/piplabs/story/releases/download/v1.0.0/story-linux-amd64
+sudo mv story-linux-amd64 story
+sudo chmod +x story
+sudo mv ./story $HOME/go/bin/
+source $HOME/.bashrc
+story version
+```
+
+> 버전 1.0.0-stable이 표시되어야 합니다
+
+(Mac OS X 전용) OS X 바이너리는 아직 빌드 프로세스에서 서명되지 않았으므로 수동으로 격리 해제해야 할 수 있습니다:
+
+```bash
+sudo xattr -rd com.apple.quarantine ./story
+```
+
+#### Cosmovisor로 Story 초기화
+
+<Tabs>
+  <Tab title="메인넷">
+    ```bash
+    cosmovisor init ./story
+    cosmovisor run init --network story --moniker ${moniker_name}
+    cosmovisor version
+    ```
+  </Tab>
+
+  <Tab title="Aeneid 테스트넷">
+    ```bash
+    cosmovisor init ./story
+    cosmovisor run init --network aeneid --moniker ${moniker_name}
+    cosmovisor version
+    ```
+  </Tab>
+</Tabs>
+
+#### 사용자 정의 구성
+
+자신의 노드 설정을 재정의하려면 다음과 같이 할 수 있습니다:
+
+* `${STORY_DATA_ROOT}/config/config.toml` 네트워크 및 합의 설정을 변경하기 위해 수정할 수 있습니다
+* `${STORY_DATA_ROOT}/config/story.toml` 다양한 클라이언트 구성을 업데이트하기 위해
+* `${STORY_DATA_ROOT}/priv_validator_key.json` 는 검증자 키를 포함하는 민감한 파일이지만 자신의 것으로 대체할 수 있습니다
+
+#### 사용자 정의 자동화
+
+아래에 Linux에서 사용할 수 있는 샘플 `Systemd` 구성을 나열합니다
+
+```bash
+# story
+sudo tee /etc/systemd/system/story.service > /dev/null <<EOF
+[Unit]
+Description=Story Cosmovisor
+After=network.target
+
+[Service]
+Type=simple
+User=$USER
+Group=$GROUP
+ExecStart=/usr/local/bin/cosmovisor run run \
+--api-enable \
+--api-address=0.0.0.0:1317
+Restart=on-failure
+RestartSec=5s
+LimitNOFILE=65535
+Environment="DAEMON_NAME=$DAEMON_NAME"
+Environment="DAEMON_HOME=$DAEMON_HOME"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
+Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+Environment="DAEMON_DATA_BACKUP_DIR=$DAEMON_HOME/cosmovisor/backup"
+WorkingDirectory=$DAEMON_HOME
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+```
+
+<Tabs>
+  <Tab title="Cosmovisor 사용">
+    ```bash
+    # story
+    sudo tee /etc/systemd/system/story.service > /dev/null <<EOF
+    [Unit]
+    Description=Story Cosmovisor
+    After=network.target
+
+    [Service]
+    Type=simple
+    User=${USER}
+    Group=${GROUP}
+    ExecStart=${path_to_story_binary} run run \
+    --api-enable \
+    --api-address=0.0.0.0:1317
+    Restart=on-failure
+    RestartSec=5s
+    LimitNOFILE=65535
+    Environment="DAEMON_NAME=$DAEMON_NAME"
+    Environment="DAEMON_HOME=$DAEMON_HOME"
+    Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
+    Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+    Environment="DAEMON_DATA_BACKUP_DIR=$DAEMON_HOME/cosmovisor/backup"
+    WorkingDirectory=$DAEMON_HOME
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+
+    ```
+  </Tab>
+
+  <Tab title="Cosmovisor 없이">
+    ```bash
+    # story
+    sudo tee /etc/systemd/system/story.service > /dev/null <<EOF
+    [Unit]
+    Description=Story Cosmovisor
+    After=network.target
+
+    [Service]
+    Type=simple
+    User=${USER}
+    Group=${GROUP}
+    ExecStart=${path_to_story_binary} run
+    Restart=on-failure
+    RestartSec=5s
+    LimitNOFILE=65535
+    WorkingDirectory=$HOME/.story/story
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+
+    ```
+  </Tab>
+</Tabs>
+
+#### 서비스 시작
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable story
+sudo systemctl start story
+
+# Monitor logs
+journalctl -u cosmovisor -f -o cat
+```
+
+#### 디버깅
+
+실행 중인 `story` 의 상태를 확인하려면 내부 JSONRPC/HTTP 엔드포인트를 쿼리하는 것이 도움이 됩니다. 다음은 몇 가지 유용한 명령어입니다:
+
+* `curl localhost:26657/net_info | jq '.result.peers[].node_info.moniker'`
+  * 이는 노드가 동기화된 합의 피어 목록을 모니커별로 제공합니다
+* `curl localhost:26657/health`
+  * 이는 노드가 정상인지 알려줍니다 - `{}` 는 정상임을 나타냅니다
+
+## 3. 설치 확인
+
+### 3.1 Geth 상태 확인
+
+```bash
+# Check sync status
+curl -X POST -H "Content-Type: application/json" \
+  --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+  http://localhost:8545
+
+```
+
+### 3.2 합의 클라이언트 확인
+
+```bash
+# Check node status
+curl localhost:26657/status
+
+# Check peer connections
+curl localhost:26657/net_info | jq '.result.peers[].node_info.moniker'
+```
+
+## 정상 상태
+
+문제가 발생하여 초기화된 상태에서 네트워크에 다시 참여하고 싶다면 다음을 실행하세요:
+
+### Geth
+
+<Tabs>
+  <Tab title="Mainnet">
+    ```bash
+    rm -rf ${GETH_DATA_ROOT} && ./geth --story --syncmode full
+    ```
+
+    Mac OS X: `rm -rf ~/Library/Story/geth/* && ./geth --story    --syncmode full`
+
+    Linux: `rm -rf ~/.story/geth/* && ./geth --story --syncmode full`
+  </Tab>
+
+  <Tab title="Aeneid Testnet">
+    ```bash
+    rm -rf ${GETH_DATA_ROOT} && ./geth --aeneid --syncmode full
+    ```
+
+    Mac OS X: `rm -rf ~/Library/Story/geth/* && ./geth --aeneid    --syncmode full`
+
+    Linux: `rm -rf ~/.story/geth/* && ./geth --aeneid --syncmode full`
+  </Tab>
+</Tabs>
+
+### Story
+
+<Tabs>
+  <Tab title="Mainnet">
+    ```bash
+    rm -rf ${STORY_DATA_ROOT} && ./story init --network story && ./story run
+    ```
+
+    Mac OS X: `rm -rf ~/Library/Story/story/* && ./story init --network story && ./story run`
+
+    Linux: `rm -rf ~/.story/story/* && ./story init --network story && ./story run`
+  </Tab>
+
+  <Tab title="Aeneid Testnet">
+    ```bash
+    rm -rf ${STORY_DATA_ROOT} && ./story init --network aeneid && ./story run
+    ```
+
+    Mac OS X: `rm -rf ~/Library/Story/story/* && ./story init --network aeneid && ./story run`
+
+    Linux: `rm -rf ~/.story/story/* && ./story init --network aeneid && ./story run`
+  </Tab>
+</Tabs>
+
+
+# 인프라 파트너
+
+## RPC 제공업체
+
+<CardGroup cols={1}>
+  <Card title="QuickNode" href="https://www.quicknode.com/chains/story" icon="house">
+    QuickNode는 무료 및 유료 플랜에서 호스팅된 Story RPC 노드를 제공하여
+    네트워크에 유연하고 안정적인 접근을 가능하게 합니다. 고처리량 또는
+    미션 크리티컬 애플리케이션의 경우, 전용 클러스터는 무제한 청구,
+    높은 속도 제한, 강력한 인프라와 함께 프리미엄 성능을 제공합니다.
+  </Card>
+</CardGroup>
+
+## 크로스체인
+
+<CardGroup cols={3}>
+  <Card title="LayerZero" href="https://docs.layerzero.network/v2/developers/evm/technical-reference/deployed-contracts?chains=odyssey-testnet" icon="house" iconColor="#000000">
+    LayerZero는 애플리케이션이 블록체인 간에 데이터를 이동할 수 있게 하는 기술로, 변경 불가능한 스마트 계약을 통해 검열 저항성 메시지와 허가 없는 개발을 고유하게 지원합니다.
+  </Card>
+
+  {" "}
+
+  <Card title="deBridge" href="https://debridge.finance/" icon="house" iconColor="#fbff3a">
+    한 발 앞서 나가고 싶어하는 사람들을 위한 매우 빠른 브리징.
+  </Card>
+
+  <Card title="Stargate" href="https://stargate.finance/" icon="house" iconColor="#ffffff">
+    Stargate는 옴니체인 DeFi의 핵심에 있는 완전히 구성 가능한 유동성 전송 프로토콜입니다.
+  </Card>
+</CardGroup>
+
+## 온램프/오프램프
+
+<CardGroup cols={2}>
+  <Card title="Transak" href="https://transak.com/" icon="house" iconColor="#1461db">
+    사용자가 앱에서 암호화폐를 사거나 팔 수 있게 합니다.
+  </Card>
+
+  <Card title="Halliday" href="https://halliday.xyz/" icon="house" iconColor="#392df8">
+    모듈형 체인을 위한 상거래 자동화 네트워크.
+  </Card>
+</CardGroup>
+
+## 인덱서/데이터
+
+<CardGroup cols={3}>
+  <Card title="Simplehash" href="https://simplehash.com/" icon="house" iconColor="#5046e5">
+    토큰 및 NFT 시장 가격, 메타데이터 및 미디어에 대한 즉각적인 접근. 80개 이상의 체인.
+  </Card>
+
+  {" "}
+
+  <Card title="Goldsky" href="https://goldsky.com/" icon="house" iconColor="#ffbf60">
+    실시간 스트리밍되는 암호화폐 데이터.
+  </Card>
+
+  {" "}
+
+  <Card title="Zettablock" href="https://zettablock.com/" icon="house" iconColor="#3c4ff6">
+    개방적이고 신뢰 없는 AI 개발을 위한 통합 플랫폼으로, 모델과 데이터셋의 접근 가능한 생태계를 지원합니다.
+  </Card>
+
+  <Card title="Zapper" href="https://protocol.zapper.xyz/chains/story" icon="house" iconColor="#8A2BE2">
+    Zapper는 DeFi를 위한 멀티체인 포트폴리오 추적기 및 분석 도구입니다.
+  </Card>
+</CardGroup>
+
+## 오라클/VRF
+
+<CardGroup cols={3}>
+  <Card title="Gelato" href="https://www.gelato.network/" icon="house" iconColor="#ff3b57">
+    Gelato의 Web3 서비스가 기본적으로 통합된 확장 가능하고 맞춤형 엔터프라이즈급 롤업을 구축하세요.
+  </Card>
+
+  {" "}
+
+  <Card title="Redstone" href="https://www.redstone.finance/" icon="house" iconColor="#ae0722">
+    DeFi를 위한 모듈형 오라클.
+  </Card>
+
+  {" "}
+
+  <Card title="Pyth" href="https://www.pyth.network/" icon="house" iconColor="#e6dafe">
+    기관 소스의 신뢰할 수 있는 저지연 시장 데이터로 스마트 계약을 보호하세요. 미션 크리티컬 시스템을 위해 설계된 고정밀 오라클 피드로 앱을 구축하세요.
+  </Card>
+
+  <Card title="Uma" href="https://uma.xyz/" icon="house" iconColor="#fe4d4c">
+    분산화된 진실 기계.
+  </Card>
+</CardGroup>
+
+## 개발 도구
+
+<CardGroup cols={2}>
+  <Card title="Protofire" href="https://protofire.io/" icon="house" iconColor="#f54704">
+    Protofire는 Dev DAO를 통해 Web3 프로젝트의 TVL과 사용량을 높이고 비용을 줄이며 품질을 향상시킵니다.
+  </Card>
+
+  <Card title="Wagmi" href="https://wagmi.sh/" icon="house" iconColor="#000000">
+    타입 안전, 확장 가능, 모듈식 설계. 고성능 블록체인 프론트엔드를 구축하세요.
+  </Card>
+</CardGroup>
+
+## 지갑/AA
+
+<CardGroup cols={3}>
+  <Card title="Dynamic" href="https://www.dynamic.xyz/" icon="house" iconColor="#4779ff">
+    Dynamic은 손쉬운 로그인, 지갑 생성 및 사용자 관리를 위한 도구 모음을 제공합니다. 사용자를 위해 설계되었고 개발자를 위해 만들어졌습니다.
+  </Card>
+
+  {" "}
+
+  <Card title="Pimlico" href="https://www.pimlico.io/" icon="house" iconColor="#7115aa">
+    세계에서 가장 인기 있는 계정 추상화 인프라 플랫폼
+  </Card>
+
+  {" "}
+
+  <Card title="ZeroDev" href="https://zerodev.app/" icon="house" iconColor="#23a4f0">
+    ZeroDev는 "스마트 EOA"(EIP-7702)와 "스마트 계약 계정"(ERC-4337)을 모두 포함하여 스마트 계정으로 구축하기 위한 가장 강력한 툴킷입니다.
+  </Card>
+
+  {" "}
+
+  <Card title="Tomo" href="https://tomo.inc/" icon="house" iconColor="#f21f7f">
+    대중 채택을 위해 설계된 올인원 지갑.
+  </Card>
+
+  {" "}
+
+  <Card title="Privy" href="https://www.privy.io/" icon="house" iconColor="#000000">
+    Privy는 사용자를 안전하게 온보딩하고, 활성화하며, 대규모로 관리할 수 있는 강력한 인증 및 키 관리 플랫폼입니다.
+  </Card>
+
+  {" "}
+
+  <Card title="Keplr" href="https://www.keplr.app/" icon="house" iconColor="#0657fa">
+    Keplr를 소개합니다. 어디서나 모든 블록체인과 앱에 연결해주는 빠르고 간단하며 안전한 지갑입니다. 첫날부터 멀티체인 미래를 개척하고 있습니다.
+  </Card>
+
+  <Card title="Turnkey" href="https://www.turnkey.com/" icon="house" iconColor="#000000">
+    안전하고 유연하며 확장 가능한 지갑 인프라.
+  </Card>
+</CardGroup>
+
+
+# 🪝 훅
+
+title: 🪝 Hooks
+sidebarTitle: Hooks
+icon: fishing-rod
+description: 라이선스 토큰을 발행하거나 파생물을 등록하기 전에 사용자 정의 로직을 추가합니다.
+[License Tokens](/concepts/licensing-module/license-token) 또는 파생물을 등록하기 전에.
+
+훅에는 두 가지 유형이 있습니다:
+
+1. **라이선싱 훅**: 라이선스 토큰을 발행하기 전에 사용자 정의 로직을 추가할 수 있습니다[라이선스 토큰을 발행하기 전에 사용자 정의 로직을 추가](/concepts/licensing-module/license-config#logic-that-is-possible-with-license-config) (그리고 파생물을 등록할 때도). 예를 들어, 동적 가격 요청, 발행할 수 있는 라이선스 토큰 수량 제한, 화이트리스트 등이 있습니다. 라이선싱 훅은 언제든지 라이선싱 구성에 추가/수정할 수 있습니다.
+2. **상업화 검사기 훅**: 라이선싱 훅과 유사하지만, 라이선스 조건의 직접적인 부분이며 변경되지 않습니다. 또한 사용자 정의 발행 수수료를 반환할 수 없습니다.
+
+## 라이선싱 훅
+
+이는 ILicensingModule 인터페이스를 구현하는 계약으로, IHook에서 확장됩니다.`ILicensingHook` 인터페이스로, 이는 `IModule`에서 확장됩니다.
+
+가장 중요한 것은, 라이선싱 훅이 beforeLicenseTransfer 함수를 구현한다는 것입니다. 이 함수는 라이선스 토큰이 발행되기 전에 호출되어 사용자 정의 로직을 구현하고 해당 라이선스 토큰의 최종 발행 수수료를 결정합니다.`beforeMintLicenseTokens` 함수로, 이는 License Token이 발행되기 전에 호출되어 [사용자 정의 로직](/concepts/licensing-module/license-config#logic-that-is-possible-with-license-config)을 구현하고 최종 `totalMintingFee`을 결정하는 함수입니다.
+
+<Note>
+  ILicensingModule 스마트 계약을 보려면`ILicensingHook` 스마트 계약
+  [여기](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/interfaces/modules/licensing/ILicensingHook.sol#L26)를 클릭하세요.
+</Note>
+
+```solidity ILicensingHook.sol
+/// @notice This function is called when the LicensingModule mints license tokens.
+/// @dev The hook can be used to implement various checks and determine the minting price.
+/// The hook should revert if the minting is not allowed.
+/// @param caller The address of the caller who calling the mintLicenseTokens() function.
+/// @param licensorIpId The ID of licensor IP from which issue the license tokens.
+/// @param licenseTemplate The address of the license template.
+/// @param licenseTermsId The ID of the license terms within the license template,
+/// which is used to mint license tokens.
+/// @param amount The amount of license tokens to mint.
+/// @param receiver The address of the receiver who receive the license tokens.
+/// @param hookData The data to be used by the licensing hook.
+/// @return totalMintingFee The total minting fee to be paid when minting amount of license tokens.
+function beforeMintLicenseTokens(
+  address caller,
+  address licensorIpId,
+  address licenseTemplate,
+  uint256 licenseTermsId,
+  uint256 amount,
+  address receiver,
+  bytes calldata hookData
+) external returns (uint256 totalMintingFee);
+```
+
+이 함수가 mintingFee를 반환한다는 점에 주목하세요. "라이선스 조건에서 발행 수수료를 설정할 수 있고, LicensingModule에서도 설정할 수 있으며, beforeLicenseTransfer에서 동적 가격을 반환할 수도 있습니다. 실제 최종 발행 수수료는 어떻게 될까요?"라고 궁금해할 수 있습니다. 다음은 우선순위입니다:`totalMintingFee`. "라이선스 조건에서, `LicenseConfig`에서 발행 수수료를 설정할 수 있고, `beforeMintLicenseTokens`에서 동적 가격을 반환할 수 있습니다. 실제 최종 발행 수수료는 어떻게 될까요?"라고 궁금해할 수 있습니다. 여기 우선순위가 있습니다:
+
+| 발행 수수료                                                                                  | 중요도    |
+| --------------------------------------------------------------------------------------- | ------ |
+| beforeLicenseTransfer에서 반환된 mintingFee`totalMintingFee`에서 반환된 `beforeMintLicenseTokens` | 최우선 순위 |
+| LicensingModule에 설정된 mintingFee`mintingFee`에서 설정된 `LicenseConfig`                       | ⬇️     |
+| 라이선스 조건에 설정된 mintingFee`mintingFee` 라이선스 조건에서 설정된                                       | 최하위 순위 |
+
+<Warning>
+  외부 라이선스 훅의 잠재적으로 악의적인 구현에 주의하세요.
+  선택한 훅의 코드를 먼저 확인하세요. Story 팀에 의해 검토되거나
+  감사되지 않았을 수 있습니다.
+</Warning>
+
+### 사용 가능한 훅
+
+다음은 우리 프로토콜에 배포된 사용 가능한 훅들입니다.
+
+<Info>
+  이 훅들의 배포된 주소를 보려면 [여기](/developers/deployed-smart-contracts#license-hooks)를 확인하세요.
+</Info>
+
+| 훅                          | 설명                                               | 계약 코드                                                                                                                         |
+| :------------------------- | :----------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
+| LockLicenseHook            | 라이선스 토큰의 발행 또는 새로운 파생물 등록을 중지합니다.                | [여기에서 보기 ↗️](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/hooks/LockLicenseHook.sol)            |
+| TotalLicenseTokenLimitHook | 발행할 수 있는 라이선스 토큰의 수량에 제한을 설정하며, 언제든지 업데이트 가능합니다. | [여기에서 보기 ↗️](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/hooks/TotalLicenseTokenLimitHook.sol) |
+
+### 훅 구현하기
+
+<CardGroup cols={2}>
+  <Card title="SDK 코드 예시" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/licenses/oneTimeUseLicense.ts" icon="code">
+    라이선싱 훅을 구현하는 방법을 보여주는 작동하는 TypeScript SDK 코드 예시입니다. 구체적으로, 발행할 수 있는 라이선스의 수를 제한하는 방법을 보여줍니다.
+  </Card>
+
+  <Card title="Solidity 코드 예시" href="https://github.com/storyprotocol/protocol-periphery-v1/blob/main/test/hooks/TotalLicenseTokenLimitHook.t.sol" icon="code">
+    라이선싱 훅을 구현하는 방법을 보여주는 작동하는 Solidity 코드 예시입니다. 구체적으로, 발행할 수 있는 라이선스의 수를 제한하는 방법을 보여줍니다.
+  </Card>
+</CardGroup>
+
+라이선싱 훅은 궁극적으로 `ILicensingHook` 인터페이스를 구현하는 스마트 계약입니다. 인터페이스는 [여기](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/interfaces/ILicensingHook.sol)에서 볼 수 있습니다. 우리는 이미 몇 가지 라이선싱 훅을 배포했습니다 (위의 차트를 참조하세요).
+
+라이선싱 훅을 실제로 사용하려면 라이선싱 구성에서 설정해야 합니다. 라이선싱 구성은 기본적으로 IP 자산에 조건을 첨부할 때 라이선스 조건에 설정하는 일련의 구성입니다.
+
+<Steps>
+  <Step title="라이선싱 구성 생성">
+    먼저 라이선싱 구성을 생성해야 합니다:
+
+    ```typescript {6-8}
+    import { LicensingConfig } from '@story-protocol/core-sdk';
+
+    const licensingConfig: LicensingConfig = {
+        isSet: true,
+        mintingFee: 0n,
+        // address of TotalLicenseTokenLimitHook
+        // from https://docs.story.foundation/developers/deployed-smart-contracts
+        licensingHook: '0xaBAD364Bfa41230272b08f171E0Ca939bD600478',
+        hookData: zeroAddress,
+        commercialRevShare: 0,
+        disabled: false,
+        expectMinimumGroupRewardShare: 0,
+        expectGroupRewardPool: zeroAddress,
+    }
+    ```
+  </Step>
+
+  <Step title="라이선싱 구성 설정">
+    다음으로, 라이선스 조건에 라이선싱 구성을 설정합니다. 다음 예시에서는 IP 자산을 등록할 때 이 작업이 이루어지는 것을 보여줍니다:
+
+    <Tip>
+      이 코드 스니펫은 약간의 설정이 필요하며, TypeScript SDK 설정 방법을 이미 이해하고 있는 개발자를 위한 것입니다. 더 자세히 알고 싶다면, [작동하는 코드 예시](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/licenses/oneTimeUseLicense.ts)를 확인하세요.
+    </Tip>
+
+    <Note>
+      이는 `mintAndRegisterIpAssetWithPilTerms` 메서드를 사용합니다. [여기](/sdk-reference/ipasset#mintandregisteripassetwithpilterms)에서 찾을 수 있습니다.
+    </Note>
+
+    ```typescript {6-7}
+    const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
+        spgNftContract: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc', // public spg contract for ease-of-use
+        licenseTermsData: [
+            {
+                terms: { defaultMintingFee: 0, commercialUse: true, ... }, // dummy license terms
+                // set the licensing config here
+                licensingConfig: licensingConfig
+            },
+        ],
+        ipMetadata: {
+            ipMetadataURI: 'test-uri',
+            ipMetadataHash: toHex('test-metadata-hash', { size: 32 }),
+            nftMetadataHash: toHex('test-nft-metadata-hash', { size: 32 }),
+            nftMetadataURI: 'test-nft-uri',
+        },
+        txOptions: { waitForTransaction: true },
+    })
+    ```
+  </Step>
+
+  <Step title="제한을 1로 설정">
+    이제 우리의 조건에 라이선싱 구성을 설정했으므로, 훅의 `setTotalLicenseTokenLimit` 함수를 호출하여 발행할 수 있는 라이선스의 최대 수를 1로 설정할 수 있습니다.
+
+    <Note>
+      이를 위한 Story SDK 메서드는 없으므로, viem의 `writeContract` 메서드를 사용해야 합니다.
+    </Note>
+
+    ```typescript
+    import { totalLicenseTokenLimitHook } from './abi/totalLicenseTokenLimitHook'
+
+    const { request } = await publicClient.simulateContract({
+        // address of TotalLicenseTokenLimitHook
+        // from https://docs.story.foundation/developers/deployed-smart-contracts
+        address: '0xaBAD364Bfa41230272b08f171E0Ca939bD600478',
+        abi: totalLicenseTokenLimitHook,
+        functionName: 'setTotalLicenseTokenLimit',
+        args: [
+            response.ipId, // ipId from the step above
+            '0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316', // the address of PILicenseTemplate from https://docs.story.foundation/developers/deployed-smart-contracts
+            response.licenseTermsIds![0], // licenseTermsId
+            1n, // limit (as BigInt)
+        ],
+        account: account, // Specify the account to use for permission checking
+    })
+
+    // Prepare transaction
+    const hash = await walletClient.writeContract({ ...request, account: account })
+
+    // Wait for transaction to be mined
+    const receipt = await publicClient.waitForTransactionReceipt({
+        hash,
+    })
+    ```
+  </Step>
+</Steps>
+
+## 상업화 검사기 훅
+
+<Warning>
+  문서가 곧 제공될 예정입니다. 그 동안 질문이 있다면 [Builder's Discord](https://discord.gg/storybuilders)에서 문의해 주세요.
+</Warning>
+
+
+# 📝 IPA 메타데이터 표준
+
+<Warning>
+  우리는 아직 IPA 메타데이터 표준을 정의하는 최선의 방법을 찾고 있습니다. 투명성을 위해 다음 문서는 지금까지의 우리의 생각이지만, 향후 버전을 출시함에 따라 변경될 수 있습니다.
+</Warning>
+
+<CardGroup cols={2}>
+  <Card title="Official Ippy IP" href="https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42" icon="house">
+    NFT와 IP 메타데이터를 모두 가지고 있는 공식 Ippy IP를 확인해보세요.
+  </Card>
+
+  <Card title="IP 자산에 메타데이터를 추가하는 방법" href="/concepts/ip-asset/overview#nft-vs-ip-metadata" icon="computer">
+    설명이나 완성된 코드 예제와 함께 여기서 논의된 IP 메타데이터를 IP 자산에 실제로 추가하는 방법을 알아보세요.
+  </Card>
+</CardGroup>
+
+이것은 IP 자산과 연관된 JSON 메타데이터로, IP 계정 내부에 저장됩니다. 메타데이터를 설정하려면 IP 계정 내에서 `setMetadata(...)` 를 호출해야 하며, 그 다음 `metadata()` 를 호출하여 읽을 수 있습니다.
+
+## 속성 및 구조
+
+아래는 IP 메타데이터에 제공해야 할 중요한 속성들입니다. **필수 항목** 열은 특정 필드가 무엇에 필요한지를 나타냅니다:
+
+* 🔍 Story Explorer - 이 필드는 Story Explorer에서 IP를 표시하는 데 도움이 됩니다
+* 🕵️ [상업적 침해 확인](/concepts/story-attestation-service) - 이 필드는 IP가 **상업적**인 경우 (즉, `commercialUse = true` 라이선스 조건이 첨부된 경우) 필요합니다. 우리는 이 필드들을 사용하여 IP에 대한 침해 확인을 실행할 것입니다.
+  * 참조: [현재 제한사항](/concepts/story-attestation-service#current-limitations).
+* 🤖 AI 에이전트 - AI 에이전트와 관련된 메타데이터 표시에 사용됨
+
+| 속성 이름         | 유형            | 설명                                                                                                                                                           | 필수 항목                                                |
+| ------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
+| `title`       | `string`      | IP의 제목                                                                                                                                                       | 🔍 Story Explorer                                    |
+| `description` | `string`      | IP의 설명                                                                                                                                                       | 🔍 Story Explorer                                    |
+| `createdAt`   | `string`      | IP가 생성된 날짜/시간 (ISO8601 또는 유닉스 형식). 이 필드는 온체인에 없는 역사적 날짜를 지정하는 데 사용할 수 있습니다. 예를 들어, Harry Potter는 6월 26일에 출판되었습니다.                                            | 🔍 Story Explorer                                    |
+| `image`       | `string`      | IP의 이미지. **오디오 자산의 경우 권장되는 썸네일 종횡비는 1:1입니다. 비디오 자산의 경우 16:9입니다.**                                                                                            | 🔍 Story Explorer                                    |
+| `imageHash`   | `string`      | SHA-256 해싱 알고리즘을 사용한 `image`의 해시. [여기](#hashing-content)에서 그 방법을 확인하세요.                                                                                      | 🔍 Story Explorer                                    |
+| `creators`    | `IpCreator[]` | 창작자에 대한 정보 배열. [아래에 정의된 유형 참조](#type-definitions)                                                                                                            | 🔍 Story Explorer                                    |
+| `mediaUrl`    | `string`      | 침해 확인에 사용되며, 실제 미디어(예: 이미지 또는 오디오)를 가리킵니다. **오디오 자산의 경우 권장되는 썸네일 종횡비는 1:1입니다. 비디오 자산의 경우 16:9입니다.**                                                          | 🕵️ [상업적 침해 확인](/concepts/story-attestation-service) |
+| `mediaHash`   | `string`      | SHA-256 해싱 알고리즘을 사용한 미디어의 해시된 문자열. [여기](#hashing-content)에서 그 방법을 확인하세요.                                                                                     | 🕵️ [상업적 침해 확인](/concepts/story-attestation-service) |
+| `mediaType`   | `string`      | 미디어 유형(오디오, 비디오, 이미지), [mimeType](https://developer.mozilla.org/en-US/docs/Web/HTTP/MIME_types/Common_types)을 기반으로 함. 허용된 미디어 유형은 [여기](#media-types)를 참조하세요. | 🕵️ [상업적 침해 확인](/concepts/story-attestation-service) |
+| `aiMetadata`  | `AIMetadata`  | AI 에이전트 메타데이터 등록 및 표시에 사용됩니다. [아래에 정의된 유형 참조](#type-definitions)                                                                                             | 🤖 AI 에이전트                                           |
+| N/A           | N/A           | 다른 값들도 포함할 수 있습니다.                                                                                                                                           | N/A                                                  |
+
+### 유형 정의
+
+다음은 메타데이터에 사용된 복잡한 유형에 대한 유형 정의입니다:
+
+<CodeGroup>
+  ```typescript IpCreator
+  type IpCreator = {
+    name: string;
+    address: Address;
+    contributionPercent: number; // add up to 100
+    description?: string;
+    image?: string;
+    socialMedia?: IpCreatorSocial[];
+    role?: string;
+  };
+
+  type IpCreatorSocial = {
+    platform: string;
+    url: string;
+  };
+  ```
+
+  ```typescript AIMetadata
+  type AIMetadata = {
+    // this can be any character file you want
+    // example: https://github.com/elizaOS/characterfile/blob/main/examples/example.character.json
+    characterFileUrl: string;
+    characterFileHash: string;
+  };
+  ```
+</CodeGroup>
+
+### 미디어 유형
+
+다음은 에 허용되는 미디어 유형입니다 `mediaType` field:
+
+| 미디어 유형            | 설명            |
+| ----------------- | ------------- |
+| `image/jpeg`      | JPEG 이미지      |
+| `image/png`       | PNG 이미지       |
+| `image/apng`      | 애니메이션 PNG 이미지 |
+| `image/avif`      | AV1 이미지 파일 형식 |
+| `image/gif`       | GIF 이미지       |
+| `image/svg+xml`   | SVG 이미지       |
+| `image/webp`      | WebP 이미지      |
+| `audio/wav`       | WAV 오디오       |
+| `audio/mpeg`      | MP3 오디오       |
+| `audio/flac`      | FLAC 오디오      |
+| `audio/aac`       | AAC 오디오       |
+| `audio/ogg`       | OGG 오디오       |
+| `audio/mp4`       | MP4 오디오       |
+| `audio/x-aiff`    | AIFF 오디오      |
+| `audio/x-ms-wma`  | WMA 오디오       |
+| `audio/opus`      | Opus 오디오      |
+| `video/mp4`       | MP4 비디오       |
+| `video/webm`      | WebM 비디오      |
+| `video/quicktime` | QuickTime 비디오 |
+
+### 콘텐츠 해싱
+
+콘텐츠를 해싱하여 `imageHash` 또는 `mediaHash` 필드에 사용하려면 SHA-256 해싱 알고리즘을 사용할 수 있습니다. 다음은 JavaScript에서 이를 수행하는 방법의 예시입니다:
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { toHex, Hex } from "viem";
+
+  // get hash from a file
+  async function getFileHash(file: File): Promise<Hex> {
+    const arrayBuffer = await file.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer);
+    return toHex(new Uint8Array(hashBuffer), { size: 32 });
+  }
+
+  // get hash from a url
+  async function getHashFromUrl(url: string): Promise<Hex> {
+    const response = await axios.get(url, { responseType: "arraybuffer" });
+    const buffer = Buffer.from(response.data);
+    return "0x" + createHash("sha256").update(buffer).digest("hex");
+  }
+  ```
+
+  ```shell Shell
+  shasum -a 256 myfile.jpg
+  ```
+</CodeGroup>
+
+### 사용 사례 예시
+
+<Tabs>
+  <Tab title="Ippy 마스코트">
+    이것은 메인넷에 등록된 공식 Ippy 마스코트입니다. 우리의 프로토콜 탐색기에서 [here](https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42)에서 볼 수 있습니다.
+
+    ```json
+    {
+      "title": "Ippy",
+      "description": "Official mascot of Story.",
+      "createdAt": "1728401700",
+      "image": "https://ipfs.io/ipfs/QmSamy4zqP91X42k6wS7kLJQVzuYJuW2EN94couPaq82A8",
+      "imageHash": "0x21937ba9d821cb0306c7f1a1a2cc5a257509f228ea6abccc9af1a67dd754af6e",
+      "mediaUrl": "https://ipfs.io/ipfs/QmSamy4zqP91X42k6wS7kLJQVzuYJuW2EN94couPaq82A8",
+      "mediaHash": "0x21937ba9d821cb0306c7f1a1a2cc5a257509f228ea6abccc9af1a67dd754af6e",
+      "mediaType": "image/png",
+      "creators": [
+        {
+          "name": "Story Foundation",
+          "address": "0x67ee74EE04A0E6d14Ca6C27428B27F3EFd5CD084",
+          "description": "The World's IP Blockchain",
+          "contributionPercent": 100,
+          "socialMedia": [
+            {
+              "platform": "Twitter",
+              "url": "https://twitter.com/storyprotocol"
+            },
+            {
+              "platform": "Telegram",
+              "url": "https://t.me/StoryAnnouncements"
+            },
+            {
+              "platform": "Website",
+              "url": "https://story.foundation"
+            },
+            {
+              "platform": "Discord",
+              "url": "https://discord.gg/storyprotocol"
+            },
+            {
+              "platform": "YouTube",
+              "url": "https://youtube.com/@storyFDN"
+            }
+          ]
+        }
+      ],
+      "tags": ["Ippy", "Story", "Story Mascot", "Mascot", "Official"], // experimental field
+      "ipType": "Character" // experimental field
+    }
+    ```
+  </Tab>
+
+  <Tab title="음악">
+    이것은 [Suno](https://suno.com/)에서 생성되고 우리의 테스트넷에 등록된 예시 노래입니다. 아래 예시를 [우리의 프로토콜 탐색기에서](https://aeneid.explorer.story.foundation/ipa/0x3E5b9e540a531da38760CC32E2f52b174EC5Fce8) 확인하세요.
+
+    ```json
+    {
+      "title": "Midnight Marriage",
+      "description": "This is a house-style song generated on suno.",
+      "createdAt": "1740005219",
+      "creators": [
+        {
+          "name": "Jacob Tucker",
+          "address": "0xA2f9Cf1E40D7b03aB81e34BC50f0A8c67B4e9112",
+          "contributionPercent": 100
+        }
+      ],
+      "image": "https://cdn2.suno.ai/image_large_8bcba6bc-3f60-4921-b148-f32a59086a4c.jpeg",
+      "imageHash": "0xc404730cdcdf7e5e54e8f16bc6687f97c6578a296f4a21b452d8a6ecabd61bcc",
+      "mediaUrl": "https://cdn1.suno.ai/dcd3076f-3aa5-400b-ba5d-87d30f27c311.mp3",
+      "mediaHash": "0xb52a44f53b2485ba772bd4857a443e1fb942cf5dda73c870e2d2238ecd607aee",
+      "mediaType": "audio/mpeg"
+    }
+    ```
+  </Tab>
+
+  <Tab title="AI 에이전트">
+    여기서 주요 차이점은 `aiMetadata`에 캐릭터 파일을 제공해야 한다는 것입니다. 원하는 캐릭터 파일을 제공하거나 [this ElizaOS example](https://github.com/elizaOS/characterfile/blob/main/examples/example.character.json)을 템플릿으로 사용할 수 있습니다.
+
+    아래 예시를 [우리의 프로토콜 탐색기에서](https://aeneid.explorer.story.foundation/ipa/0x49614De8b2b02C790708243F268Af50979D568d4) 확인하세요.
+
+    ```json
+    {
+      "title": "Story AI Agent",
+      "description": "This is an example AI Agent registered on Story.",
+      "createdAt": "1740005219",
+      "creators": [
+        {
+          "name": "Jacob Tucker",
+          "address": "0xA2f9Cf1E40D7b03aB81e34BC50f0A8c67B4e9112",
+          "contributionPercent": 100
+        }
+      ],
+      "image": "https://ipfs.io/ipfs/bafybeigi3k77t5h5aefwpzvx3uiomuavdvqwn5rb5uhd7i7xcq466wvute",
+      "imageHash": "0x64ccc40de203f218d16bb90878ecca4338e566ab329bf7be906493ce77b1551a",
+      "mediaUrl": "https://ipfs.io/ipfs/bafybeigi3k77t5h5aefwpzvx3uiomuavdvqwn5rb5uhd7i7xcq466wvute",
+      "mediaHash": "0x64ccc40de203f218d16bb90878ecca4338e566ab329bf7be906493ce77b1551a",
+      "mediaType": "image/webp",
+      "aiMetadata": {
+        "characterFileUrl": "https://ipfs.io/ipfs/bafkreic6eu4hlnwx46soib62rgkhhmlieko67dggu6bzk7bvtfusqsknfu",
+        "characterFileHash": "0x5e253875b6d7e7a4e407da899473b168229def8cc6a783957c35996928494d2d"
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## 선택적 속성
+
+다음 속성들은 선택사항이지만 IP 자산에 대한 추가적인 맥락을 제공할 수 있습니다:
+
+<Warning>
+  우리는 아직 IPA 메타데이터 표준을 정의하는 최선의 방법을 찾고 있습니다. 아래의 필드들은 언젠가 변경되거나 제거될 수 있습니다.
+</Warning>
+
+| 속성 이름            | 유형                 | 설명                                                                                                                 |
+| :--------------- | :----------------- | :----------------------------------------------------------------------------------------------------------------- |
+| `ipType`         | `string`           | IP 자산의 유형으로, 제작자가 임의로 정의할 수 있습니다. 예: "캐릭터", "챕터", "위치", "아이템", "음악" 등                                              |
+| `relationships`  | `IpRelationship[]` | IPA의 직접적인 부모 자산과의 상세한 관계 정보, 예를 들어 `APPEARS_IN`, `FINETUNED_FROM` 등. 더 많은 예시는 [here](#relationship-types)에서 확인하세요. |
+| `watermarkImage` | `string`           | 워터마크가 이미 적용된 별도의 이미지입니다. 이를 통해 이 이미지를 사용하기로 선택한 앱들이 워터마크가 적용된 버전의 이미지를 렌더링할 수 있습니다.                                |
+| `media`          | `IpMedia[]`        | 지원 미디어의 배열. 미디어 유형은 아래에 정의되어 있습니다.                                                                                 |
+| `app`            | `StoryApp`         | 이는 Story에서 직접 검증된 애플리케이션에 할당됩니다(현재는 요청 기반). 각 App ID를 이름에 매핑할 것입니다.                                                |
+| `tags`           | `string[]`         | 이 IPA를 표면화하는 데 도움이 될 수 있는 태그들                                                                                      |
+| `robotTerms`     | `IPRobotTerms`     | 특정 에이전트에 대해 훈련 금지를 설정할 수 있습니다                                                                                      |
+| 해당 없음            | 해당 없음              | 다른 값들도 포함할 수 있습니다.                                                                                                 |
+
+### 유형 정의
+
+<CodeGroup>
+  ```typescript IpRelationship
+  type IpRelationship = {
+    parentIpId: Address;
+    type: string; // see "Relationship Types" docs below
+  };
+  ```
+
+  ```typescript IpMedia
+  type IpMedia = {
+    name: string;
+    url: string;
+    mimeType: string;
+  };
+  ```
+
+  ```typescript StoryApp
+  type StoryApp = {
+    id: string;
+    name: string;
+    website: string;
+    action?: string;
+  };
+  ```
+
+  ```typescript IPRobotTerms
+  type IPRobotTerms = {
+    userAgent: string;
+    allow: string;
+  };
+  ```
+</CodeGroup>
+
+### 관계 유형
+
+속성에 사용할 수 있는 다양한 관계 유형입니다.`relationships` 속성.
+
+#### 스토리 관계
+
+1. **APPEARS\_IN** - 캐릭터가 챕터에 등장합니다.
+
+2. **BELONGS\_TO** - 챕터가 책에 속합니다.
+
+3. **PART\_OF** - 책이 시리즈의 일부입니다.
+
+4. **CONTINUES\_FROM** - 챕터가 이전 챕터에서 이어집니다.
+
+5. **LEADS\_TO** - 사건이 결과로 이어집니다.
+
+6. **FORESHADOWS** - 사건이 미래의 발전을 암시합니다.
+
+7. **CONFLICTS\_WITH** - 캐릭터가 다른 캐릭터와 갈등합니다.
+
+8. **RESULTS\_IN** - 결정이 중요한 변화를 초래합니다.
+
+9. **DEPENDS\_ON** - 서브플롯이 메인 플롯에 의존합니다.
+
+10. **SETS\_UP** - 프롤로그가 이야기를 설정합니다.
+
+11. **FOLLOWS\_FROM** - 챕터가 이전 챕터에 이어집니다.
+
+12. **REVEALS\_THAT** - 반전이 예상치 못한 일이 일어났음을 드러냅니다.
+
+13. **DEVELOPS\_OVER** - 캐릭터가 이야기 전반에 걸쳐 발전합니다.
+
+14. **INTRODUCES** - 챕터는 새로운 캐릭터나 요소를 INTRODUCES합니다.
+
+15. **RESOLVES\_IN** - 갈등은 특정 결과로 RESOLVES\_IN됩니다.
+
+16. **CONNECTS\_TO** - 주제는 주요 내러티브와 CONNECTS\_TO됩니다.
+
+17. **RELATES\_TO** - 서브플롯은 중심 주제와 RELATES\_TO됩니다.
+
+18. **TRANSITIONS\_FROM** - 장면은 한 배경에서 다른 배경으로 TRANSITIONS\_FROM합니다.
+
+19. **INTERACTED\_WITH** - 캐릭터는 다른 캐릭터와 INTERACTED\_WITH합니다.
+
+20. **LEADS\_INTO** - 사건은 절정으로 LEADS\_INTO됩니다.\
+    **PARALLEL - story** 병렬로 또는 같은 시간대에 일어나는 일
+
+#### AI 관계
+
+1. **TRAINED\_ON** - 모델은 데이터셋에 TRAINED\_ON됩니다.
+
+2. **FINETUNED\_FROM** - 모델은 기본 모델에서 FINETUNED\_FROM됩니다.
+
+3. **GENERATED\_FROM** - 이미지는 미세 조정된 모델에서 GENERATED\_FROM됩니다.
+
+4. **REQUIRES\_DATA** - 모델은 훈련을 위해 데이터를 REQUIRES\_DATA합니다.
+
+5. **BASED\_ON** - 리믹스는 특정 워크플로우에 BASED\_ON됩니다.
+
+6. **INFLUENCES** - 샘플 데이터는 모델 출력을 INFLUENCES합니다.
+
+7. **CREATES** - 파이프라인은 미세 조정된 모델을 CREATES합니다.
+
+8. **UTILIZES** - 워크플로우는 기본 모델을 UTILIZES합니다.
+
+9. **DERIVED\_FROM** - 미세 조정된 모델은 기본 모델에서 DERIVED\_FROM됩니다.
+
+10. **PRODUCES** - 모델은 생성된 이미지를 PRODUCES합니다.
+
+11. **MODIFIES** - 리믹스는 기본 워크플로우를 MODIFIES합니다.
+
+12. **REFERENCES** - AI 생성 이미지는 원본 데이터를 REFERENCES합니다.
+
+13. **OPTIMIZED\_BY** - 모델은 특정 알고리즘에 의해 OPTIMIZED\_BY됩니다.
+
+14. **INHERITS** - 미세 조정된 모델은 기본 모델의 특징을 INHERITS합니다.
+
+15. **APPLIES\_TO** - 미세 조정 과정은 모델에 APPLIES\_TO됩니다.
+
+16. **COMBINES** - 리믹스는 여러 데이터셋의 요소를 COMBINES합니다.
+
+17. **GENERATES\_VARIANTS** - 모델은 이미지의 변형을 GENERATES\_VARIANTS합니다.
+
+18. **EXPANDS\_ON** - 미세 조정 과정은 기본 기능을 EXPANDS\_ON합니다.
+
+19. **CONFIGURES** - 워크플로우는 모델의 매개변수를 CONFIGURES합니다.
+
+20. **ADAPTS\_TO** - 미세 조정된 모델은 새로운 데이터에 ADAPTS\_TO합니다.
+
+
+# IP Modifications & Restrictions
+
+# IP 자산 수정
+
+IP 자산은 몇 가지 방법으로 수정/사용자 정의할 수 있습니다. 예를 들어, [라이선스 구성 설정](/concepts/licensing-module/license-config)을 통해 아래에서 볼 수 있듯이 몇 가지를 변경할 수 있고, 메타데이터를 변경하는 등의 방법이 있습니다. 이러한 것들은 **특정 조건이 없는 한 항상 변경할 수 있습니다**.
+
+| 작업                      | 조건                                                                                                                                                                                                                  | 다음을 통해...                                                                                                                               |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| 라이선스 발행 수수료 수정          | 발행 수수료를 **인상**할 수 있습니다. **감소**는 할 수 없습니다.                                                                                                                                                                           | [라이선스 구성](/concepts/licensing-module/license-config)                                                                                    |
+| 라이선싱 훅 수정               | 훅은 반드시 다음에 화이트리스트로 등록되어야 합니다 [Module Registry](/concepts/registry/module-registry).                                                                                                                                 | [License Config](/concepts/licensing-module/license-config)                                                                             |
+| 수정 `commercialRevShare` | 귀하는 **증가**할 수 있습니다 수익 공유 비율을. 귀하는 **할 수 없습니다** 감소시키는 것을. <br /><br />그러나, 귀하는 **할 수 있습니다** 0으로 설정하여 덮어쓰기를 비활성화할 수 있습니다.                                                                                             | [License Config](/concepts/licensing-module/license-config)                                                                             |
+| 라이선스 비활성화/활성화           | 라이선스는 언제든지 비활성화하거나 다시 활성화할 수 있습니다.<br /><br />*라이선스를 비활성화하면 향후 라이선스 발급이 불가능해지지만, 기존 라이선스에는 영향을 미치지 않습니다.*                                                                                                           | [License Config](/concepts/licensing-module/license-config)                                                                             |
+| 메타데이터 수정                | 메타데이터가 다음과 같은 경우 수정할 수 없습니다 **동결된**. 이는 다음을 호출하여 수행됩니다 `freezeMetadata` 내의 [CoreMetadataModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/metadata/CoreMetadataModule.sol). | [CoreMetadataModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/metadata/CoreMetadataModule.sol) |
+
+## 라이선스 훅 수정
+
+IP는 다음을 사용하여 더욱 사용자 정의하거나 수정할 수 있습니다 [License Hook](/concepts/hooks#licensing-hooks). 이는 License Config 내에서 설정되는 함수로, [License Token](/concepts/licensing-module/license-token) (또는 더 간단히 "라이선스")가 발행되기 전에 호출됩니다. License Hook으로 구현할 수 있는 다양한 기능들이 있으며, 이는 **항상 수정 가능합니다**:
+
+| 기능          | 설명                                                                |
+| ----------- | ----------------------------------------------------------------- |
+| 동적 라이선스 수수료 | 라이선스의 가격을 동적으로 설정할 수 있습니다. 예를 들어, 본딩 커브 로직을 통해 동적으로 업데이트될 수 있습니다. |
+| 총 라이선스 수    | 발행할 수 있는 최대 라이선스 토큰 수에 기반하여 함수를 중단할 수 있습니다.                       |
+| 특정 수신자      | 특정 수신자에게만 라이선스 발행을 제한할 수 있습니다.                                    |
+| 기타...       | 필요에 따라 추가적인 라이선싱 훅 기능을 구현할 수 있습니다.                                |
+
+# 그룹 IPA 제한
+
+참조 [👥 Group IPA Restrictions](/concepts/grouping-module#group-restrictions) 더 자세한 정보를 위해.
+
+
+# ⚙️ IP 계정
+
+<Note>
+  읽기 건너뛰기
+
+  IP 계정에 대한 2분 간단 개요를 [here](https://twitter.com/jacobmtucker/status/1787603252198134234)에서 확인하세요.
+</Note>
+
+🧩 IP Asset[🧩 IP Asset](/concepts/ip-asset/overview)이 등록되면 관련된 **IP Account**가 부여됩니다. IP Account는 수정된 ERC-6551(Token Bound Account) 구현입니다. 이는 Story의 모듈과의 상호 작용 권한을 제어하거나 IP와 관련된 데이터를 저장하기 위해 IP Asset에 바인딩된 별도의 계약입니다. 등록 시 IP Asset에는 고유한 ID가 할당됩니다. 이 ID는 IP Asset에 바인딩된 IP Account의 주소입니다.
+
+<img src="/images/concepts/ip-account.png" alt="IP Account Diagram" />
+
+IP Account는 주로 두 가지 역할을 합니다:
+
+1. 메타데이터와 IP에서 생성된 라이선스 토큰이나 로열티 토큰과 같은 관련 자산의 소유권 세부 정보를 포함한 포괄적인 IP 관련 데이터를 저장합니다.
+2. 다양한 모듈에서 이 데이터를 활용할 수 있도록 합니다. 이러한 모듈들은 IP Account와 상호 작용하고 기여하며, 데이터를 생성하고 저장합니다. 예를 들어, 라이선싱, 수익/로열티 공유, 리믹싱, IP 분쟁 등의 모듈은 IP Account의 프로그래밍 가능성 덕분에 가능해집니다.
+
+<Note>
+  기본 NFT가 이전되면 새 소유자는 자동으로 관련 IP Asset 및 IP Account의 소유자가 됩니다.
+</Note>
+
+## `execute`와 `executeWithSig`
+
+IP Account의 주요 기능 중 하나는 일반적인 `execute()` 함수로, 이는 인코딩된 바이트 데이터를 통해 Story 내의 임의의 모듈을 호출할 수 있게 합니다(따라서 향후 모듈에 대해 확장 가능). 또한, `executeWithSig()` 함수가 있어 사용자가 트랜잭션에 서명하고 다른 사람이 원활한 UX를 위해 대신 실행할 수 있게 합니다.
+
+
+# 🧩 IP Asset
+
+<Note>
+  읽기 건너뛰기
+
+  IP Assets에 대한 1분 간단 개요를 [here](https://twitter.com/jacobmtucker/status/1785765362744889410)에서 확인하세요.
+</Note>
+
+IP Assets는 Story의 기본적인 프로그래밍 가능한 IP 메타데이터입니다. 각 IP Asset은 온체인 ERC-721 NFT(IP를 나타냄)입니다. IP가 오프체인인 경우, 먼저 해당 IP를 나타내는 ERC-721 NFT를 민팅한 다음 IP Asset으로 등록하면 됩니다.
+
+IP Asset이 생성되면 관련된 [⚙️ IP Account](/concepts/ip-asset/ip-account)가 배포됩니다. 이는 수정된 ERC-6551(Token Bound Account) 구현입니다. IP Asset에 바인딩된 별도의 컨트랙트로, Story의 모듈과의 상호 작용에 대한 권한을 제어하거나 IP와 관련된 데이터를 저장하는 데 사용됩니다.
+
+## IP Asset 등록하기
+
+IP Asset은 ERC-721 NFT를 Story의 글로벌 [IP Asset Registry](/concepts/registry/ip-asset-registry)에 등록하여 생성됩니다.
+
+코드 예제/튜토리얼로 바로 넘어가고 싶다면 [How to Register IP on Story](/developers/tutorials/how-to-register-ip-on-story)를 참조하세요.
+
+## NFT vs. IP 메타데이터
+
+Story에서 IP는 프로토콜에 IP Asset으로 등록되는 NFT입니다. 그러나 NFT와 IP Asset 모두 설정할 수 있는 자체 메타데이터가 있습니다. 그렇다면 둘의 차이점은 무엇일까요?
+
+|         | 표준                                                                         | 무엇인가요?                                                                                                                        |
+| :------ | :------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
+| **NFT** | [Opensea ERC721 Standard](https://docs.opensea.io/docs/metadata-standards) | name, description, image, animation\_url, attributes 등과 같은 것들`name`, `description`, `image`, `attributes`, `animation_url`, 등 |
+| **IP**  | [📝 IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard)       | Story에 더 특화되어 있으며, 침해 확인을 위한 기본 콘텐츠에 대한 필요한 정보, 작품의 저자 등을 포함합니다                                                               |
+
+IP Asset의 소유권, 법적, 경제적 세부 사항과 같은 다른 모든 메타데이터는 우리 프로토콜에서 직접 처리합니다. 예를 들어, 프로토콜은 [📜 Licensing Module](/concepts/licensing-module/overview)을 통해 부모-자식 관계와 관련된 데이터를, [💸 Royalty Module](/concepts/royalty-module/overview)을 통해 IP Asset 간의 금전적 흐름을, [💊 Programmable IP License (PIL)](/concepts/programmable-ip-license/overview)을 통해 IP Asset의 법적 제약/권한을 저장합니다.
+
+### IP Asset에 NFT & IP 메타데이터 추가하기
+
+<CardGroup cols={2}>
+  <Card title="SDK 완성된 코드 예제" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/register.ts" icon="computer">
+    코드로 바로 이동하여 IP Asset에 NFT & IP 메타데이터를 추가하는 완성된 코드 예제를 확인하세요
+  </Card>
+
+  <Card title="SDK 설명" href="/developers/typescript-sdk/register-ip-asset" icon="file">
+    단계별 설명을 통해 IP Asset에 메타데이터를 추가하는 방법을 알아보세요.
+  </Card>
+</CardGroup>
+
+실제로 SDK를 사용하든 스마트 컨트랙트를 직접 사용하든, 우리 프로토콜은 4가지 다른 매개변수를 제공하도록 요구합니다:
+
+* 여기에서 `WorkflowStructs.sol` 컨트랙트를 [here](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/lib/WorkflowStructs.sol)에서 확인하세요.
+
+```solidity WorkflowStructs.sol
+/// @notice Struct for metadata for NFT minting and IP registration.
+/// @dev Leave the nftMetadataURI empty if not minting an NFT.
+/// @param ipMetadataURI The URI of the metadata for the IP.
+/// @param ipMetadataHash The hash of the metadata for the IP.
+/// @param nftMetadataURI The URI of the metadata for the NFT.
+/// @param nftMetadataHash The hash of the metadata for the IP NFT.
+struct IPMetadata {
+  string ipMetadataURI;
+  bytes32 ipMetadataHash;
+  string nftMetadataURI;
+  bytes32 nftMetadataHash;
+}
+```
+
+* `ipMetadataURI` - 📝 IPA Metadata Standard를 따르는 JSON 객체를 가리키는 URI[📝 IPA 메타데이터 표준](/concepts/ip-asset/ipa-metadata-standard)
+* `ipMetadataHash` - ipMetadata JSON 객체의 해시`ipMetadataURI` JSON 객체
+* `nftMetadataURI` - Opensea ERC721 Standard를 따르는 JSON 객체를 가리키는 URI[Opensea ERC721 Standard](https://docs.opensea.io/docs/metadata-standards)
+* `nftMetadataHash` - nftMetadata JSON 객체의 해시`nftMetadataURI` JSON 객체
+
+
+# 라이선스 토큰
+
+<CardGroup cols={1}>
+  <Card title="LicenseToken.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/LicenseToken.sol" icon="scroll" color="#ccb092">
+    라이선스 토큰의 스마트 계약을 확인하세요.
+  </Card>
+</CardGroup>
+
+A **라이선스 토큰**은 **ERC-721 NFT**로 표현되며 특정 [라이선스 조건](/concepts/licensing-module/license-terms)을 포함합니다. 관련된 `licenseTokenId`은 전역적이며, 하나의 라이선스 토큰 계약이 있습니다.
+
+라이선스 조건이 IP 자산에 첨부되면 공개되어 누구나 해당 조건에 대한 라이선스 토큰을 발행할 수 있습니다. 라이선스 토큰은 다른 IP를 원본 IP 자산의 파생물로 등록하는 데 사용될 때 소각됩니다.
+
+<Frame caption="라이선스 토큰이 발행될 때 일어나는 과정을 보여주는 다이어그램.">
+  <img src="/images/concepts/license-token-diagram.png" alt="A diagram showing what happens when a License Token is minted." />
+</Frame>
+
+## 비공개 라이선스
+
+<Frame>
+  <img src="/images/concepts/private-licenses.png" alt="A diagram showing how private licenses are minted." />
+</Frame>
+
+비공개 라이선스 토큰을 발행하기 위해, 루트 IP 자산의 소유자는 **아직 IP 자산 자체에 첨부되지 않은 조건**을 가진 라이선스 토큰을 발행할 수 있습니다. 파생 IP 자산은 상속받은 조건만 발행할 수 있기 때문에 비공개 라이선스를 발행할 수 없다는 점에 유의하는 것이 중요합니다.
+
+## 라이선스 토큰의 양도성
+
+라이선스 토큰은 가리키는 라이선스 조건의 값에 따라 양도 가능하거나 불가능할 수 있습니다.
+
+양도 불가능한 라이선스 토큰이 수령인에게 발행되면 영원히 그곳에 고정됩니다.
+
+## 파생물 등록하기
+
+각각의 라이선스 조건 계약을 가진 다른 IP 자산의 파생물로 IP 자산을 등록할 수 있습니다. 이는 IP 자산 간의 법적 구속력 있는 계약을 생성하여 [💸 로열티 모듈](/concepts/royalty-module/overview)에서의 자동 지불과 같은 것들을 강제합니다.
+
+### ⚠️ 제한 사항
+
+파생물 등록에는 몇 가지 제한 사항이 있습니다:
+
+* IP 자산은 한 번만 파생물로 등록할 수 있습니다. IP 자산에 여러 부모가 있는 경우 동시에 모두 등록해야 합니다.
+* IP 자산이 파생물이 되면 더 이상 부모를 연결할 수 없습니다.
+* IP 자산을 파생물로 연결할 때 라이선스 조건을 첨부할 수 없습니다. 부모로부터 조건을 상속받게 됩니다.
+* 부모 IP 자산이나 자식 IP 자산 중 어느 것도 분쟁 상태일 수 없습니다.
+* 자식 IP 자산은 이미 파생물을 가질 수 없습니다.
+* 라이선스 조건 중 하나라도 상업적이라면 모두 상업적이어야 합니다 (`commercialUse = true`)
+
+***
+
+파생 IP 자산을 등록하는 방법에는 두 가지가 있습니다.
+
+<Note>
+  IP 자산은 한 번만 파생물로 등록할 수 있습니다. IP 자산에 여러 부모가 있는 경우 동시에 모두 등록해야 합니다. IP 자산이 파생물이 되면 더 이상 부모를 연결할 수 없습니다.
+</Note>
+
+### 1. 기존 라이선스 토큰 사용하기
+
+라이선스 토큰은 다른 IP를 원본 IP 자산의 파생물로 등록하는 데 사용될 때 소각됩니다.
+
+<Frame>
+  <img src="/images/concepts/existing-license-token.png" alt="Using an Existing License Token" />
+</Frame>
+
+### 2. 직접 파생물 등록하기
+
+라이선스 토큰 없이도 직접 파생물을 등록할 수 있습니다. 라이선스 조건이 IP 자산에 첨부되면 어차피 라이선스 토큰을 발행할 수 있게 공개되므로, 이는 단순히 라이선스 토큰을 발행하는 중간 단계를 건너뛰는 편리한 방법입니다.
+
+<Frame>
+  <img src="/images/concepts/derivative-directly.png" alt="Registering a Derivative Directly" />
+</Frame>
+
+
+# 라이선스 설정
+
+## 라이선스 설정
+
+<CardGroup cols={1}>
+  <Card title="LicensingConfig 구조체" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/lib/Licensing.sol" icon="scroll" color="#ccb092">
+    스마트 계약에서 LicensingConfig 구조체를 확인하세요.
+  </Card>
+</CardGroup>
+
+선택적으로, IP 자산에 `LicensingConfig`를 첨부할 수 있습니다 (해당 자산에 첨부된 특정 `licenseTermsId`에 대해). 이는 아래와 같이 `mintingFee`와 `licensingHook`와 같은 필드를 포함합니다.
+
+```solidity
+/// @notice This struct is used by IP owners to define the configuration
+/// when others are minting license tokens of their IP through the LicensingModule.
+/// When the `mintLicenseTokens` function of LicensingModule is called, the LicensingModule will read
+/// this configuration to determine the minting fee and execute the licensing hook if set.
+/// IP owners can set these configurations for each License or set the configuration for the IP
+/// so that the configuration applies to all licenses of the IP.
+/// If both the license and IP have the configuration, then the license configuration takes precedence.
+/// @param isSet Whether the configuration is set or not.
+/// @param mintingFee The minting fee to be paid when minting license tokens.
+/// @param licensingHook  The hook contract address for the licensing module, or address(0) if none
+/// @param hookData The data to be used by the licensing hook.
+/// @param commercialRevShare The commercial revenue share percentage.
+/// @param disabled Whether the license is disabled or not.
+/// @param expectMinimumGroupRewardShare The minimum percentage of the group's reward share
+/// (from 0 to 100%, represented as 100 * 10 ** 6) that can be allocated to the IP when it is added to the group.
+/// If the remaining reward share in the group is less than the minimumGroupRewardShare,
+/// the IP cannot be added to the group.
+/// @param expectGroupRewardPool The address of the expected group reward pool.
+/// The IP can only be added to a group with this specified reward pool address,
+/// or address(0) if the IP does not want to be added to any group.
+struct LicensingConfig {
+  bool isSet;
+  uint256 mintingFee;
+  address licensingHook;
+  bytes hookData;
+  uint32 commercialRevShare;
+  bool disabled;
+  uint32 expectMinimumGroupRewardShare;
+  address expectGroupRewardPool;
+}
+```
+
+이들 중 일부는 무엇을 의미하나요?
+
+1. `isSet` - 이것이 false이면, 전체 라이선스 설정이 완전히 무시됩니다. 예를 들어, 라이선스 설정에 `mintingFee == 10`와 `disabled == true`가 있지만 `isSet == false`이면, `mintingFee`와 `disabled`는 완전히 무시됩니다.
+2. `disabled` - 이것이 true이면, 설정이 첨부된 조건에 대해 라이선스를 발행할 수 없고 더 이상 파생물을 전혀 첨부할 수 없습니다.
+
+와 같은 필드들은 `mintingFee`와 `commercialRevShare`라이선스 조건 자체의 중복을 덮어씁니다. **이의 이점은 일반적으로 라이선스 조건을 변경할 수 없는 파생 IP 자산이 특정 필드를 덮어쓸 수 있다는 것입니다.**
+
+는 `licensingHook` 인터페이스를 구현하는 스마트 계약의 주소입니다. 이 인터페이스는 `ILicensingHook` 함수를 포함하고 있으며, `beforeMintLicenseTokens`이 함수는 사용자가 라이선스 토큰을 발행하기 전에 실행됩니다. 이는 라이선스 발행 시 실행될 로직을 삽입할 수 있음을 의미합니다.
+
+훅 자체는 다른 섹션에서 설명됩니다. 라이선스, 라이선스 토큰을 발행하는 사람, 그리고 받는 사람에 대한 정보를 포함하고 있음을 알 수 있습니다.
+
+<Tip>
+  라이선싱 훅에 대해 자세히 알아보기 [here](/concepts/hooks#licensing-hooks).
+</Tip>
+
+### 라이선스 설정하기
+
+함수를 호출하여 라이선스 설정을 할 수 있습니다 `setLicenseConfig` 계약의 [LicensingModule.sol 계약](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/licensing/LicensingModule.sol).
+
+### 라이선스 설정으로 가능한 로직
+
+1. **최대 라이선스 수**: 는 `licensingHook`(다음 섹션에서 설명)에서 발행할 수 있는 최대 라이선스 수에 대한 로직을 정의할 수 있는 곳입니다. 예를 들어, 최대 라이선스 수가 이미 발행되었다면 트랜잭션을 취소하는 것입니다.
+2. **파생물 불허**: IP 자산의 파생물을 등록하면, 그 파생물은 라이선스 조건을 변경할 수 없습니다. 이는 [here](/concepts/licensing-module/license-terms#inherited-license-terms)에서 설명되어 있습니다. 다음과 같은 의문이 들 수 있습니다: "파생물로서, 내 자신의 파생물을 불허하고 싶지만, 내 라이선스 조건은 파생물을 허용하고 있고 이를 변경할 수 없다면 어떻게 해야 하나요?" 이를 해결하기 위해, 간단히 `disabled`를 true로 설정하면 됩니다.
+3. **발행 수수료**: 위의 #2와 유사하게... 발행 수수료는 어떻습니까? 파생 IP 자산에서 라이선스 조건을 변경할 수 없지만 (따라서 그 안의 발행 수수료도), 라이선스 설정에서 `mintingFee`를 수정하거나 `totalMintingFee`에서 `licensingHook`를 반환하여 (다음 섹션에서 설명) 그 파생물의 발행 수수료를 변경할 수 있습니다.
+4. **상업적 수익 공유**: 위의 #2와 #3과 유사하게, 라이선스 설정에서 `commercialRevShare`를 수정할 수 있습니다.
+5. **라이선스 토큰 발행을 위한 동적 가격 책정**: 총 발행된 수, 사용자가 발행하는 라이선스 수, 또는 사용자가 누구인지에 따라 IP 자산에서 라이선스 토큰을 발행하기 위한 동적 가격을 설정합니다. 이 모든 데이터는 `licensingHook`(다음 섹션에서 설명)에서 사용할 수 있습니다.
+
+... 그리고 더 많은 기능들.
+
+### 제한 사항
+
+참조: [IP 수정 및 제한 사항](/concepts/ip-asset/ipa-modifications)에서 라이선스 설정에 대한 다양한 제한 사항을 확인하세요.
+
+
+# 라이선스 조건
+
+Story에 IP를 등록할 때, IP에 라이선스 조건을 첨부할 수 있습니다. 이는 [📜 라이선싱 모듈](/concepts/licensing-module/overview)에 의해 온체인에서 강제되고, [❌ 분쟁 모듈](/concepts/dispute-module/overview)에 의해 이의 제기가 가능하며, 최악의 경우 전통적인 방식으로 법정에서 오프체인으로 강제할 수 있는 실제 법적 구속력이 있는 조건입니다.
+
+여기에는 상업적 사용에 대한 조건도 포함되어 있으며, 이는 [💸 Royalty Module](/concepts/royalty-module/overview)이 어떻게 시행될지를 설명합니다(예: "수익의 50%를 원본 IP와 공유해야 함").
+
+<CardGroup cols={1}>
+  <Card title="라이선스 조건 예시" href="/concepts/programmable-ip-license/pil-flavors" icon="ice-cream">
+    "플레이버"라고도 알려진 PIL 라이선스 조건의 인기 있는 조합들을 확인해보세요.
+  </Card>
+</CardGroup>
+
+더 구체적으로, 라이선스 조건은 [License Template](/concepts/licensing-module/license-template)에서 특정 값들의 조합입니다. 실제로 **여러** 라이선스 조건(변형)이 각 라이선스 템플릿에 대해 존재할 수 있고 존재할 것입니다. 라이선스 템플릿이 많은 라이선스 조건 변형을 생성한다고 상상할 수 있습니다.
+
+<Frame>
+  <img src="/images/concepts/license-terms-diagram.png" alt="License Terms Diagram" />
+</Frame>
+
+등록되면, **라이선스 조건은 변경할 수 없습니다 - 조작되거나 변경될 수 없습니다**, 심지어 그것을 생성한 라이선스 템플릿에 의해서도 말입니다.
+
+또한, 라이선스 조건은 그들이 유래한 라이선스 템플릿 내에서 고유한 숫자 ID를 가집니다. 이는 라이선스 조건을 재사용 가능하게 만들어, 누군가가 특정 값 세트로 라이선스 조건을 생성하면 한 번만 생성되어 다른 사람들도 사용할 수 있게 됩니다.
+
+예를 들어, [Programmable IP License (PIL💊)](/concepts/programmable-ip-license/overview)의 특정 조건 값 세트, 예를 들어 비상업적 사용 + 파생물 허용 + 무료 발행은 관련 ID를 가진 고유한 라이선스 조건을 정의합니다.
+
+## IP 자산에 첨부된 라이선스 조건
+
+루트 IP 자산의 소유자는 라이선스 조건을 첨부하여 다른 사용자들에게 이 IP 자산의 파생물을 만들기 위해 해당 조건의 라이선스 토큰을 발행할 수 있다는 신호를 보낼 수 있습니다. **라이선스 조건이 IP 자산에 첨부되면, 이제 "공개"로 간주되며 누구나 해당 조건을 사용하여 라이선스 토큰을 발행할 수 있습니다.**
+
+<Frame>
+  <img src="/images/concepts/license-terms-attach-diagram.png" alt="License Terms Attached to IP Asset" />
+</Frame>
+
+## 상속된 라이선스 조건
+
+반면에, 파생 IP 자산은 부모 IP 자산으로부터 라이선스 조건을 상속받습니다. 이는 IP 자산이 파생물로 등록될 때, 라이선스 토큰을 소각하고 관련 라이선스 조건을 상속받는다는 것을 의미합니다. **이 파생물의 소유자는 새로운 라이선스 조건을 설정할 수 없습니다.**
+
+<Note>
+  "내 파생물에 새로운 라이선스 조건을 설정할 수 없다면, 그것은 또한 내 파생물에 대한 발행 수수료를 변경하거나 더 많은 파생물을 허용하지 않는 것도 의미하나요?"라고 궁금해할 수 있습니다.
+
+  다행히도, 이를 해결할 방법이 있습니다! 파생 IP에서 라이선스 조건을 변경할 수는 없지만, [특별한 동작을 구현하기 위해 라이선스 구성을 활용할 수 있습니다](/concepts/licensing-module/license-config).
+</Note>
+
+## 만료
+
+라이선스 조건은 만료`expiration` 시간을 지원합니다. 라이선스 조건이 만료되면, 해당 라이선스를 따르는 모든 파생물은 더 이상 수익을 창출하거나 추가 파생물을 만들 수 없게 됩니다. IP 자산이 여러 부모의 파생물인 경우, 두 부모 중 가장 빠른 만료 시간에 도달하면 만료됩니다.
+
+
+# 📜 Licensing Module
+
+<Accordion title="읽기 건너뛰기 - 1분 요약" icon="circle-info">
+  라이선싱 모듈을 사용하면 License Template**License Template**(이는 [Programmable IP License (PIL💊)](/concepts/programmable-ip-license/overview)입니다)에서 실제 법적 라이선스를 생성하고 IP 자산에 첨부할 수 있습니다. 이 라이선스와 이를 정의하는 **License Terms**는 다른 사람들이 귀하의 IP를 사용하고, 상업화하고, 리믹스하는 방법을 제한합니다.
+
+  License Terms가 IP 자산에 첨부되어 있다면, 누구나 그로부터 **License Token**(ERC-721 NFT)을 발행할 수 있으며, 이는 정의된 조건에 따라 해당 작품을 사용할 수 있는 라이선스 역할을 합니다. 이 토큰은 파생 작품을 등록하기 위해 소각될 수 있습니다. 이는 자산 간의 부모-자식 관계를 설정하여 [💸 Royalty Module](/concepts/royalty-module/overview)에서의 자동 로열티 흐름과 같은 기능을 가능하게 합니다.
+</Accordion>
+
+IP 자산의 소유자는 파생물 생성, 상업적 이용, 다양한 플랫폼에서의 복제와 같은 지적 재산권을 소유합니다.
+
+IP 자산은 프로그래밍 방식으로 [License Tokens](/concepts/licensing-module/license-token)(ERC-721 NFT)를 통해 사용자가 어느 정도 자율성을 가지고 이러한 권리를 행사할 수 있는 권한을 부여할 수 있으며, 이는 [License Terms](/concepts/licensing-module/license-terms)라고 알려진 특정 조건 세트를 가리킵니다.
+
+<Frame caption="Blue: contracts built into the protocol. White: contracts developed by the community or 3rd party vendor.">
+  <img src="/images/concepts/licensing-module-diagram.png" alt="The contracts in blue are built into the protocol. The contracts in white can be developed by the community or 3rd party vendor." />
+</Frame>
+
+## LicensingModule
+
+<CardGroup cols={1}>
+  <Card title="LicensingModule.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/licensing/LicensingModule.sol" icon="scroll" color="#ccb092">
+    라이선스 모듈의 스마트 계약을 확인하세요.
+  </Card>
+</CardGroup>
+
+LicensingModule`LicensingModule.sol` 계약은 라이선싱 시스템의 주요 진입점입니다. 이는 다음과 같은 책임을 갖습니다:
+
+* IP 자산에 License Terms 첨부
+* License Tokens 발행
+* 파생물 등록
+* License Configs 설정
+
+## 추가 읽기
+
+다음 문서는 위에서 보여진 라이선싱 모듈의 모든 주요 구성 요소를 설명합니다:
+
+* [License Template](/concepts/licensing-module/license-template)
+* [License Terms](/concepts/licensing-module/license-terms)
+* [License Token](/concepts/licensing-module/license-token)
+* [License Registry](/concepts/registry/license-registry)
+* [License Config](/concepts/licensing-module/license-config)
+
+
+# 라이선스 템플릿
+
+라이선스 템플릿은 IP에 대한 다양한 라이선스 조건을 정의하는 코드로 작성된 ("프로그래밍 가능한") 법적 프레임워크입니다. 예를 들어:
+
+* "상업적 사용이 허용되나요?" - 참/거짓 (bool)
+* "라이선스를 양도할 수 있나요?" - 참/거짓 (bool)
+* "상업적 사용인 경우, 내가 받는 로열티 비율은 얼마인가요?" - 숫자
+
+이러한 조건과 값은 라이선스 템플릿마다 다릅니다.
+
+라이선스 템플릿의 첫 번째 (그리고 현재 유일한) 예시는 Story 팀이 직접 개발한 프로그래밍 가능한 IP 라이선스 (PIL :pill:)입니다.
+
+<CardGroup cols={2}>
+  <Card title="프로그래밍 가능한 IP 라이선스 (PIL)" href="/concepts/programmable-ip-license/overview" icon="pills" color="yellow">
+    라이선스 템플릿의 첫 번째 구현에 대해 알아보세요
+  </Card>
+
+  <Card title="PIL 스마트 컨트랙트" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/licensing/PILicenseTemplate.sol" icon="scroll" color="#ccb092">
+    PIL의 스마트 컨트랙트를 확인하세요.
+  </Card>
+</CardGroup>
+
+## 라이선스 템플릿 요구사항
+
+라이선스 템플릿은 다음을 책임집니다:
+
+* 모든 매개변수, 가능한 값, 그리고 해당하는 법률 용어가 포함된 실제 오프체인 법적 계약 템플릿에 대한 링크를 `licenseTextUrl`로 제공합니다.
+  * 라이선싱 프레임워크가 Story와 호환되려면 법적 텍스트가 **반드시** 명확하고 매개변수화되어 있어야 하며, 각 라이선싱 매개변수는 각 값의 가능한 결과를 설정해야 합니다.
+  * 각 라이선스 템플릿의 매개변수 값("라이선스 템플릿 조건"이라고 함)은 각 라이선스 계약의 법적 텍스트를 결정합니다.
+* 다음을 정의합니다 `struct` 특정 매개변수 정의에 따라, License Terms 구조체(아래에서 설명)에 인코딩되어야 합니다.
+* License Terms에 대한 등록 방법과 getter를 제공합니다.
+* **확인** 하는 것은 **minter**와 주소 **모두 파생물을 연결하는 것이 License Template 조건에 의해 해당 작업을 수행할 수 있도록 허용되는지**.
+  * 이러한 조건들은 License Template 자체에 의해 강제되거나 훅을 통해 강제될 수 있습니다. 이는 파생물 생성에 대한 제한, LNFT 보유자에 대한 토큰 게이팅, 라이선스 제공자의 창작 통제, KYC 등 다양한 범위일 수 있습니다. 각 License Template의 구현에 따라 다릅니다.
+* **파생물이 여러 부모를 가지고 있거나 가질 예정인 경우 License Terms가 호환되는지 확인**
+
+## 자신만의 템플릿 만들기
+
+자신만의 License Template(PIL과 같은)을 만들 수 있지만, 프로토콜에 완전히 통합되려면 Story 팀의 승인을 받아야 합니다.
+
+
+# 👥 그룹화 모듈
+
+그룹화 모듈은 그룹을 위한 로열티 풀을 지원하는 그룹 IP 자산의 생성과 관리를 가능하게 합니다.
+
+<CardGroup cols={1}>
+  <Card title="GroupingModule.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/grouping/GroupingModule.sol" icon="scroll" color="#ccb092">
+    그룹화 모듈의 스마트 컨트랙트를 확인하세요.
+  </Card>
+</CardGroup>
+
+`GroupingModule.sol`는 그룹화 워크플로우의 주요 진입점입니다. 이는 **stateless**하며 다음을 담당합니다:
+
+* 새 그룹 등록
+* 그룹에 IPA 추가
+* 그룹에서 IPA 제거
+* 그룹이 특정 IPA를 포함하는지 확인
+* 그룹의 총 IPA 수 가져오기
+
+## 그룹 IPA 생성
+
+IP 자산 등록 과정과 유사하게, 등록을 위해 민팅된 NFT가 있어야 하고 그 다음 IP 계정이 생성되는 것처럼, 그룹 IP 자산에도 동일하게 적용됩니다. 그룹을 등록하려면 민팅된 ERC-721 NFT(그룹의 소유권을 나타내는)가 있어야 하며, 등록 시 그룹을 위한 IP 계정이 배포됩니다.
+
+누구나 새 그룹을 생성할 수 있습니다.
+
+### 그룹 IP 자산 레지스트리
+
+IP 자산이 생성될 때 IP 계정이 배포되고 [IP Asset Registry](/concepts/registry/ip-asset-registry)를 통해 등록되는 것과 유사하게, 그룹의 IP 계정은 [Group IP Asset Registry](/concepts/registry/group-ip-asset-registry)를 통해 배포되고 등록됩니다. 이는 그룹 멤버와 보상 풀을 포함하여 그룹 IP 자산의 등록과 추적을 관리하는 역할을 합니다.
+
+### 그룹의 IP 계정
+
+그룹 IP 계정은 일반 IP 계정과 동등하게 기능해야 하며, 라이선스 조건 첨부, 파생물 생성, 모듈과의 실행 및 기타 상호작용을 허용합니다. 또한 IP 계정의 공통 인터페이스를 가지고 있습니다. 따라서 그룹 IP 계정은 IP 계정이 적용될 수 있는 모든 곳에 적용될 수 있습니다.
+
+IP 계정의 공통 인터페이스 외에도, 그룹 IP 계정은 그룹 내 개별 IPA를 추가/제거하는 기능을 가지고 있습니다.
+
+## 그룹 제한사항
+
+다음은 그룹 IPA와 관련된 제한사항입니다:
+
+* 그룹 IP의 파생 IP는 해당 그룹 IP만을 유일한 부모로 가질 수 있습니다
+* 그룹 IP는 [Liquid Absolute Percentage (LAP)](/concepts/royalty-module/liquid-absolute-percentage) 로열티 정책을 사용하는 라이선스 조건을 첨부할 수 없습니다
+* 빈 그룹은 파생 IP를 가질 수 없거나 라이선스 토큰을 민팅할 수 없습니다
+* 그룹 IP는 파생물로 등록될 수 없습니다
+* 그룹 IP는 모든 구성원에게 공통된 하나의 라이선스 조건만 첨부할 수 있습니다
+* 그룹이 첫 번째 구성원을 얻으면 `mintingFee`, `licensingHook`, 그리고 `licensingHookData`이 고정됩니다. 그룹의 `commercialRevShare`만 증가할 수 있습니다
+* 그룹의 최대 크기는 1000명의 구성원입니다
+
+### 그룹에 추가 및 제거하기
+
+* 그룹의 소유자만 IP 자산을 추가/제거할 수 있습니다. 귀하는 **do not** IP 자산을 소유하지 않아도 그룹에 추가할 수 있습니다.
+* IPA는 그룹의 라이선스 조건과 일치하는 하나의 라이선스 조건을 포함해야 합니다 (동일한 `licenseTemplate` 및 `licenseTerms`. IPA는 그룹과 일치하는 것 외에도 다른 라이선스 조건을 포함할 수 있습니다.
+* IP를 그룹에 추가할 때, 그룹과 IP는 동일한 `mintingFee` 및 `licenseHook`을 `LicenseConfig`에 가지고 있어야 합니다. 또한, 그룹의 상업적 수익 공유는 IP의 상업적 수익 공유보다 크거나 같아야 합니다.
+
+### 그룹이 잠기는 경우
+
+그룹이 잠기면 IPA를 제거할 수 없지만 새로운 IPA는 여전히 추가할 수 있습니다.
+
+그룹 IPA는 다음과 같은 경우에 잠깁니다:
+
+1. 파생 IP가 등록되었을 때 또는
+2. 누군가가 그룹에서 라이선스 토큰을 발행할 때
+
+## 예시
+
+훈련 데이터를 사용하여 지속적으로 학습하고 더 나은 콘텐츠를 생성하는 AI 봇이 있다고 가정해 봅시다. 훈련 데이터는 루트인 그룹 IPA이고, AI 봇은 훈련 데이터의 파생 IPA입니다. 그리고 AI 봇이 지불을 받을 때마다 수익은 수익으로서 훈련 데이터로 다시 흘러갑니다.
+
+이제 그룹에 더 많은 훈련 데이터를 추가하고 싶습니다. 그룹이 이제 잠겼기 때문에 (파생물을 연결했으므로), 새로운 그룹 IPA를 루트로 등록한 다음 새로운 AI 봇을 파생물로 등록해야 합니다.
+
+
+# 개요
+
+지적 재산권의 한 부분은 [🧩 IP Asset](/concepts/ip-asset)과 그와 관련된 [⚙️ IP Account](/concepts/ip-asset/ip-account)로 표현되며, 이는 각 IP의 핵심 정체성 역할을 하도록 설계된 스마트 계약입니다. 또한 우리는 다양한 [🧱 Modules](/concepts/modules)을 통해 IP Asset에 기능을 추가하여 파생물 생성, IP 분쟁, 그리고 IP 간의 수익 흐름 자동화 등을 할 수 있습니다.
+
+<Frame>
+  <img src="/images/concepts/story-architecture.png" />
+</Frame>
+
+위 다이어그램에서 언급된 계층들을 간단히 소개해 보겠습니다:
+
+## [🧩 IP Asset](/concepts/ip-asset)
+
+IP를 온체인으로 가져오고 싶을 때, ERC-721 NFT를 발행합니다. 이 NFT는 IP에 대한 **소유권**을 나타냅니다.
+
+그런 다음, **등록**을 통해 NFT를 우리 프로토콜의 [IP Asset Registry](/concepts/registry/ip-asset-registry)에 등록합니다. 이는 [⚙️ IP Account](/concepts/ip-asset/ip-account)를 배포하여 효과적으로 "IP Asset"을 생성합니다. 해당 계약의 주소가 IP Asset의 식별자가 됩니다 (`ipId`).
+
+기본 NFT는 다른 NFT와 마찬가지로 거래/판매될 수 있으며, 새 소유자는 IP Asset과 그와 관련된 모든 수익을 소유하게 됩니다.
+
+## [⚙️ IP Account](/concepts/ip-asset/ip-account)
+
+IP Account는 IP Asset과 연결된 스마트 계약으로, 주로 두 가지 역할을 합니다:
+
+1. 관련 IP Asset의 데이터를 저장합니다. 예를 들어, IP에서 생성된 관련 라이선스 및 로열티 등이 있습니다.
+2. 다양한 모듈에서 이 데이터를 활용할 수 있도록 합니다. 예를 들어, IP 계정의 프로그래밍 가능성 덕분에 라이선싱, 수익/로열티 공유, 리믹스 및 기타 중요한 기능들이 가능해집니다.
+
+IP 계정의 주소는 IP 자산의 식별자입니다 (`ipId`).
+
+## [🧱 모듈](/concepts/modules)
+
+모듈은 IP 계정의 기능을 정의하고 확장하는 맞춤형 스마트 계약입니다. 모듈은 개발자들이 각 IP에 대한 기능과 상호작용을 생성할 수 있게 하여 IP를 진정으로 프로그래밍 가능하게 만듭니다.
+
+우리는 이미 몇 가지 핵심 모듈을 가지고 있습니다:
+
+1. [📜 라이선싱 모듈](/concepts/licensing-module): IP 간의 부모\<->자식 관계를 생성하여, 라이선스 조건에 의해 제한된 IP의 파생물을 가능하게 합니다 (출처를 밝혀야 함, 수익의 10%를 공유해야 함 등)
+2. [💸 로열티 모듈](/concepts/royalty-module): 라이선스 조건에서 협상된 수익 공유를 준수하며 IP 간의 수익 흐름을 자동화합니다
+3. [❌ 분쟁 모듈](/concepts/dispute-module): IP의 분쟁 및 플래깅을 용이하게 합니다
+4. [👥 그룹화 모듈](/concepts/grouping-module): IP들을 함께 그룹화할 수 있게 합니다
+5. [👀 메타데이터 모듈](/concepts/metadata-module): IP 자산의 메타데이터를 관리하고 볼 수 있습니다
+
+## [🗂️ 레지스트리](/concepts/registry)
+
+우리 프로토콜의 다양한 레지스트리는 프로토콜의 전역 상태에 대한 주요 디렉토리/저장소 역할을 합니다. 특정 IP의 상태를 관리하는 IP 계정과 달리, 레지스트리는 프로토콜의 더 넓은 상태를 감독합니다.
+
+## [💊 프로그래밍 가능한 IP 라이선스 (PIL)](/concepts/programmable-ip-license)
+
+PIL은 IP 자산이 법적으로 라이선스될 수 있는 방법에 대한 특정 **라이선스 조건**을 정의하는 실제 오프체인 법적 계약입니다. 예를 들어, IP 자산이 어떻게 상업화되고, 리믹스되거나 귀속되는지, 그리고 누가 어떤 조건 하에서 그렇게 할 수 있는지를 정의합니다.
+
+우리는 이러한 조건들을 온체인에도 매핑하여 다른 사람들이 귀하의 IP를 원활하고 투명하게 라이선스할 수 있도록 IP 자산에 쉽게 조건을 첨부할 수 있게 했습니다.
+
+
+# PIL 조건
+
+<CardGroup cols={3}>
+  <Card title="개요 읽기" href="/concepts/programmable-ip-license/overview" icon="pills" color="yellow">
+    아직 읽지 않으셨다면, 프로그래머블 IP 라이선스(PIL💊) 개요를 읽어보세요.
+  </Card>
+
+  <Card title="사전 설정된 PIL 조건" href="/concepts/programmable-ip-license/pil-flavors" icon="thumbs-up" color="#51af51">
+    PIL의 가능한 조합이 너무 많기 때문에, 개발 중에 사용할 수 있는 사전 설정된 "플레이버"를 만들었습니다.
+  </Card>
+
+  <Card title="PIL 법적 텍스트" href="https://github.com/piplabs/pil-document/blob/main/Story%20Foundation%20-%20Programmable%20IP%20License%20(1.31.25).pdf" icon="scroll" color="#ccb092">
+    실제 PIL 법적 텍스트를 확인해보세요. 법적 텍스트임에도 매우 읽기 쉽습니다!
+  </Card>
+</CardGroup>
+
+# 온체인 조건
+
+대부분의 PIL 조건은 온체인에 있습니다. 이들은 `IPILicenseTemplate.sol` 계약에서 `PILTerms` 구조체 [여기](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/interfaces/modules/licensing/IPILicenseTemplate.sol)로 구현되어 있습니다.
+
+```solidity IPILicenseTemplate.sol
+/// @notice This struct defines the terms for a Programmable IP License (PIL).
+/// These terms can be attached to IP Assets.
+struct PILTerms {
+  bool transferable;
+  address royaltyPolicy;
+  uint256 defaultMintingFee;
+  uint256 expiration;
+  bool commercialUse;
+  bool commercialAttribution;
+  address commercializerChecker;
+  bytes commercializerCheckerData;
+  uint32 commercialRevShare;
+  uint256 commercialRevCeiling;
+  bool derivativesAllowed;
+  bool derivativesAttribution;
+  bool derivativesApproval;
+  bool derivativesReciprocal;
+  uint256 derivativeRevCeiling;
+  address currency;
+  string uri;
+}
+```
+
+## 설명
+
+| 매개변수                        | 값                | 설명                                                                                                                                                                                                                                                                                         |
+| --------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `transferable`              | 참/거짓             | false인 경우, 라이선스 토큰은 수신자 주소로 발행된 후 양도할 수 없습니다.                                                                                                                                                                                                                                              |
+| `royaltyPolicy`             | Address          | 로열티 정책 계약의 주소입니다.                                                                                                                                                                                                                                                                          |
+| `defaultMintingFee`         | #                | 라이선스 발행 시 지불해야 하는 수수료입니다.                                                                                                                                                                                                                                                                  |
+| `expiration`                | #                | 라이선스의 만료 기간입니다.                                                                                                                                                                                                                                                                            |
+| `commercialUse`             | True/False       | 아래의 제한 사항에 따라 원본 IP 자산을 사용하여 수익을 창출할 수 있습니다.                                                                                                                                                                                                                                               |
+| `commercialAttribution`     | True/False       | true인 경우, 사람들은 상업적 응용 프로그램(예: 상품)에서 원작에 대한 크레딧을 제공해야 합니다.                                                                                                                                                                                                                                  |
+| `commercializerChecker`     | Address          | 원작을 상업적으로 이용할 수 있는 상업화 주체입니다. 제로 주소인 경우 제한이 적용되지 않습니다.                                                                                                                                                                                                                                     |
+| `commercializerCheckerData` | Bytes            | 상업화 검사기 계약에 전달될 데이터입니다.                                                                                                                                                                                                                                                                    |
+| `commercialRevShare`        | \[0-100,000,000] | 라이선스 제공자와 공유해야 하는 수익(원본 및 파생 작품의 모든 출처)의 양입니다(10,000,000의 값은 10%의 수익 공유를 의미합니다). 이는 [RoyaltyModule.sol 계약](https://github.com/storyprotocol/protocol-core-v1/blob/e339f0671c9172a6699537285e32aa45d4c1b57b/contracts/modules/royalty/RoyaltyModule.sol#L50)에 화이트리스트로 등록된 모든 토큰의 수익을 수집합니다. |
+| `commercialRevCeiling`      | #                | 만약 `commercialUse`가 true로 설정된 경우, 이 값은 원작으로부터 얻을 수 있는 최대 수익을 결정합니다.                                                                                                                                                                                                                        |
+| `derivativesAllowed`        | True/False       | 라이선스 소지자가 자신의 작품의 파생물을 만들 수 있는지 여부를 나타냅니다.                                                                                                                                                                                                                                                 |
+| `derivativesAttribution`    | True/False       | true인 경우, 만들어진 파생물은 원작에 대한 크레딧을 제공해야 합니다.                                                                                                                                                                                                                                                  |
+| `derivativesApproval`       | True/False       | true인 경우, 라이선스 제공자가 작품의 파생물을 승인해야 합니다.                                                                                                                                                                                                                                                     |
+| `derivativesReciprocal`     | True/False       | false인 경우, 파생물의 파생물을 만들 수 없습니다. 무한한 리믹스를 허용하려면 이를 true로 설정하세요.                                                                                                                                                                                                                             |
+| `derivativeRevCeiling`      | #                | 만약 `commercialUse`가 true로 설정된 경우, 이 값은 파생 작품으로부터 얻을 수 있는 최대 수익을 결정합니다.                                                                                                                                                                                                                     |
+| `currency`                  | Address          | 발행 수수료를 지불하는 데 사용될 ERC20 토큰입니다. 이 토큰은 Story에 등록되어 있어야 합니다.                                                                                                                                                                                                                                 |
+| `uri`                       | String           | 라이선스 조건의 URI로, [오프체인 라이선스 조건](/concepts/programmable-ip-license/pil-terms#off-chain-terms-to-be-included-in-uri-field)을 가져오는 데 사용할 수 있습니다.                                                                                                                                                 |
+
+# 필드에 포함될 오프체인 조건`uri` 필드
+
+일부 PIL 조건은 오프체인에 저장되어야 하며 위의 `uri` 필드에 전달되어야 합니다. 이는 이러한 조건들이 종종 더 길고 설명적이어서 온체인에 저장하는 것이 적절하지 않기 때문입니다.
+
+| 매개변수                            | 설명                                                                                                                                                |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `territory`                     | IP 사용을 특정 지역 및/또는 국가로 제한합니다. 기본적으로 IP는 전 세계적으로 사용할 수 있습니다.                                                                                        |
+| `channelsOfDistribution`        | IP 사용을 특정 미디어 형식과 특정 유통 채널로 제한합니다. 기본적으로 IP는 모든 가능한 유통 채널에서 사용할 수 있습니다. 예: "텔레비전", "물리적 소비자 제품", "비디오 게임" 등.                                      |
+| `attribution`                   | IP 사용 시 원작자에게 크레딧을 제공해야 하는지 여부입니다. 기본적으로 원작자에게 크레딧을 제공할 필요가 없습니다.                                                                                 |
+| `contentStandards`              | IP 사용에 대한 콘텐츠 기준을 설정합니다. 기본적으로 적용되는 기준이 없습니다. 예: "혐오 금지", "전연령 적합", "약물 또는 무기 금지", "포르노그래피 금지".                                                   |
+| `sublicensable`                 | 파생 작품은 원 라이선스 제공자의 승인 없이 이 라이선스에 따라 받은 동일한 권리를 제3자에게 부여할 수 있습니다. 기본적으로 파생 작품은 이를 할 수 없습니다.                                                        |
+| `aiLearningModels`              | IP를 AI 학습 모델 개발에 사용할 수 있는지 여부입니다. 기본적으로 IP는 **사용할 수 없습니다** 이러한 개발에.                                                                               |
+| `restrictionOnCrossPlatformUse` | IP가 제공되는 앱에서만 라이선스 부여 및 파생 작품 생성을 제한합니다. 기본적으로 IP는 어디서나 사용할 수 있습니다.                                                                               |
+| `governingLaw`                  | 이 라이선스가 준수하는 특정 관할권의 법률입니다. 기본적으로 이는 미국 캘리포니아입니다.                                                                                                 |
+| `alternativeDisputeResolution`  | 섹션 3.1 (s)를 참조하세요 [여기](https://github.com/piplabs/pil-document/blob/main/Story%20Foundation%20-%20Programmable%20IP%20License%20\(1.31.25\).pdf). |
+| `additionalParameters`          | 라이선스 제공자가 추가하고 싶은 다른 조건이 있을 수 있으며 이 태그에서 추가할 수 있습니다.                                                                                              |
+
+
+# 💊 Programmable IP License (PIL)
+
+PIL은 Story 팀이 만든 미국 저작권법에 기반한 법적 오프체인 문서입니다.
+
+PIL에 명시된 매개변수들(예: "상업적 사용", "파생물 허용" 등)은 온체인에 매핑되어 있어, 우리의 프로토콜을 통해 온체인에서 강제할 수 있습니다. 이는 코드와 법을 연결하고 지적 재산권 세계에 투명하고 자율적이며 허가 없는 스마트 계약의 이점을 제공합니다.
+
+<CardGroup cols={1}>
+  <Card title="PIL 법적 텍스트" href="https://github.com/piplabs/pil-document/blob/main/Story%20Foundation%20-%20Programmable%20IP%20License%20(1.31.25).pdf" icon="scroll" color="#ccb092">
+    실제 PIL 법적 텍스트를 확인해보세요. 법적 문서치고는 매우 읽기 쉽습니다!
+  </Card>
+</CardGroup>
+
+PIL은 [License Template](/concepts/licensing-module/license-template)의 첫 번째이자 현재 유일한 예시입니다. License Template은 단순히 온체인으로 가져온 전통적인 법적 문서로, 다음과 같은 사전 정의된 조건들을 포함하고 있습니다:
+
+* `commercialUse` - 누군가 내 작품을 상업적으로 사용할 수 있는가?
+* `mintingFee` - 내 작품을 다른 작품에 사용하기 위한 라이선스 발행 비용.
+* `derivativesAttribution` - 누군가 파생 작품에서 나를 크레딧으로 언급해야 하는가?
+
+코드에서 이러한 조건들은 그들의 법적 오프체인 상대를 나타내는 구조체를 형성합니다. PIL에 정의된 모든 조건들과 그에 관련된 코드 설명을 보려면 [PIL Terms](/concepts/programmable-ip-license/pil-terms)를 참조하세요.
+
+PIL의 예시 구성("flavors")을 보려면 [PIL Flavors (examples)](/concepts/programmable-ip-license/pil-flavors)를 참조하세요.
+
+## 배경 이야기
+
+<Note>
+  PIL을 사용한 개발을 바로 시작하고 싶다면 이 섹션을 건너뛰어도 됩니다.
+</Note>
+
+우리는 Story의 [📜 Licensing Module](/concepts/licensing-module/overview)을 설계하여 허가된 리믹스와 공동 창작과 같은 새로운 형태의 창의성 확장을 지원합니다. 우리의 프로토콜은 사용자 생성 소셜 비디오 및 이미지부터 할리우드급 협업 스토리텔링에 이르기까지 모든 미디어 형식이나 프로젝트를 지원할 수 있습니다.
+
+지적 재산권 소유자는 라이선스를 부여함으로써 다른 당사자가 그들의 작품을 사용하거나 그 위에 구축할 수 있도록 권리를 허용할 수 있으며, 이는 이익을 위해서나 공공의 이익을 위해 이루어질 수 있습니다. 미디어 세계에서 이러한 라이선스는 일반적으로 매우 맞춤화된 계약으로, 미디어 형식과 라이선스 제공자의 고유한 요구에 따라 다양하며 - 종종 고유한 전문 지식(변호사를 통해)과 상당한 자원이 필요합니다.
+
+우리는 이러한 새로운 활동을 규모에 맞게 지원할 수 있는 "보편적 라이선스" 형태를 찾았습니다. [Creative Commons](https://creativecommons.org/mission/), [Arweave](https://mirror.xyz/0x64eA438bd2784F2C52a9095Ec0F6158f847182d9/AjNBmiD4A4Sw-ouV9YtCO6RCq0uXXcGwVJMB5cdfbhE), A16Z / [Can't Be Evil,](https://a16zcrypto.com/posts/article/introducing-nft-licenses/) The [Token-Bound NFT License](https://james.grimmelmann.net/files/articles/token-bound-nft-license.pdf) 그리고 음악 권리 단체들을 비롯한 여러 곳에 감사의 말씀을 전합니다. 하지만 우리는 충분히 강력한 하나의 프레임워크나 계약을 찾을 수 없었습니다 - 그래서 우리의 전문 법률 고문(특히 Ghaith Mahmood와 Heather Liu에게 특별한 감사를 드립니다)과 함께 직접 만들었습니다! **프로그래머블 IP 라이선스(PIL:pill:)를 소개합니다**, 이는 프로토콜에서 [License Template](/concepts/licensing-module/license-template)의 첫 번째 예시입니다.
+
+## 피드백
+
+우리는 IP 소유자들과 협력하여 그들의 작품의 잠재력을 열어내는 데 도움이 될 피드백을 수집하고 협력하는 것에 대해 매우 기대하고 있습니다 - 여러분의 생각을 들려주세요! 우리에게 연락할 수 있는 주소는 `legal@storyprotocol.xyz`입니다.
+
+<CardGroup cols={1}>
+  <Card title="PIL 법적 텍스트" href="https://github.com/piplabs/pil-document/blob/main/Story%20Foundation%20-%20Programmable%20IP%20License%20(1.31.25).pdf" icon="scroll" color="#ccb092">
+    실제 PIL 법적 텍스트를 확인해보세요. 법적 문서치고는 매우 읽기 쉽습니다!
+  </Card>
+</CardGroup>
+
+
+# PIL Flavors (examples)
+
+The [💊 Programmable IP License (PIL)](/concepts/programmable-ip-license/overview)은 매우 구성 가능하지만, 사용 편의성을 위해 인기 있는 사전 구성된 라이선스 조건("플레이버"라고도 함)을 지원합니다. 이들이 가장 인기 있는 옵션이 될 것으로 예상합니다:
+
+## 플레이버 #1: 비상업적 소셜 리믹싱
+
+<Note>
+  이 플레이버는 이미 우리 프로토콜에 `licenseTermsId = 1`로 등록되어 있습니다. 이는 입력이 필요 없기 때문에 미리 등록해 두었습니다.
+</Note>
+
+세상이 당신의 창작물을 기반으로 구축하고 가지고 놀 수 있게 하세요. 이 라이선스는 당신의 작품의 모든 사용을 추적하면서 무한한 무료 리믹싱을 허용하고 당신에게 완전한 크레딧을 줍니다. 유사한 예: 출처 표시가 포함된 TikTok.
+
+### 다른 사람들이 할 수 있는 것은?
+
+| 다른 사람들이 할 수 있는 것                             | 다른 사람들이 할 수 없는 것                                        |
+| -------------------------------------------- | ------------------------------------------------------- |
+| ✅ 이 작품을 리믹스하기 (`derivativesAllowed == true`) | ❌ 원작과 파생 작품을 상업화하기 (`commercialUse == false`)           |
+| ✅ 자신의 리믹스를 어디서나 배포하기                         | ❌ 파생 작품에 대한 크레딧 주장하기 (`derivativesAttribution == true`) |
+| ✅ 무료로 라이선스 받기 (`defaultMintingFee == 0`)     | ❌ 원작에 대한 크레딧 주장하기 ("Attribution"이 오프체인 조건에서 true임)      |
+
+### PIL 조건 값
+
+* **온체인**:
+
+<CodeGroup>
+  ```solidity Solidity
+  PILTerms({
+    transferable: true,
+    royaltyPolicy: address(0),
+    defaultMintingFee: 0,
+    expiration: 0,
+    commercialUse: false,
+    commercialAttribution: false,
+    commercializerChecker: address(0),
+    commercializerCheckerData: EMPTY_BYTES,
+    commercialRevShare: 0,
+    commercialRevCeiling: 0,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0,
+    currency: address(0),
+    uri: "https://github.com/piplabs/pil-document/blob/998c13e6ee1d04eb817aefd1fe16dfe8be3cd7a2/off-chain-terms/NCSR.json"
+  });
+  ```
+
+  ```typescript TypeScript
+  import { zeroAddress } from "viem";
+
+  const nonCommercialSocialRemix = {
+    transferable: true,
+    royaltyPolicy: zeroAddress,
+    defaultMintingFee: 0n,
+    expiration: 0n,
+    commercialUse: false,
+    commercialAttribution: false,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: "0x",
+    commercialRevShare: 0,
+    commercialRevCeiling: 0n,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0n,
+    currency: zeroAddress,
+    uri: "https://github.com/piplabs/pil-document/blob/998c13e6ee1d04eb817aefd1fe16dfe8be3cd7a2/off-chain-terms/NCSR.json",
+  };
+  ```
+</CodeGroup>
+
+* **Off-chain:**
+
+| 매개변수          | 옵션 / 태그                                                                     |
+| ------------- | --------------------------------------------------------------------------- |
+| 지역            | 제한 없음                                                                       |
+| 배포 채널         | 제한 없음                                                                       |
+| 출처 표시         | 참                                                                           |
+| 콘텐츠 기준        | 혐오 금지, 전연령 적합, 약물 또는 무기 금지, 포르노그래피 금지                                       |
+| 서브라이선스 가능     | 거짓                                                                          |
+| AI 학습 모델      | 거짓                                                                          |
+| 크로스 플랫폼 사용 제한 | 거짓                                                                          |
+| 준거법           | 미국 캘리포니아                                                                    |
+| 대체 분쟁 해결      | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
+| 추가 라이선스 매개변수  | 없음                                                                          |
+
+## 플레이버 #2: 상업적 사용
+
+당신이 설정한 경제적 조건에 대한 대가로 누구나 적절하게 작품을 사용할 수 있도록 하면서 작품의 재사용에 대한 통제권을 유지하세요. 이는 창작자가 규칙을 설정하는 Shutterstock과 유사합니다.
+
+### 다른 사람들이 할 수 있는 것은?
+
+| 다른 사람들이 할 수 있는 것                         | 다른 사람들이 할 수 없는 것                                           |
+| ---------------------------------------- | ---------------------------------------------------------- |
+| ✅ 원작을 상업화하기 (`commercialUse == true`)    | ❌ 이 작품을 리믹스하기 (`derivativesAllowed == false`)              |
+| ✅ 모든 수익 유지하기 (`commercialRevShare == 0`) | ❌ 원작에 대한 크레딧 주장하기 (`commercialAttribution == true`)        |
+|                                          | ❌ 무료로 라이선스 받기 (`defaultMintingFee`가 설정됨)                   |
+|                                          | ❌ 비상업적으로도 원작에 대한 크레딧 주장하기 ("Attribution"이 오프체인 조건에서 true임) |
+
+### PIL 조건 값
+
+* **온체인**:
+
+<CodeGroup>
+  ```solidity Solidity
+  PILTerms({
+    transferable: true,
+    royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+    defaultMintingFee: MINTING_FEE, // ex. 1000000000000000000 (which means it costs 1 $WIP to mint)
+    expiration: 0,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: address(0),
+    commercializerCheckerData: EMPTY_BYTES,
+    commercialRevShare: 0,
+    commercialRevCeiling: 0,
+    derivativesAllowed: false,
+    derivativesAttribution: false,
+    derivativesApproval: false,
+    derivativesReciprocal: false,
+    derivativeRevCeiling: 0,
+    currency: CURRENCY, // ex. $WIP address
+    uri: "https://github.com/piplabs/pil-document/blob/9a1f803fcf8101a8a78f1dcc929e6014e144ab56/off-chain-terms/CommercialUse.json"
+  })
+  ```
+
+  ```typescript TypeScript
+  import { zeroAddress, parseEther } from "viem";
+
+  const commercialUse = {
+    transferable: true,
+    royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+    defaultMintingFee: MINTING_FEE, // ex. parseEther("1") (which means it costs 1 $WIP to mint)
+    expiration: 0n,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: "0x",
+    commercialRevShare: 0,
+    commercialRevCeiling: 0n,
+    derivativesAllowed: false,
+    derivativesAttribution: false,
+    derivativesApproval: false,
+    derivativesReciprocal: false,
+    derivativeRevCeiling: 0n,
+    currency: CURRENCY, // ex. $WIP address
+    uri: "https://github.com/piplabs/pil-document/blob/9a1f803fcf8101a8a78f1dcc929e6014e144ab56/off-chain-terms/CommercialUse.json",
+  };
+  ```
+</CodeGroup>
+
+* **오프체인**
+
+| 매개변수          | 옵션 / 태그                                                                     |
+| ------------- | --------------------------------------------------------------------------- |
+| 지역            | 제한 없음                                                                       |
+| 배포 채널         | 제한 없음                                                                       |
+| 출처 표시         | 참                                                                           |
+| 콘텐츠 기준        | 혐오 금지, 전연령 적합, 약물 또는 무기 금지, 포르노그래피 금지                                       |
+| 서브라이선스 가능     | 거짓                                                                          |
+| AI 학습 모델      | 거짓                                                                          |
+| 크로스 플랫폼 사용 제한 | 거짓                                                                          |
+| 준거법           | 미국 캘리포니아                                                                    |
+| 대체 분쟁 해결      | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
+| 추가 라이선스 매개변수  | None                                                                        |
+
+## Flavor #3: 상업적 리믹스
+
+세상이 당신의 창작물을 기반으로 만들고 즐기게 하세요... 그리고 함께 돈을 벌어보세요! 이 라이선스는 무한한 무료 리믹스를 허용하면서 당신의 작품의 모든 사용을 추적하고 당신에게 전적인 크레딧을 주며, 각 파생작은 그 "부모" IP에게 수익의 일정 비율을 지불합니다.
+
+### 예시
+
+Story의 공식 마스코트를 확인해보세요 **Ippy**, 우리는 이를 상업적 리믹스 조건으로 [Mainnet](https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42)과 [Aeneid Testnet](https://aeneid.explorer.story.foundation/ipa/0x641E638e8FCA4d4844F509630B34c9D524d40BE5)에 등록했습니다.
+
+### 다른 사람들이 할 수 있는 것은?
+
+| 다른 사람들이 할 수 있는 것                             | 다른 사람들이 할 수 없는 것                                           |
+| -------------------------------------------- | ---------------------------------------------------------- |
+| ✅ 이 작품을 리믹스하기 (`derivativesAllowed == true`) | ❌ 원작에 대한 크레딧 주장하기 (`commercialAttribution == true`)        |
+| ✅ 원작과 파생 작품을 상업화하기 (`commercialUse == true`) | ❌ 파생 작품에 대한 크레딧 주장하기 (`derivativesAttribution == true`)    |
+| ✅ 자신의 리믹스를 어디서든 배포하기                         | ❌ 모든 수익 유지하기 (`commercialRevShare`가 설정됨)                   |
+|                                              | ❌ 무료로 라이선스 받기 (`defaultMintingFee`가 설정됨)                   |
+|                                              | ❌ 비상업적으로도 원작에 대한 크레딧 주장하기 ("Attribution"이 오프체인 조건에서 true임) |
+
+### PIL 조건 값
+
+* **온체인**:
+
+<CodeGroup>
+  ```solidity Solidity
+  PILTerms({
+    transferable: true,
+    royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+    defaultMintingFee: MINTING_FEE, // ex. 1000000000000000000 (which means it costs 1 $WIP to mint)
+    expiration: 0,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: address(0),
+    commercializerCheckerData: EMPTY_BYTES,
+    commercialRevShare: COMMERCIAL_REV_SHARE, // ex. 50 * 10 ** 6 (which means 50% of derivative revenue)
+    commercialRevCeiling: 0,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0,
+    currency: CURRENCY, // ex. $WIP address
+    uri: "https://github.com/piplabs/pil-document/blob/ad67bb632a310d2557f8abcccd428e4c9c798db1/off-chain-terms/CommercialRemix.json"
+  });
+  ```
+
+  ```typescript TypeScript
+  import { zeroAddress, parseEther } from "viem";
+
+  const commercialRemix = {
+    transferable: true,
+    royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+    defaultMintingFee: MINTING_FEE, // ex. parseEther("1") (which means it costs 1 $WIP to mint)
+    expiration: 0n,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: "0x",
+    commercialRevShare: COMMERCIAL_REV_SHARE, // ex. 50 (which means 50% of derivative revenue)
+    commercialRevCeiling: 0n,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0n,
+    currency: CURRENCY, // ex. $WIP address
+    uri: "https://github.com/piplabs/pil-document/blob/ad67bb632a310d2557f8abcccd428e4c9c798db1/off-chain-terms/CommercialRemix.json",
+  };
+  ```
+</CodeGroup>
+
+* **오프체인**
+
+| 매개변수          | 옵션 / 태그                                                                     |
+| ------------- | --------------------------------------------------------------------------- |
+| 지역            | 제한 없음                                                                       |
+| 배포 채널         | 제한 없음                                                                       |
+| 저작자 표시        | 참                                                                           |
+| 콘텐츠 기준        | 혐오 금지, 전연령 적합, 약물 또는 무기 금지, 포르노그래피 금지                                       |
+| 서브라이선스 가능     | 거짓                                                                          |
+| AI 학습 모델      | 거짓                                                                          |
+| 크로스 플랫폼 사용 제한 | 거짓                                                                          |
+| 준거법           | 캘리포니아, 미국                                                                   |
+| 대체 분쟁 해결      | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
+| 추가 라이선스 매개변수  | 없음                                                                          |
+
+## Flavor #4: 크리에이티브 커먼즈 저작자표시
+
+세상이 당신의 창작물을 기반으로 만들고 즐기게 하세요 - 돈을 버는 것도 포함해서요.
+
+### 다른 사람들이 할 수 있는 것은?
+
+| 다른 사람들이 할 수 있는 것                             | 다른 사람들이 할 수 없는 것                                           |
+| -------------------------------------------- | ---------------------------------------------------------- |
+| ✅ 이 작품을 리믹스하기 (`derivativesAllowed == true`) | ❌ 원작에 대한 크레딧 주장하기 (`commercialAttribution == true`)        |
+| ✅ 원작과 파생 작품을 상업화하기 (`commercialUse == true`) | ❌ 파생 작품에 대한 크레딧 주장하기 (`derivativesAttribution == true`)    |
+| ✅ 자신의 리믹스를 어디서든 배포하기                         | ❌ 비상업적으로도 원작에 대한 크레딧 주장하기 ("Attribution"이 오프체인 조건에서 true임) |
+| ✅ 무료로 라이선스 받기 (`defaultMintingFee == 0`)     |                                                            |
+| ✅ 모든 수익 유지하기 (`commercialRevShare == 0`)     |                                                            |
+
+### PIL 조건 값
+
+* **온체인**:
+
+<CodeGroup>
+  ```solidity Solidity
+  PILTerms({
+    transferable: true,
+    royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+    defaultMintingFee: 0,
+    expiration: 0,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: address(0),
+    commercializerCheckerData: EMPTY_BYTES,
+    commercialRevShare: 0,
+    commercialRevCeiling: 0,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCelling: 0,
+    currency: CURRENCY, // ex. $WIP address
+    uri: 'https://github.com/piplabs/pil-document/blob/998c13e6ee1d04eb817aefd1fe16dfe8be3cd7a2/off-chain-terms/CC-BY.json'
+  });
+  ```
+
+  ```typescript TypeScript
+  import { zeroAddress } from "viem";
+
+  const creativeCommonsAttribution = {
+    transferable: true,
+    royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
+    defaultMintingFee: 0n,
+    expiration: 0n,
+    commercialUse: true,
+    commercialAttribution: true,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: "0x",
+    commercialRevShare: 0,
+    commercialRevCeiling: 0n,
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCelling: 0n,
+    currency: CURRENCY, // ex. $WIP address
+    uri: "https://github.com/piplabs/pil-document/blob/998c13e6ee1d04eb817aefd1fe16dfe8be3cd7a2/off-chain-terms/CC-BY.json",
+  };
+  ```
+</CodeGroup>
+
+* **오프체인**
+
+| 매개변수          | 옵션 / 태그                                                                     |
+| ------------- | --------------------------------------------------------------------------- |
+| 지역            | 제한 없음                                                                       |
+| 배포 채널         | 제한 없음                                                                       |
+| 저작자 표시        | 참                                                                           |
+| 콘텐츠 기준        | 혐오 금지, 전연령 적합, 약물 또는 무기 금지, 포르노그래피 금지                                       |
+| 서브라이선스 가능     | False                                                                       |
+| AI 학습 모델      | True                                                                        |
+| 크로스 플랫폼 사용 제한 | False                                                                       |
+| 준거법           | California, USA                                                             |
+| 대체 분쟁 해결      | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
+| 추가 라이선스 매개변수  | 없음                                                                          |
+
+# 예시
+
+다음은 로열티 흐름의 일반적인 예시입니다.*더 많은 예시가 곧 추가될 예정입니다!*
+
+## 예시 1
+
+<Frame>
+  <img src="/images/concepts/flavor-1.png" alt="Example 1 Royalty Flow" />
+</Frame>
+
+### 설명
+
+누군가가 Story에 자신의 Azuki를 등록합니다. 기본적으로 해당 IP 자산은 비상업적 소셜 리믹스 조건을 가지며, 이는 누구나 해당 작품의 파생물을 만들 수 있지만 상업화할 수 없다는 것을 명시합니다. 그래서 다른 사람이 해당 작품의 리믹스를 만들어 등록하고(IPA2), 이는 동일한 조건을 상속받습니다. 그 다음 또 다른 사람이 IPA2에 대해 같은 작업을 수행하여 IPA3를 만들고 등록합니다.
+
+그 후 IPA1의 소유자가 다른 사람들이 작품을 상업화할 수 있도록 결정하지만, 파생물을 만들 수 없고, 10 \$WIP의 발행 수수료를 지불해야 하며, 모든 수익의 10%를 공유해야 한다고 정합니다. 그래서 누군가가 IPA1을 티셔츠에 넣어 상업화하고 싶어 합니다. 그들은 10 \$WIP의 발행 수수료를 지불하여 IPA1을 상업화할 수 있는 라이선스를 나타내는 라이선스 토큰을 받습니다. 그런 다음 이미지를 티셔츠에 넣고 판매합니다. 해당 티셔츠로 벌어들인 수익의 10%는 온체인으로 IPA1에 전송되어야 합니다.
+
+## 예시 2
+
+<Frame>
+  <img src="/images/concepts/flavor-2.png" alt="Example 2 Royalty Flow" />
+</Frame>
+
+### 설명
+
+누군가가 Story에 자신의 Azuki를 등록합니다. 기본적으로 해당 IP 자산은 비상업적 소셜 리믹스 조건을 가지며, 이는 누구나 해당 작품의 파생물을 만들 수 있지만 상업화할 수 없다는 것을 명시합니다. 그래서 다른 사람이 해당 작품의 리믹스를 만들어 등록하고(IPA2), 이는 동일한 조건을 상속받습니다. 그 다음 또 다른 사람이 IPA2에 대해 같은 작업을 수행하여 IPA3를 만들고 등록합니다.
+
+그 후 IPA1의 소유자가 다른 사람들이 자신의 작품의 파생물을 만들고 상업화할 수 있도록 결정하지만, 10 \$WIP의 발행 수수료를 지불하고 모든 수익의 10%를 공유해야 한다고 정합니다. 그래서 누군가가 IPA1을 티셔츠에 넣어 상업화하고 싶어 합니다. 그들은 10 \$WIP의 발행 수수료를 지불하여 라이선스 토큰을 받고 이를 소각하여 자신만의 파생물을 만들어 배경색을 빨간색으로 변경합니다. 그런 다음 리믹스된 이미지를 티셔츠에 넣고 판매합니다. 해당 티셔츠로 벌어들인 수익의 10%는 온체인으로 IPA1에 전송되어야 합니다.
+
+세 번째 사람이 TV 광고에 리믹스를 상업화하고 싶어하지만 머리 색을 흰색으로 바꾸고 싶어 합니다. 그래서 그들은 10 \$WIP의 발행 수수료를 지불하고(이 중 1 \$WIP는 IPA1로 다시 전송됩니다) 자신만의 파생물을 만듭니다. 그런 다음 리믹스된 이미지를 TV 광고에 넣습니다. 해당 티셔츠로 벌어들인 수익의 10%는 온체인으로 IPA4에 전송되어야 하며, 이 중 10%는 IPA1로 다시 분배됩니다.
+
+
+# Story는 IP를 어떻게 보호하나요?
+
+<Frame>
+  <img src="/images/concepts/hdspip.png" alt="How Does Story Protect IP?" />
+</Frame>
+
+<Tip>Story에서 생성된 모든 라이선스는 실제로 집행 가능한 법적 계약입니다.</Tip>
+
+## 프로그래머블 IP 라이선스 (PIL): 법적 집행의 기초
+
+핵심적으로, Story에 등록된 모든 [IP Asset](/concepts/ip-asset)은 **법적 구속력이 있는 문서인 [프로그래머블 IP 라이선스 (PIL)](/concepts/programmable-ip-license)**&#xB85C; 감싸져 있습니다. 미국 저작권법을 기반으로 한 PIL은 IP 소유자가 자산에 맞춤형 조건을 첨부할 수 있는 범용 라이선스 계약 템플릿 역할을 합니다.
+
+**Story에서의 라이선싱은 진정한 법적 약속을 의미합니다.** PIL에 정의된 매개변수 - 상업적 사용, 파생물 허용, 저작자 표시 요구사항, 로열티 구조 - 는 IP 소유자(라이선서)와 IP를 라이선스하는 모든 사람(라이선시) 사이의 법적으로 집행 가능한 조건을 나타냅니다.
+
+### PIL은 어떻게 집행을 가능하게 하나요?
+
+* **명확한 법적 조건:** PIL은 IP 소유자가 사용 규칙을 정의하는 표준화된 방법을 제공합니다.
+* **온체인 기록을 증거로:** IP Asset에 첨부된 PIL 조건은 Story의 목적에 맞게 구축된 블록체인에 변경 불가능하게 기록되어 *반박할 수 없는 증거*로 작용합니다.
+* **오프체인 법적 대응:** PIL 조건을 위반하여 IP가 오용된 경우, IP 소유자는 **오프체인 법적 절차**에서 온체인 증거를 활용할 수 있습니다.
+* **권리 증명으로서의 라이선스 토큰:** 라이선시는 [**라이선스 토큰**](/concepts/licensing-module/license-token) (NFT)을 받습니다. 이는 PIL 조건에 따라 부여된 특정 사용 권한을 나타내며, 권한 부여 상태에 대한 추가 증거를 제공합니다.
+
+## Story 증명 서비스 (SAS): 사전 침해 모니터링
+
+법적 프레임워크를 넘어서, 우리는 [**Story 증명 서비스 (SAS)**](/concepts/story-attestation-service)를 구축하고 있습니다. 이는 다층적 분산 접근 방식을 사용하여 IP 소유자가 잠재적인 저작권 침해를 모니터링하는 데 도움을 줍니다.
+
+<Note>
+  SAS는 판단 계층이 아닌 신호 계층입니다 - 자동화된 집행 조치를 취하는 대신 IP 소유자가 조치를 취할 수 있는 잠재적 문제를 표시합니다.
+</Note>
+
+### SAS가 침해 탐지에 어떻게 도움이 되나요:
+
+* **전문 제공업체 네트워크:** SAS는 Yakoa와 Pex와 같은 서비스 제공업체와 협력하여 AI와 기계 학습을 사용해 인터넷과 다른 블록체인에서 다양한 미디어 유형의 저작권 위반을 탐지합니다.
+* **투명한 신호:** SAS는 제공업체 결과를 기반으로 IP Asset의 정당성에 대한 공개적으로 접근 가능한 신호를 제공합니다.
+* **상업적 IP에 초점:** 현재 SAS는 주로 상업적 IP Asset에 대한 침해 검사를 실행합니다 - 적어도 하나의 라이선스 조건이 있는 경우`commercialUse = true`.
+* **메타데이터 기반 검사:** SAS는 등록 시 제공된 IP 특정 메타데이터를 사용하여 기존 온라인 콘텐츠에 대한 검사를 수행합니다.
+
+### 중요한 고려사항:
+
+* **탐지, 예방이 아님:** SAS는 주로 IP 등록 후 잠재적 침해를 표시하며, 이를 예방하지는 않습니다.
+* **인터넷 기반 검사:** 현재 SAS는 주로 이미 온라인에 존재하는 콘텐츠를 기반으로 침해를 탐지하며, 오프라인 사용은 탐지하지 않습니다.
+* **완벽함에 대한 보장 없음:** 어떤 시스템도 모든 저작권 침해를 100% 탐지할 수 있다고 보장할 수 없습니다.
+
+## 분쟁 모듈의 역할
+
+우리는 또한 [**분쟁 모듈**](/concepts/dispute-module)을 구축했습니다. 이를 통해 누구나 부적절한 등록이나 잠재적 표절과 같은 이유로 IP Asset에 대해 온체인 분쟁을 제기할 수 있습니다. 이는 분쟁 중인 IP에 대한 온체인 표시로 이어질 수 있으며, 잠재적으로 라이선스 생성이나 수익 창출 능력에 영향을 미칠 수 있습니다.
+
+## 하이브리드 집행 모델
+
+<Note>
+  Story는 법원이나 변호사를 대체하지 않습니다—온체인 자동화, 투명성, 상호 운용성의 이점을 누리면서 전통적인 집행 시스템과 함께 작동하는 도구를 IP 보유자에게 제공합니다.
+</Note>
+
+### Story가 할 수 있는 것:
+
+* PIL을 통해 IP 라이선싱을 위한 법적으로 건전한 프레임워크 제공
+* IP 소유권과 라이선스 조건에 대한 변경 불가능한 온체인 기록 생성
+* SAS를 통해 잠재적인 온라인 침해를 감지하는 모니터링 도구 제공
+* Dispute Module을 통한 온체인 분쟁 해결 촉진
+* 오프체인 법적 집행에 사용할 수 있는 증거 제공
+
+### Story가 할 수 없는 것:
+
+* IP 침해에 대한 글로벌 경찰력으로 행동
+* 모든 무단 IP 사용 방지 보장
+* 물리적 세계에서 법적 판결을 직접 집행
+* 등록된 IP와의 모든 디지털 및 물리적 상호작용 모니터링
+
+```
++--------------------------+      +-----------------------------+
+| IP Owner Registers IP on |----->| IP Asset Created on Story   |
+| Story                    |      | (with associated metadata)  |
++--------------------------+      +-----------------------------+
+                                          |
+                                          v
++---------------------------------------+   +-------------------------+
+| Programmable IP License (PIL)         |<--| IP Owner Attaches Legal |
+| (Legal wrapper defining usage terms)  |   | Terms via PIL           |
++---------------------------------------+   +-------------------------+
+                                          |
+                                          v
+                                  +-------------------------+
+                                  | IP Asset with PIL Terms |
+                                  | (Commercial Use = true) |
+                                  +-------------------------+
+                                          |
+                                          v
++--------------------------+      +-------------------------------------+
+| Story Attestation        |----->| SAS Providers Scan Internet & Other |
+| Service (SAS) Coordinates|      | Sources for Infringement (using IP  |
++--------------------------+      | Metadata)                           |
+                                  +-------------------------------------+
+                                          |
+                                          v
++----------------------------------------------------------------------+
+| SAS Providers Report Potential Infringement Signals for the IP Asset |
+| (e.g., "Potential copy found on website X")                          |
++----------------------------------------------------------------------+
+                                          |
+                                          v
++---------------------------------------------------------------------+
+| IP Owner Reviews SAS Signals on IP Portal (Coming Soon)             |
++---------------------------------------------------------------------+
+                                          |
+                                          v
++---------------------------------------------------------------------+
+| IP Owner Can Use SAS Signals & PIL Terms as Evidence for:           |
+| - On-Chain Dispute via Dispute Module                               |
+| - Off-Chain Legal Action (e.g., Cease & Desist, Lawsuit)            |
++---------------------------------------------------------------------+
+
+```
+
+
+# IP 로열티 금고
+
+<Accordion title="읽기 건너뛰기 - 1분 요약" icon="circle-info">
+  IP 로열티 금고는 IP 자산과 관련된 모든 금전적 유입을 위한 풀입니다.
+
+  모든 IP 자산에는 100,000,000개의 로열티 토큰이 연결되어 있으며, 각 토큰은 해당 IPA 수익의 0.000001%에 대한 권리를 나타냅니다 (*"수익 토큰"*) 풀에 저장됩니다.
+
+  수익 토큰은 지불에 사용되는 ERC-20 토큰입니다 (예: WIP). 이러한 토큰은 프로토콜에 의해 화이트리스트에 등록되어야 사용할 수 있습니다.
+</Accordion>
+
+각 IP 자산에는 IP 로열티 금고가 있으며, 이는 IP 자산의 상업적 탐색이나 라이선스 발행으로 인한 모든 금전적 유입을 위한 풀 역할을 합니다. 로열티 토큰(아래에 정의됨)을 보유한 사람은 누구나 이 풀에서 자신의 몫을 청구할 권리가 있습니다.
+
+<CardGroup cols={1}>
+  <Card title="IPRoyaltyVault.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/royalty/policies/IpRoyaltyVault.sol" icon="scroll" color="#ccb092">
+    IP 로열티 금고의 스마트 계약을 확인하세요.
+  </Card>
+</CardGroup>
+
+## 토큰 용어
+
+1. **로열티 토큰**: IP 로열티 금고 계약은 각 IP 자산의 로열티 토큰에 대한 ERC-20 계약이기도 합니다. 이는 IP 자산의 IP 로열티 금고 주소가 로열티 토큰의 ERC-20 토큰 주소이기도 하다는 것을 의미합니다. 각 IP 자산에는 100,000,000개의 로열티 토큰이 연결되어 있으며, 각 토큰은 해당 수익의 0.000001%를 나타냅니다. 이러한 로열티 토큰의 보유자는 관련 IP 로열티 금고에 있는 수익 토큰(아래에 정의됨)을 청구할 수 있습니다.
+2. **수익 토큰**: 이는 지불에 사용되는 토큰입니다 (예: WIP). 로열티 토큰은 수익 토큰을 청구하는 데 사용될 수 있습니다. 화이트리스팅에 대해 아래에서 읽어보세요 ⤵️
+
+### 화이트리스트에 등록된 수익 토큰
+
+ERC-20 토큰은 수익 토큰으로 사용되기 위해 우리 프로토콜의 [RoyaltyModule.sol 계약](https://github.com/storyprotocol/protocol-core-v1/blob/e339f0671c9172a6699537285e32aa45d4c1b57b/contracts/modules/royalty/RoyaltyModule.sol#L50)에 화이트리스트로 등록되어야 합니다. 다음은 화이트리스트에 등록된 토큰들입니다:
+
+<Tabs>
+  <Tab title="Aeneid 테스트넷">
+    | 토큰     | 계약 주소                                        | 탐색기                                                                                         | 발행                                                                                                                    |
+    | :----- | :------------------------------------------- | :------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------- |
+    | WIP    | `0x1514000000000000000000000000000000000000` | [여기서 보기 ↗️](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000) | 해당 없음                                                                                                                 |
+    | MERC20 | `0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E` | [여기서 보기 ↗️](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E) | [발행 ↗️](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E?tab=write_contract#0x40c10f19) |
+  </Tab>
+
+  <Tab title="메인넷">
+    | 토큰  | 계약 주소                                        | 탐색기                                                                                         | Mint |
+    | :-- | :------------------------------------------- | :------------------------------------------------------------------------------------------ | :--- |
+    | WIP | `0x1514000000000000000000000000000000000000` | [여기서 보기 ↗️](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000) | N/A  |
+  </Tab>
+</Tabs>
+
+## 로열티 토큰을 어떻게 얻나요?
+
+IP 자산이 수익을 받으면 해당 IP Royalty Vault에 예치됩니다. 이 금고에서 수익을 청구하려면 관련 로열티 토큰이 있어야 합니다. 주소가 특정 IP 자산의 로열티 토큰을 소유하면, 해당 주소는 IP Royalty Vault에 있는 (화이트리스트에 등록된) 미래의 Revenue Token 중 해당 비율(소유한 로열티 토큰의 총 공급량 대비 비율)만큼을 받을 자격이 있습니다.
+
+IP Royalty Vault 배포와 초기 로열티 토큰 분배를 트리거하는 두 가지 방법이 있습니다 - 둘 중 먼저 발생하는 것:
+
+1. IP에서 처음으로 라이선스 토큰이 발행될 때: 관련 IP 계정(부모의 IP 계정)이 로열티 토큰의 100%를 받습니다
+2. IP가 파생작으로 등록될 때: 관련 IP 계정(자식의 IP 계정)이 로열티 토큰의 100%를 받은 다음, 라이선스 조건에 따라 그 중 x%를 조상들에게 분배합니다
+
+로열티 토큰은 ERC-20이므로 다른 토큰처럼 전송할 수 있습니다. 따라서 IP 계정은 이를 다른 사람에게 보내거나 심지어 2차 시장에서 판매할 수도 있습니다.
+
+## 수익 흐름
+
+이 섹션에서는 지불 시점부터 로열티 토큰 보유자가 청구하는 시점까지 수익이 어떻게 흐르는지 설명하겠습니다. 설명을 위해 [Liquid Absolute Percentage (LAP)](/concepts/royalty-module/liquid-absolute-percentage)의 예를 사용하겠지만, 모든 로열티 정책에 대해 동일합니다.
+
+IPA4가 IPA3에게 1M WIP를 `payRoyaltyOnBehalf`를 호출하여 팁을 주는 시나리오를 상상해 보겠습니다.
+
+1. Revenue Token이 Royalty Module 계약으로 흐릅니다. 이 계약은 수신 IPA의 **royalty stack**에 따라 토큰을 분할합니다. 이 경우 IPA3의 royalty stack은 15%이므로, 850k 토큰이 IP Royalty Vault 3으로 흐르고, 150k 토큰이 LAP 계약으로 흐릅니다.
+
+<Frame>
+  <img src="/images/concepts/lap-1.png" alt="Revenue Flow Step 1" />
+</Frame>
+
+<br />
+
+2. LAP 계약은 `transferToVault`를 호출하여 조상들에게 지불금을 분리합니다. 이 경우, IPA2는 100k(IPA3 수익의 10%)를 받고 IPA1은 50k(IPA3 수익의 5%)를 받습니다.
+
+<Frame>
+  <img src="/images/concepts/lap-2.png" alt="Revenue Flow Step 2" />
+</Frame>
+
+<br />
+
+3. 이제 Revenue Token이 IP Royalty Vault에 있으므로, 관련 로열티 토큰 보유자들이 금고에서 청구할 수 있습니다. 기억하세요, Revenue Token은 로열티 토큰을 보유한 사람에게 청구됩니다. 가장 일반적인 경우, 로열티 토큰은 원래 생성된 IP 계정에 있습니다. 청구하려면 `claimRevenueOnBehalfByTokenBatch` 또는 `claimRevenueOnBehalf`를 호출하면 됩니다.
+
+<Frame>
+  <img src="/images/concepts/lap-3.png" alt="Revenue Flow Step 3" />
+</Frame>
+
+### 외부 로열티 정책
+
+Revenue Token은 `claimByTokenBatchAsSelf` 함수를 통해 한 금고에서 다른 금고로 이동할 수도 있습니다. 이 함수들은 `IpRoyaltyVault.sol` 계약에 위치해 있습니다. 이를 위해서는 Revenue Token을 청구하는 금고가 청구 대상 금고의 로열티 토큰을 소유해야 합니다. 이는 외부 로열티 정책과 함께 사용될 때 특히 유용할 수 있습니다.
+
+금고는 동일한 파생 체인에 속한 IP의 다른 금고에서만 청구할 수 있습니다. 만약 금고가 어떤 IP의 로열티 토큰을 소유하고 있지만 그 IP의 조상이 아니라면, 해당 로열티 토큰으로 보상을 청구할 수 없습니다.
+
+
+# Liquid Absolute Percentage (LAP)
+
+<Accordion title="읽기 건너뛰기 - 1분 요약" icon="circle-info">
+  예를 들어보겠습니다: IP 자산 ('C')는 'B'의 자식이고, 'B'는 'A'의 자식입니다. 즉, A▶️B▶️C 순서입니다. 'A'는 모든 후손이 수익의 5%를 자신과 공유해야 한다고 명시합니다. 반면 'B'는 모든 후손이 수익의 10%를 자신과 공유해야 한다고 명시합니다.
+
+  좋습니다. 이제 두 가지 (독립적인) 일반적인 시나리오에서 어떤 일이 일어나는지 살펴보겠습니다:
+
+  1. **라이선스 발행** - 'C'가 'B'로부터 100 WIP 비용의 라이선스를 발행합니다. 'C'가 'B'에게 라이선스 발행을 위해 100 WIP를 지불할 때, 'A'는 B로부터 5 WIP를 청구합니다. 결국 'B'는 95 WIP만 받게 됩니다.
+  2. **직접 팁 주기** - 'C'는 매우 잘 쓰여진 만화책입니다. 누군가가 이를 좋아해서 'C'에게 100 WIP를 팁으로 줍니다. 'A'는 'C'로부터 5 WIP를 청구합니다. 'B'는 'C'로부터 10 WIP를 청구합니다. 결국 'C'는 85 WIP만 받게 됩니다.
+</Accordion>
+
+Liquid Absolute Percentage (LAP)는 각 부모 IP 자산이 파생 체인의 모든 하위 IP 자산들이 라이선스 계약에 정의된 대로 금전적 이익에서 공유할 최소 로열티 비율을 선택할 수 있다고 정의합니다.
+
+<CardGroup cols={1}>
+  <Card title="RoyaltyPolicyLAP.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/royalty/policies/LAP/RoyaltyPolicyLAP.sol" icon="scroll" color="#ccb092">
+    LAP 로열티 정책의 스마트 계약을 확인하세요.
+  </Card>
+</CardGroup>
+
+## 전제 조건
+
+계속하기 전에 반드시 [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault) 용어를 읽어보세요.
+
+이 페이지의 라이선스 로열티 %는 PIL 조건의 `commercialRevShare`와 동일한 값에 해당합니다.
+
+## 로열티 지불 및 청구 흐름
+
+아래 이미지에서 IPA 1과 IPA 2는 IPA 3의 조상이기 때문에 IPA 3이 벌어들인 수익에 대해 경제적 권리를 가집니다. 아래 파생 체인을 이해하기 위한 주요 사항:
+
+* 라이선스 로열티 비율 - 이 비율은 사용자가 선택하며, LAP 규칙에 따라 다른 사용자가 자신의 IPA를 리믹스할 수 있도록 허용하는 대가로 원하는 비율을 의미합니다.
+* 로열티 스택 - IPA가 모든 조상에게 지불해야 하는 수익입니다. LAP의 경우 로열티 스택 = 부모의 로열티 스택 합계 + 각 부모와 연결하는 데 사용된 라이선스 비율의 합계
+  * IPA 2의 로열티 스택 = IPA 1의 로열티 스택 + IPA 1과 2 사이의 라이선스 로열티 % = 0% + 5% = 5%
+  * IPA 3의 로열티 스택 = IPA 2의 로열티 스택 + IPA 2와 3 사이의 라이선스 로열티 % = 5% + 10% = 15%
+* 로열티 토큰은 처음에 볼트가 배포될 때 IPA로 흐릅니다. 로열티 토큰은 다른 주소로 전송될 수 있으며, 전송 후 향후 로열티 유입은 RT를 보유하고 있는 새 주소가 청구할 수 있습니다.
+
+<Frame>
+  <img src="/images/concepts/lap-0.png" alt="Royalty Payment Flow" />
+</Frame>
+
+이제 IP 자산 4가 IP 자산 3의 파생물로 파생 체인에 참여하려는 시나리오를 상상해 봅시다. 아래는 예시 흐름 순서입니다:
+
+1. IP 자산 4는 `payRoyaltyOnBehalf`를 호출하여 부모 IPA 3에게 1M WIP의 로열티를 지불합니다. 로열티 과정은 라이선스 발행 수수료이든 다른 로열티 지불이든 동일하다는 점에 유의하세요. 차이점은 라이선스 발행 수수료가 `payLicenseMintingFee`를 통해 이루어지며 파생물 생성 시 필수라는 것입니다. 지불이 이루어지면 IPA 3 로열티 스택 %에 해당하는 몫이 로열티 정책 계약으로 전송되고 나머지 금액은 IPA 3 볼트로 전송됩니다.
+
+<Frame>
+  <img src="/images/concepts/lap-1.png" alt="Payment Distribution" />
+</Frame>
+
+2. 각 조상은 로열티 정책 계약에서 `transferToVault`를 호출하여 특정 후손으로부터 청구할 권리가 있는 금액을 받을 수 있습니다. 자금은 조상의 IP Royalty Vault로 이동합니다.
+   1. 100k WIP가 IP Royalty Vault 2로 전송됩니다. IPA 2의 모든 후손 수익의 10%에 대한 권리가 있기 때문입니다.
+   2. 50k WIP가 IP Royalty Vault 1로 전송됩니다. IPA 2의 모든 후손 수익의 5%에 대한 권리가 있기 때문입니다.
+
+<Frame>
+  <img src="/images/concepts/lap-2.png" alt="Transfer to Vault" />
+</Frame>
+
+3. 청구 흐름의 마지막 단계에서 모든 로열티 토큰 보유자 주소는 `claimRevenueOnBehalfByTokenBatch`/`claimRevenueOnBehalf` (비볼트 청구자의 경우) 또는 `claimRevenueByTokenBatchAsSelf` (청구자가 IP Royalty Vault인 경우)를 호출하여 수익 토큰을 청구할 수 있습니다. 현재 예시에서:
+
+   1. 50k WIP가 100% RT1을 보유한 IPA 1에 청구됩니다
+   2. 100k WIP가 100% RT2를 보유한 IPA 2에 청구됩니다
+   3. 850k WIP가 100% RT3을 보유한 IPA 3에 의해 청구됩니다
+
+<Note>
+  스마트 계약, IPA, 또는 EOA 등 모든 로열티 토큰 보유자 주소가 청구할 수 있습니다.
+</Note>
+
+<Frame>
+  <img src="/images/concepts/lap-3.png" alt="Claiming Revenue" />
+</Frame>
+
+
+# 외부 로열티 정책
+
+실제 세계에서 관찰되는 것처럼 로열티 분배 규칙에는 많은 종류와 변형이 있을 수 있습니다. 온체인에서도 같은 것을 예상할 수 있습니다. 사용 사례가 고유하고 특정한 로열티 규칙을 요구할 때마다, 그 규칙 세트를 **외부 로열티 정책**으로 등록할 수 있습니다.
+
+## 1. 외부 로열티 정책이란 무엇인가요?
+
+이는 특정 인터페이스를 상속받는 스마트 계약입니다. 이 인터페이스는 `IExternalRoyaltyPolicy`라고 불리며, 아래의 view 함수를 정의합니다:
+
+<CardGroup cols={1}>
+  <Card title="IExternalRoyaltyPolicy.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/interfaces/modules/royalty/policies/IExternalRoyaltyPolicy.sol" icon="scroll" color="#ccb092">
+    외부 로열티 정책을 위한 스마트 계약을 확인하세요.
+  </Card>
+</CardGroup>
+
+```solidity IExternalRoyaltyPolicy.sol
+/// @notice Returns the amount of royalty tokens required to link a child to a given IP asset
+/// @param ipId The ipId of the IP asset
+/// @param licensePercent The percentage of the license
+/// @return The amount of royalty tokens required to link a child to a given IP asset
+function getPolicyRtsRequiredToLink(address ipId, uint32 licensePercent) external view returns (uint32);
+```
+
+스마트 계약을 개발한 후 위의 인터페이스를 상속받았는지 확인하고, `registerExternalRoyaltyPolicy` 함수를 호출하여 [RoyaltyModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/royalty/RoyaltyModule.sol)에서 새로운 외부 로열티 정책을 등록할 수 있습니다.
+
+## 2. 어떻게 작동하나요?
+
+"정책 X"라고 불리는 새로운 외부 로열티 정책의 예를 따라가 봅시다.
+
+### 외부 로열티 정책은 사용자에 의해 선택됩니다
+
+IPA 소유자는 IP가 리믹스될 수 있도록 허용하고 싶은 로열티 정책을 결정합니다. LAP, LRP 및 기타 외부 로열티 정책과 같은 여러 로열티 규칙 옵션 중에서 선택할 수 있습니다. 사용자가 "정책 X"로 라이선스 토큰을 발행하기로 결정했다고 가정해 봅시다. 그 후, IP2가 IP1을 리믹스하고 IP3가 IP2를 리믹스하여 아래 이미지와 같은 상황이 됩니다:
+
+<Frame>
+  <img src="/images/concepts/ep-0.png" alt="External Royalty Policy Example" />
+</Frame>
+
+리믹스가 있을 때마다 - 부모와 파생물 사이의 연결에는 2개의 데이터 포인트가 연관됩니다:
+
+1. 로열티 정책 주소
+   1. 예시에서는 "정책 X" 주소
+2. 부모가 파생물에게 요구하는 로열티 토큰의 비율. 이 비율은 사용되는 로열티 정책에 따라 다른 의미를 가질 수 있습니다 - 즉, 상대적 비율, 절대적 비율, 특정 규칙에 따라 조정된 비율 등이 될 수 있습니다.
+   1. IP1과 IP2 사이에 10%
+   2. IP2와 IP3 사이에 50%
+
+### 외부 로열티 정책은 사용자의 IP로부터 로열티 토큰을 받습니다
+
+예를 따라, 각 리믹스가 이루어지고 `onLinkToParents` 함수 호출 중 [RoyaltyModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/royalty/RoyaltyModule.sol)에서, `getPolicyRtsRequiredToLink` 함수가 "정책 X" 주소에서 호출됩니다.
+
+```solidity IExternalRoyaltyPolic.sol
+/// @notice Returns the amount of royalty tokens required to link a child to a given IP asset
+/// @param ipId The ipId of the IP asset
+/// @param licensePercent The percentage of the license
+/// @return The amount of royalty tokens required to link a child to a given IP asset
+function getPolicyRtsRequiredToLink(address ipId, uint32 licensePercent) external view returns (uint32);
+```
+
+이는 연결이 이루어지기 위해 로열티 정책이 요구하는 파생물의 로열티 토큰의 %를 반환해야 합니다. 그 로열티 토큰의 지분은 "정책 X" 계약으로 전송됩니다. 예시의 경우:
+
+* "정책 X"는 RT2 토큰 공급량의 3%를 받아 사용자 기반에 재분배할 수 있습니다. IP1 소유자는 10%를 원했지만 - 예시를 위해 가정해보면 - "정책 X"의 특정 사용 사례와 맞춤 로직으로 인해, IP2 소유자는 IP를 홍보할 매우 큰 유통 네트워크를 가지고 있어 플랫폼에서 특별한 지위를 부여받아 부모 IP에게 줘야 하는 % 지분에 대해 70% 할인을 받습니다. 따라서 라이선스 비율이 10%를 나타냈지만 실제로는 3%만 제공합니다.
+* "정책 X"는 RT3 토큰 공급량의 50%를 받아 사용자 기반에 재분배할 수 있습니다.
+
+<Frame>
+  <img src="/images/concepts/ep-1.png" alt="Royalty Token Distribution" />
+</Frame>
+
+### 외부 로열티 정책은 맞춤 규칙에 따라 사용자에게 가치를 재분배합니다
+
+외부 로열티 정책이 사용자에게 가치를 재분배하는 방법에는 두 가지가 있습니다:
+
+1. 로열티 토큰을 직접 사용자에게 보냅니다
+2. 외부 로열티 정책 계약에 로열티 토큰을 보관하고 사용자가 해당 계약을 통해 수익 토큰을 청구하도록 합니다
+
+"정책 X"의 맥락에서 두 가지를 모두 살펴보겠습니다. "정책 X"가 받은 RT3 토큰 공급량의 50% 중 - 40%는 "정책 X" 계약에 보관되고 10%는 조상 로열티 금고(IP1)로 보내진다고 가정해 봅시다.
+
+<Frame>
+  <img src="/images/concepts/ep-2.png" alt="Royalty Token Redistribution" />
+</Frame>
+
+이제 IP3에 100만의 지불이 이루어졌다고 상상해 봅시다 - 흐름의 예시는 다음과 같을 것입니다:
+
+<Frame>
+  <img src="/images/concepts/ep-3.png" alt="Payment Flow Example" />
+</Frame>
+
+IP3 로열티 금고로 유입된 100만 WIP 중:
+
+* 50만 WIP는 RT3 토큰 공급량의 50%를 가지고 있던 IP 계정 3에 의해 청구됩니다
+* IP1 로열티 볼트가 RT3 토큰 공급량의 10%를 통해 100k WIP를 청구합니다`claimByTokenBatchAsSelf` 함수
+* "Policy X"가 RT3 토큰 공급량의 40을 가지고 있어 400k WIP를 청구합니다. 이 금액은 "Policy X" 커스텀 계약에 따라 특정 규칙에 의해 - y%와 z%를 정의하여 - 사용자들에게 추가로 분배됩니다.
+
+
+# 💸 로열티 모듈
+
+로열티 모듈은 Story에서 IP 간의 수익 흐름을 정의합니다. 더 구체적으로, 부모와 자식 [🧩 IP Assets](/concepts/ip-asset/overview) 사이의 수익 흐름을 정의합니다. 수익 흐름이 발생하는 두 가지 일반적인 시나리오가 있습니다:
+
+1. 라이선스 발행 - [License Token](/concepts/licensing-module/license-token)을 발행할 때 `mintingFee`. 누군가가 이를 지불할 때(파생작을 등록하거나 단순히 라이선스를 보유하고자 하는 경우), 수익은 조상 체인을 따라 흘러야 합니다.
+2. 직접 팁 주기 - 누군가가 IP에 직접 수익을 보내면 체인을 따라 흘러야 합니다.
+
+<CardGroup cols={1}>
+  <Card title="RoyaltyModule.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/royalty/RoyaltyModule.sol" icon="scroll" color="#ccb092">
+    로열티 모듈의 스마트 계약을 확인하세요.
+  </Card>
+</CardGroup>
+
+## 고수준 예시
+
+아래 예시([Liquid Absolute Percentage](/concepts/royalty-module/liquid-absolute-percentage) 사용)는 IP Asset 4(IPA4)가 IPA3에 1,000,000 WIP을 팁으로 줄 때 어떤 일이 일어나는지 보여줍니다.
+
+1. 수익은 먼저 로열티 모듈 계약으로 흐릅니다
+2. 로열티 모듈은 **royalty stack** (15%)
+3. LAP는 IPA3의 수익에서 일부를 받기로 협상한 라이선스 계약이 있기 때문에 더 상위 조상들에게 자금을 분배할 것입니다.
+
+<Note>
+  그림의 모든 내용을 이해하지 못해도 걱정하지 마세요. 이는 로열티 모듈이 무엇에 관한 것인지 개요를 보여주기 위한 것입니다.
+</Note>
+
+<Frame>
+  <img src="/images/concepts/royalty-module-overview.png" alt="Royalty Module Flow Example" />
+</Frame>
+
+## 로열티 정책
+
+로열티 정책은 두 IP Asset 간의 라이선스 계약의 구성 요소입니다. 이는 실제로 수익 흐름이 어떻게 일어나는지를 정의합니다.
+
+로열티 모듈은 우리 팀이 직접 만든 화이트리스트/네이티브 정책과 여러분이 만든 외부 정책을 모두 지원합니다.
+
+<Note>
+  부모가 없는 IP Asset은 다양한 로열티 정책으로 라이선스를 발행할 수 있지만, 파생 IP Asset은 부모의 로열티 정책을 상속받습니다.
+
+  또한, IP Asset이 각 파생물과 가지는 모든 연결에 대해 항상 하나의 로열티 정책이 적용됩니다.
+</Note>
+
+### 화이트리스트/네이티브 로열티 정책
+
+이 정책들은 거버넌스 화이트리스팅이 필요하며 조상들에게 로열티 토큰 분배를 보장합니다.
+
+1. [Liquid Absolute Percentage (LAP)](/concepts/royalty-module/liquid-absolute-percentage)
+2. [Liquid Relative Percentage (LRP)](/concepts/royalty-module/liquid-relative-percentage)
+
+### 외부 로열티 정책
+
+이 정책들은 허가 없이 등록할 수 있으며 자체적인 로열티 및 수익 분배 규칙을 규정합니다.
+
+* [외부 로열티 정책](/concepts/royalty-module/external-royalty-policies)
+
+## 로열티 토큰 % vs 로열티 스택 %
+
+파생작을 만들 때, 창작자는 다음 질문에 답하고 싶어 할 것입니다: "내 IP 수익 중 얼마를 내가 가지고, 얼마를 조상 IP들에게 줄 것인가?"
+
+이 질문에 답하기 위해 두 가지 개념이 중요합니다:
+
+1. 로열티 토큰 - 각 IP Asset에는 100,000,000개의 로열티 토큰이 연결되어 있으며, 각 토큰은 IP 로열티 금고에 들어오는 자본의 0.000001%를 나타냅니다. 이 로열티 토큰의 보유자는 관련 IP 로열티 금고에 있는 수익 토큰을 청구할 수 있습니다.
+2. 로열티 스택 - 화이트리스트/네이티브 로열티 정책을 통해 조상들에게 지불해야 하는 IP 수익의 비율입니다. 외부 로열티 정책은 로열티 스택 비율을 사용하지 않습니다 - 화이트리스트/네이티브 로열티 정책만 사용합니다.
+
+아래 시나리오를 상상해 봅시다:
+
+* IP1은 루트 IP Asset입니다.
+* IP2는 IP1의 파생작입니다.
+* 사용자 A는 IP1의 로열티 토큰 100%를 가지고 있습니다
+* 사용자 B는 IP2의 로열티 토큰 20%를 가지고 있습니다
+* 사용자 C는 IP2의 로열티 토큰 80%를 가지고 있습니다
+* IP2의 로열티 스택은 10%입니다 - 이는 네이티브/화이트리스트 정책을 통한 모든 조상 IP들이 파생작을 만들기 위해 IP2가 수익의 10%를 지불하도록 요구한다는 의미입니다. 이 경우, 조상은 IP1 하나뿐입니다. IP1은 파생작을 만들기 위해 IP2의 미래 수익의 10%를 요구합니다.
+
+아래 이미지에는 IP2에 대한 100만 WIP 지불의 예시가 있습니다. 이미지에서 우리는 지불이 이루어질 때 전체 파생 체인의 각 로열티 토큰 보유자가 얼마나 받는지 볼 수 있습니다.
+
+<Frame>
+  <img src="/images/concepts/rt-vs-rs.png" alt="Royalty Token Distribution Example" />
+</Frame>
+
+* RT 보유자 A - 100만 WIP 지불에서 10만 WIP를 받습니다. 로열티 스택 비율이 먼저 지불되며 RT 보유자 A는 IP1의 로열티 토큰의 100%를 가지고 있어 전체 10만 WIP를 유지합니다.
+* RT 보유자 B - 100만 WIP 지불에서 18만 WIP를 받습니다. IP2 보유자들은 전체적으로 원래 100만 WIP 지불에서 90만 WIP를 받습니다. 이 90만 WIP는 그 다음 IP2의 다른 로열티 토큰 보유자인 B와 C 사이에 분배됩니다. B는 IP2의 로열티 토큰의 20%를 가지고 있어 90만 WIP \* 20% = 18만을 받습니다.
+* RT 보유자 C - 100만 WIP 지불에서 72만 WIP를 받습니다. IP2 보유자들은 전체적으로 원래 100만 WIP 지불에서 90만 WIP를 받습니다. 이 90만 WIP는 그 다음 IP2의 다른 로열티 토큰 보유자인 B와 C 사이에 분배됩니다. C는 IP2의 로열티 토큰의 80%를 가지고 있어 90만 WIP \* 80% = 72만을 받습니다.
+
+## 파생 체인 구성
+
+<Frame>
+  <img src="/images/concepts/derivative-chain-config.png" alt="Derivative Chain Configurations" />
+</Frame>
+
+파생 체인은 여러 구성을 가질 수 있습니다.
+
+각 IP 자산은 총 로열티 비율이 100%로 제한됩니다. IPA가 조상을 위해 100% 이상의 로열티 토큰을 예약하게 만드는 라이선스를 발행할 때 되돌릴 것입니다, 이는 의미가 없기 때문입니다.
+
+
+# Liquid Relative Percentage (LRP)
+
+<Accordion title="읽기 건너뛰기 - 1분 요약" icon="circle-info">
+  예를 들어보겠습니다: IP 자산 ('C')는 'B'의 자식이고, 'B'는 'A'의 자식입니다. 즉, A▶️B▶️C와 같은 구조입니다. 'A'는 모든 **직접적인** 자손이 자신의 수익의 5%를 공유해야 한다고 명시합니다. 반면에 'B'는 모든 **직접적인** 자손이 자신의 수익의 10%를 공유해야 한다고 명시합니다.
+
+  좋습니다. 두 가지 (독립적인) 일반적인 시나리오에서 어떤 일이 일어나는지 살펴보겠습니다:
+
+  1. **라이선스 발행** - 'C'가 'B'로부터 100 WIP 비용의 라이선스를 발행합니다. 'C'가 'B'에게 라이선스를 발행하기 위해 100 WIP를 지불할 때, 'A'는 B로부터 5 WIP를 청구합니다. 결국 'B'는 95 WIP만 받게 됩니다.
+  2. **직접 팁 주기** - 'C'는 매우 잘 쓰여진 만화책입니다. 누군가가 이를 좋아해서 'C'에게 100 WIP를 팁으로 줍니다. 'B'는 'C'로부터 10 WIP를 청구합니다. 'A'는 'B'로부터 0.5 WIP를 청구합니다 (10의 5%). 결국 'C'는 90 WIP만 받게 됩니다.
+</Accordion>
+
+유동 상대 비율(LRP) 로열티 정책은 각 부모 IP 자산이 파생 체인에서 직접적인 파생 IP 자산만이 라이선스 계약에 정의된 대로 그들의 금전적 이익에서 공유할 최소 로열티 비율을 선택할 수 있다고 정의합니다.
+
+<CardGroup cols={1}>
+  <Card title="RoyaltyPolicyLRP.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/royalty/policies/LRP/RoyaltyPolicyLRP.sol" icon="scroll" color="#ccb092">
+    LRP 로열티 정책의 스마트 컨트랙트를 확인하세요.
+  </Card>
+</CardGroup>
+
+## 전제 조건
+
+계속하기 전에 반드시 [IP 로열티 금고](/concepts/royalty-module/ip-royalty-vault) 용어를 읽어보세요.
+
+이 페이지의 라이선스 로열티 %는 PIL 조건의 `commercialRevShare`와 동일한 값에 해당합니다.
+
+## 로열티 지불 및 청구 흐름
+
+아래 이미지에서 IPA 1과 IPA 2는 IPA 3의 조상이기 때문에 IPA 3이 만든 수익에 대해 % 경제적 권리를 가집니다. 아래 파생 체인을 이해하기 위한 주요 참고 사항:
+
+* 라이선스 로열티 비율 - 이 비율은 사용자가 선택하며, LRP 규칙에 따라 다른 사용자가 자신의 IPA를 리믹스할 수 있도록 허용하는 대가로 원하는 비율을 의미합니다.
+* 로열티 스택 LRP - IPA가 모든 부모에게 지불해야 하는 수익입니다. LRP 로열티 스택의 경우 = 각 부모와 연결하는 데 사용된 라이선스 비율의 합
+  * IPA 2의 로열티 스택 = IPA 1과 2 사이의 라이선스 로열티 % = 5%
+  * IPA 3의 로열티 스택 = IPA 2와 3 사이의 라이선스 로열티 % = 10%
+* 로열티 토큰은 금고가 배포될 때 처음에 IPA로 흐릅니다. 로열티 토큰은 다른 주소로 전송될 수 있으며, 그 전송 이후의 모든 향후 로열티 유입은 현재 RT를 보유하고 있는 새 주소가 청구할 수 있습니다.
+
+<Frame>
+  <img src="/images/concepts/lrp-0.png" alt="Royalty Payment Flow" className="mx-auto" />
+</Frame>
+
+이제 IP 자산 4가 IP 자산 3의 파생물로 파생 체인에 참여하려는 시나리오를 상상해 봅시다. 아래는 예시 흐름 순서입니다:
+
+1. IP 자산 4는 `payRoyaltyOnBehalf`를 호출하여 부모 IPA 3에게 1M WIP의 로열티를 지불합니다. 로열티 프로세스는 라이선스 발행 수수료이든 다른 로열티 지불이든 동일하다는 점에 유의하세요. 차이점은 라이선스 발행 수수료가 `payLicenseMintingFee`를 통해 이루어지며 파생물 생성 시 필수라는 것입니다. 지불이 이루어지면 IPA 3 로열티 스택 %에 해당하는 몫이 로열티 정책 컨트랙트로 전송되고 나머지 금액은 IPA 3 금고로 전송됩니다.
+
+<Frame>
+  <img src="/images/concepts/lrp-1.png" alt="Payment Distribution" className="mx-auto" />
+</Frame>
+
+2. 각 조상은 로열티 정책 컨트랙트에서 `transferToVault`를 호출하여 각 조상이 주어진 자손으로부터 청구할 권리가 있는 금액을 받을 수 있습니다. 자금은 조상의 IP 로열티 금고로 이동합니다.
+   1. 95k WIP가 IP 로열티 금고 2로 이전됩니다. 이는 모든 IPA 2 자손 수익의 10%에 대한 권리가 있고 직접적인 부모 IPA 1에게 자신의 수익의 5%를 지불해야 하기 때문입니다. 따라서 IPA 3로부터 100k를 받고 IPA 1에게 5k를 지불하여 IPA 2는 100k - 5k = 95k를 보유하게 됩니다.
+   2. 5k WIP가 IP 로열티 금고 1로 이전됩니다. 이는 모든 IPA 2 자손 수익의 0.5%에 대한 권리가 있기 때문입니다. IPA 1은 IPA 2가 벌어들인 수익의 5%에 대한 권리가 있고, IPA 2는 다시 IPA 3이 벌어들인 수익의 10%에 대한 권리가 있습니다. LRP 로열티 정책이 상대적 비율을 고려하므로 IPA 1은 IPA 3이 벌어들인 수익의 10%\*5% = 0.5%에 대한 권리를 갖습니다.
+
+<Frame>
+  <img src="/images/concepts/lrp-2.png" alt="Transfer to Vault" className="mx-auto" />
+</Frame>
+
+3. 청구 흐름의 마지막 단계에서 모든 로열티 토큰 보유자 주소는 `claimRevenueOnBehalfByTokenBatch`/`claimRevenueOnBehalf` (비금고 청구자의 경우) 또는 `claimRevenueByTokenBatchAsSelf` (청구자가 IP 로열티 금고인 경우)를 호출하여 수익 토큰을 청구할 수 있습니다. 현재 예시에서:
+
+   1. 5k WIP가 100% RT1을 보유한 IPA 1에 의해 청구됩니다
+   2. 95k WIP가 100% RT2를 보유한 IPA 2에 청구됩니다
+   3. 900k WIP가 100% RT3를 보유한 IPA 3에 의해 청구됩니다
+
+<Note>
+  스마트 계약, IPA 또는 EOA와 관계없이 모든 로열티 토큰 보유자 주소가 청구할 수 있습니다.
+</Note>
+
+<Frame>
+  <img src="/images/concepts/lrp-3.png" alt="Claiming Revenue" className="mx-auto" />
+</Frame>
+
+
+# 개념 FAQ
+
+## *"라이선스 토큰, 로열티 토큰, 수익 토큰의 차이점은 무엇인가요?"*
+
+|           | 라이선스 토큰                                                                                                                                                        | 로열티 토큰                                                                                                               | 수익 토큰                                                                                              |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **모듈**    | [📜 라이선싱 모듈](/concepts/licensing-module)                                                                                                                       | [💸 로열티 모듈](/concepts/royalty-module)                                                                                | [💸 로열티 모듈](/concepts/royalty-module)                                                              |
+| **설명**    | 특정 라이선스 조건으로 IP 자산에서 발행되는 ERC-721 NFT입니다. 이는 본질적으로 라이선스 토큰의 조건에 따라 관련 IP 자산을 사용할 수 있는 권한을 부여하는 라이선스입니다.<br /><br />라이선스 토큰은 다른 IP 자산의 파생물로 등록하는 데 사용될 때 소각됩니다. | 각 IP 자산에는 100,000,000개의 로열티 토큰이 연결되어 있으며, 각 토큰은 소유자에게 IPA의 로열티 금고에 예치된 수익("*수익 토큰*")의 0.000001%를 청구할 수 있는 권리를 나타냅니다. | 이들은 실제로 지불에 사용되는 토큰입니다(예: \$WIP).<br /><br />"*로열티 토큰*"은 IP 자산이 이를 획득했을 때 이러한 수익 토큰을 청구하는 데 사용됩니다. |
+| **관련 문서** | [라이선스 토큰](/concepts/licensing-module/license-token)                                                                                                            | [IP 로열티 금고](/concepts/royalty-module/ip-royalty-vault)                                                               | [IP 로열티 금고](/concepts/royalty-module/ip-royalty-vault)                                             |
+
+
+# 📦 SPG (Periphery)
+
+Story Protocol Gateway(SPG)는 우리 프로토콜에 배포된 주변부/유틸리티 스마트 계약 그룹으로 **독립적인 작업들을 결합할 수 있게 해줍니다** - 예를 들어 [🧩 IP Asset](/concepts/ip-asset/overview)을 등록하고 해당 IP Asset에 License Terms를 첨부하는 것 - **을 하나의 트랜잭션으로 결합하여 사용자의 편의성을 높입니다**.
+
+이는 주로 우리의 [SDK](/sdk-reference)를 더 쉽게 사용할 수 있도록 개발되었습니다.
+
+예를 들어, 이것은 `mintAndRegisterIpAndAttachPILTerms` SPG의 함수 중 하나입니다 (더 구체적으로는 `LicenseAttachmentWorkflows.sol`에 있습니다) 이를 통해 NFT를 발행하고, IP Asset으로 등록하고, 한 번의 호출로 License Terms를 첨부할 수 있습니다:
+
+```solidity LicenseAttachmentWorkflows.sol
+function mintAndRegisterIpAndAttachPILTerms(
+  address spgNftContract,
+  address recipient,
+  WorkflowStructs.IPMetadata calldata ipMetadata,
+  WorkflowStructs.LicenseTermsData[] calldata licenseTermsData,
+  bool allowDuplicates
+) external onlyMintAuthorized(spgNftContract) returns (address ipId, uint256 tokenId, uint256[] memory licenseTermsIds)
+```
+
+## 지원되는 모든 워크플로우
+
+위에서 언급했듯이, 우리는 여러 기능을 하나로 결합한 다양한 함수를 만들었습니다. 이들을 다른 그룹으로 분류했습니다. 이 그룹들을 "워크플로우"라고 부릅니다.
+
+<CardGroup cols={2}>
+  <Card title="모든 워크플로우 보기" href="https://github.com/storyprotocol/protocol-periphery-v1/blob/main/docs/WORKFLOWS.md" icon="eyes" color="grey">
+    여기를 클릭하여 지원되는 모든 워크플로우를 확인하세요.
+  </Card>
+
+  <Card title="스마트 계약" href="https://github.com/storyprotocol/protocol-periphery-v1/tree/main/contracts/workflows" icon="scroll" color="#ccb092">
+    여기를 클릭하여 워크플로우 스마트 계약을 확인하세요.
+  </Card>
+</CardGroup>
+
+## 호출 일괄 처리
+
+SPG에는 `mintAndRegisterIpAndAttachPILTerms`, `registerIpAndAttachPILTerms`, 그리고 더 많은 함수들이 포함되어 있지만, IP Asset과의 모든 가능한 상호작용 조합을 고려하여 계속해서 계약을 업데이트하는 것은 번거로울 것입니다.
+
+대신, 우리는 원하는 대로 트랜잭션을 일괄 처리할 수 있는 "Multicall" 메커니즘을 허용했습니다. 자세한 정보는 [함수 호출 일괄 처리](/concepts/spg/batch-spg-function-calls)를 참조하세요.
+
+
+# 일괄 함수 호출
+
+## 배경
+
+이전까지는 여러 IP를 등록하거나 민팅, 라이선스 조건 첨부, 파생물 등록과 같은 다른 작업을 수행하려면 각 작업마다 별도의 트랜잭션이 필요했습니다. 이는 비효율적이고 비용이 많이 들 수 있습니다. 이 과정을 간소화하기 위해 여러 트랜잭션을 하나로 일괄 처리할 수 있습니다. 이를 위한 두 가지 솔루션이 이제 사용 가능합니다:
+
+1. **SPG 함수 호출 일괄 처리:** SPG의 내장 [SPG의 내장 `multicall` 함수 사용](#1-batch-spg-function-calls-via-built-in-multicall-function).
+2. **SPG 이외의 함수 호출 일괄 처리:** Multicall3 계약 사용[Multicall3 계약](#2-batch-function-calls-via-multicall3-contract).
+
+***
+
+## 1. 내장 `multicall` 함수를 통한 SPG 함수 호출 일괄 처리
+
+SPG는 `multicall` 함수를 포함하고 있어 여러 읽기 또는 쓰기 작업을 단일 트랜잭션으로 결합할 수 있습니다.
+
+### 함수 정의
+
+이 `multicall` 함수는 인코딩된 호출 데이터 배열을 받아 각 함수 호출에 해당하는 인코딩된 결과 배열을 반환합니다:
+
+```solidity Solidity
+/// @dev Executes a batch of function calls on this contract.
+function multicall(bytes[] calldata data) external virtual returns (bytes[] memory results);
+```
+
+### 사용 예시
+
+여러 NFT를 민팅하고, 이를 IP로 등록하고, 일부 부모 IP의 파생물로 연결하고 싶다고 가정해 봅시다.
+
+이를 수행하기 위해 SPG의 `multicall` 함수를 사용하여 `mintAndRegisterIpAndMakeDerivative` 함수 호출을 일괄 처리할 수 있습니다.
+
+다음과 같이 할 수 있습니다:
+
+```solidity Solidity
+// an SPG workflow contract: https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/workflows/DerivativeWorkflows.sol
+contract DerivativeWorkflows {
+    ...
+    function mintAndRegisterIpAndMakeDerivative(
+        address nftContract,
+        MakeDerivative calldata derivData,
+        IPMetadata calldata ipMetadata,
+        address recipient
+    ) external returns (address ipId, uint256 tokenId) {
+        ....
+    }
+    ...
+}
+```
+
+를 사용하여 `mintAndRegisterIpAndMakeDerivative`를 일괄 호출하려면 `multicall` function:
+
+```javascript JavaScript
+// batch mint, register, and make derivatives for multiple IPs
+await DerivativeWorkflows.multicall([
+  DerivativeWorkflows.contract.methods.mintAndRegisterIpAndMakeDerivative(
+      nftContract1,
+      derivData1,
+      recipient1,
+      ipMetadata1,
+  ).encodeABI(),
+
+  DerivativeWorkflows.contract.methods.mintAndRegisterIpAndMakeDerivative(
+      nftContract2,
+      derivData2,
+      recipient2,
+      ipMetadata2,
+  ).encodeABI(),
+
+  DerivativeWorkflows.contract.methods.mintAndRegisterIpAndMakeDerivative(
+      nftContract3,
+      derivData3,
+      recipient3,
+      ipMetadata3,
+  ).encodeABI(),
+  ...
+  // Add more calls as needed
+]);
+```
+
+***
+
+## 2. Multicall3 계약을 통한 함수 호출 일괄 처리
+
+<Warning>
+  Multicall3 계약은 Multicall 실행 중 접근 제어 및 컨텍스트 변경으로 인해 SPGNFT 민팅과 관련된 SPG 함수와 완전히 호환되지 않습니다. 이러한 작업의 경우 [SPG의 내장 multicall 함수를 사용하세요.](#1-batch-spg-function-calls-via-built-in-multicall-function)
+</Warning>
+
+Multicall3 계약을 사용하면 단일 트랜잭션 내에서 여러 호출을 실행하고 결과를 집계할 수 있습니다. [`viem` 라이브러리](https://viem.sh/docs/contract/multicall#multicall)는 Multicall3에 대한 기본 지원을 제공합니다.
+
+### Story Aeneid 테스트넷 Multicall3 배포 정보
+
+(모든 EVM 체인에서 동일한 주소)
+
+```json
+{
+  "contractName": "Multicall3",
+  "chainId": 1516,
+  "contractAddress": "0xcA11bde05977b3631167028862bE2a173976CA11",
+  "url": "https://aeneid.storyscan.io/address/0xcA11bde05977b3631167028862bE2a173976CA11"
+}
+```
+
+### 주요 함수
+
+여러 함수 호출을 일괄 처리하기 위해 다음 함수들을 사용할 수 있습니다:
+
+1. **`aggregate3`**: `Call3` 구조체를 사용하여 호출을 일괄 처리합니다.
+2. **`aggregate3Value`**: `aggregate3`와 유사하지만 각 호출에 값을 첨부할 수 있습니다.
+
+```solidity Solidity
+/// @notice Aggregate calls, ensuring each returns success if required.
+/// @param calls An array of Call3 structs.
+/// @return returnData An array of Result structs.
+function aggregate3(Call3[] calldata calls) external payable returns (Result[] memory returnData);
+
+/// @notice Aggregate calls with an attached msg value.
+/// @param calls An array of Call3Value structs.
+/// @return returnData An array of Result structs.
+function aggregate3Value(Call3Value[] calldata calls) external payable returns (Result[] memory returnData);
+```
+
+### 구조체 정의
+
+* **Call3**: `aggregate3`에서 사용됩니다.
+* **Call3Value**: `aggregate3Value`에서 사용됩니다.
+
+```solidity Solidity
+struct Call3 {
+  address target;      // Target contract to call.
+  bool allowFailure;   // If false, the multicall will revert if this call fails.
+  bytes callData;      // Data to call on the target contract.
+}
+
+struct Call3Value {
+  address target;
+  bool allowFailure;
+  uint256 value;       // Value (in wei) to send with the call.
+  bytes callData;      // Data to call on the target contract.
+}
+```
+
+### 반환 타입
+
+* **Result**: `aggregate3`와 `aggregate3Value` 모두에서 반환되는 구조체입니다.
+
+```solidity Solidity
+struct Result {
+  bool success;        // Whether the function call succeeded.
+  bytes returnData;    // Data returned from the function call.
+}
+```
+
+<Note>
+  Solidity, TypeScript, Python에서의 자세한 예제는 [Multicall3 저장소](https://github.com/mds1/multicall/tree/main/examples)를 참조하세요.
+</Note>
+
+### 제한 사항
+
+Multicall3 사용 시 제한 사항 목록은 [Multicall3 README](https://github.com/mds1/multicall/blob/main/README.md#batch-contract-writes)를 참조하세요.
+
+### 추가 자료
+
+* [Multicall3 문서](https://github.com/mds1/multicall/blob/main/README.md)
+* [Viem의 Multicall 문서](https://viem.sh/docs/contract/multicall#multicall)
+
+### 전체 Multicall3 인터페이스
+
+```solidity Solidity
+interface IMulticall3 {
+  struct Call {
+      address target;
+      bytes callData;
+  }
+
+  struct Call3 {
+      address target;
+      bool allowFailure;
+      bytes callData;
+  }
+
+  struct Call3Value {
+      address target;
+      bool allowFailure;
+      uint256 value;
+      bytes callData;
+  }
+
+  struct Result {
+      bool success;
+      bytes returnData;
+  }
+
+  function aggregate(Call[] calldata calls) external payable returns (uint256 blockNumber, bytes[] memory returnData);
+  function aggregate3(Call3[] calldata calls) external payable returns (Result[] memory returnData);
+  function aggregate3Value(Call3Value[] calldata calls) external payable returns (Result[] memory returnData);
+  function blockAndAggregate(Call[] calldata calls) external payable returns (uint256 blockNumber, bytes32 blockHash, Result[] memory returnData);
+  function getBasefee() external view returns (uint256 basefee);
+  function getBlockHash(uint256 blockNumber) external view returns (bytes32 blockHash);
+  function getBlockNumber() external view returns (uint256 blockNumber);
+  function getChainId() external view returns (uint256 chainId);
+  function getCurrentBlockCoinbase() external view returns (address coinbase);
+  function getCurrentBlockDifficulty() external view returns (uint256 difficulty);
+  function getCurrentBlockGasLimit() external view returns (uint256 gaslimit);
+  function getCurrentBlockTimestamp() external view returns (uint256 timestamp);
+  function getEthBalance(address addr) external view returns (uint256 balance);
+  function getLastBlockHash() external view returns (bytes32 blockHash);
+  function tryAggregate(bool requireSuccess, Call[] calldata calls) external payable returns (Result[] memory returnData);
+  function tryBlockAndAggregate(bool requireSuccess, Call[] calldata calls) external payable returns (uint256 blockNumber, bytes32 blockHash, Result[] memory returnData);
+}
+```
+
+
+# 👀 메타데이터 모듈
+
+메타데이터 모듈은 Story 내에서 IP 자산의 메타데이터를 생성, 관리 및 검색할 수 있게 합니다. 이는 쓰기 작업을 위한 CoreMetadataModule과 읽기 작업을 위한 CoreMetadataViewModule의 두 가지 주요 구성 요소로 이루어져 있습니다.
+
+<CardGroup cols={2}>
+  <Card title="CoreMetadataModule.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/metadata/CoreMetadataModule.sol" icon="scroll" color="#ccb092">
+    Core Metadata Module의 스마트 계약을 확인하세요.
+  </Card>
+
+  <Card title="CoreMetadataViewModule.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/metadata/CoreMetadataViewModule.sol" icon="eye" color="#92ccb0">
+    Core Metadata View Module의 스마트 계약을 확인하세요.
+  </Card>
+</CardGroup>
+
+## 메타데이터 구조
+
+IP 자산의 메타데이터에는 다음이 포함됩니다:
+
+* **metadataURI**: IP 자산의 상세 메타데이터를 가리키는 URI
+* **metadataHash**: 검증 목적의 메타데이터 해시
+* **nftTokenURI**: IP 자산과 연관된 NFT의 메타데이터를 가리키는 URI
+* **nftMetadataHash**: 검증을 위한 NFT 메타데이터의 해시
+* **registrationDate**: IP 자산이 등록된 시기
+* **owner**: IP 자산의 현재 소유자
+
+## CoreMetadataModule (쓰기 작업)
+
+`CoreMetadataModule.sol`은 IP 자산의 메타데이터를 작성하고 업데이트하는 역할을 합니다. 이는 **stateful**하며 다음과 같은 주요 기능을 제공합니다:
+
+* IP 자산의 메타데이터 URI 설정 및 업데이트
+* NFT 토큰 URI 설정 및 업데이트
+* 메타데이터를 불변으로 만들기 위한 동결
+* 검증을 위한 메타데이터 해시 관리
+
+이 모듈은 IP 자산의 저장소에 메타데이터를 저장하여 다른 모듈과 애플리케이션에서 접근할 수 있게 합니다.
+
+### 메타데이터 설정
+
+IP 자산의 메타데이터를 설정하려면 호출자가 적절한 권한을 가지고 있어야 합니다. CoreMetadataModule은 메타데이터 설정을 위한 여러 함수를 제공합니다:
+
+* `setMetadataURI`: IP metadataURI와 그 해시만 설정합니다
+* `updateNftTokenURI`: NFT 토큰 URI와 그 해시를 업데이트합니다
+* `setAll`: 모든 메타데이터 속성을 한 번에 설정합니다
+
+다음은 예시입니다:
+
+```solidity solidity
+// Set the metadata URI and hash
+coreMetadataModule.setMetadataURI(
+    ipAssetAddress,
+    "https://example.com/metadata/asset123",
+    keccak256("metadata content hash")
+);
+```
+
+### 메타데이터 동결
+
+CoreMetadataModule은 IP 자산 소유자가 메타데이터를 동결하여 불변으로 만들 수 있게 합니다. 한 번 동결되면 메타데이터는 변경할 수 없어 IP 자산 정보의 영구성을 보장합니다.
+
+메타데이터를 동결하려면:
+
+```solidity solidity
+// Make the metadata immutable
+coreMetadataModule.freezeMetadata(ipAssetAddress);
+```
+
+다음을 사용하여 메타데이터가 동결되었는지 확인할 수 있습니다:
+
+```solidity solidity
+// Check if metadata is frozen
+bool isFrozen = coreMetadataModule.isMetadataFrozen(ipAssetAddress);
+```
+
+## CoreMetadataViewModule (읽기 작업)
+
+`CoreMetadataViewModule.sol`은 CoreMetadataModule에 의해 저장된 메타데이터에 접근할 수 있는 읽기 전용 모듈입니다. 이는 View Module 패턴을 따르며 다음과 같은 주요 기능을 제공합니다:
+
+* 메타데이터 URI 및 해시 검색
+* NFT 토큰 URI 및 메타데이터 해시 검색
+* 모든 메타데이터 속성이 포함된 형식화된 JSON 문자열 생성
+* 등록 날짜 및 소유권 정보 확인
+
+### 메타데이터 검색
+
+CoreMetadataViewModule은 메타데이터를 검색하기 위한 다양한 함수를 제공합니다:
+
+* `getCoreMetadata`: 모든 메타데이터를 단일 구조체로 반환합니다
+* `getMetadataURI`: 메타데이터 URI만 반환합니다
+* `getNftTokenURI`: NFT 토큰 URI를 반환합니다
+* `getJsonString`: 모든 메타데이터가 포함된 형식화된 JSON 문자열을 반환합니다
+
+다음은 예시입니다:
+
+```solidity solidity
+// Get the metadata URI
+string memory uri = coreMetadataViewModule.getMetadataURI(ipAssetAddress);
+
+// Get all metadata in one call
+CoreMetadata memory metadata = coreMetadataViewModule.getCoreMetadata(ipAssetAddress);
+
+// Get a JSON representation of all metadata
+string memory jsonMetadata = coreMetadataViewModule.getJsonString(ipAssetAddress);
+```
+
+메타데이터 모듈은 IP 자산 메타데이터를 관리하기 위한 강력한 시스템을 제공하여 지적 재산에 대한 중요한 정보가 적절히 기록되고, 접근 가능하며, 필요할 때 불변으로 만들 수 있도록 보장합니다.
+
+
+# 🧱 Modules
+
+title: 🧱 모듈
+sidebarTitle: 개요
+description: IP Asset에 대해 작업을 수행하는 독립적인 계약에 대해 알아보세요
+[`IModule` 인터페이스](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/interfaces/modules/base/IModule.sol)를 준수하는 독립형 계약입니다. 이러한 모듈은 IP의 데이터/상태를 변경하거나 IP에 대한 조치를 취하는 데 중요한 역할을 합니다.
+
+## 기존 모듈
+
+Story 팀이 만든 몇 가지 중요한 모듈을 알아야 합니다:
+
+| 모듈                                       | 설명                                            |
+| ---------------------------------------- | --------------------------------------------- |
+| [📜 라이선싱 모듈](/concepts/licensing-module) | IP 자산에 라이선스를 정의하고 첨부하는 역할을 담당합니다.             |
+| [💸 로열티 모듈](/concepts/royalty-module)    | 부모 및 자식 IP 자산 간의 로열티 흐름을 처리하는 역할을 담당합니다.      |
+| [❌ 분쟁 모듈](/concepts/dispute-module)      | 잘못 등록되거나 부적절하게 행동한 IP 자산의 분쟁을 처리하는 역할을 담당합니다. |
+| [👥 그룹화 모듈](/concepts/grouping-module)   | IPA 그룹을 처리하는 역할을 담당합니다.                       |
+| [👀 메타데이터 모듈](/concepts/metadata-module) | IP 자산의 메타데이터를 관리하고 볼 수 있습니다.                  |
+
+## 기본 모듈
+
+기본 모듈은 Story에 등록된 모든 모듈에 대한 표준 필수 기능 세트를 제공합니다. Story에 모듈을 만들고 등록하고자 하는 사람은 반드시 기본 모듈을 상속하고 재정의해야 합니다.
+
+<Note>
+  스마트 계약을 [여기서](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/BaseModule.sol) 확인하세요.
+</Note>
+
+### 주요 특징
+
+#### 단순성과 유연성
+
+BaseModule은 의도적으로 단순하고 일반화되어 있습니다. 인터페이스 감지에 중요한 ERC165 인터페이스만 구현합니다. 이러한 설계 선택은 Story 내에서 더 구체적인 모듈을 개발할 때 최대한의 유연성을 제공합니다.
+
+#### ERC165 인터페이스 구현
+
+ERC165 인터페이스를 구현함으로써, BaseModule은 다른 계약이 특정 인터페이스를 지원하는지 쿼리할 수 있게 합니다. 이 기능은 Story 생태계 내부와 외부에서 호환성과 상호운용성을 보장하는 데 필수적입니다.
+
+```solidity
+abstract contract BaseModule is ERC165, IModule {
+    ...
+}
+```
+
+#### `supportsInterface` 함수
+
+BaseModule의 주요 함수는 `supportsInterface`로, ERC165의 `supportsInterface` 메서드를 재정의합니다. 이 함수는 인터페이스 감지에 중요하며, 계약이 자체 `IModule` 인터페이스와 상속받을 수 있는 다른 인터페이스에 대한 지원을 선언할 수 있게 합니다.
+
+```solidity
+function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
+    return interfaceId == type(IModule).interfaceId || super.supportsInterface(interfaceId);
+}
+```
+
+
+# Access Controller
+
+<CardGroup cols={1}>
+  <Card title="AccessController.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/access/AccessController.sol" icon="scroll" color="#ccb092">
+    Access Controller의 스마트 컨트랙트를 확인하세요.
+  </Card>
+</CardGroup>
+
+Access Controller는 Story의 모든 권한 관련 상태와 권한 검사를 관리합니다. 특히, 다음을 유지합니다 *Permission Table* 및 *Permission Engine* 권한을 처리하고 저장합니다. IPAccount 권한은 IPAccount 소유자가 설정합니다.
+
+<Frame>
+  <img src="/images/concepts/ac-overview.png" alt="Access Controller Diagram" />
+</Frame>
+
+## Permission Table
+
+### Permission Record
+
+| IPAccount  | Signer (caller) | To (only module) | Function Sig | Permission |
+| ---------- | --------------- | ---------------- | ------------ | ---------- |
+| 0x123..111 | 0x789..222      | 0x790..333       | 0xAaAaAaAa   | Allow      |
+| 0x123..111 | 0x789..222      | 0x790..333       | 0xBBBBBBBB   | Deny       |
+| 0x123..111 | 0x789..222      | 0x790..333       | 0xCCCCCC     | Abstain    |
+
+각 레코드는 다음 형식으로 권한을 정의합니다 **Signer** (호출자)가 **Func**의 **To** (모듈)을 **IPAccount**를 대신하여 호출합니다.
+
+권한 필드는 "Allow," "Deny," 또는 "Abstain"으로 설정할 수 있습니다. Abstain은 권한 결정이 상위 수준 권한에 의해 결정됨을 나타냅니다.
+
+### 와일드카드
+
+권한을 정의할 때 와일드카드도 지원됩니다. 이는 여러 모듈 및/또는 함수에 적용되는 권한을 정의합니다.
+
+와일드카드를 사용하면 사용자가 쉽게 허용 목록이나 차단 목록의 권한을 정의할 수 있습니다.
+
+| IPAccount  | Signer (caller) | To (module) | Func | Permission |
+| :--------- | :-------------- | :---------- | :--- | :--------- |
+| 0x123..111 | 0x789..222      | \*          | \*   | Allow      |
+| 0x123..111 | 0x789..222      | 0x790..333  | \*   | Deny       |
+
+위의 예시는 서명자(0x789...)가 IPAccount(0x123...)를 대신하여 모듈(0x790...)의 어떤 함수도 호출할 수 없음을 보여줍니다.
+
+다시 말해, IPAccount는 서명자가 모듈 0x790...333의 어떤 함수도 호출하지 못하도록 차단 목록에 추가했습니다.
+
+* 지원되는 와일드카드:
+
+| 매개변수                | 와일드카드      |
+| ------------------- | ---------- |
+| Func                | bytes4(0)  |
+| 주소 (IPAccount / To) | address(0) |
+
+### 권한 우선순위
+
+특정 권한이 일반 권한보다 우선합니다.
+
+| IPAccount  | Signer (caller) | To (module) | Func       | Permission |
+| :--------- | :-------------- | :---------- | :--------- | :--------- |
+| 0x123..111 | 0x789..222      | \*          | \*         | Allow      |
+| 0x123..111 | 0x789..222      | 0x790..333  | \*         | Deny       |
+| 0x123..111 | 0x789..222      | 0x790..333  | 0xCCCCDDDD | Allow      |
+
+위의 예시는 서명자(0x789...)가 IPAccount(0x123...)를 대신하여 모듈(0x790...)의 어떤 함수도 호출할 수 없지만, 함수 0xCCCCDDDD는 예외임을 보여줍니다.
+
+또한, 서명자(0x789...)는 IPAccount(0x123...)를 대신하여 다른 모든 모듈을 호출할 수 있습니다.
+
+## 접근 제어가 있는 호출 흐름
+
+Access Controller가 예상하는 세 가지 유형의 호출 흐름이 있습니다.
+
+1. IPAccount가 모듈을 직접 호출합니다.
+2. 모듈이 다른 모듈을 직접 호출합니다.
+3. 모듈이 레지스트리를 직접 호출합니다.
+
+### IPAccount가 모듈을 직접 호출하는 경우
+
+* IPAccount는 Access Controller와 권한 검사를 수행합니다.
+* 모듈은 msg.sender가 유효한 IPAccount인지만 확인하면 됩니다.`msg.sender` 유효한 IPAccount입니다.
+
+IPAccount에서 모듈을 호출할 때, IPAccount는 AccessController와 접근 제어 검사를 수행하여 현재 호출자가 해당 호출을 할 수 있는 권한이 있는지 확인합니다. 모듈에서는 트랜잭션 msg.sender가 유효한 IPAccount인지만 확인하면 됩니다.`msg.sender` 유효한 IPAccount입니다.
+
+`AccessControlled`는 modifier를 제공합니다 `onlyIpAccount()` 액세스 제어 확인을 수행하는 데 도움이 됩니다.
+
+```solidity Solidity
+contract MockModule is IModule, AccessControlled {
+    function action(string memory param) external view onlyIpAccount() returns (string memory) {
+            // do something
+    }
+}
+```
+
+<Frame>
+  <img src="/images/concepts/ac-diagram.png" alt="IPAccount calling Module" />
+</Frame>
+
+## 모듈이 다른 모듈을 호출
+
+* 호출된 모듈은 자체적으로 인증 확인을 수행해야 합니다.
+
+모듈이 다른 모듈에서 직접 호출될 때, 해당 모듈은 AccessController를 사용하여 액세스 제어 확인을 수행할 책임이 있습니다. 이 확인은 현재 호출자가 모듈을 호출할 권한이 있는지 결정합니다.
+
+`AccessControlled` 수정자를 제공합니다 `verifyPermission(address ipAccount)` 액세스 제어 확인을 수행하는 데 도움이 됩니다.
+
+```solidity Solidity
+contract MockModule is IModule, AccessControlled {
+    function callFromAnotherModule(address ipAccount) external verifyPermission(ipAccount) returns (string memory) {
+        if (!IAccessController(accessController).checkPermission(ipAccount, msg.sender, address(this), this.callFromAnotherModule.selector)) {
+		        revert Unauthorized();
+        }
+			  // do something
+    }
+}
+```
+
+<Frame>
+  <img src="/images/concepts/ac-diagram-2.png" alt="Module calling Module" />
+</Frame>
+
+## 모듈이 Registry를 호출
+
+* 레지스트리는 AccessController를 호출하여 인증 확인을 수행합니다.
+* 레지스트리는 전역 권한 설정을 통해 모듈을 인증합니다
+
+모듈에 의해 레지스트리가 호출될 때, AccessController를 사용하여 액세스 제어 확인을 수행할 수 있습니다. 이 확인은 호출된 모듈이 레지스트리를 호출할 권한이 있는지 결정합니다.
+
+```solidity Solidity
+// called by StoryProtocl Admin
+IAccessController(accessController).setGlobalPermission(address(0), address(module), address(registry), bytes4(0))) {
+
+```
+
+```solidity Solidity
+contract MockRegistry {
+    function registerAction() external returns (string memory) {
+        if (!IAccessController(accessController).checkPermission(address(0), msg.sender, address(this), this.registerAction.selector)) {
+		        revert Unauthorized();
+        }
+			  // do something
+    }
+}
+```
+
+<Frame>
+  <img src="/images/concepts/ac-diagram-3.png" alt="Module calling Registry" />
+</Frame>
+
+<Note>
+  소유권 이전 시 IPAccount의 권한이 취소됩니다.
+
+  IPAccount와 연관된 권한은 현재 소유자에게만 독점적으로 연결됩니다. IPAccount의 소유권이 새로운 개인에게 이전될 때, 이전 소유자에게 부여된 기존 권한은 자동으로 취소됩니다. 이는 현재의 합법적인 소유자만이 이러한 권한에 접근할 수 있도록 보장합니다. 만약 향후 IPAccount 소유권이 원래 소유자에게 다시 이전된다면, 처음에 취소되었던 권한이 복원되어 원래 소유자의 접근 및 제어 권한이 회복됩니다.
+</Note>
+
+
+# Story Attestation Service
+
+<Accordion title="읽기 건너뛰기 - 1분 요약" icon="circle-info">
+  Story Attestation Service (SAS)를 독립적인 서비스 제공자(침해, 신원 등)들의 집합으로 생각할 수 있습니다. 각 제공자는 자신만의 방식으로 IP의 유효성을 증명합니다. 따라서 각 IP에는 결과를 표시하는 일련의 "배지"가 붙게 됩니다.
+
+  그런 다음 어떤 제공자를 신뢰하거나 믿을지는 생태계/시장이 결정하게 됩니다. 이는 IP 유효성에 대한 분산된 "검증자" 같은 접근 방식이 되어, IP 자산에 대해 많은 제공자가 유효하다고 말한다면 그것은 아마도 유효할 것입니다.
+</Accordion>
+
+Story는 지적 재산을 검증하기 위해 두 가지 기본 구성 요소에 기반한 다층적 분산 접근 방식을 채택합니다:
+
+1. Story Attestation Service(SAS): 다양한 매체(이미지, 오디오 등)에서 저작권 위반을 감지하는 전문 서비스 제공업체 네트워크를 활용하여 [🧩 IP Asset](/concepts/ip-asset)의 정당성에 대한 투명하고 공개적으로 접근 가능한 신호를 제공합니다. IP 등록을 용이하게 하는 애플리케이션(예: 원본 콘텐츠)은 향후 IP 자산의 출처를 증명("앱테스테이션"이라고 함)할 수도 있습니다.
+2. 이[❌ Dispute Module](/concepts/dispute-module)은 IP 분쟁의 미묘한 특성을 수용하기 위해 온체인 및 오프체인 프로세스를 모두 활용하여 갈등을 해결하기 위한 유연한 프레임워크를 제공합니다.
+
+이러한 감지 방법과 분쟁 해결의 조합은 과도한 마찰을 일으키지 않고 IP를 등록할 수 있는 강력한 생태계를 만들며, 시장과 개별 생태계 앱이 각 증명 제공자에게 얼마나 가중치를 줄지 결정할 수 있게 합니다.
+
+이러한 계층들이 **IP Validation Service (IPVS)**&#xB97C; 구성합니다 - 완전히 분산된 신뢰의 마켓플레이스입니다. 기존의 감지 제공자 시스템은 IP 진위성에 대한 전문적이고 검증 가능한 평가를 제공할 수 있는 더 넓은 신호 기여자 생태계로 계속 확장될 것입니다. 인센티브화된 참여를 통해 IPVS는 다양한 검증자들이 협력하여 전문화된 신호를 제공하는 자체 지속 가능한 시장을 조성합니다.
+
+따라서 잠재적으로 더 큰 혼란을 일으킬 수 있는 선점 위험을 야기하는 중복을 방지하는 대신, 신호와 증명을 통해 원본 IP가 다른 것들 위로 부상할 수 있게 합니다.
+
+## "SAS는 언제 내 IP를 스캔하나요?"
+
+<Note>
+  Story Attestation Service는 **상업적 IP**에 대해서만 IP 침해 검사를 실행한다는 점을 주목해야 합니다. 즉, 최소한 하나의 [License Terms](/concepts/licensing-module/license-terms)가 있는 `commercialUse = true`IP 자산입니다.
+
+  만약 당신의 IP가 비상업적이라면, 이 섹션은 당신에게 해당되지 않습니다.
+</Note>
+
+Story에 [IP를 등록할 때](/developers/tutorials/how-to-register-ip-on-story), [📝 IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard)를 구현하는 IP 특정 메타데이터를 전달합니다. 이 표준에서는 3개의 필드를 볼 수 있습니다:
+
+| 속성 이름       | 유형       | 설명                                                                                                                                                                                                        |
+| :---------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mediaUrl`  | `string` | 침해 검사에 사용되며, 실제 미디어(예: 이미지 또는 오디오)를 가리킵니다                                                                                                                                                                 |
+| `mediaHash` | `string` | SHA-256 해싱 알고리즘을 사용한 미디어의 해시된 문자열. [here](/concepts/ip-asset/ipa-metadata-standard#hashing-content)에서 그 방법을 확인하세요.                                                                                        |
+| `mediaType` | `string` | 미디어 유형(오디오, 비디오, 이미지), [mimeType](https://developer.mozilla.org/en-US/docs/Web/HTTP/MIME_types/Common_types)을 기반으로 합니다. 허용된 미디어 유형은 [here](/concepts/ip-asset/ipa-metadata-standard#media-types)에서 확인하세요. |
+
+이들은 상업적 침해 검사에 사용됩니다. `mediaUrl`를 통해 전달하는 모든 미디어는 우리의 침해 감지 제공자들에 의해 검사되며 침해가 감지되면 플래그가 지정됩니다.
+
+만약 이러한 `media.*` 필드를 전달하지 않으면, 침해 감지가 수행되지 않고 당신의 IP는 유효성이 증명되지 않을 것입니다.
+
+### 현재 제한사항
+
+* 상업적 조건(`media.*`)을 첨부하기 전에 `commercialUse = true` 필드를 설정해야 합니다. 그렇지 않으면 검사가 수행되지 않습니다.
+* 증명은 IP 포털(곧 출시될 "IP를 위한 GitHub" 플랫폼)에만 표시됩니다. 우리는 누구나 결과에 접근할 수 있도록 증명을 공개 기록에 게시하는 작업을 진행 중입니다 (**곧 출시 예정!**).
+* 오직 **인터넷에 이미 존재하는** 미디어만 감지됩니다. 만약 누군가가 Story에 새로운 IP를 등록하면, 우리의 제공자들이 그에 대한 데이터를 가지고 있지 않기 때문에 단순히 검증된 것으로 반환될 것입니다.
+
+## 현재 제공자
+
+<CardGroup cols={2}>
+  <Card title="Yakoa" href="https://www.yakoa.io/" icon="house" color="#190087">
+    Yakoa는 AI와 기계 학습을 사용하여 여러 블록체인을 스캔하고, 온체인 데이터를 분석하여 디지털 자산의 직접적인 복사, 스타일적 위조, 무단 복제를 감지합니다. 새로운 자산을 알려진 IP의 데이터베이스와 비교하여 실시간으로 잠재적 위반을 플래그 지정하고 집행을 위한 상세한 감사 로그를 제공합니다.
+  </Card>
+
+  <Card title="Pex" href="https://www.pex.com/" icon="house" color="#019cf4">
+    Pex.com은 고급 콘텐츠 인식 및 분석을 활용하여 창작자와 권리 소유자가 온라인에서 그들의 시각 및 오디오 미디어를 추적, 관리, 수익화할 수 있도록 돕는 디지털 플랫폼입니다. 웹 전체에서 콘텐츠가 어떻게 사용되는지 모니터링하여 사용자가 라이선싱 기회를 발견하고 지적 재산권을 보호하는 것을 더 쉽게 만듭니다.
+  </Card>
+</CardGroup>
+
+## 증명 제공자가 되는 방법
+
+Story Attestation Service는 현재 활발히 개발 중입니다. 만약 당신이 어떤 형태의 IP 검증(침해, 신원, 출처 등)을 운영하고 있다면, 증명 제공자가 될 수 있습니다. 그렇게 하려면 이 [form](https://docs.google.com/forms/d/10n3AnWoiLsxpaY17kJlxRazysDe8aOWJgirRnfkFRAk/edit)을 작성해 주세요.
+
+
+# ❌ Dispute Module
+
+Dispute Module은 사용자가 중재를 통해 분쟁을 제기하고 해결할 수 있는 방법을 만듭니다.
+
+<CardGroup cols={1}>
+  <Card title="DisputeModule.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/dispute/DisputeModule.sol" icon="scroll" color="#ccb092">
+    Dispute Module의 스마트 계약을 확인하세요.
+  </Card>
+</CardGroup>
+
+## 분쟁 용어
+
+중재 시스템의 주요 구성 요소는 다음과 같습니다:
+
+* **중재 정책:** 중재 정책은 분쟁을 결정할 규칙/프로세스/엔티티의 집합을 의미합니다. 현재 지원되는 유일한 중재 정책은 [UMA Arbitration Policy](/concepts/dispute-module/uma-arbitration-policy)입니다.
+* **중재 페널티:** IP 자산이 "태그"된 후 어떤 일이 일어나는지를 의미합니다. IPA는 분쟁이 정확하다고 결정되지 않는 한 "태그"된 것으로 간주되지 않습니다. 태그되면 IPA는 다음을 할 수 없게 됩니다:
+  * 라이선스 발행
+  * 부모에 연결
+  * 로열티 청구
+  * 그리고 기존의 모든 라이선스가 사용 불가능해집니다
+
+### 분쟁 태그
+
+**태그**는 분쟁을 제기할 때 프로토콜의 IP 자산에 적용할 수 있는 "라벨"을 의미합니다. **태그는 분쟁에 사용되기 위해 프로토콜 거버넌스에 의해 화이트리스트에 등록되어야 합니다.** 초기 태그 세트(및 그들의 `bytes32` Dispute Module과 온체인에서 상호 작용하기 위한)는 다음과 같습니다:
+
+* `IMPROPER_REGISTRATION`: `0x494d50524f5045525f524547495354524154494f4e0000000000000000000000`
+* `IMPROPER_USAGE`: `0x494d50524f5045525f5553414745000000000000000000000000000000000000`
+* `IMPROPER_PAYMENT`: `0x494d50524f5045525f5041594d454e5400000000000000000000000000000000`
+* `CONTENT_STANDARDS_VIOLATION`: `0x434f4e54454e545f5354414e44415244535f56494f4c4154494f4e0000000000`
+* `IN_DISPUTE`: `0x494e5f4449535055544500000000000000000000000000000000000000000000`
+
+| 분쟁 태그                                                                                                                                                                                                                                                                                                                   | 설명                                                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `IMPROPER_REGISTRATION`                                                                                                                                                                                                                                                                                                 | 이미 존재하는 IP의 등록을 의미합니다.                                                                                                                                                                               |
+| `IMPROPER_USAGE`<br /><br />예시 (비exhaustive):<br />Territory,<br />Channels of Distribution,<br />Expiration,<br />Irrevocable,<br />Attribution,<br />Derivatives,<br />Limitations on Creation of Derivatives,<br />Commercial Use,<br />Sublicensable,<br />Non-Transferable,<br />Restriction on Cross-Platform Use | 여러 항목에 걸쳐 IP 자산의 부적절한 사용을 의미합니다 (왼쪽의 예시). 이러한 항목들은 [💊 Programmable IP License (PIL)](/concepts/programmable-ip-license/overview) 법률 문서에서 더 자세히 찾을 수 있습니다.                                           |
+| `IMPROPER_PAYMENT`                                                                                                                                                                                                                                                                                                      | IP와 관련된 누락된 지불을 의미합니다.                                                                                                                                                                               |
+| `CONTENT_STANDARDS_VIOLATION`<br /><br />Examples: No-Hate, Suitable-for-All-Ages, No-Drugs-or-Weapons, No-Pornography                                                                                                                                                                                                  | "No-Hate", "Suitable-for-All-Ages", "No-Drugs-or-Weapons", "No-Pornography"를 의미합니다. 이러한 항목들은 [💊 Programmable IP License (PIL)](/concepts/programmable-ip-license/overview) 법률 문서에서 더 자세히 찾을 수 있습니다. |
+| `IN_DISPUTE`                                                                                                                                                                                                                                                                                                            | 다른 4개와 다르게, 이는 분쟁 종료 시 사라지는 임시 태그이며 침해가 없는 경우 "0x"로 대체되거나 다른 태그 중 하나로 대체됩니다.                                                                                                                         |
+
+## 분쟁 프로세스 흐름
+
+<Frame>
+  <img src="/images/concepts/dispute-process-flow.png" alt="Dispute Process Flow" />
+</Frame>
+
+### 분쟁 제기
+
+The `raiseDispute` 함수는 권한이 없어도 사용 가능하며 모든 주소가 프로토콜에 등록된 모든 IP 자산에 대해 분쟁을 제기할 수 있습니다. 분쟁 개시자는 다음을 수행해야 합니다:
+
+1. 중재 결정이 긍정적일 경우 IP 자산에 적용될 "태그"를 선택합니다. 이는 제안된 태그가 정확하다고 확인된 경우에만 IP 자산이 공식적으로 "태그"된다는 것을 의미합니다 (위 다이어그램의 "긍정적 결정").
+2. 평가를 위한 분쟁 증거 제출
+3. 각 중재 정책에 특화된 기타 조건 - 예를 들어 지불 규칙 등
+
+### 분쟁 판결 설정
+
+The `setDisputeJudgement`는 화이트리스트에 등록된 주소만 호출할 수 있으며 호출자가 분쟁 판결을 설정할 수 있게 합니다. 분쟁 결정은 변경 불가능하므로 한 번만 호출할 수 있습니다. 제3자가 재고의 가능성을 제공하고 싶다면 자체적으로 할 수 있으며 최종 판결을 전달할 수 있습니다.
+
+### 부모가 침해된 경우 파생물 태그 지정
+
+만약 `setDisputeJudgement`가 IP를 침해로 태그했다면 모든 주소에서 `tagIfRelatedIpInfringed`를 호출하여 파생 체인 전체에 걸쳐 파생물에 부모와 동일한 태그를 적용하거나, IP가 그룹인 경우 그룹 멤버 태그를 해당 IP가 멤버인 모든 그룹 IP에 적용할 수 있습니다.
+
+<Note>
+  향후 전망
+
+  향후에는 침해 IP 자산과 관련된 모든 IP 자산이 누군가가 `tagIfRelatedIpInfringed`를 호출할 필요 없이 자동으로 태그되는 것이 목표입니다. 이는 현재 우리가 인식하고 있는 제한사항입니다.
+</Note>
+
+그런 다음 파생물은 판단이 필요 없이 직접 태그됩니다. 부모 IP 라이선스가 침해된 경우 해당 라이선스에서 파생된 모든 파생물도 암묵적으로 침해 상황에 있다고 간주되기 때문입니다.
+
+**예시**: IPA 7은 먼저 `setDisputeJudgement` 를 통해 분쟁 과정을 거친 후 침해("PLAGIARISM")로 태그됩니다. 그 후에만 IPAs 3, 1, 0이 `tagIfRelatedIpInfringed` 를 통해 새로운 분쟁 과정을 거치지 않고도 어떤 주소에서든 태그될 수 있습니다.
+
+<Frame>
+  <img src="/images/concepts/plagiarism-example.png" alt="Dispute Example" />
+</Frame>
+
+### 분쟁 해결
+
+분쟁을 해결하면 IP 자산에서 태그가 제거됩니다. 태그를 적용하는 방법이 두 가지이므로 해결하는 방법도 두 가지가 있습니다:
+
+1. 태그가 `setDisputeJudgement` 함수를 통해 적용된 경우
+
+분쟁 판결이 긍정적인 경우, 태그가 적용됩니다. IP 자산에 태그가 적용된 후, **분쟁 제기자**는 문제가 해결되었고 태그가 더 이상 적용되지 않는다고 판단하면 `resolveDispute`를 호출하여 제거할 수 있습니다. 예를 들어, 한 당사자가 분쟁 제기자에게 돈을 빚졌다가 분쟁 판결 후 전액을 지불한 경우, 태그를 지우고 IP 자산은 다시 깨끗한 상태가 될 수 있습니다.
+
+분쟁 제기자가 해결하지 않기로 선택하면 `setDisputeJudgement`에서 정의된 태그가 계속 유효합니다.
+
+2. 태그가 `tagIfRelatedIpInfringed` 함수를 통해 적용된 경우
+
+IP가 이전에 `tagIfRelatedIpInfringed`를 통해 침해로 태그된 경우, 이러한 태그는 `resolveDispute`를 통해 부모가 더 이상 침해 IP 자산으로 간주되지 않는 한 권한 없이 제거될 수 있습니다.
+
+이 권한 없는 분쟁 해결 메커니즘은 부모가 원래의 분쟁을 해결하고 더 이상 침해 상황에 있지 않다고 간주될 때, 파생 체인을 따라 쉽게 전파하고 파생 IP에서 침해 태그를 제거하기 위해 존재합니다. 따라서 파생물도 더 이상 침해 상황에 있지 않습니다.
+
+어떤 주소도 해결하지 않기로 선택하면 부모에서 파생물로 적용된 태그가 계속 유효합니다.
+
+### 분쟁 취소
+
+분쟁이 제기되었지만 분쟁 판결 전에 문제가 해결된 경우, 분쟁 제기자는 분쟁을 취소할 수 있습니다. 그러나 각 중재 정책의 조건에 따라 취소 시 환불되지 않는 수수료가 있을 수 있습니다.
+
+<Warning>
+  현재, [UMA Arbitration
+  Policy](/concepts/dispute-module/uma-arbitration-policy)는 분쟁 취소를
+  지원하지 않습니다.
+</Warning>
+
+
+# UMA Arbitration Policy
+
+<Note>
+  UMA의 분쟁 해결 방식에 대한 자세한 정보는 [그들의
+  웹사이트를 방문하세요](https://uma.xyz/).
+</Note>
+
+이 중재 정책은 UMA의 낙관적 오라클을 사용하여 분쟁을 검증하는 분쟁 해결 메커니즘입니다. 아래에서 UMA 분쟁 처리 과정이 어떻게 작동하는지에 대한 개요를 공유합니다.
+
+## 스마트 계약 흐름도
+
+<img src="/images/concepts/uma-1.png" alt="UMA Arbitration Flow" />
+
+<Steps>
+  <Step title="분쟁 제기">
+    IP 자산에 대한 분쟁을 시작하는 첫 번째 단계는 `raiseDispute` 함수를 [DisputeModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/dispute/DisputeModule.sol)에서 호출하는 것입니다. 이 함수는 차례로 `assertTruth`를 UMA의 `OptimisticOracleV3.sol`에서 호출합니다. 분쟁을 시작하려면 분쟁 제기자는 선택한 통화에 대해 UMA가 정의한 최소 보증금 이상의 보증금을 제출해야 합니다. 이 보증금은 오라클에 의해 분쟁이 검증 가능하게 정확하지 않다고 판단되면 잃게 된다는 점에 유의하세요.
+
+    <Note>
+      UMA는 IP 가격이 변동함에 따라 \$IP 보증금 크기를 조정할 것입니다. 현재
+      보증금 크기를 얻는 올바른 방법은 `getMinimumBond()`를 통해서입니다
+      `OptimisticOracleV3.sol` (OOV3), 우리의 [aeneid
+      테스트넷](https://aeneid.storyscan.io/address/0xABac6a158431edED06EE6cba37eDE8779F599eE4?tab=read_write_contract#0x4360af3d)
+
+      그리고
+      [메인넷](https://www.storyscan.io/address/0x8EF424F90C6BC1b98153A09c0Cac5072545793e8?tab=read_write_contract#0x4360af3d)에서 찾을 수 있습니다.
+    </Note>
+
+    이 단계 이후, 분쟁은 다른 사용자들이 반박/항소할 수 있도록 "공개"됩니다. 반박/항소가 없으면 UMA 규칙에 따라 IP가 침해하는 것으로 간주됩니다.
+
+    ```sol DisputeModule.sol
+    /// @notice Raises a dispute on a given ipId
+    /// @param targetIpId The ipId that is the target of the dispute
+    /// @param disputeEvidenceHash The hash pointing to the dispute evidence - this could be an IPFS CID 				converted to a bytes32 hash. This is the document with the proof that UMA reviewers will potentially read
+    /// @param targetTag The target tag of the dispute
+    /// @param data The data to initialize the policy - here you can do abi.encode of liveness, token address 	and bond amount
+    /// @return disputeId The id of the newly raised dispute
+    function raiseDispute(
+     address targetIpId,
+     bytes32 disputeEvidenceHash,
+     bytes32 targetTag,
+     bytes calldata data
+    ) external returns (uint256 disputeId);
+    ```
+  </Step>
+
+  <Step title="(선택사항) 분쟁 주장 / 반대 분쟁 / 항소 제기">
+    `raiseDispute` 호출 후에는 "활성" 기간이라고 불리는 시간이 있으며, 이 기간 동안 반대 분쟁/항소를 제출할 수 있습니다. 활성 기간은 두 부분으로 나뉩니다: (i) IP 소유자만 반대 분쟁/항소를 할 수 있는 활성 기간의 첫 번째 부분과 (ii) 모든 주소가 반대 분쟁/항소를 할 수 있는 두 번째 부분 - 이는 `disputeAssertion`를 `ArbitrationPolicyUMA.sol`에서 호출하여 수행할 수 있습니다. 분쟁에 반대하려면 호출자는 분쟁을 제기할 때 분쟁 제기자가 사용한 것과 동일한 금액과 통화의 보증금을 제출해야 합니다. 원래 분쟁이 오라클에 의해 검증 가능하게 정확하다고 판단되면 이 보증금을 잃게 된다는 점에 유의하세요.
+
+    이 단계 이후, 분쟁은 상승되어 외부 당사자인 UMA에 의해 검토됩니다.
+
+    ```sol ArbitrationPolicyUMA.sol
+    /// @notice Allows the IP that was targeted with a dispute to dispute the assertion while providing counter evidence
+    /// @param assertionId The identifier of the assertion that was disputed
+    /// @param counterEvidenceHash The hash of the counter evidence
+    function disputeAssertion(bytes32 assertionId, bytes32 counterEvidenceHash) external;
+
+    /// @notice Returns the assertion id for a given dispute id
+    /// @param disputeId The dispute id
+    function disputeIdToAssertionId(uint256 disputeId) external view returns (bytes32);
+    ```
+  </Step>
+
+  <Step title="(2단계가 발생한 경우) UMA 검토자들이 분쟁을 판단">
+    UMA 검토자들이 분쟁을 판단합니다. 이 단계에서 사용자는 UMA 검토자들이
+    분쟁 판단을 내릴 때까지 기다리기만 하면 됩니다. 이 단계는 48-96시간이
+    걸릴 수 있습니다.
+  </Step>
+
+  <Step title="주장 해결">
+    이 단계는 UMA가 `settleAssertion`를 호출하는 봇을 실행하므로 자동으로 이루어질 것으로 예상되며, 이는 차례로 분쟁에서 이긴 주소로 보증금을 분배합니다.
+
+    1. 아무도 반대 분쟁을 제출하지 않았다면 활성 기간이 끝났을 때 어떤 주소든 `settleAssertion`를 UMA의 `OptimisticOracleV3.sol`에서 호출할 수 있습니다.
+    2. 활성 기간이 끝나기 전에 누군가가 반대 분쟁/항소를 제출했다면, 분쟁은 UMA 검토자들에게 상승되어 IP가 침해인지 아닌지에 대한 판단과 결정을 내리게 됩니다. 결정이 내려진 후에는 어떤 주소든 `settleAssertion`를 UMA의 `OptimisticOracleV3.sol`에서 호출할 수 있습니다.
+  </Step>
+</Steps>
+
+## 분쟁 증거 제출 지침
+
+분쟁을 제기하거나 반대 분쟁을 할 때, 양 당사자는 분쟁 증거를 제출할 수 있습니다. 분쟁 증거란 오라클 참여자들이 분쟁에 대한 판단을 내리기 위해 사용하고 읽을 텍스트 문서를 말합니다.
+
+### 입증 책임
+
+UMA 중재 정책을 사용하는 모든 분쟁에서 입증 책임은 분쟁을 제기하는 당사자에게 있습니다. 이는 분쟁 제기자가 합리적인 의심을 넘어서는 명확하고, 설득력 있으며, 검증 가능한 증거를 제공해야 함을 의미합니다. 이러한 높은 기준을 충족하지 못하는 분쟁은 반대 분쟁이 제기될 수 있으며, 분쟁 제기 당사자는 보증금을 잃게 됩니다.
+
+### 문서 특성
+
+<Warning>
+  이 과정은 아직 실험 단계이므로, 증거를 제출해야 하는 내용/형식에 대해 반복과 미세 조정이 예상됩니다.
+</Warning>
+
+모든 문서는 다음과 같은 특성을 가져야 합니다:
+
+* 텍스트 문서여야 합니다. 필요한 경우 이미지나 비디오를 포함할 수 있습니다.
+
+* IPFS에 업로드되어야 합니다.
+
+* 검토자가 분쟁 증거 문서를 검토하는 데 1시간 이상 걸리지 않아야 합니다 - 검토자의 시간은 제한되어 있으며, 검토에 너무 많은 시간이 걸리면 증거가 무효로 간주될 수 있습니다. 분쟁을 해결하기 위해 최선의 노력을 기울일 것이지만, 분쟁 증거가 유효하려면 간결하게 유지해 주세요.
+
+분쟁 태그의 유형에 따라 아래 표의 "분쟁 증거 내용"도 증거에 포함해야 합니다:
+
+| 분쟁 태그                                                                                                                                                                                        | 분쟁 증거 내용                                                                                                                                | 분쟁 검토 과정 (인간 검토자 지침)                                                                                                                                                                                                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `IMPROPER_REGISTRATION`                                                                                                                                                                      | A. 분쟁 대상 IP에 의해 침해되고 있는 기존 IP의 전시 또는 포인터<br /><br />B. 침해 IP보다 이른 날짜에 기존 IP가 공개적으로 전시되었다는 증거(온체인 또는 오프체인) 및/또는 이를 확인할 수 있는 위치/방법에 대한 지침 | 1. 입력 A를 사용하여 기존 IP가 분쟁 대상 IP와 동일하거나 매우 유사한지 확인<br /> - 1픽셀 차이가 있는 Mickey Mouse는 침해에 해당<br /> - 새로운 모자를 쓴 Mickey Mouse는 적절한 라이선스가 있는 원본 Mickey Mouse의 파생작이 아닌 한 침해에 해당<br />2. 입력 B를 사용하여 기존 IP의 등록 날짜 확인<br />3. 분쟁 대상 IP의 등록 날짜가 더 늦은지 확인<br />4. 분쟁 대상 IP가 기존 IP의 파생작이 아닌지 확인<br /><br /> |
+| `IMPROPER_USAGE`<br /><br />예시 (비exhaustive):<br />지역,<br />유통 채널,<br />만료,<br />취소 불가능,<br />저작자 표시,<br />파생물,<br />파생물 생성 제한,<br />상업적 사용,<br />서브라이선스 가능,<br />양도 불가능,<br />크로스 플랫폼 사용 제한 | A. 위반된 PIL 조항<br /><br />B. 위반 설명<br /><br />C. 위반 증거                                                                                   | 1. 입력 A를 사용하여 PIL 라이선스 공식 문서에서 관련 PIL 조항 설명 읽기<br />2. 입력 B를 사용하여 위반 설명 읽기<br />3. 입력 C를 사용하여 가능한 경우 관련 플랫폼에서 확인하여 제시된 증거의 진실성 판단<br /><br />                                                                                                                                                |
+| `IMPROPER_PAYMENT`                                                                                                                                                                           | A. 분쟁 대상 IP가 받은 각 지불금 중 로열티 금고 및/또는 조상에게 공유되었어야 하지만 공유되지 않은 지불금에 대한 설명<br /><br />B. 로열티로 적절히 공유되지 않은 지불금에 대한 증거                        | 1. 입력 A와 B를 사용하여 가능한 경우 관련 플랫폼에서 확인하여 지불금 증거의 진실성 확인<br />2. 지불금 증거가 실제로 존재한다고 판단되면, 블록체인 탐색기에서 확인하여 온체인에서 실제로 지불이 이루어지지 않았는지 확인. 지불은 RoyaltyModule.sol 스마트 계약의 payRoyaltyOnBehalf() 함수를 호출하여 이루어져야 합니다. 또한, 로열티 지불은 소유자/IP가 해당 로열티를 지불하는 자본을 원래 받은 시점으로부터 15일 이내에 이루어져야 합니다.<br /><br />    |
+| `CONTENT_STANDARDS_VIOLATION`<br /><br />혐오 금지,<br />전연령 적합,<br />마약 또는 무기 금지,<br />포르노그래피 금지                                                                                                | A. 위반된 콘텐츠 기준 항목<br /><br />B. 위반 설명<br /><br />C. 위반 증거                                                                                | 1. 입력 A를 사용하여 PIL의 공식 콘텐츠 기준 섹션에서 관련 콘텐츠 기준 설명 읽기<br />2. 입력 B를 사용하여 위반 설명 읽기<br />3. 입력 C를 사용하여 가능한 경우 관련 플랫폼에서 확인하여 제시된 증거의 진실성 판단<br /><br />                                                                                                                                             |
+
+
+# 그룹 IP 자산 레지스트리
+
+<CardGroup cols={1}>
+  <Card title="GroupIPAssetRegistry.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/registries/GroupIPAssetRegistry.sol" icon="scroll" color="#ccb092">
+    그룹 IP 자산 레지스트리의 스마트 계약을 확인하세요.
+  </Card>
+</CardGroup>
+
+그룹 IP 자산 레지스트리는 그룹 구성원과 보상 풀을 포함한 그룹 IP 자산의 등록 및 추적을 관리하는 책임이 있습니다.
+
+그룹 IP 자산 레지스트리는 매핑을 통해 그룹의 IP 계정과 개별 IP 계정 간의 그룹화 관계를 온체인에서 유지합니다:
+
+```solidity GroupIPAssetRegistry.sol
+mapping(address groupIpId => EnumerableSet.AddressSet memberIpIds) groups;
+```
+
+### 주요 기능
+
+```solidity GroupIPAssetRegistry.sol
+function registerGroup(address groupNft, uint256 groupNftId, address rewardPool) external onlyGroupingModule whenNotPaused returns (address groupId)
+```
+
+이 함수는 Story에 새로운 Group IPA를 등록합니다.
+
+```solidity GroupIPAssetRegistry.sol
+function addGroupMember(address groupId, address[] calldata ipIds) external onlyGroupingModule whenNotPaused
+```
+
+이미 등록된 IPA들을 기존 Group IPA에 추가합니다.
+
+```solidity GroupIPAssetRegistry.sol
+function removeGroupMember(address groupId, address[] calldata ipIds) external onlyGroupingModule whenNotPaused
+```
+
+Group IPA에서 등록된 IPA들을 제거합니다.
+
+
+# License Registry
+
+<CardGroup cols={1}>
+  <Card title="LicenseRegistry.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/registries/LicenseRegistry.sol" icon="scroll" color="#ccb092">
+    라이선스 레지스트리의 스마트 컨트랙트를 확인하세요.
+  </Card>
+</CardGroup>
+
+라이선스 레지스트리는 프로토콜 내의 모든 라이선스 관련 상태를 저장합니다. 여기에는 [Programmable IP License (PIL💊)](/concepts/programmable-ip-license/overview)와 같은 새로운 라이선스 템플릿 등록, 개별 [IP Assets](/concepts/ip-asset/overview)에 라이선스 첨부, 파생작 등록 등과 같은 글로벌 상태 관리가 포함됩니다:
+
+```solidity LicenseRegistry.sol
+/// @dev Storage of the LicenseRegistry
+/// @param defaultLicenseTemplate The default license template address
+/// @param defaultLicenseTermsId The default license terms ID
+/// @param registeredLicenseTemplates Registered license templates
+/// @param registeredRoyaltyPolicies Registered royalty policies
+/// @param registeredCurrencyTokens Registered currency tokens
+/// @param parentIps Mapping of parent IPs to derivative IPs
+/// @param parentLicenseTerms Mapping of parent IPs to license terms used to link to derivative IPs
+/// @param childIps Mapping of derivative IPs to parent IPs
+/// @param attachedLicenseTerms Mapping of attached license terms to IP IDs
+/// @param licenseTemplates Mapping of license templates to IP IDs
+/// @param expireTimes Mapping of IP IDs to expire times
+/// @param licensingConfigs Mapping of minting license configs to a licenseTerms of an IP
+/// @dev Storage structure for the LicenseRegistry
+/// @custom:storage-location erc7201:story-protocol.LicenseRegistry
+struct LicenseRegistryStorage {
+  address defaultLicenseTemplate;
+  uint256 defaultLicenseTermsId;
+  mapping(address licenseTemplate => bool isRegistered) registeredLicenseTemplates;
+  mapping(address childIpId => EnumerableSet.AddressSet parentIpIds) parentIps;
+  mapping(address childIpId => mapping(address parentIpId => uint256 licenseTermsId)) parentLicenseTerms;
+  mapping(address parentIpId => EnumerableSet.AddressSet childIpIds) childIps;
+  mapping(address ipId => EnumerableSet.UintSet licenseTermsIds) attachedLicenseTerms;
+  mapping(address ipId => address licenseTemplate) licenseTemplates;
+  mapping(bytes32 ipLicenseHash => Licensing.LicensingConfig licensingConfig) licensingConfigs;
+}
+```
+
+### 주요 함수
+
+```solidity LicenseRegistry.sol
+function attachLicenseTermsToIp(address ipId, address licenseTemplate, uint256 licenseTermsId) external onlyLicensingModule
+```
+
+이 함수를 사용하면 IP Asset에 라이선스 조건을 첨부할 수 있습니다.
+
+```solidity LicenseRegistry.sol
+function registerDerivativeIp(address childIpId, address[] calldata parentIpIds, address licenseTemplate, uint256[] calldata licenseTermsIds, bool isUsingLicenseToken) external onlyLicensingModule
+```
+
+이 함수를 사용하면 IP Asset을 다른 IP Asset의 파생작으로 등록할 수 있어, [💸 Royalty Module](/concepts/royalty-module/overview)에서 청구 가능한 로열티 흐름과 같은 기능을 활용할 수 있습니다.
+
+
+# 🗂️ 레지스트리
+
+Story의 다양한 레지스트리는 프로토콜의 전역 상태를 위한 주요 디렉토리/저장소 역할을 합니다. 당연히 이들은 해당 저장소를 업데이트하는 기능도 포함하고 있습니다.
+
+특정 IP의 상태를 관리하는 [⚙️ IP 계정](/concepts/ip-asset/ip-account)과 달리, **레지스트리**는 프로토콜의 더 넓은 상태를 감독합니다.
+
+# 레지스트리 유형
+
+다음은 Story의 모든 레지스트리입니다.
+
+## [IP 자산 레지스트리](/concepts/registry/ip-asset-registry)
+
+프로토콜에 IP를 등록하는 책임을 담당합니다.
+
+## [그룹 IP 자산 레지스트리](/concepts/registry/group-ip-asset-registry)
+
+그룹 IP 자산을 등록하고 유지하는 책임을 담당합니다.
+
+## [라이선스 레지스트리](/concepts/registry/license-registry)
+
+IP 자산에 라이선스 조건 첨부, 파생물 등록, 새로운 라이선스 템플릿 생성 등 프로토콜 내의 모든 라이선스 관련 상태를 저장합니다.
+
+## [모듈 레지스트리](/concepts/registry/module-registry)
+
+Story에 허가 없이 등록된 모듈과 훅의 전역 목록을 유지하고 업데이트합니다
+
+
+# 모듈 레지스트리
+
+<CardGroup cols={1}>
+  <Card title="ModuleRegistry.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/registries/ModuleRegistry.sol" icon="scroll" color="#ccb092">
+    모듈 레지스트리의 스마트 계약을 확인하세요.
+  </Card>
+</CardGroup>
+
+모듈 레지스트리는 Story에 허가 없이 등록된 모듈과 훅의 전역 목록을 유지하고 업데이트합니다. 각 IP 계정의 모듈 및 훅과의 상호 작용에 대한 세밀한 제어를 위해 IP 계정 별로 모듈을 활성화/비활성화할 수 있습니다.
+
+**모듈을 생성/읽기를 깊이 있게 다루고 싶지 않다면 이 모듈은 아마 당신에게 그다지 중요하지 않을 것입니다.** 모듈 생성/읽기에 대해 자세히 알고 싶지 않다면 필요하지 않습니다.
+
+
+# IP Asset Registry
+
+<CardGroup cols={1}>
+  <Card title="IPAssetRegistry.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/registries/IPAssetRegistry.sol" icon="scroll" color="#ccb092">
+    IP 자산 레지스트리의 스마트 컨트랙트를 확인하세요.
+  </Card>
+</CardGroup>
+
+IP 자산 레지스트리는 프로토콜에 IP를 등록하는 책임을 가지고 있습니다. 프로토콜에 등록된 각 새로운 IP 자산에 대해 전용 [IP Account](/concepts/ip-asset/ip-account) 컨트랙트를 배포합니다 (*NOTE: This registry inherits from the* [IP Account Registry](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/registries/IPAccountRegistry.sol))
+
+### 주목할 만한 함수들
+
+```solidity IPAssetRegistry.sol
+function register(uint256 chainid, address tokenContract, uint256 tokenId) external whenNotPaused returns (address id)
+```
+
+이 함수는 ERC-721 NFT를 Story의 새로운 IP Asset으로 등록합니다.
+
+
+# Introduction
+
+<Frame>
+  <img src="/images/story-banner.png" alt="Hero" />
+</Frame>
+
+## 세계의 IP 블록체인 소개
+
+Story는 지적 재산권을 위해 특별히 설계된 목적 지향적 레이어 1 블록체인입니다.
+
+온체인에서 IP를 등록하고 몇 초 만에 사용 조건을 추가할 수 있어, 현재 복잡하고 구식인 IP 법적 시스템에 대한 진입 장벽을 크게 낮춥니다. 예를 들어, 시간, 돈, 변호사 없이도 "내 IP를 사용하면 상업적 수익의 50%를 나에게 지불해야 한다"는 조건을 강제할 수 있습니다.
+
+<Note>
+  IP는 이미지, 노래, RWA, AI 훈련 데이터 또는 그 사이의 모든 것일 수 있습니다.
+</Note>
+
+블록체인에서 IP를 프로그래밍 가능하게 만듦으로써, AI 에이전트(또는 다른 소프트웨어)와 인간이 간단한 API 호출로 IP를 거래하고 수익화할 수 있는 투명하고 분산된 글로벌 IP 저장소가 됩니다.
+
+<CardGroup cols={2}>
+  <Card title="5살 아이에게 설명하듯이" icon="house" href="/explain-like-im-five">
+    1분 요약을 읽어보세요.
+  </Card>
+
+  <Card title="백서 읽기" href="https://www.story.foundation/whitepaper.pdf" icon="file">
+    Story 백서를 읽어보세요.
+  </Card>
+</CardGroup>
+
+<Accordion title="우리가 Story를 만든 이유는 무엇인가요?" icon="face-thinking">
+  IP 소유자들이 온라인에서 자신의 작품을 공유할 때, 다른 사람들이 그들에게 크레딧을 주지 않고 사용하거나 변경하기 쉽고, 그들의 작품이 인기를 얻거나 가치가 있게 되면 공정한 보상을 받지 못하는 경우가 많습니다. 이는 자신의 아이디어와 창작물을 공유하고 싶지만 그것들에 대한 통제력을 잃고 싶지 않은 사람들에게 실망스러울 수 있습니다.
+
+  또한, AI 생성 미디어의 속도와 과잉 공급은 물리적 복제를 위해 설계된 현재의 IP 시스템을 앞지르고 있습니다. 많은 경우,[AI는 저작권이 있는 데이터로 훈련되고 이를 생산하고 있습니다](https://twitter.com/BriannaWu/status/1823833723764084846).
+
+  Story는 창작자들이 내장된 보호 기능과 함께 작품을 공유할 수 있는 방법을 제공함으로써 이 문제를 해결합니다. Story에 등록된 노래, 이미지 또는 창작물을 누군가(AI 모델 포함)가 사용할 때, 시스템은 자동으로 원래 소유자가 누구인지 추적하고 크레딧을 받을 수 있도록 합니다. 또한, 그 작품이 수익을 창출한다면 - 예를 들어 누군가 노래를 리믹스하고 돈을 벌었다면 - 원래 소유자는 온체인에 설정된 라이선스 조건에 따라 자동으로 공정한 몫을 받게 됩니다.
+</Accordion>
+
+## 빠른 FAQ
+
+<AccordionGroup>
+  <Accordion title="가스 토큰은 무엇인가요?">\$IP</Accordion>
+
+  <Accordion title="어떤 지갑을 사용해야 하나요?">
+    물론 EVM 기반 지갑을 모두 사용할 수 있지만, 우리는[MetaMask](https://metamask.io/)나[OKX](https://www.okx.com/web3)를 추천합니다. 아래에서 Story의 L1을 추가할 수 있습니다:
+
+    <CardGroup cols={2}>
+      <Card title="Story 메인넷 추가" icon="globe" href="https://chainid.network/chain/1514/">
+        Story의 메인넷에 지갑을 연결하세요.
+      </Card>
+
+      <Card title="Story 'Aeneid' 테스트넷 추가" icon="globe" href="https://chainid.network/chain/1315/">
+        Story의 'Aeneid' 테스트넷에 지갑을 연결하세요.
+      </Card>
+    </CardGroup>
+  </Accordion>
+
+  <Accordion title="생태계를 어디서 볼 수 있나요?">
+    우리의[Ecosystem - Getting Started](https://storyprotocol.notion.site/Story-Ecosystem-Getting-Started-169051299a5480cc9b3dcac7c3ec82da)페이지를 확인해보세요.
+  </Accordion>
+
+  <Accordion title="스테이블코인 옵션은 무엇인가요?">
+    다음에서 제공하는 브리지된 USDC.e를 사용할 수 있습니다:[Stargate](https://stargate.finance/bridge).
+  </Accordion>
+
+  <Accordion title="브리지는 어떻게 하고 가장 좋은 방법은 무엇인가요?">
+    다음을 사용하세요:[Stargate](https://stargate.finance/bridge),[deBridge](https://app.debridge.finance/?inputChain=1\&outputChain=1514\&inputCurrency=\&outputCurrency=0xf1815bd50389c46847f0bda824ec8da914045d14\&dlnMode=simple\&address=\&amount=1), 또는[Orbiter Finance](https://www.orbiter.finance/en?tgt_chain=1514\&src_chain=1\&src_token=ETH).
+  </Accordion>
+</AccordionGroup>
+
+## 간단한 아키텍처 개요
+
+Story를 구성하는 여러 요소가 있습니다. 아래에서 가장 중요한 구성 요소를 다룰 것입니다.
+
+<Frame>
+  <img src="/images/story-stack.png" alt="Story Diagram" />
+</Frame>
+
+### Story Network: "세계의 IP 블록체인"
+
+Story Network는 EVM과 Cosmos SDK의 장점을 모두 갖춘 목적 지향적 레이어 1 블록체인입니다. 100% EVM 호환성과 함께 그래프 데이터 구조를 지원하기 위한 깊은 실행 레이어 최적화를 통해 IP와 같은 복잡한 데이터 구조를 빠르고 비용 효율적으로 처리하도록 특별히 설계되었습니다. 이를 위해 다음과 같은 방법을 사용합니다:
+
+* IP 그래프와 같은 복잡한 데이터 구조를 몇 초 안에 최소한의 비용으로 탐색할 수 있는 사전 컴파일된 프리미티브 사용
+* 빠른 최종성과 저렴한 트랜잭션을 보장하기 위해 성숙한 CometBFT 스택을 기반으로 한 합의 레이어
+
+### "창의성 증명" 프로토콜
+
+Solidity로 작성된 스마트 계약으로 구성된 우리의 "창의성 증명" 프로토콜은 Story Network에 기본적으로 배포되어 있으며 누구나 Story에 IP를 온램프할 수 있게 합니다. 우리 문서의 대부분은 이 프로토콜에 초점을 맞추고 있습니다.
+
+창작자들은 자신의 IP를[🧩 IP Assets](/concepts/ip-asset)로 Story에 등록합니다. 당신은[🧱 Modules](/concepts/modules)를 사용하여 IP Assets와 상호 작용합니다. 예를 들어,[Licensing Module](/concepts/licensing-module)을 통해 IP의 적절한 사용을 강제하고,[Royalty Module](/concepts/royalty-module)을 통해 수익을 지불하고 청구하며,[Dispute Module](/concepts/dispute-module)을 통해 침해 IP에 대해 분쟁을 제기합니다.
+
+각 IP Asset에는 관련된 ERC721 NFT가 있으며, 이는 IP에 대한*소유권*을 나타냅니다. 이는 IP 소유권을 사고 팔 수 있음을 의미합니다. 또한, IP에서 발행된 라이선스도 ERC721 NFT이므로 특정 조건 하에서 IP를 사용할 권리를 사고 팔 수 있습니다. 이를 통해 새로운 영역인**IPFi**가 열립니다.
+
+### 프로그래밍 가능한 IP 라이선스
+
+온체인이지만, IP의 사용 조건과 발행된 라이선스는[프로그래밍 가능한 IP 라이선스 (PIL💊)](/concepts/programmable-ip-license)라는 오프체인 법적 계약에 의해 강제됩니다.
+
+PIL을 통해 누구나 Story에서 토큰화된 IP를 "실제 세계" 법적 시스템으로 오프램프할 수 있으며, 창작자들이 IP를 리믹스하고, 수익화하고, 파생물을 만들 수 있는 실제 법적 조건을 설명합니다.*프로토콜, 더 구체적으로 위에서 설명한 IP Assets와 모듈은 이러한 조건을 온체인에서 자동화하고 강제합니다*, 법적 세계(PIL)와 블록체인 사이의 매핑을 만듭니다.
+
+<Note>
+  USDC가 법정화폐로의 상환을 가능하게 하는 것처럼, PIL은 IP에 대한 상환을 가능하게 합니다.
+</Note>
+
+## 예시
+
+<Accordion title="예시 #1" icon="circle-info">
+  디지털 그림을 그리는 예술가나 오리지널 노래를 만드는 음악가라고 상상해보세요. 당신은 온라인에서 작품을 공유하고 싶지만, 다른 사람들이 당신의 작품을 사용하거나 변경할 때 크레딧을 주고 - 만약 그들이 그것으로 돈을 벌면 - 당신이 몫을 받기를 원합니다. 여기서 Story가 등장합니다. 이는 당신과 같은 IP 소유자에게 작품이 어떻게 사용되고, 추적되고, 공유되는지에 대한 통제권을 주는 기술을 사용하는 플랫폼으로, 작품이 보호되고 공정하게 보상받을 수 있게 합니다.
+
+  이렇게 생각해보세요: Story에 노래를 업로드한다고 가정해봅시다. 이제 누구나 당신이 원작자임을 알 수 있고, 누군가 리믹스하고 싶다면 Story를 통해 할 수 있습니다. 그러면 시스템은 자동으로 리믹스를 당신의 노래의 "파생작"으로 추적하고 당신을 원작자로 기록합니다. 이렇게 하면 리믹스가 인기를 얻어 수익을 창출할 경우, Story는 당신이 리믹서와 마찬가지로 그 수익의 일부를 얻을 수 있도록 도와줍니다.
+</Accordion>
+
+<Accordion title="예시 #2" icon="circle-info">
+  과학자가 인공지능(AI) 모델의 연구에 사용될 이미지 데이터셋을 업로드한다고 가정해봅시다. Story를 통해 해당 데이터셋이 등록되므로, 어떤 회사가 AI 훈련에 이를 사용하면 원래의 과학자에게 크레딧이 주어집니다. 만약 그 데이터셋이 수익성 있는 AI 애플리케이션에 기여한다면, Story는 원 기여자에게 공정한 몫이 돌아가도록 보장합니다.
+
+  Story를 통해 여러분은 자신의 작업을 자유롭게 공유할 수 있으며, 어디로 가든 추적되고 공정하게 여러분에게 크레딧이 돌아간다는 것을 알 수 있습니다. 이 아이디어는 창의적인 작업을 공유하고, 발전시키고, 성장시키기 위한 공정한 환경을 만드는 것입니다.
+</Accordion>
+
+
+# FAQ
+
+<AccordionGroup>
+  <Accordion title="가스 토큰은 무엇인가요?">\$IP</Accordion>
+
+  <Accordion title="어떤 지갑을 사용해야 하나요?">
+    물론 당신의 선호도에 따라 다르겠지만, EVM 기반 지갑이라면 어떤 것이든 사용할 수 있습니다. 하지만 우리는 [MetaMask](https://metamask.io/)를[OKX](https://www.okx.com/web3)에 추천합니다. 아래에서 Story의 L1을 추가할 수 있습니다:
+
+    <CardGroup cols={2}>
+      <Card title="Story 메인넷 추가" icon="globe" href="https://chainid.network/chain/1514/">
+        Story의 메인넷에 지갑을 연결하세요.
+      </Card>
+
+      <Card title="Story 'Aeneid' 테스트넷 추가" icon="globe" href="https://chainid.network/chain/1315/">
+        Story의 'Aeneid' 테스트넷에 지갑을 연결하세요.
+      </Card>
+    </CardGroup>
+  </Accordion>
+
+  <Accordion title="생태계를 어디서 볼 수 있나요?">
+    우리의 [생태계 - 시작하기](https://storyprotocol.notion.site/Story-Ecosystem-Getting-Started-169051299a5480cc9b3dcac7c3ec82da) 페이지를 확인해보세요.
+  </Accordion>
+
+  <Accordion title="스테이블코인 옵션은 무엇이 있나요?">
+    현재 우리는 네이티브 스테이블코인이 없습니다. [Stargate](https://stargate.finance/bridge)에서 제공하는 브릿지 USDC.e를 사용할 수 있습니다.
+  </Accordion>
+
+  <Accordion title="어떻게 브릿지를 사용하고 가장 좋은 방법은 무엇인가요?">
+    다음을 사용하세요: [Stargate](https://stargate.finance/bridge), [deBridge](https://app.debridge.finance/?inputChain=1\&outputChain=1514\&inputCurrency=\&outputCurrency=0xf1815bd50389c46847f0bda824ec8da914045d14\&dlnMode=simple\&address=\&amount=1), [Orbiter Finance](https://www.orbiter.finance/en?tgt_chain=1514\&src_chain=1\&src_token=ETH)
+  </Accordion>
+
+  <Accordion title="온체인 IP는 실제로 존재하나요?">
+    Story는 법적 시스템을 대체하는 것이 아니라, 창의적인 IP에 대한 법적 시스템을 더 효율적으로 만들기 위한 온체인 레일을 제공합니다.
+
+    우리는 세계적 수준의 법률 팀과 협력하여 [Programmable IP License (PIL💊)](/concepts/programmable-ip-license)라는 실제 오프체인 법적 계약을 만들었습니다. 이 계약은 간단한 조건을 통해 창작자가 누가 자신의 IP를 리믹스하고, 수익화하고, 파생물을 만들 수 있는지, 그리고 그 비용이 얼마인지를 명시할 수 있게 합니다.
+
+    그런 다음 우리는 이러한 조건을 자동화하고 시행하기 위해 온체인(스마트 계약 형태로)에 비즈니스 로직을 구축했습니다. 이는 법적 세계와 우리의 온체인 조건 사이에 긴밀한 매핑을 만듭니다.
+  </Accordion>
+
+  <Accordion title="제 자산은 오프체인입니다. Story에서 IP로 어떻게 등록할 수 있나요?">
+    오프체인 자산을 나타내는 NFT를 발행하고, 그 NFT를 Story에 등록하면 됩니다.
+  </Accordion>
+
+  <Accordion title="오프체인 자산(예: 상품)을 판매하고 있습니다. 자동 로열티 흐름이 어떻게 강제되는지 확인하려면 어떻게 해야 하나요?">
+    자동 로열티 흐름은 오프체인에서도 강제될 수 있습니다. 로열티 인프라는 온체인에 있지만, 관련 라이선스는 체인을 넘어서도 유효합니다. 라이선스를 법적으로 준수하기 위해, 모든 파생 작업은 IP 자산에 연결된 IP 계정으로 온체인 로열티를 지불해야 하며, 그렇지 않으면 실제 세계에서와 마찬가지로 (예: 라이선스 남용으로 법정에 소환되는 등) 라이선스에 명시된 조건에 따라 결과를 감수해야 합니다.
+
+    또한, [Programmable IP License (PIL💊)](/concepts/programmable-ip-license)의 조건 중 하나는 라이선스 사용자가 수익 공유가 포함된 경우 오프체인 거래(예: 상품)에 대한 수익 데이터를 라이선스 제공자에게 제공해야 한다는 것입니다.
+  </Accordion>
+
+  <Accordion title="간단한 예시가 있나요?">
+    디지털 그림을 그리는 아티스트나 오리지널 노래를 만드는 뮤지션이라고 상상해보세요. 당신은 온라인에서 작품을 공유하고 싶지만, 다른 사람들이 당신의 작품을 사용하거나 변경할 때 당신에게 크레딧을 주고 - 만약 그들이 그것으로 돈을 벌면 - 당신이 몫을 받기를 원합니다. 여기서 Story가 등장합니다. Story는 기술을 사용하여 당신과 같은 IP 소유자에게 작품이 어떻게 사용되고, 추적되고, 공유되는지에 대한 통제권을 주는 플랫폼입니다. 따라서 작품이 보호되면서도 공정하게 보상받을 수 있습니다.
+
+    이렇게 생각해보세요: Story에 노래를 업로드한다고 가정해봅시다. 이제 누구나 당신이 원작자임을 알 수 있고, 누군가가 리믹스를 하고 싶다면 Story를 통해 할 수 있습니다. 그러면 시스템은 자동으로 리믹스를 당신의 노래의 "파생작"으로 추적하고 당신을 원작자로 기록합니다. 이렇게 하면 리믹스가 인기를 얻어 수익을 낼 경우, Story는 리믹서와 마찬가지로 당신도 그 수익의 일부를 얻을 수 있도록 도와줍니다.
+  </Accordion>
+
+  <Accordion title="어떤 도전 과제가 있나요?">
+    자연스럽게 이런 질문이 생깁니다: "*만약 내가 악의적인 사용자라서 이 모든 것을 무시하고 그냥 우클릭으로 '다른 이름으로 저장'을 한다면 어떻게 되나요?*"
+
+    첫째, 사람들이 법을 따르고자 하는 정도를 과소평가하고 있습니다. 이것이 PIL이 그렇게 중요한 이유입니다 - 모든 IP는 단순히 온체인에 있는 것이 아니라 실제 법적 계약과 연결되어 있습니다! 만약 누군가가 당신의 IP를 무단으로 사용한다면, 법정에서 소송을 제기할 수 있습니다. 하지만 이런 "행복한 경로"가 항상 일어나는 것은 아닙니다. 문제가 발생했을 때, 우리는 오프체인 중재에 의존하기 전에 가능한 많은 단계의 해결 방법을 제공하고자 합니다.
+
+    따라서, 우리는 [❌ Dispute Module](/concepts/dispute-module)을 만들었습니다. 이를 통해 누구나 온체인에서 위반 콘텐츠를 신고할 수 있습니다. 분쟁이 성공적으로 해결되면, 해당 IP는 플래그 처리되어 더 이상 수익을 창출하거나 라이선스를 생성할 수 없게 됩니다.
+
+    Story에서의 최악의 시나리오는 다른 곳에서의 최선의 시나리오입니다: 법적 중재입니다. 우리를 사용하는 창작자들은 항상 전통적인 법적 시스템을 최후의 수단으로 사용할 수 있습니다. 이는 우리가 피하고 싶은 상황이지만, 창작자들이 시스템을 신뢰하기 위해 필요한 것입니다.
+  </Accordion>
+
+  <Accordion title="왜 모든 기존 체인에서 프로토콜로 존재하지 않나요?">
+    우리는 프로토콜로 시작했으며, Polygon, Ethereum 등의 프로젝트를 지원했습니다. 하지만 이는 IP를 그것이 존재하는 체인에 고립시켰고, 체인 간 IP를 연결하지 못했습니다. 이는 Story를 글로벌 IP 저장소로 만들고자 하는 비전을 실현하지 못합니다.
+
+    우리는 IP 정산 레이어가 되고자 합니다. 다시 말해, 체인 간 상호운용성을 가져오고자 합니다. 우리는 모든 등록된 IP를 위한 단일 허브 블록체인이 필요합니다. 이 IP는 Story에 있을 수도 있고, 다른 체인에 있을 수도 있으며, 오프체인에 있을 수도 있지만, 모든 라이선스, 로열티, IP 메타데이터가 단일 통합 실행 환경에 존재하도록 하는 허브가 필요합니다.
+  </Accordion>
+
+  <Accordion title="알겠습니다, 그래서 단일 블록체인이 필요하다고요. 왜 기존의 블록체인을 사용하지 않나요?">
+    첫째로 가장 명확한 이유는, 우리만의 Layer 1을 구축함으로써 전체 기술 스택에 걸쳐 혁신할 수 있다는 것입니다. 이를 통해 기존 L1 로드맵을 기다리지 않고도 온체인 분쟁 해결이나 온체인 IP 그래프와 같은 필수 기능을 구현할 수 있습니다.
+
+    우리 스스로 전체 스택을 혁신해야 할 필요성은 몇몇 기존 체인에서 구축을 시도했을 때 빠르게 깨달았습니다. 그 체인들의 기술적 한계로 인해 작동하지 않을 것이라는 것을 알게 되었습니다. 다음은 우리가 L1을 구축하기로 결정한 - 또는 오히려 강요된 - 몇 가지 이유입니다:
+
+    1. 기존 L1은 단순히 하나의 트랜잭션에서 각각 복잡한 라이선스 세부사항을 가진 수천 개의 부모에 대한 IP 등록을 효율적으로 처리할 수 없습니다. Geth EVM에서 가스 사용량은 조상 IP가 증가함에 따라 급격히 증가하여, 블록 가스 한도로 인해 670개 이상의 조상에 대해서는 실용적이지 않습니다. 따라서 우리는 실행 클라이언트에 직접 작성된 새로운 상태 유지 프리컴파일 접근 방식을 활용하여 IP 그래프의 그래프 순회 및 저장 효율성을 개선했습니다. 이는 PoC 프로토콜의 제한 하에서 우리가 그래프에 사용하는 특정 값을 쓰고 읽기 위해 EVM 주변의 "지름길"을 만듭니다.
+    2. 마찬가지로, 기존 L1은 수천 개의 IP 자산 간의 로열티 토큰 흐름을 처리할 수 없습니다. 이 역시 실행 클라이언트에 직접 개선을 함으로써 해결되었습니다.
+    3. 라이선스 데이터를 온체인에 두어 최대 상호운용성을 확보하여, 한 번에 수백 개의 IP를 리믹스할 수 있습니다.
+    4. 맞춤형 X-CHAIN 데이터(예: [Initia's](https://initia.xyz/) 모델)를 사용한 롤업 지원 가능성으로 롤업이 필요한 수백만 건의 트랜잭션을 가진 Web2 앱을 지원합니다. 또한 최대 인센티브 정렬을 위해 자체 검증자를 실행하는 Web2 앱을 지원합니다.
+    5. NFT 및 오프체인 RWA IP를 위한 네이티브 오라클과 같은 검증자 내장 L1 기술의 미래 (Cosmos SDK 투표 확장).
+  </Accordion>
+
+  <Accordion title="왜 그냥 L2로 만족하지 않나요?">
+    사실 우리는 L1을 구축하기로 결정하기 전에 L2를 구축했습니다. 하지만 우리는 실행 레이어를 혁신하는 것(L2에서도 가능)뿐만 아니라, 합의 메커니즘을 추가하고, 검증자 노드 저장소를 개선하고, 새로운 검증자 기능을 추가하고, 가장 중요하게는 프리컴파일을 추가하고 싶었습니다.
+
+    예를 들어, 우리는 결국 Netflix, TikTok 등이 검증자를 실행하여 IP 데이터를 직접 온체인으로 스트리밍할 수 있게 하고, 또한 그 노드들이 IP 그래프에 최적화된 그래프 DB를 가질 수 있게 하고 싶습니다. 분쟁 중인 IP 자산과 관련된 모든 트랜잭션이 즉시 거부되는 것을 상상해보세요.
+  </Accordion>
+
+  <Accordion title="Story는 왜 검증자 수준에서 개선을 하고 있나요?">
+    대안은 이러한 기능을 제공하기 위해 L1 외부에 인접 시스템을 운영하는 것인데, 이는 L1 자체보다 엄격하게 덜 분산화될 것입니다. 이러한 기능을 L1(검증자)에 네이티브하게 만듦으로써, 우리는 충분한 분산화, 보장된 실행, 그리고 유지해야 할 시스템을 줄일 수 있습니다.
+
+    즉, 인접 시스템이 다운되어 (분쟁 및 오라클이 중지됨) L1은 정상적으로 작동하는 상황이 발생하면 큰 문제가 될 것입니다. 이는 AVS와 같은 재스테이킹으로 해결할 수 있지만, 이 기술은 아직 검증되지 않았고 재스테이킹을 사용한 성공 사례가 없습니다 (EIGEN 토큰은 아직 개발 중입니다).
+
+    Story가 가질 수 있는 큰 인센티브 정렬: IP 회사들이 검증자를 운영하고 검증자 내장 기능을 통해 네트워크에 맞춤형 오프체인 IP 데이터를 네이티브하게 제공하는 것입니다.
+
+    또는 법률 회사가 분쟁을 자동화하고 다른 검증자들에게 브로드캐스트하는 것입니다. 분쟁에 대한 합의 후, 검증자들은 즉시 분쟁 중인 IP를 포함하는 트랜잭션을 차단할 수 있습니다. 이는 인접 시스템이 제공하는 것으로는 불가능합니다 (preconf가 있지 않는 한, 이는 Ethereum 영역에서 논란의 여지가 있는 주제입니다).
+  </Accordion>
+
+  <Accordion title="IP 그래프의 효율성을 개선하기 위해 L1이 필요하다고 언급하셨는데, 왜 오프체인 그래프 인덱싱을 사용하는 L2를 구축하지 않나요?">
+    IP 그래프는 온체인에 있어야 합니다. 왜냐하면 특정 온체인 기능들이 IP 그래프를 순회하고 집계할 수 있는 능력을 필요로 하기 때문입니다. 예를 들어, 로열티와 수익 분배는 IP 그래프를 통해 온체인에서 이루어져야 합니다. 오프체인 그래프 인덱싱을 사용하면 이러한 온체인 기능들이 실현 불가능하거나 과도하게 복잡해질 것입니다. 오라클을 포함시켜야 할 필요가 생기기 때문입니다.
+
+    마찬가지로, 분쟁 모듈은 IP 그래프를 직접 온체인에서 순회하여 IP의 조상이 플래그 처리되었는지 확인할 수 있고, 그 후 오라클의 필요 없이 분쟁 중인 IP의 라이선스를 발급하려는 트랜잭션을 즉시 중단하는 등의 즉각적인 조치를 취할 수 있습니다.
+  </Accordion>
+
+  <Accordion title="Story는 사용자들이 자신의 것이 아닌 오프체인 IP를 등록하는 것을 어떻게 방지할 계획인가요?">
+    우리는 IP 침해를 억제하기 위해 [❌ Dispute Module](/concepts/dispute-module)을 포함한 몇 가지 방법을 지원할 것입니다. 예를 들어, 누군가가 다른 사람의 IP를 등록하려 한다면, 온체인에서 이의를 제기할 수 있습니다. 최악의 경우, 오늘날의 전통적인 법적 시스템에서 작동하는 것처럼 법정에 가져갈 수 있습니다.
+
+    이에 대한 더 미묘한 답변(우리가 지속적으로 탐구하고 개선하고 있는 것)은 IP 침해를 억제할 수 있는 추가적인 방법이 있을 수 있다는 것입니다. 예를 들어, 사용자들이 IP의 유효성에 대해 토큰을 스테이킹하는 검증 메커니즘을 도입할 수 있습니다. 만약 그 IP가 분쟁 대상이 되어 저작권 침해로 표시된다면, 토큰은 슬래시되어 피해를 입은 창작자에게 분배됩니다. 또한 우리는 외부 IP 침해 감지 서비스를 L1의 가장 낮은 수준에 직접 도입하여, IP가 등록되는 순간 잠재적 침해로 플래그를 지정하거나 자동으로 표시할 수 있는 방법을 고려해 왔습니다.
+
+    궁극적으로 Story는 악의적인 행위자를 막기 위한 시스템이 아니라, 정직한 행위자들이 자신의 지적 재산권을 더 쉽게 등록하고, 다른 사람의 작품을 리믹스하며, 자신의 작품에 대한 적절한 조건을 설정하는 것을 돕기 위한 것입니다. 이 프로토콜은 허가가 필요 없으며 악의적인 행위자를 완전히 막는 것은 거의 불가능하지만, 우리는 최선을 다해 그들을 억제하려고 노력할 수 있습니다. Apple Music, Spotify, Netflix가 "최소 저항의 경로"를 만들어 미디어를 더 접근하기 쉽게 만들면서 미디어 불법 복제가 급감한 것처럼, 우리는 Story와 지적 재산권에 대해서도 비슷한 미래를 예상합니다.
+  </Accordion>
+</AccordionGroup>
+
+
+# GroupingModule
+
+Grouping Module은 Story의 IPA 그룹화를 위한 주요 진입점입니다. 다음과 같은 책임을 갖습니다:
+
+* 그룹 등록
+* 그룹에 IP 추가
+* 그룹에서 IP 제거
+* 보상 청구
+
+## 상태 변수
+
+### name
+
+```solidity
+string public constant override name = GROUPING_MODULE_KEY
+```
+
+모듈의 이름을 반환합니다.
+
+### ROYALTY\_MODULE
+
+```solidity
+IRoyaltyModule public immutable ROYALTY_MODULE
+```
+
+프로토콜 전체의 표준 RoyaltyModule을 반환합니다.
+
+### LICENSE\_TOKEN
+
+```solidity
+ILicenseToken public immutable LICENSE_TOKEN
+```
+
+프로토콜 전체의 표준 LicenseToken을 반환합니다.
+
+### GROUP\_NFT
+
+```solidity
+IGroupNFT public immutable GROUP_NFT
+```
+
+GROUP NFT 컨트랙트의 주소를 반환합니다.
+
+### GROUP\_IP\_ASSET\_REGISTRY
+
+```solidity
+IGroupIPAssetRegistry public immutable GROUP_IP_ASSET_REGISTRY
+```
+
+프로토콜 전체의 표준 Group IP Asset Registry를 반환합니다.
+
+### LICENSE\_REGISTRY
+
+```solidity
+ILicenseRegistry public immutable LICENSE_REGISTRY
+```
+
+프로토콜 전체의 표준 LicenseRegistry를 반환합니다.
+
+### DISPUTE\_MODULE
+
+```solidity
+IDisputeModule public immutable DISPUTE_MODULE
+```
+
+프로토콜 전체의 분쟁 모듈을 반환합니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) public initializer
+```
+
+이 구현 컨트랙트의 초기화 함수입니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 컨트랙트의 주소입니다.
+
+### registerGroup
+
+```solidity
+function registerGroup(address groupPool) external nonReentrant whenNotPaused returns (address groupId)
+```
+
+Group IPA를 등록합니다.
+
+**Parameters:**
+
+* `groupPool`: 그룹 풀의 주소입니다.
+
+**Returns:**
+
+* `groupId`: 새로 등록된 Group IPA의 주소입니다.
+
+### whitelistGroupRewardPool
+
+```solidity
+function whitelistGroupRewardPool(address rewardPool, bool allowed) external restricted
+```
+
+그룹 보상 풀을 화이트리스트에 등록합니다.
+
+**Parameters:**
+
+* `rewardPool`: 그룹 보상 풀의 주소입니다.
+* `allowed`: 그룹 보상 풀이 화이트리스트에 등록되었는지 여부입니다.
+
+### addIp
+
+```solidity
+function addIp(
+    address groupIpId,
+    address[] calldata ipIds,
+    uint256 maxAllowedRewardShare
+) external nonReentrant whenNotPaused verifyPermission(groupIpId)
+```
+
+그룹에 IP를 추가합니다. 이 함수는 Group IP 소유자 또는 승인된 운영자가 호출해야 합니다.
+
+**Parameters:**
+
+* `groupIpId`: 그룹 IP의 주소입니다.
+* `ipIds`: IP ID들입니다.
+* `maxAllowedRewardShare`: 각 멤버 IP에 할당할 수 있는 최대 보상 공유 비율입니다.
+
+### removeIp
+
+```solidity
+function removeIp(
+    address groupIpId,
+    address[] calldata ipIds
+) external nonReentrant whenNotPaused verifyPermission(groupIpId)
+```
+
+그룹에서 IP를 제거합니다. 이 함수는 Group IP 소유자 또는 승인된 운영자가 호출해야 합니다.
+
+**Parameters:**
+
+* `groupIpId`: 그룹 IP의 주소입니다.
+* `ipIds`: IP ID들입니다.
+
+### claimReward
+
+```solidity
+function claimReward(address groupId, address token, address[] calldata ipIds) external nonReentrant whenNotPaused
+```
+
+보상을 청구합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹의 주소입니다.
+* `token`: 토큰의 주소입니다.
+* `ipIds`: IP ID들입니다.
+
+### collectRoyalties
+
+```solidity
+function collectRoyalties(
+    address groupId,
+    address token
+) external nonReentrant whenNotPaused returns (uint256 royalties)
+```
+
+로열티를 풀에 수집하여 그룹 멤버 IP들이 청구할 수 있도록 합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹의 주소입니다.
+* `token`: 토큰의 주소입니다.
+
+**Returns:**
+
+* `royalties`: 수집된 로열티의 양입니다.
+
+### name
+
+```solidity
+function name() external pure override returns (string memory)
+```
+
+모듈의 이름을 반환합니다.
+
+**Returns:**
+
+* `string`: 모듈의 이름입니다.
+
+### getClaimableReward
+
+```solidity
+function getClaimableReward(
+    address groupId,
+    address token,
+    address[] calldata ipIds
+) external view returns (uint256[] memory)
+```
+
+그룹 내 각 IP에 대해 사용 가능한 보상을 반환합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹의 주소입니다.
+* `token`: 토큰의 주소입니다.
+* `ipIds`: IP ID들입니다.
+
+**Returns:**
+
+* `uint256[] memory`: 각 IP에 대한 보상입니다.
+
+
+# EvenSplitGroupPool
+
+EvenSplitGroupPool은 IGroupRewardPool 인터페이스를 구현하고 그룹 내 IP 멤버들 간의 보상 분배를 관리하는 계약입니다. 이는 모든 멤버들 사이에 보상을 공정하게 분배하기 위해 균등 분할 메커니즘을 사용합니다.
+
+## 상태 변수
+
+### ROYALTY\_MODULE
+
+```solidity
+IRoyaltyModule public immutable ROYALTY_MODULE
+```
+
+프로토콜 전체의 Royalty Module 주소입니다.
+
+### GROUPING\_MODULE
+
+```solidity
+IGroupingModule public immutable GROUPING_MODULE
+```
+
+프로토콜 전체의 Grouping Module 주소입니다.
+
+### GROUP\_IP\_ASSET\_REGISTRY
+
+```solidity
+IGroupIPAssetRegistry public immutable GROUP_IP_ASSET_REGISTRY
+```
+
+프로토콜 전체의 Group IP Asset Registry 주소입니다.
+
+### MAX\_GROUP\_SIZE
+
+```solidity
+uint32 public constant MAX_GROUP_SIZE = 1_000
+```
+
+그룹에 허용되는 최대 IP 멤버 수입니다.
+
+### GroupInfo
+
+```solidity
+struct GroupInfo {
+    address token;
+    uint32 totalMembers;
+    uint128 pendingBalance;
+    uint128 accRewardPerIp;
+    uint256 averageRewardShare;
+}
+```
+
+GroupInfo에 대한 저장 구조:
+
+* `token`: 그룹 IP에 첨부된 라이선스 조건에 의해 정의된 그룹의 보상 토큰
+* `totalMembers`: 그룹 내 IP의 총 수
+* `pendingBalance`: accRewardPerIp에 추가될 대기 중인 잔액
+* `accRewardPerIp`: IP당 누적 보상, MAX\_GROUP\_SIZE를 곱한 값
+* `averageRewardShare`: IP당 평균 보상 지분, 더 높은 최소 지분으로 새 IP가 참여할 때만 증가
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) public initializer
+```
+
+EvenSplitGroupPool 계약을 초기화합니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 계약의 주소입니다.
+
+### addIp
+
+```solidity
+function addIp(
+    address groupId,
+    address ipId,
+    uint256 minimumGroupRewardShare
+) external onlyGroupingModule returns (uint256 totalGroupRewardShare)
+```
+
+그룹 풀에 IP를 추가합니다. GroupingModule만이 이 함수를 호출할 수 있습니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID입니다.
+* `ipId`: IP ID입니다.
+* `minimumGroupRewardShare`: IP가 그룹에 추가될 것으로 예상하는 최소 그룹 보상 지분입니다.
+
+**Returns:**
+
+* `totalGroupRewardShare`: IP를 추가한 후의 총 그룹 보상 지분입니다.
+
+### removeIp
+
+```solidity
+function removeIp(address groupId, address ipId) external onlyGroupingModule
+```
+
+그룹 풀에서 IP를 제거합니다. GroupingModule만이 이 함수를 호출할 수 있습니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID입니다.
+* `ipId`: IP ID입니다.
+
+### depositReward
+
+```solidity
+function depositReward(address groupId, address token, uint256 amount) external onlyGroupingModule
+```
+
+그룹 풀에 직접 보상을 예치합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID입니다.
+* `token`: 보상 토큰입니다.
+* `amount`: 보상의 양입니다.
+
+### getAvailableReward
+
+```solidity
+function getAvailableReward(
+    address groupId,
+    address token,
+    address[] calldata ipIds
+) external view returns (uint256[] memory)
+```
+
+그룹 내 각 IP에 대한 보상을 반환합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID입니다.
+* `token`: 보상 토큰입니다.
+* `ipIds`: IP ID들입니다.
+
+**Returns:**
+
+* `uint256[] memory`: 각 IP에 대한 보상입니다.
+
+### distributeRewards
+
+```solidity
+function distributeRewards(
+    address groupId,
+    address token,
+    address[] calldata ipIds
+) external whenNotPaused onlyGroupingModule returns (uint256[] memory rewards)
+```
+
+풀 내의 주어진 IP 계정들에게 보상을 분배합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID입니다.
+* `token`: 보상 토큰들입니다.
+* `ipIds`: IP ID들입니다.
+
+**Returns:**
+
+* `rewards`: 각 IP에 분배된 보상 금액을 포함하는 배열입니다.
+
+### getTotalIps
+
+```solidity
+function getTotalIps(address groupId) external view returns (uint256)
+```
+
+그룹 내 IP의 총 수를 반환합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID입니다.
+
+**Returns:**
+
+* `uint256`: 그룹 내 IP의 총 수입니다.
+
+### getIpAddedTime
+
+```solidity
+function getIpAddedTime(address groupId, address ipId) external view returns (uint256)
+```
+
+IP가 그룹에 추가된 타임스탬프를 반환합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID입니다.
+* `ipId`: IP ID입니다.
+
+**Returns:**
+
+* `uint256`: IP가 그룹에 추가된 타임스탬프입니다.
+
+### getIpRewardDebt
+
+```solidity
+function getIpRewardDebt(address groupId, address token, address ipId) external view returns (uint256)
+```
+
+그룹 내 IP의 보상 부채를 반환합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID입니다.
+* `token`: 보상 토큰입니다.
+* `ipId`: IP ID입니다.
+
+**Returns:**
+
+* `uint256`: IP의 보상 부채입니다.
+
+### isIPAdded
+
+```solidity
+function isIPAdded(address groupId, address ipId) external view returns (bool)
+```
+
+IP가 그룹에 추가되었는지 확인합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID입니다.
+* `ipId`: IP ID입니다.
+
+**Returns:**
+
+* `bool`: IP가 그룹에 추가되었으면 true, 그렇지 않으면 false입니다.
+
+### getMinimumRewardShare
+
+```solidity
+function getMinimumRewardShare(address groupId, address ipId) external view returns (uint256)
+```
+
+그룹 내 IP의 최소 보상 지분을 반환합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID입니다.
+* `ipId`: IP ID입니다.
+
+**Returns:**
+
+* `uint256`: IP의 최소 보상 지분입니다.
+
+### getTotalAllocatedRewardShare
+
+```solidity
+function getTotalAllocatedRewardShare(address groupId) external view returns (uint256)
+```
+
+그룹의 총 할당된 보상 지분을 반환합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 ID입니다.
+
+**Returns:**
+
+* `uint256`: 그룹의 총 할당된 보상 지분입니다.
+
+
+# CoreMetadataModule
+
+CoreMetadataModule은 Story 내의 IP 자산에 대한 핵심 메타데이터를 관리합니다. IP 자산의 메타데이터 속성을 설정하고 업데이트할 수 있으며, 메타데이터를 동결하여 추가 변경을 방지할 수 있습니다.
+
+## 상태 변수
+
+### name
+
+```solidity
+string public constant override name = CORE_METADATA_MODULE_KEY
+```
+
+모듈의 이름을 반환합니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) public initializer
+```
+
+CoreMetadataModule 계약을 초기화합니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 계약의 주소입니다.
+
+### name
+
+```solidity
+function name() external pure override returns (string memory)
+```
+
+모듈의 이름을 반환합니다.
+
+**Returns:**
+
+* `string`: 모듈의 이름입니다.
+
+### updateNftTokenURI
+
+```solidity
+function updateNftTokenURI(address ipId, bytes32 nftMetadataHash) external verifyPermission(ipId)
+```
+
+IP 자산이 연결된 IP NFT에서 최신 TokenURI를 검색하여 IP 자산의 nftTokenURI를 업데이트합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+* `nftMetadataHash`: NFT의 메타데이터를 나타내는 bytes32 해시입니다. 이 메타데이터는 IP 자산과 연관되어 있으며 NFT의 TokenURI를 통해 접근할 수 있습니다. 메타데이터를 사용할 수 없음을 나타내려면 bytes32(0)를 사용하세요.
+
+### setMetadataURI
+
+```solidity
+function setMetadataURI(
+    address ipId,
+    string memory metadataURI,
+    bytes32 metadataHash
+) external verifyPermission(ipId)
+```
+
+IP 자산의 metadataURI를 설정합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+* `metadataURI`: IP 자산에 설정할 metadataURI입니다.
+* `metadataHash`: metadataURI에 있는 메타데이터의 해시입니다. 메타데이터를 사용할 수 없음을 나타내려면 bytes32(0)를 사용하세요.
+
+### setAll
+
+```solidity
+function setAll(
+    address ipId,
+    string memory metadataURI,
+    bytes32 metadataHash,
+    bytes32 nftMetadataHash
+) external verifyPermission(ipId)
+```
+
+IP 자산의 모든 핵심 메타데이터를 설정합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+* `metadataURI`: IP 자산에 설정할 metadataURI입니다.
+* `metadataHash`: metadataURI에 있는 메타데이터의 해시입니다. 메타데이터를 사용할 수 없음을 나타내려면 bytes32(0)를 사용하세요.
+* `nftMetadataHash`: NFT의 메타데이터를 나타내는 bytes32 해시입니다. 이 메타데이터는 IP 자산과 연관되어 있으며 NFT의 TokenURI를 통해 접근할 수 있습니다. 메타데이터를 사용할 수 없음을 나타내려면 bytes32(0)를 사용하세요.
+
+### freezeMetadata
+
+```solidity
+function freezeMetadata(address ipId) external verifyPermission(ipId)
+```
+
+IP 자산의 모든 메타데이터를 변경 불가능하게 만듭니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+### isMetadataFrozen
+
+```solidity
+function isMetadataFrozen(address ipId) external view returns (bool)
+```
+
+IP 자산의 메타데이터가 변경 불가능한지 확인합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `bool`: 메타데이터가 동결되었으면 true, 그렇지 않으면 false입니다.
+
+### supportsInterface
+
+```solidity
+function supportsInterface(bytes4 interfaceId) public view virtual override(BaseModule, IERC165) returns (bool)
+```
+
+IERC165 인터페이스를 구현합니다.
+
+**Parameters:**
+
+* `interfaceId`: 인터페이스 식별자입니다.
+
+**Returns:**
+
+* `bool`: 계약이 인터페이스를 지원하면 true, 그렇지 않으면 false입니다.
+
+
+# CoreMetadataViewModule
+
+CoreMetadataViewModule은 Story 내의 IP 자산의 핵심 메타데이터에 대한 읽기 전용 액세스를 제공하는 뷰 모듈입니다. IP 자산에서 metadataURI, metadataHash, NFT 토큰 URI 및 등록 날짜와 같은 메타데이터 정보를 검색합니다.
+
+## 상태 변수
+
+### name
+
+```solidity
+string public constant override name = CORE_METADATA_VIEW_MODULE_KEY
+```
+
+모듈의 이름을 반환합니다.
+
+### IP\_ASSET\_REGISTRY
+
+```solidity
+address public immutable IP_ASSET_REGISTRY
+```
+
+IP Asset Registry 컨트랙트의 주소입니다.
+
+### MODULE\_REGISTRY
+
+```solidity
+address public immutable MODULE_REGISTRY
+```
+
+Module Registry 컨트랙트의 주소입니다.
+
+### coreMetadataModule
+
+```solidity
+address public coreMetadataModule
+```
+
+CoreMetadataModule 컨트랙트의 주소입니다.
+
+## 함수
+
+### constructor
+
+```solidity
+constructor(address ipAssetRegistry, address moduleRegistry)
+```
+
+CoreMetadataViewModule 컨트랙트를 초기화합니다.
+
+**Parameters:**
+
+* `ipAssetRegistry`: IP Asset Registry 컨트랙트의 주소입니다.
+* `moduleRegistry`: Module Registry 컨트랙트의 주소입니다.
+
+### updateCoreMetadataModule
+
+```solidity
+function updateCoreMetadataModule() external
+```
+
+ModuleRegistry에서 검색하여 이 뷰 모듈에서 사용하는 CoreMetadataModule의 주소를 업데이트합니다.
+
+### getCoreMetadata
+
+```solidity
+function getCoreMetadata(address ipId) external view returns (CoreMetadata memory)
+```
+
+IP 자산의 모든 핵심 메타데이터를 검색합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `CoreMetadata`: IP 자산의 모든 핵심 메타데이터를 포함하는 구조체입니다.
+
+### getMetadataURI
+
+```solidity
+function getMetadataURI(address ipId) public view returns (string memory)
+```
+
+CoreMetadataModule에 의해 설정된 IP 자산의 metadataURI를 검색합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `string`: IP 자산의 metadataURI입니다.
+
+### getMetadataHash
+
+```solidity
+function getMetadataHash(address ipId) public view returns (bytes32)
+```
+
+CoreMetadataModule에 의해 설정된 IP 자산의 메타데이터 해시를 검색합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `bytes32`: IP 자산의 메타데이터 해시입니다.
+
+### getRegistrationDate
+
+```solidity
+function getRegistrationDate(address ipId) public view returns (uint256)
+```
+
+IPAssetRegistry에서 IP 자산의 등록 날짜를 검색합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `uint256`: IP 자산의 등록 날짜입니다.
+
+### getNftTokenURI
+
+```solidity
+function getNftTokenURI(address ipId) public view returns (string memory)
+```
+
+IP 자산이 바인딩된 NFT의 TokenURI를 검색합니다. 가능한 경우 CoreMetadataModule의 TokenURI를 우선적으로 사용합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `string`: IP 자산에 바인딩된 NFT TokenURI입니다.
+
+### getNftMetadataHash
+
+```solidity
+function getNftMetadataHash(address ipId) public view returns (bytes32)
+```
+
+CoreMetadataModule에 의해 설정된 IP 자산의 NFT 메타데이터 해시를 검색합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `bytes32`: IP 자산의 NFT 메타데이터 해시입니다.
+
+### getOwner
+
+```solidity
+function getOwner(address ipId) public view returns (address)
+```
+
+IP 자산의 소유자를 검색합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `address`: IP 자산 소유자의 주소입니다.
+
+### getJsonString
+
+```solidity
+function getJsonString(address ipId) external view returns (string memory)
+```
+
+IP 자산에 대한 표준 NFT 메타데이터 스키마에 따라 형식화된 JSON 문자열을 생성합니다. 이 함수는 모든 관련 메타데이터 필드를 포함하여 IPAssetRegistry와 CoreMetadataModule 모두에서 메타데이터를 통합합니다. CoreMetadataModule의 "NFT TokenURI"가 우선순위를 가집니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `string`: IP 자산의 모든 메타데이터를 나타내는 base64로 인코딩된 JSON 문자열입니다.
+
+### isSupported
+
+```solidity
+function isSupported(address ipAccount) external view returns (bool)
+```
+
+주어진 IP 계정에 대해 뷰 모듈이 지원되는지 확인합니다.
+
+**Parameters:**
+
+* `ipAccount`: IP 계정의 주소입니다.
+
+**Returns:**
+
+* `bool`: 뷰 모듈이 지원되면 true, 그렇지 않으면 false입니다.
+
+### supportsInterface
+
+```solidity
+function supportsInterface(bytes4 interfaceId) public view virtual override(BaseModule, IERC165) returns (bool)
+```
+
+IERC165 인터페이스를 구현합니다.
+
+**Parameters:**
+
+* `interfaceId`: 인터페이스 식별자입니다.
+
+**Returns:**
+
+* `bool`: 컨트랙트가 인터페이스를 지원하면 true, 그렇지 않으면 false입니다.
+
+
+# DisputeModule
+
+분쟁 모듈은 IP 자산에 대한 집행 계층으로 작용하여 판사들의 중재를 통해 분쟁을 제기하고 해결할 수 있게 합니다. 이를 통해 사용자들은 규칙을 위반하거나 다른 IP 권리를 침해할 수 있는 IP 자산에 대해 이의를 제기할 수 있습니다.
+
+## 상태 변수
+
+### name
+
+```solidity
+string public constant override name = DISPUTE_MODULE_KEY
+```
+
+모듈의 이름을 반환합니다.
+
+### IN\_DISPUTE
+
+```solidity
+bytes32 public constant IN_DISPUTE = bytes32("IN_DISPUTE")
+```
+
+분쟁이 판결을 기다리는 분쟁 상태임을 나타내는 태그입니다.
+
+### LICENSE\_REGISTRY
+
+```solidity
+ILicenseRegistry public immutable LICENSE_REGISTRY
+```
+
+프로토콜 전체의 라이선스 레지스트리를 반환합니다.
+
+### GROUP\_IP\_ASSET\_REGISTRY
+
+```solidity
+IGroupIPAssetRegistry public immutable GROUP_IP_ASSET_REGISTRY
+```
+
+프로토콜 전체의 그룹 IP 자산 레지스트리를 반환합니다.
+
+### IP\_GRAPH\_ACL
+
+```solidity
+IPGraphACL public immutable IP_GRAPH_ACL
+```
+
+프로토콜 전체의 IP 그래프 접근 제어 목록을 반환합니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) external initializer
+```
+
+이 구현 계약의 초기화 함수입니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 계약의 주소입니다.
+
+### whitelistDisputeTag
+
+```solidity
+function whitelistDisputeTag(bytes32 tag, bool allowed) external restricted
+```
+
+분쟁 태그를 화이트리스트에 등록합니다.
+
+**Parameters:**
+
+* `tag`: 분쟁 태그입니다.
+* `allowed`: 분쟁 태그가 화이트리스트에 등록되었는지 여부를 나타냅니다.
+
+### whitelistArbitrationPolicy
+
+```solidity
+function whitelistArbitrationPolicy(address arbitrationPolicy, bool allowed) external restricted
+```
+
+중재 정책을 화이트리스트에 등록합니다.
+
+**Parameters:**
+
+* `arbitrationPolicy`: 중재 정책의 주소입니다.
+* `allowed`: 중재 정책이 화이트리스트에 등록되었는지 여부를 나타냅니다.
+
+### setArbitrationRelayer
+
+```solidity
+function setArbitrationRelayer(address arbitrationPolicy, address arbPolicyRelayer) external restricted
+```
+
+주어진 중재 정책에 대한 중재 릴레이어를 설정합니다.
+
+**Parameters:**
+
+* `arbitrationPolicy`: 중재 정책의 주소입니다.
+* `arbPolicyRelayer`: 중재 릴레이어의 주소입니다.
+
+### setBaseArbitrationPolicy
+
+```solidity
+function setBaseArbitrationPolicy(address arbitrationPolicy) external restricted
+```
+
+기본 중재 정책을 설정합니다.
+
+**Parameters:**
+
+* `arbitrationPolicy`: 중재 정책의 주소.
+
+### setArbitrationPolicyCooldown
+
+```solidity
+function setArbitrationPolicyCooldown(uint256 cooldown) external restricted
+```
+
+중재 정책 쿨다운을 설정합니다.
+
+**Parameters:**
+
+* `cooldown`: 초 단위의 쿨다운.
+
+### setArbitrationPolicy
+
+```solidity
+function setArbitrationPolicy(
+    address ipId,
+    address nextArbitrationPolicy
+) external whenNotPaused verifyPermission(ipId)
+```
+
+ipId에 대한 중재 정책을 설정합니다.
+
+**Parameters:**
+
+* `ipId`: ipId.
+* `nextArbitrationPolicy`: 중재 정책의 주소.
+
+### raiseDispute
+
+```solidity
+function raiseDispute(
+    address targetIpId,
+    bytes32 disputeEvidenceHash,
+    bytes32 targetTag,
+    bytes calldata data
+) external nonReentrant whenNotPaused returns (uint256)
+```
+
+주어진 ipId에 대해 분쟁을 제기합니다.
+
+**Parameters:**
+
+* `targetIpId`: 분쟁의 대상이 되는 ipId.
+* `disputeEvidenceHash`: 분쟁 증거를 가리키는 해시.
+* `targetTag`: 분쟁의 대상 태그.
+* `data`: 정책을 초기화하기 위한 데이터.
+
+**Returns:**
+
+* `disputeId`: 새로 제기된 분쟁의 ID.
+
+### setDisputeJudgement
+
+```solidity
+function setDisputeJudgement(
+    uint256 disputeId,
+    bool decision,
+    bytes calldata data
+) external nonReentrant whenNotPaused
+```
+
+주어진 분쟁에 대한 판결을 설정합니다. 화이트리스트에 등록된 중재 중계자만이 판결을 내릴 수 있습니다.
+
+**Parameters:**
+
+* `disputeId`: 분쟁 ID.
+* `decision`: 분쟁에 대한 결정.
+* `data`: 분쟁 판결을 설정하기 위한 데이터.
+
+### cancelDispute
+
+```solidity
+function cancelDispute(uint256 disputeId, bytes calldata data) external nonReentrant whenNotPaused
+```
+
+진행 중인 분쟁을 취소합니다.
+
+**Parameters:**
+
+* `disputeId`: 분쟁 ID.
+* `data`: 분쟁을 취소하기 위한 데이터.
+
+### tagIfRelatedIpInfringed
+
+```solidity
+function tagIfRelatedIpInfringed(address ipIdToTag, uint256 infringerDisputeId) external whenNotPaused
+```
+
+부모가 침해 태그로 태그되었거나 그룹 구성원이 침해 태그로 태그된 경우 파생물이나 그룹 IP에 태그를 지정합니다.
+
+**Parameters:**
+
+* `ipIdToTag`: 태그할 ipId.
+* `infringerDisputeId`: 관련된 침해 ipId에 태그를 지정한 분쟁 ID.
+
+### resolveDispute
+
+```solidity
+function resolveDispute(uint256 disputeId, bytes calldata data) external nonReentrant whenNotPaused
+```
+
+판결이 내려진 후 분쟁을 해결합니다.
+
+**Parameters:**
+
+* `disputeId`: 분쟁 ID.
+* `data`: 분쟁을 해결하기 위한 데이터.
+
+### updateActiveArbitrationPolicy
+
+```solidity
+function updateActiveArbitrationPolicy(address ipId) external whenNotPaused returns (address arbitrationPolicy)
+```
+
+주어진 ipId에 대한 활성 중재 정책을 업데이트합니다.
+
+**Parameters:**
+
+* `ipId`: ipId.
+
+**Returns:**
+
+* `arbitrationPolicy`: 중재 정책의 주소.
+
+### isIpTagged
+
+```solidity
+function isIpTagged(address ipId) external view returns (bool)
+```
+
+ipId가 어떤 태그로든 태그되어 있으면(최소 하나의 분쟁이 진행되었음을 의미) true를 반환합니다.
+
+**Parameters:**
+
+* `ipId`: ipId.
+
+**Returns:**
+
+* `isTagged`: ipId가 태그되어 있으면 true.
+
+### disputeCounter
+
+```solidity
+function disputeCounter() external view returns (uint256)
+```
+
+분쟁 ID 카운터를 반환합니다.
+
+**Returns:**
+
+* `uint256`: 현재 분쟁 카운터 값.
+
+### arbitrationPolicyCooldown
+
+```solidity
+function arbitrationPolicyCooldown() external view returns (uint256)
+```
+
+중재 정책 쿨다운을 반환합니다.
+
+**Returns:**
+
+* `uint256`: 초 단위의 쿨다운.
+
+### baseArbitrationPolicy
+
+```solidity
+function baseArbitrationPolicy() external view returns (address)
+```
+
+기본 중재 정책의 주소를 반환합니다.
+
+**Returns:**
+
+* `address`: 기본 중재 정책 주소.
+
+### disputes
+
+```solidity
+function disputes(
+    uint256 disputeId
+)
+    external
+    view
+    returns (
+        address targetIpId,
+        address disputeInitiator,
+        uint256 disputeTimestamp,
+        address arbitrationPolicy,
+        bytes32 disputeEvidenceHash,
+        bytes32 targetTag,
+        bytes32 currentTag,
+        uint256 infringerDisputeId
+    )
+```
+
+주어진 분쟁 ID에 대한 분쟁 정보를 반환합니다.
+
+**Parameters:**
+
+* `disputeId`: 분쟁 ID.
+
+**Returns:**
+
+* `targetIpId`: 분쟁의 대상이 되는 ipId.
+* `disputeInitiator`: 분쟁 제기자의 주소.
+* `disputeTimestamp`: 분쟁의 타임스탬프.
+* `arbitrationPolicy`: 중재 정책의 주소.
+* `disputeEvidenceHash`: 분쟁 증거를 가리키는 해시.
+* `targetTag`: 분쟁의 대상 태그.
+* `currentTag`: 분쟁의 현재 태그.
+* `infringerDisputeId`: 침해자 분쟁 ID.
+
+### isWhitelistedDisputeTag
+
+```solidity
+function isWhitelistedDisputeTag(bytes32 tag) external view returns (bool allowed)
+```
+
+분쟁 태그가 화이트리스트에 등록되어 있는지 나타냅니다.
+
+**Parameters:**
+
+* `tag`: 분쟁 태그.
+
+**Returns:**
+
+* `allowed`: 태그가 화이트리스트에 등록되어 있으면 true.
+
+### isWhitelistedArbitrationPolicy
+
+```solidity
+function isWhitelistedArbitrationPolicy(address arbitrationPolicy) external view returns (bool allowed)
+```
+
+중재 정책이 화이트리스트에 등록되어 있는지 나타냅니다.
+
+**Parameters:**
+
+* `arbitrationPolicy`: 중재 정책의 주소.
+
+**Returns:**
+
+* `allowed`: 정책이 화이트리스트에 등록되어 있으면 true.
+
+### arbitrationRelayer
+
+```solidity
+function arbitrationRelayer(address arbitrationPolicy) external view returns (address)
+```
+
+주어진 중재 정책에 대한 중재 중계자를 반환합니다.
+
+**Parameters:**
+
+* `arbitrationPolicy`: 중재 정책의 주소.
+
+**Returns:**
+
+* `address`: 중재 중계자 주소.
+
+### arbitrationPolicies
+
+```solidity
+function arbitrationPolicies(address ipId) external view returns (address policy)
+```
+
+주어진 ipId에 대한 중재 정책을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: ipId.
+
+**Returns:**
+
+* `policy`: 중재 정책 주소.
+
+### nextArbitrationPolicies
+
+```solidity
+function nextArbitrationPolicies(address ipId) external view returns (address policy)
+```
+
+주어진 ipId에 대한 다음 중재 정책을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: ipId.
+
+**Returns:**
+
+* `policy`: 다음 중재 정책 주소.
+
+### nextArbitrationUpdateTimestamps
+
+```solidity
+function nextArbitrationUpdateTimestamps(address ipId) external view returns (uint256 timestamp)
+```
+
+주어진 ipId에 대한 다음 중재 업데이트 타임스탬프를 반환합니다.
+
+**Parameters:**
+
+* `ipId`: ipId.
+
+**Returns:**
+
+* `timestamp`: 업데이트 타임스탬프.
+
+
+# 개요
+
+<CardGroup cols={2}>
+  <Card title="단계별 가이드" icon="house" href="/developers/smart-contracts-guide">
+    스마트 계약 가이드를 통해 일련의 튜토리얼로 우리의 스마트 계약을 배워보세요.
+  </Card>
+
+  <Card title="배포된 프로토콜 주소" icon="gear" href="/developers/deployed-smart-contracts">
+    testnet과 mainnet에 대한 모든 배포된 프로토콜 주소.**testnet** 및 **mainnet**.
+  </Card>
+</CardGroup>
+
+<Warning>
+  의사 난수성을 위해 를 사용하지 마세요. 대신 온체인 VRF(Pyth 또는 Gelato)를 사용하세요. 현재, 값은 부모 블록 해시로 설정되어 있어 X-1 블록에 대해 무작위가 아닙니다.`RANDAO` 의사 난수성을 위해 온체인 VRF(Pyth 또는 Gelato)를 사용하세요. 현재, `RANDAO` 값은 부모 블록 해시로 설정되어 X-1 블록에 대해 무작위가 아닙니다.
+</Warning>
+
+
+# LicensingModule
+
+LicensingModule은 Story의 라이선싱 시스템의 주요 진입점입니다. 다음과 같은 책임을 갖습니다:
+
+* IP 자산에 라이선스 조건 첨부
+* 라이선스 토큰 발행
+* 파생물 등록
+
+## 상태 변수
+
+### name
+
+```solidity
+string public constant override name = LICENSING_MODULE_KEY
+```
+
+모듈의 이름을 반환합니다.
+
+### ROYALTY\_MODULE
+
+```solidity
+RoyaltyModule public immutable ROYALTY_MODULE
+```
+
+프로토콜 전체의 표준 RoyaltyModule을 반환합니다.
+
+### LICENSE\_REGISTRY
+
+```solidity
+ILicenseRegistry public immutable LICENSE_REGISTRY
+```
+
+프로토콜 전체의 표준 LicenseRegistry를 반환합니다.
+
+### DISPUTE\_MODULE
+
+```solidity
+IDisputeModule public immutable DISPUTE_MODULE
+```
+
+프로토콜 전체의 분쟁 모듈을 반환합니다.
+
+### LICENSE\_NFT
+
+```solidity
+ILicenseToken public immutable LICENSE_NFT
+```
+
+라이선스 NFT를 반환합니다.
+
+### MODULE\_REGISTRY
+
+```solidity
+IModuleRegistry public immutable MODULE_REGISTRY
+```
+
+프로토콜 전체의 ModuleRegistry를 반환합니다.
+
+### IP\_GRAPH\_ACL
+
+```solidity
+IPGraphACL public immutable IP_GRAPH_ACL
+```
+
+프로토콜 전체의 IP 그래프 접근 제어 목록을 반환합니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) public initializer
+```
+
+이 구현 계약의 초기화 함수입니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 계약의 주소입니다.
+
+### attachDefaultLicenseTerms
+
+```solidity
+function attachDefaultLicenseTerms(address ipId) external
+```
+
+IP에 기본 라이선스 조건을 첨부합니다.
+
+**Parameters:**
+
+* `ipId`: 기본 라이선스 조건을 첨부할 IP ID입니다.
+
+### attachLicenseTerms
+
+```solidity
+function attachLicenseTerms(
+    address ipId,
+    address licenseTemplate,
+    uint256 licenseTermsId
+) external
+```
+
+특정 라이선스 조건을 IP에 첨부합니다. 이 함수는 IP 소유자 또는 승인된 운영자에 의해 호출되어야 합니다.
+
+**Parameters:**
+
+* `ipId`: IP ID입니다.
+* `licenseTemplate`: 라이선스 템플릿의 주소입니다.
+* `licenseTermsId`: 라이선스 조건의 ID입니다.
+
+### mintLicenseTokens
+
+```solidity
+function mintLicenseTokens(
+    address licensorIpId,
+    address licenseTemplate,
+    uint256 licenseTermsId,
+    uint256 amount,
+    address receiver,
+    bytes calldata royaltyContext,
+    uint256 maxMintingFee,
+    uint32 maxRevenueShare
+) external returns (uint256 startLicenseTokenId)
+```
+
+IP에 첨부된 라이선스 조건에 대한 라이선스 토큰을 발행합니다. 라이선스 토큰은 수신자에게 발행됩니다.
+
+이 함수를 호출하기 전에 라이선스 조건이 IP에 첨부되어 있어야 하지만, 기본 라이선스 조건은 모든 IP에 기본적으로 첨부되어 있으므로 명시적으로 첨부하지 않고도 기본 라이선스 조건의 라이선스 토큰을 발행할 수 있습니다.
+
+IP 소유자는 라이선스 조건을 IP에 첨부하지 않고도 자신의 IP에 대한 임의의 라이선스 조건에 대한 라이선스 토큰을 발행할 수 있습니다.
+
+라이선스 조건이나 IP 소유자가 구성한 대로 발행 수수료를 지불해야 할 수 있습니다. 발행 수수료는 라이선스 조건에 명시되거나 IP 소유자가 구성한 발행 수수료 토큰으로 지불됩니다.
+
+**Parameters:**
+
+* `licensorIpId`: 라이선서 IP ID입니다.
+* `licenseTemplate`: 라이선스 템플릿의 주소입니다.
+* `licenseTermsId`: 라이선스 템플릿 내의 라이선스 조건 ID입니다.
+* `amount`: 발행할 라이선스 토큰의 수량입니다.
+* `receiver`: 수신자의 주소입니다.
+* `royaltyContext`: 로열티의 컨텍스트입니다.
+* `maxMintingFee`: 호출자가 지불할 의사가 있는 최대 발행 수수료입니다. 0으로 설정하면 제한이 없습니다.
+* `maxRevenueShare`: 라이선스 토큰 발행에 허용되는 최대 수익 공유 비율입니다.
+
+**Returns:**
+
+* `startLicenseTokenId`: 발행된 라이선스 토큰의 시작 ID입니다.
+
+### registerDerivative
+
+```solidity
+function registerDerivative(
+    address childIpId,
+    address[] calldata parentIpIds,
+    uint256[] calldata licenseTermsIds,
+    address licenseTemplate,
+    bytes calldata royaltyContext,
+    uint256 maxMintingFee,
+    uint32 maxRts,
+    uint32 maxRevenueShare
+) external
+```
+
+라이선스 토큰 없이 부모 IP의 라이선스 조건으로 직접 파생물을 등록하고, 부모 IP의 라이선스 조건을 파생 IP에 첨부합니다.
+
+이 함수를 호출하기 전에 라이선스 조건이 부모 IP에 첨부되어 있어야 합니다. 모든 IP는 기본적으로 기본 라이선스 조건이 첨부되어 있습니다.
+
+파생 IP 소유자가 호출자이거나 승인된 운영자여야 합니다.
+
+**Parameters:**
+
+* `childIpId`: 파생 IP ID입니다.
+* `parentIpIds`: 부모 IP ID들입니다.
+* `licenseTermsIds`: 부모 IP가 지원하는 라이선스 조건의 ID들입니다.
+* `licenseTemplate`: 라이선스 조건 ID의 라이선스 템플릿 주소입니다.
+* `royaltyContext`: 로열티의 컨텍스트입니다.
+* `maxMintingFee`: 호출자가 지불할 의사가 있는 최대 발행 수수료입니다. 0으로 설정하면 제한이 없습니다.
+* `maxRts`: 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수입니다.
+* `maxRevenueShare`: 라이선스 토큰 발행에 허용되는 최대 수익 공유 비율입니다.
+
+### registerDerivativeWithLicenseTokens
+
+```solidity
+function registerDerivativeWithLicenseTokens(
+    address childIpId,
+    uint256[] calldata licenseTokenIds,
+    bytes calldata royaltyContext,
+    uint32 maxRts
+) external
+```
+
+라이선스 토큰으로 파생물을 등록합니다. 파생 IP는 부모 IP의 라이선스 조건에서 발행된 라이선스 토큰으로 등록됩니다.
+
+라이선스 토큰으로 발행된 부모 IP의 라이선스 조건이 파생 IP에 첨부됩니다.
+
+호출자는 파생 IP 소유자이거나 승인된 운영자여야 합니다.
+
+**Parameters:**
+
+* `childIpId`: 파생 IP ID입니다.
+* `licenseTokenIds`: 라이선스 토큰의 ID들입니다.
+* `royaltyContext`: 로열티의 컨텍스트입니다.
+* `maxRts`: 외부 로열티 정책에 분배될 수 있는 최대 로열티 토큰 수입니다.
+
+### setLicensingConfig
+
+```solidity
+function setLicensingConfig(
+    address ipId,
+    address licenseTemplate,
+    uint256 licenseTermsId,
+    Licensing.LicensingConfig memory licensingConfig
+) external
+```
+
+특정 IP의 라이선스 조건에 대한 라이선싱 구성을 설정합니다.
+
+licenseTemplate과 licenseTermsId가 모두 지정되지 않은 경우, 라이선싱 구성은 해당 IP의 모든 라이선스에 적용됩니다.
+
+**Parameters:**
+
+* `ipId`: 구성이 설정되는 IP의 주소입니다.
+* `licenseTemplate`: 사용된 라이선스 템플릿의 주소입니다. 지정되지 않은 경우, 구성은 모든 라이선스에 적용됩니다.
+* `licenseTermsId`: 라이선스 템플릿 내의 라이선스 조건 ID입니다. 지정되지 않은 경우, 구성은 모든 라이선스에 적용됩니다.
+* `licensingConfig`: 라이선스에 대한 라이선싱 구성입니다.
+
+### predictMintingLicenseFee
+
+```solidity
+function predictMintingLicenseFee(
+    address licensorIpId,
+    address licenseTemplate,
+    uint256 licenseTermsId,
+    uint256 amount,
+    address receiver,
+    bytes calldata royaltyContext
+) external view returns (address currencyToken, uint256 tokenAmount)
+```
+
+주어진 IP와 라이선스 조건에 대한 민팅 라이선스 수수료를 사전 계산합니다.
+
+이 함수는 라이선스 토큰을 민팅하기 전에 민팅 라이선스 수수료를 계산하는 데 사용할 수 있습니다.
+
+**Parameters:**
+
+* `licensorIpId`: 라이선서의 IP ID입니다.
+* `licenseTemplate`: 라이선스 템플릿의 주소입니다.
+* `licenseTermsId`: 라이선스 조건의 ID입니다.
+* `amount`: 민팅할 라이선스 토큰의 수량입니다.
+* `receiver`: 수신자의 주소입니다.
+* `royaltyContext`: 로열티의 컨텍스트입니다.
+
+**Returns:**
+
+* `currencyToken`: 민팅 라이선스 수수료에 사용되는 ERC20 토큰의 주소입니다.
+* `tokenAmount`: 라이선스 토큰을 민팅하기 위해 지불해야 할 통화 토큰의 양입니다.
+
+
+# LicenseToken
+
+LicenseToken 계약(LNFT(License NFT)라고도 알려짐)은 Story 생태계 내의 IP 자산에 대한 라이선스 계약을 나타내는 ERC721 토큰입니다. 이는 프로그래밍 가능한 IP 라이선스의 생성, 전송 및 관리를 가능하게 합니다.
+
+## 상태 변수
+
+### LICENSE\_REGISTRY
+
+```solidity
+ILicenseRegistry public immutable LICENSE_REGISTRY
+```
+
+프로토콜 전체 라이선스 레지스트리의 주소.
+
+### LICENSING\_MODULE
+
+```solidity
+ILicensingModule public immutable LICENSING_MODULE
+```
+
+프로토콜 전체 라이선싱 모듈의 주소.
+
+### DISPUTE\_MODULE
+
+```solidity
+IDisputeModule public immutable DISPUTE_MODULE
+```
+
+프로토콜 전체 분쟁 모듈의 주소.
+
+### MAX\_COMMERCIAL\_REVENUE\_SHARE
+
+```solidity
+uint32 public constant MAX_COMMERCIAL_REVENUE_SHARE = 100_000_000
+```
+
+최대 로열티 비율은 100\_000\_000으로, 100%를 나타냅니다.
+
+### LicenseTokenMetadata
+
+```solidity
+struct LicenseTokenMetadata {
+    address licensorIpId;
+    address licenseTemplate;
+    uint256 licenseTermsId;
+    bool transferable;
+    uint32 commercialRevShare;
+}
+```
+
+라이선스 토큰의 메타데이터 구조:
+
+* `licensorIpId`: 라이선스 제공자인 IP 자산
+* `licenseTemplate`: 라이선스 템플릿 계약 주소
+* `licenseTermsId`: 라이선스 조건의 ID
+* `transferable`: 라이선스 토큰의 전송 가능 여부
+* `commercialRevShare`: 상업적 수익 공유 비율
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager, string memory imageUrl) public initializer
+```
+
+LicenseToken 계약을 초기화합니다.
+
+**Parameters:**
+
+* `accessManager`: 접근 관리자의 주소.
+* `imageUrl`: 라이선스 토큰의 기본 이미지 URL.
+
+### setLicensingImageUrl
+
+```solidity
+function setLicensingImageUrl(string calldata url) external restricted
+```
+
+모든 라이선스 토큰의 라이선싱 이미지 URL을 설정합니다.
+
+**Parameters:**
+
+* `url`: 라이선싱 이미지의 URL.
+
+### mintLicenseTokens
+
+```solidity
+function mintLicenseTokens(
+    address licensorIpId,
+    address licenseTemplate,
+    uint256 licenseTermsId,
+    uint256 amount,
+    address minter,
+    address receiver,
+    uint32 maxRevenueShare
+) external onlyLicensingModule returns (uint256 startLicenseTokenId)
+```
+
+지정된 수량의 라이선스 토큰(LNFT)을 발행합니다.
+
+**Parameters:**
+
+* `licensorIpId`: 라이선스 토큰이 발행되는 라이센서 IP의 ID입니다.
+* `licenseTemplate`: 라이선스 템플릿의 주소입니다.
+* `licenseTermsId`: 라이선스 조건의 ID입니다.
+* `amount`: 발행할 라이선스 토큰의 수량입니다.
+* `minter`: 발행자의 주소입니다.
+* `receiver`: 발행된 라이선스 토큰을 받는 수신자의 주소입니다.
+* `maxRevenueShare`: 라이선스 토큰 발행에 허용되는 최대 수익 공유 비율입니다.
+
+**Returns:**
+
+* `startLicenseTokenId`: 발행된 라이선스 토큰의 시작 ID입니다.
+
+### burnLicenseTokens
+
+```solidity
+function burnLicenseTokens(address holder, uint256[] calldata tokenIds) external onlyLicensingModule
+```
+
+주어진 토큰 ID에 대한 라이선스 토큰(LT)을 소각합니다.
+
+**Parameters:**
+
+* `holder`: 라이선스 토큰 보유자의 주소입니다.
+* `tokenIds`: 소각할 라이선스 토큰의 ID 배열입니다.
+
+### validateLicenseTokensForDerivative
+
+```solidity
+function validateLicenseTokensForDerivative(
+    address caller,
+    address childIpId,
+    uint256[] calldata tokenIds
+) external view returns (
+    address licenseTemplate,
+    address[] memory licensorIpIds,
+    uint256[] memory licenseTermsIds,
+    uint32[] memory commercialRevShares
+)
+```
+
+파생 IP 등록을 위한 라이선스 토큰을 검증합니다.
+
+**Parameters:**
+
+* `caller`: 주어진 토큰으로 파생물을 등록하는 호출자의 주소입니다.
+* `childIpId`: 파생 IP의 ID입니다.
+* `tokenIds`: 검증할 라이선스 토큰의 ID 배열입니다.
+
+**Returns:**
+
+* `licenseTemplate`: 라이선스 토큰과 연관된 라이선스 템플릿의 주소입니다.
+* `licensorIpIds`: 각 라이선스 토큰과 연관된 라이센서 IP의 배열입니다.
+* `licenseTermsIds`: 각 검증된 라이선스 토큰과 연관된 라이선스 조건의 배열입니다.
+* `commercialRevShares`: 각 라이선스 토큰과 연관된 상업적 수익 공유 비율의 배열입니다.
+
+### totalMintedTokens
+
+```solidity
+function totalMintedTokens() external view returns (uint256)
+```
+
+처음부터 발행된 라이선스 토큰의 총 수를 반환합니다. 이 숫자는 라이선스 토큰이 소각되어도 감소하지 않습니다.
+
+**Returns:**
+
+* `uint256`: 발행된 라이선스 토큰의 총 수입니다.
+
+### getLicenseTokenMetadata
+
+```solidity
+function getLicenseTokenMetadata(uint256 tokenId) external view returns (LicenseTokenMetadata memory)
+```
+
+주어진 라이선스 ID에 대한 라이선스 데이터를 반환합니다.
+
+**Parameters:**
+
+* `tokenId`: 라이선스 토큰의 ID입니다.
+
+**Returns:**
+
+* `LicenseTokenMetadata`: 라이선스 토큰의 메타데이터입니다.
+
+### getLicensorIpId
+
+```solidity
+function getLicensorIpId(uint256 tokenId) external view returns (address)
+```
+
+주어진 라이선스 ID의 라이센서인 IP 자산의 ID를 반환합니다.
+
+**Parameters:**
+
+* `tokenId`: 라이선스 토큰의 ID입니다.
+
+**Returns:**
+
+* `address`: 라이센서 IP의 ID입니다.
+
+### getLicenseTermsId
+
+```solidity
+function getLicenseTermsId(uint256 tokenId) external view returns (uint256)
+```
+
+주어진 라이선스 ID에 사용되는 라이선스 조건의 ID를 반환합니다.
+
+**Parameters:**
+
+* `tokenId`: 라이선스 토큰의 ID입니다.
+
+**Returns:**
+
+* `uint256`: 라이선스 조건의 ID입니다.
+
+### getLicenseTemplate
+
+```solidity
+function getLicenseTemplate(uint256 tokenId) external view returns (address)
+```
+
+주어진 라이선스 ID에 사용되는 라이선스 템플릿의 주소를 반환합니다.
+
+**Parameters:**
+
+* `tokenId`: 라이선스 토큰의 ID입니다.
+
+**Returns:**
+
+* `address`: 라이선스 템플릿의 주소입니다.
+
+### getTotalTokensByLicensor
+
+```solidity
+function getTotalTokensByLicensor(address licensorIpId) external view returns (uint256)
+```
+
+주어진 라이센서 IP에 대해 발행된 라이선스 토큰의 총 수를 검색합니다.
+
+**Parameters:**
+
+* `licensorIpId`: 라이센서 IP의 ID입니다.
+
+**Returns:**
+
+* `uint256`: 라이센서 IP에 대해 발행된 라이선스 토큰의 총 수입니다.
+
+### isLicenseTokenRevoked
+
+```solidity
+function isLicenseTokenRevoked(uint256 tokenId) public view returns (bool)
+```
+
+라이선스가 취소되었는지 여부를 반환합니다(분쟁 모듈에서 분쟁 후 라이센서 IP에 태그가 지정된 경우). 태그가 제거되면 라이선스는 더 이상 취소되지 않습니다.
+
+**Parameters:**
+
+* `tokenId`: 라이선스 토큰의 ID입니다.
+
+**Returns:**
+
+* `bool`: 라이선스가 취소된 경우 True입니다.
+
+### tokenURI
+
+```solidity
+function tokenURI(uint256 id) public view virtual override(ERC721Upgradeable, IERC721Metadata) returns (string memory)
+```
+
+LNFT 매개변수의 ERC721 OpenSea 메타데이터 JSON 표현입니다.
+
+**Parameters:**
+
+* `id`: 라이선스 토큰의 ID입니다.
+
+**Returns:**
+
+* `string`: 라이선스 토큰의 메타데이터 URI입니다.
+
+
+# PILicenseTemplate
+
+PILicenseTemplate(프로그래머블 IP 라이선스 템플릿)은 Story에서 IP 자산에 대한 라이선스 조건을 정의하고 관리하는 스마트 계약입니다. IP 소유자가 IP 자산에 첨부할 수 있는 맞춤형 라이선스 조건을 만들 수 있게 하여 IP를 상업적으로 사용하고 파생 작품을 만드는 방법을 제어할 수 있게 합니다.
+
+## 상태 변수
+
+### LICENSE\_REGISTRY
+
+```solidity
+ILicenseRegistry public immutable LICENSE_REGISTRY
+```
+
+라이선스 조건과 토큰을 추적하는 라이선스 레지스트리 계약의 주소입니다.
+
+### ROYALTY\_MODULE
+
+```solidity
+IRoyaltyModule public immutable ROYALTY_MODULE
+```
+
+로열티 지불과 정책을 처리하는 로열티 모듈 계약의 주소입니다.
+
+### licenseTerms
+
+```solidity
+mapping(uint256 licenseTermsId => PILTerms) licenseTerms
+```
+
+라이선스 조건 ID를 해당하는 PILTerms 구조체에 매핑합니다.
+
+### hashedLicenseTerms
+
+```solidity
+mapping(bytes32 licenseTermsHash => uint256 licenseTermsId) hashedLicenseTerms
+```
+
+라이선스 조건의 해시를 해당하는 라이선스 조건 ID에 매핑합니다.
+
+### licenseTermsCounter
+
+```solidity
+uint256 licenseTermsCounter
+```
+
+등록된 라이선스 조건의 수를 세는 카운터입니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager, string memory name, string memory metadataURI) external initializer
+```
+
+이 구현 계약의 초기화 함수입니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 계약의 주소입니다.
+* `name`: 라이선스 템플릿의 이름입니다.
+* `metadataURI`: 오프체인 메타데이터의 URL입니다.
+
+### registerLicenseTerms
+
+```solidity
+function registerLicenseTerms(PILTerms calldata terms) external nonReentrant returns (uint256 id)
+```
+
+새로운 라이선스 조건을 등록하고 새로 등록된 라이선스 조건의 ID를 반환합니다. 라이선스 조건은 해시되며 이 해시를 사용하여 조건이 이미 등록되었는지 확인합니다. 조건이 이미 등록되어 있다면 기존 ID를 반환합니다.
+
+**Parameters:**
+
+* `terms`: 등록할 PILTerms입니다.
+
+**Returns:**
+
+* `id`: 새로 등록된 라이선스 조건의 ID입니다.
+
+### exists
+
+```solidity
+function exists(uint256 licenseTermsId) external view override returns (bool)
+```
+
+라이선스 조건이 존재하는지 확인합니다.
+
+**Parameters:**
+
+* `licenseTermsId`: 라이선스 조건의 ID입니다.
+
+**Returns:**
+
+* 라이선스 조건이 존재하면 true를, 그렇지 않으면 false를 반환합니다.
+
+### verifyMintLicenseToken
+
+```solidity
+function verifyMintLicenseToken(
+    uint256 licenseTermsId,
+    address licensee,
+    address licensorIpId,
+    uint256
+) external override nonReentrant returns (bool)
+```
+
+라이선스 토큰의 발행을 확인합니다. 이 함수는 LicensingModule에서 라이선스 토큰을 발행할 때 호출되어 라이선스 조건에 따라 발행이 허용되는지 확인합니다.
+
+**Parameters:**
+
+* `licenseTermsId`: 라이선스 조건의 ID입니다.
+* `licensee`: 라이선스 토큰을 받을 라이선스 사용자의 주소입니다.
+* `licensorIpId`: 라이선스 조건을 첨부하고 라이선스 토큰을 발행하는 라이선스 제공자의 IP ID입니다.
+
+**Returns:**
+
+* 발행이 확인되면 true를, 그렇지 않으면 false를 반환합니다.
+
+### verifyRegisterDerivative
+
+```solidity
+function verifyRegisterDerivative(
+    address childIpId,
+    address parentIpId,
+    uint256 licenseTermsId,
+    address licensee
+) external override returns (bool)
+```
+
+파생 작품의 등록을 확인합니다. 이 함수는 LicensingModule에서 파생 작품을 등록할 때 호출되어 부모 IP의 라이선스 조건을 준수하는지 확인합니다.
+
+**Parameters:**
+
+* `childIpId`: 파생 작품의 IP ID입니다.
+* `parentIpId`: 부모 IP의 IP ID입니다.
+* `licenseTermsId`: 라이선스 조건의 ID입니다.
+* `licensee`: 라이선스 사용자의 주소입니다.
+
+**Returns:**
+
+* 등록이 확인되면 true를, 그렇지 않으면 false를 반환합니다.
+
+### verifyCompatibleLicenses
+
+```solidity
+function verifyCompatibleLicenses(uint256[] calldata licenseTermsIds) external view override returns (bool)
+```
+
+라이선스들이 호환되는지 확인합니다. 이 함수는 LicensingModule에서 여러 부모 IP에 대한 파생 IP를 등록할 때 라이선스 호환성을 확인하기 위해 호출됩니다.
+
+**Parameters:**
+
+* `licenseTermsIds`: 라이선스 조건들의 ID입니다.
+
+**Returns:**
+
+* 라이선스들이 호환되면 true를, 그렇지 않으면 false를 반환합니다.
+
+### verifyRegisterDerivativeForAllParents
+
+```solidity
+function verifyRegisterDerivativeForAllParents(
+    address childIpId,
+    address[] calldata parentIpIds,
+    uint256[] calldata licenseTermsIds,
+    address childIpOwner
+) external override returns (bool)
+```
+
+모든 부모 IP에 대한 파생 작품의 등록을 확인합니다. 이 함수는 LicensingModule에서 여러 부모 IP에 대한 파생 IP를 등록할 때 라이선스를 확인하기 위해 호출됩니다.
+
+**Parameters:**
+
+* `childIpId`: 파생 작품의 IP ID입니다.
+* `parentIpIds`: 부모 IP들의 IP ID입니다.
+* `licenseTermsIds`: 라이선스 조건들의 ID입니다.
+* `childIpOwner`: 파생 IP 소유자의 주소입니다.
+
+**Returns:**
+
+* 등록이 확인되면 true를, 그렇지 않으면 false를 반환합니다.
+
+### getRoyaltyPolicy
+
+```solidity
+function getRoyaltyPolicy(
+    uint256 licenseTermsId
+) external view returns (address royaltyPolicy, bytes memory royaltyData, uint256 mintingFee, address currency)
+```
+
+라이선스 조건의 로열티 정책을 반환합니다.
+
+**Parameters:**
+
+* `licenseTermsId`: 라이선스 조건의 ID입니다.
+
+**Returns:**
+
+* `royaltyPolicy`: 라이선스 조건에 지정된 로열티 정책의 주소입니다.
+* `royaltyData`: 로열티 정책의 데이터입니다.
+* `mintingFee`: 라이선스 발행 수수료입니다.
+* `currency`: 라이선스 발행 수수료와 로열티에 사용되는 ERC20 토큰의 주소입니다.
+
+### isLicenseTransferable
+
+```solidity
+function isLicenseTransferable(uint256 licenseTermsId) external view override returns (bool)
+```
+
+라이선스 조건이 양도 가능한지 확인합니다.
+
+**Parameters:**
+
+* `licenseTermsId`: 라이선스 조건의 ID.
+
+**Returns:**
+
+* 라이선스 조건이 양도 가능하면 true를 반환하고, 그렇지 않으면 false를 반환합니다.
+
+### getEarlierExpireTime
+
+```solidity
+function getEarlierExpireTime(
+    uint256[] calldata licenseTermsIds,
+    uint256 start
+) external view override returns (uint256)
+```
+
+주어진 라이선스 조건들 중 가장 빠른 만료 시간을 반환합니다.
+
+**Parameters:**
+
+* `licenseTermsIds`: 라이선스 조건들의 ID.
+* `start`: 시작 시간.
+
+**Returns:**
+
+* 가장 빠른 만료 시간을 반환합니다.
+
+### getExpireTime
+
+```solidity
+function getExpireTime(uint256 licenseTermsId, uint256 start) external view returns (uint256)
+```
+
+라이선스 조건의 만료 시간을 반환합니다.
+
+**Parameters:**
+
+* `licenseTermsId`: 라이선스 조건의 ID.
+* `start`: 시작 시간.
+
+**Returns:**
+
+* 만료 시간을 반환합니다.
+
+### getLicenseTermsId
+
+```solidity
+function getLicenseTermsId(PILTerms calldata terms) external view returns (uint256 selectedLicenseTermsId)
+```
+
+주어진 라이선스 조건의 ID를 가져옵니다.
+
+**Parameters:**
+
+* `terms`: ID를 가져올 PILTerms.
+
+**Returns:**
+
+* `selectedLicenseTermsId`: 주어진 라이선스 조건의 ID.
+
+### getLicenseTerms
+
+```solidity
+function getLicenseTerms(uint256 selectedLicenseTermsId) external view returns (PILTerms memory terms)
+```
+
+주어진 ID의 라이선스 조건을 가져옵니다.
+
+**Parameters:**
+
+* `selectedLicenseTermsId`: 라이선스 조건의 ID.
+
+**Returns:**
+
+* `terms`: 주어진 ID와 연관된 PILTerms.
+
+### getLicenseTermsURI
+
+```solidity
+function getLicenseTermsURI(uint256 licenseTermsId) external view returns (string memory)
+```
+
+라이선스 조건의 URI를 반환합니다.
+
+**Parameters:**
+
+* `licenseTermsId`: 라이선스 조건의 ID.
+
+**Returns:**
+
+* 라이선스 조건의 URI를 반환합니다.
+
+### totalRegisteredLicenseTerms
+
+```solidity
+function totalRegisteredLicenseTerms() external view returns (uint256)
+```
+
+등록된 라이선스 조건의 총 수를 반환합니다.
+
+**Returns:**
+
+* 등록된 라이선스 조건의 총 수를 반환합니다.
+
+### supportsInterface
+
+```solidity
+function supportsInterface(
+    bytes4 interfaceId
+) public view virtual override(BaseLicenseTemplateUpgradeable, IERC165) returns (bool)
+```
+
+컨트랙트가 주어진 인터페이스를 지원하는지 확인합니다.
+
+**Parameters:**
+
+* `interfaceId`: 인터페이스 식별자.
+
+**Returns:**
+
+* 컨트랙트가 인터페이스를 지원하면 true를 반환하고, 그렇지 않으면 false를 반환합니다.
+
+### toJson
+
+```solidity
+function toJson(uint256 licenseTermsId) public view returns (string memory)
+```
+
+라이선스 조건을 라이선스 토큰의 메타데이터의 일부가 될 JSON 문자열로 변환합니다.
+
+**Parameters:**
+
+* `licenseTermsId`: 라이선스 조건의 ID.
+
+**Returns:**
+
+* OpenSea 메타데이터 표준을 따르는 라이선스 조건의 JSON 문자열을 반환합니다.
+
+## PILTerms 구조
+
+PILTerms 구조는 프로그래머블 IP 라이선스(PIL)의 조건을 정의합니다:
+
+```solidity
+struct PILTerms {
+    bool transferable;
+    address royaltyPolicy;
+    uint256 mintingFee;
+    uint256 expiration;
+    bool commercialUse;
+    bool commercialAttribution;
+    address commercializerChecker;
+    bytes commercializerCheckerData;
+    uint32 commercialRevShare;
+    uint256 commercialRevCelling;
+    bool derivativesAllowed;
+    bool derivativesAttribution;
+    bool derivativesApproval;
+    bool derivativesReciprocal;
+    uint256 derivativeRevCelling;
+    address currency;
+    string uri;
+}
+```
+
+**Parameters:**
+
+* `transferable`: 라이선스가 양도 가능한지 여부를 나타냅니다.
+* `royaltyPolicy`: StoryProtocol에서 사전에 요구하는 로열티 정책 컨트랙트의 주소입니다.
+* `mintingFee`: 라이선스 발행 시 지불해야 하는 수수료입니다.
+* `expiration`: 라이선스의 만료 기간입니다.
+* `commercialUse`: 작품을 상업적으로 사용할 수 있는지 여부를 나타냅니다.
+* `commercialAttribution`: 작품을 상업적으로 복제할 때 저작자 표시가 필요한지 여부입니다.
+* `commercializerChecker`: 작품을 상업적으로 이용할 수 있는 상업화 주체입니다. 제로 주소인 경우 제한이 없습니다.
+* `commercializerCheckerData`: 상업화 주체 확인 컨트랙트에 전달될 데이터입니다.
+* `commercialRevShare`: 라이선스 제공자와 공유해야 하는 수익의 비율입니다.
+* `commercialRevCelling`: 작품의 상업적 사용으로 생성될 수 있는 최대 수익입니다.
+* `derivativesAllowed`: 라이선스 사용자가 자신의 작품의 파생물을 만들 수 있는지 여부를 나타냅니다.
+* `derivativesAttribution`: 작품의 파생물에 대해 저작자 표시가 필요한지 여부를 나타냅니다.
+* `derivativesApproval`: 작품의 파생물이 라이선스 제공자 IP ID에 연결되기 전에 라이선스 제공자의 승인이 필요한지 여부를 나타냅니다.
+* `derivativesReciprocal`: 라이선스 사용자가 작품의 파생물을 동일한 조건으로 라이선스해야 하는지 여부를 나타냅니다.
+* `derivativeRevCelling`: 작품의 파생적 사용으로 생성될 수 있는 최대 수익입니다.
+* `currency`: 발행 수수료를 지불하는 데 사용될 ERC20 토큰입니다. 이 토큰은 Story Protocol에 등록되어 있어야 합니다.
+* `uri`: 오프체인 라이선스 조건을 가져오는 데 사용할 수 있는 라이선스 조건의 URI입니다.
+
+
+# IPAccountImpl
+
+IPAccountImpl 컨트랙트는 토큰 바운드 계정에 대한 ERC-6551 표준을 따르는 Story의 IP 계정 구현입니다. 이는 IP 자산이 다른 자산을 소유하고 관리하며, 트랜잭션을 실행하고, 허가된 방식으로 다른 컨트랙트와 상호 작용할 수 있는 기능을 제공합니다.
+
+## 상태 변수
+
+### ACCESS\_CONTROLLER
+
+```solidity
+address public immutable ACCESS_CONTROLLER
+```
+
+권한 확인에 사용되는 AccessController 컨트랙트의 주소입니다. 이는 불변이며 생성 시 설정됩니다.
+
+## 상속
+
+IPAccountImpl은 다음을 상속받습니다:
+
+* ERC6551: Base implementation of the ERC-6551 standard
+* IPAccountStorage: Storage contract for IP Account data
+* IIPAccount: Interface for IP Account functionality
+
+## 함수
+
+### 생성자
+
+```solidity
+constructor(
+    address accessController,
+    address ipAssetRegistry,
+    address licenseRegistry,
+    address moduleRegistry
+)
+```
+
+새로운 IPAccountImpl 계약 인스턴스를 생성합니다.
+
+**Parameters:**
+
+* `accessController`: 권한 확인에 사용될 AccessController 계약의 주소
+* `ipAssetRegistry`: IP 자산 레지스트리의 주소
+* `licenseRegistry`: 라이선스 레지스트리의 주소
+* `moduleRegistry`: 모듈 레지스트리의 주소
+
+### supportsInterface
+
+```solidity
+function supportsInterface(bytes4 interfaceId) public view returns (bool)
+```
+
+계약이 특정 인터페이스를 지원하는지 확인합니다.
+
+**Parameters:**
+
+* `interfaceId`: ERC-165에 명시된 인터페이스 식별자
+
+**Returns:**
+
+* 계약이 인터페이스를 지원하는지 여부를 나타내는 불리언
+
+### token
+
+```solidity
+function token() public view returns (uint256, address, uint256)
+```
+
+계정을 소유한 대체 불가능 토큰의 식별자를 반환합니다.
+
+**Returns:**
+
+* `chainId`: 토큰이 존재하는 체인의 EIP-155 ID
+* `tokenContract`: 토큰의 계약 주소
+* `tokenId`: 토큰의 ID
+
+### isValidSigner
+
+```solidity
+function isValidSigner(address signer, bytes calldata data) public view returns (bytes4 result)
+```
+
+서명자가 IP 계정을 대신하여 특정 작업을 실행할 수 있는 유효한 서명자인지 확인합니다.
+
+**Parameters:**
+
+* `signer`: 확인할 서명자
+* `data`: 확인할 데이터, 로 인코딩됨`abi.encode(address to, bytes calldata)`
+
+**Returns:**
+
+* 서명자가 유효한 경우 함수 선택자, 그렇지 않으면 0
+
+### isValidSigner
+
+```solidity
+function isValidSigner(address signer, address to, bytes calldata data) public view returns (bool)
+```
+
+AccessController 권한 시스템을 통해 주어진 데이터와 수신자에 대해 서명자가 유효한지 확인합니다.
+
+**Parameters:**
+
+* `signer`: 확인할 서명자
+* `to`: 거래의 수신자
+* `data`: 확인할 콜데이터
+
+**Returns:**
+
+* 서명자가 유효한지 여부를 나타내는 불리언
+
+### owner
+
+```solidity
+function owner() public view returns (address)
+```
+
+IP 계정의 소유자를 반환합니다.
+
+**Returns:**
+
+* 소유자의 주소
+
+### state
+
+```solidity
+function state() public view returns (bytes32 result)
+```
+
+거래 순서를 위한 IPAccount의 내부 nonce를 반환합니다.
+
+**Returns:**
+
+* 계정의 현재 상태(nonce)
+
+### updateStateForValidSigner
+
+```solidity
+function updateStateForValidSigner(address signer, address to, bytes calldata data) external
+```
+
+주어진 데이터와 수신자에 대해 서명자가 유효한 경우 IP 계정의 상태를 업데이트합니다.
+
+**Parameters:**
+
+* `signer`: 확인할 서명자
+* `to`: 거래의 수신자
+* `data`: 확인할 콜데이터
+
+### executeWithSig
+
+```solidity
+function executeWithSig(
+    address to,
+    uint256 value,
+    bytes calldata data,
+    address signer,
+    uint256 deadline,
+    bytes calldata signature
+) external payable returns (bytes memory result)
+```
+
+서명자를 대신하여 IP 계정에서 거래를 실행합니다.
+
+**Parameters:**
+
+* `to`: 거래의 수신자
+* `value`: 보낼 이더의 양
+* `data`: 거래와 함께 보낼 데이터
+* `signer`: 거래의 서명자
+* `deadline`: 거래 서명의 마감 시간
+* `signature`: EIP-712로 인코딩된 거래의 서명
+
+**Returns:**
+
+* 거래의 반환 데이터
+
+### execute
+
+```solidity
+function execute(address to, uint256 value, bytes calldata data) external payable returns (bytes memory result)
+```
+
+IP 계정에서 거래를 실행합니다.
+
+**Parameters:**
+
+* `to`: 거래의 수신자
+* `value`: 보낼 이더의 양
+* `data`: 거래와 함께 보낼 데이터
+
+**Returns:**
+
+* 거래의 반환 데이터
+
+### execute
+
+```solidity
+function execute(
+    address to,
+    uint256 value,
+    bytes calldata data,
+    uint8 operation
+) public payable returns (bytes memory result)
+```
+
+지정된 작업 유형으로 IP 계정에서 거래를 실행합니다.
+
+**Parameters:**
+
+* `to`: 거래의 수신자
+* `value`: 보낼 이더의 양
+* `data`: 거래와 함께 보낼 데이터
+* `operation`: 수행할 작업 유형, 0 - CALL만 지원됨
+
+**Returns:**
+
+* 거래의 반환 데이터
+
+### executeBatch
+
+```solidity
+function executeBatch(
+    Call[] calldata calls,
+    uint8 operation
+) public payable returns (bytes[] memory results)
+```
+
+IP 계정에서 일괄 거래를 실행합니다.
+
+**Parameters:**
+
+* `calls`: 실행할 호출의 배열
+* `operation`: 수행할 작업 유형, 0 - CALL만 지원됨
+
+**Returns:**
+
+* 거래들의 반환 데이터
+
+### isValidSignature
+
+```solidity
+function isValidSignature(bytes32 hash, bytes calldata signature) public view returns (bytes4 result)
+```
+
+IP 계정에 대해 ERC1271 서명 검증이 비활성화되어 있습니다.
+
+**Parameters:**
+
+* `hash`: 서명될 데이터의 해시
+* `signature`: 검증할 서명
+
+**Returns:**
+
+* 항상 0xffffffff를 반환 (비활성화됨)
+
+## 이벤트
+
+### Executed
+
+```solidity
+event Executed(address to, uint256 value, bytes data, bytes32 state)
+```
+
+IP 계정에서 거래가 실행될 때 발생합니다.
+
+**Parameters:**
+
+* `to`: 거래의 수신자
+* `value`: 보낸 이더의 양
+* `data`: 거래와 함께 보낸 데이터
+* `state`: 계정의 새로운 상태(nonce)
+
+### ExecutedWithSig
+
+```solidity
+event ExecutedWithSig(address to, uint256 value, bytes data, bytes32 state, uint256 deadline, address signer, bytes signature)
+```
+
+서명자를 대신하여 IP 계정에서 거래가 실행될 때 발생합니다.
+
+**Parameters:**
+
+* `to`: 거래의 수신자
+* `value`: 보낸 이더의 양
+* `data`: 거래와 함께 보낸 데이터
+* `state`: 계정의 새로운 상태(nonce)
+* `deadline`: 트랜잭션 서명의 마감 시간
+* `signer`: 트랜잭션의 서명자
+* `signature`: 트랜잭션의 서명
+
+## 보안 고려사항
+
+IPAccountImpl 계약은 여러 보안 조치를 구현합니다:
+
+1. **권한 시스템**: 다양한 서명자와 작업에 대한 권한을 관리하기 위해 AccessController를 사용합니다.
+
+2. **서명 검증**: 안전한 트랜잭션 승인을 위해 EIP-712 타입 데이터 서명을 구현합니다.
+
+3. **마감 시간 확인**: 재생 공격을 방지하기 위해 트랜잭션 마감 시간을 포함합니다.
+
+4. **Nonce 관리**: 트랜잭션 재생을 방지하기 위해 상태(nonce) 시스템을 사용합니다.
+
+5. **입력 유효성 검사**: 입력을 검증하고 잘못된 작업 방지와 같은 엣지 케이스를 확인합니다.
+
+6. **서명 가변성 보호**: 서명 가변성 공격에 대한 보호를 포함합니다.
+
+7. **제한된 작업**: 보안상의 이유로 CALL 작업(0)만 지원하여 잠재적으로 위험한 작업을 제한합니다.
+
+8. **업그레이드 비활성화**: 계약의 불변성을 보장하기 위해 UUPS 업그레이드 기능을 비활성화합니다.
+
+## 사용 예시
+
+### 트랜잭션 실행
+
+IP 자산 소유자는 자신의 IP 계정을 통해 트랜잭션을 실행할 수 있습니다:
+
+```solidity
+// Assuming 'ipAccount' is an instance of IPAccountImpl
+ipAccount.execute(
+    targetContract,
+    0, // No ETH sent
+    abi.encodeWithSignature("someFunction(uint256)", 123)
+);
+```
+
+### 서명을 통한 실행
+
+허가된 서명자는 IP 계정을 대신하여 트랜잭션을 실행할 수 있습니다:
+
+```solidity
+// Generate signature off-chain
+bytes signature = signEIP712Message(...);
+
+// Execute transaction
+ipAccount.executeWithSig(
+    targetContract,
+    0, // No ETH sent
+    abi.encodeWithSignature("someFunction(uint256)", 123),
+    signer,
+    deadline,
+    signature
+);
+```
+
+
+# RoyaltyModule
+
+RoyaltyModule은 Story에서 로열티 지불을 처리하는 주요 진입점입니다. IP 소유자가 자신의 IP 자산에 대한 로열티 정책을 설정할 수 있게 하고, 파생 IP 소유자가 부모 IP에 로열티를 지불할 수 있게 합니다.
+
+## 상태 변수
+
+### LICENSE\_REGISTRY
+
+```solidity
+ILicenseRegistry public immutable LICENSE_REGISTRY
+```
+
+라이선스 조건과 토큰을 추적하는 License Registry 계약의 주소입니다.
+
+### DISPUTE\_MODULE
+
+```solidity
+IDisputeModule public immutable DISPUTE_MODULE
+```
+
+분쟁 해결을 처리하는 Dispute Module 계약의 주소입니다.
+
+### licensingModule
+
+```solidity
+address licensingModule
+```
+
+Licensing Module 계약의 주소입니다.
+
+### isWhitelistedRoyaltyPolicy
+
+```solidity
+mapping(address royaltyPolicy => bool isWhitelisted) isWhitelistedRoyaltyPolicy
+```
+
+로열티 정책이 화이트리스트에 등록되어 있는지 나타냅니다.
+
+### isWhitelistedRoyaltyToken
+
+```solidity
+mapping(address token => bool) isWhitelistedRoyaltyToken
+```
+
+로열티 토큰이 화이트리스트에 등록되어 있는지 나타냅니다.
+
+### royaltyPolicies
+
+```solidity
+mapping(address ipId => address royaltyPolicy) royaltyPolicies
+```
+
+IP ID를 해당 로열티 정책에 매핑합니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) external initializer
+```
+
+이 구현 계약의 초기화 함수입니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 계약의 주소입니다.
+
+### setLicensingModule
+
+```solidity
+function setLicensingModule(address licensing) external restricted
+```
+
+라이선싱 모듈을 설정합니다.
+
+**Parameters:**
+
+* `licensing`: 라이선스 모듈의 주소입니다.
+
+### whitelistRoyaltyPolicy
+
+```solidity
+function whitelistRoyaltyPolicy(address royaltyPolicy, bool allowed) external restricted
+```
+
+로열티 정책을 화이트리스트에 등록합니다.
+
+**Parameters:**
+
+* `royaltyPolicy`: 로열티 정책의 주소입니다.
+* `allowed`: 로열티 정책이 화이트리스트에 등록되어 있는지 여부를 나타냅니다.
+
+### whitelistRoyaltyToken
+
+```solidity
+function whitelistRoyaltyToken(address token, bool allowed) external restricted
+```
+
+로열티 토큰을 화이트리스트에 등록합니다.
+
+**Parameters:**
+
+* `token`: 토큰 주소입니다.
+* `allowed`: 토큰이 화이트리스트에 등록되어 있는지 여부를 나타냅니다.
+
+### onLicenseMinting
+
+```solidity
+function onLicenseMinting(
+    address ipId,
+    address royaltyPolicy,
+    bytes calldata licenseData,
+    bytes calldata externalData
+) external nonReentrant onlyLicensingModule
+```
+
+라이선스 발행 시 로열티 관련 로직을 실행합니다.
+
+**Parameters:**
+
+* `ipId`: 라이선스가 발행되는 ipId (라이센서).
+* `royaltyPolicy`: 발행되는 라이선스의 로열티 정책 주소.
+* `licenseData`: 각 로열티 정책에 맞춤화된 라이선스 데이터.
+* `externalData`: 각 로열티 정책에 맞춤화된 외부 데이터.
+
+### onLinkToParents
+
+```solidity
+function onLinkToParents(
+    address ipId,
+    address royaltyPolicy,
+    address[] calldata parentIpIds,
+    bytes[] memory licenseData,
+    bytes calldata externalData
+) external nonReentrant onlyLicensingModule
+```
+
+부모에 연결 시 로열티 관련 로직을 실행합니다.
+
+**Parameters:**
+
+* `ipId`: 부모에 연결되는 자식 ipId.
+* `royaltyPolicy`: 소각되는 모든 라이선스의 공통 로열티 정책 주소.
+* `parentIpIds`: 자식 ipId가 연결되는 부모 ipId들.
+* `licenseData`: 각 로열티 정책에 맞춤화된 라이선스 데이터.
+* `externalData`: 각 로열티 정책에 맞춤화된 외부 데이터.
+
+### payRoyaltyOnBehalf
+
+```solidity
+function payRoyaltyOnBehalf(
+    address receiverIpId,
+    address payerIpId,
+    address token,
+    uint256 amount
+) external nonReentrant whenNotPaused
+```
+
+함수 호출자가 지불자 IP 자산을 대신하여 수취자 IP 자산에게 로열티를 지불할 수 있도록 합니다.
+
+**Parameters:**
+
+* `receiverIpId`: 로열티를 받는 ipId.
+* `payerIpId`: 로열티를 지불하는 ipId.
+* `token`: 로열티 지불에 사용할 토큰.
+* `amount`: 지불할 금액.
+
+### payLicenseMintingFee
+
+```solidity
+function payLicenseMintingFee(
+    address receiverIpId,
+    address payerAddress,
+    address licenseRoyaltyPolicy,
+    address token,
+    uint256 amount
+) external onlyLicensingModule
+```
+
+라이선스 발행 수수료를 지불할 수 있게 합니다.
+
+**Parameters:**
+
+* `receiverIpId`: 로열티를 받는 ipId.
+* `payerAddress`: 로열티를 지불하는 주소.
+* `licenseRoyaltyPolicy`: 발행되는 라이선스의 로열티 정책.
+* `token`: 로열티 지불에 사용할 토큰.
+* `amount`: 지불할 금액.
+
+### licensingModule
+
+```solidity
+function licensingModule() external view returns (address)
+```
+
+라이선싱 모듈 주소를 반환합니다.
+
+**Returns:**
+
+* 라이선싱 모듈의 주소.
+
+### isWhitelistedRoyaltyPolicy
+
+```solidity
+function isWhitelistedRoyaltyPolicy(address royaltyPolicy) external view returns (bool)
+```
+
+로열티 정책이 화이트리스트에 등록되어 있는지 나타냅니다.
+
+**Parameters:**
+
+* `royaltyPolicy`: 로열티 정책의 주소.
+
+**Returns:**
+
+* `isWhitelisted`: 로열티 정책이 화이트리스트에 등록되어 있으면 True.
+
+### isWhitelistedRoyaltyToken
+
+```solidity
+function isWhitelistedRoyaltyToken(address token) external view returns (bool)
+```
+
+로열티 토큰이 화이트리스트에 등록되어 있는지 나타냅니다.
+
+**Parameters:**
+
+* `token`: 로열티 토큰의 주소.
+
+**Returns:**
+
+* `isWhitelisted`: 로열티 토큰이 화이트리스트에 등록되어 있으면 True.
+
+### royaltyPolicies
+
+```solidity
+function royaltyPolicies(address ipId) external view returns (address)
+```
+
+주어진 IP 자산에 대한 로열티 정책을 나타냅니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ID.
+
+**Returns:**
+
+* `royaltyPolicy`: 로열티 정책의 주소.
+
+### supportsInterface
+
+```solidity
+function supportsInterface(bytes4 interfaceId) public view virtual override(BaseModule, IERC165) returns (bool)
+```
+
+IERC165 인터페이스 지원.
+
+**Parameters:**
+
+* `interfaceId`: 인터페이스 식별자.
+
+**Returns:**
+
+* 인터페이스가 지원되면 true를 반환합니다.
+
+## 보안 고려사항
+
+RoyaltyModule 계약은 다음과 같은 여러 보안 조치를 구현합니다:
+
+1. **접근 제어**: 대부분의 관리 기능은 `restricted` 수정자를 통해 프로토콜 관리자만 호출할 수 있도록 제한됩니다.
+
+2. **모듈 상호작용 제어**: `onLicenseMinting` 및 `payLicenseMintingFee` 같은 함수는 `onlyLicensingModule` 수정자를 통해 라이선싱 모듈에서만 호출할 수 있습니다.
+
+3. **재진입 방지**: `nonReentrant` 수정자는 재진입 공격을 방지하기 위해 토큰 전송을 처리하는 함수에 사용됩니다.
+
+4. **일시 중지 가능성**: 계약은 `whenNotPaused` 수정자를 사용하여 비상 상황에서 일시 중지될 수 있습니다.
+
+5. **화이트리스트 메커니즘**: 계약은 로열티 정책과 토큰에 대한 화이트리스트를 구현하여 승인된 구성 요소만 로열티 시스템과 상호 작용할 수 있도록 합니다.
+
+6. **분쟁 해결 통합**: 계약은 로열티 지불과 관련된 분쟁을 처리하기 위해 분쟁 모듈과 통합됩니다.
+
+
+# RoyaltyPolicyLRP
+
+RoyaltyPolicyLRP (유동적 상대 비율) 계약은 유동적 상대 비율 메커니즘을 사용하여 주어진 IP 자산에 대한 로열티 분배 로직을 정의합니다. 이는 IP 자산과 그 조상들 간의 로열티 관계를 관리하며, 적절한 로열티 금고로 수익 토큰을 이전할 수 있게 합니다.
+
+## 상태 변수
+
+### RoyaltyPolicyLRPStorage
+
+```solidity
+struct RoyaltyPolicyLRPStorage {
+    mapping(address ipId => uint32) royaltyStackLRP;
+    mapping(address ipId => mapping(address ancestorIpId => uint32)) ancestorPercentLRP;
+    mapping(address ipId => mapping(address ancestorIpId => mapping(address token => uint256))) transferredTokenLRP;
+}
+```
+
+RoyaltyPolicyLRP의 저장 구조는 다음을 포함합니다:
+
+* `royaltyStackLRP`: LRP 로열티 정책에 대해 모든 조상에게 지불될 로열티 비율의 합
+* `ancestorPercentLRP`: LRP 로열티 정책에 대한 IP 자산과 주어진 조상 간의 로열티 비율
+* `transferredTokenLRP`: LRP를 통해 자손 IP로부터 금고로 이전된 총 수명 수익 토큰
+
+### IP\_GRAPH
+
+```solidity
+address public constant IP_GRAPH = address(0x0101)
+```
+
+IP들 간의 관계를 추적하는 IP Graph 프리컴파일 계약의 주소입니다.
+
+### ROYALTY\_MODULE
+
+```solidity
+IRoyaltyModule public immutable ROYALTY_MODULE
+```
+
+Royalty Module 계약의 주소입니다.
+
+### ROYALTY\_POLICY\_LAP
+
+```solidity
+IGraphAwareRoyaltyPolicy public immutable ROYALTY_POLICY_LAP
+```
+
+RoyaltyPolicyLAP 계약의 주소입니다.
+
+### IP\_GRAPH\_ACL
+
+```solidity
+IPGraphACL public immutable IP_GRAPH_ACL
+```
+
+IP Graph 접근 제어 목록 계약의 주소입니다.
+
+## 함수
+
+### constructor
+
+```solidity
+constructor(address royaltyModule, address royaltyPolicyLAP, address ipGraphAcl)
+```
+
+RoyaltyPolicyLRP 계약의 생성자입니다.
+
+**Parameters:**
+
+* `royaltyModule`: RoyaltyModule 주소
+* `royaltyPolicyLAP`: RoyaltyPolicyLAP 주소
+* `ipGraphAcl`: IPGraphACL 주소
+
+### initialize
+
+```solidity
+function initialize(address accessManager) external initializer
+```
+
+이 구현 계약의 초기화 함수입니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 계약의 주소입니다.
+
+### onLicenseMinting
+
+```solidity
+function onLicenseMinting(
+    address ipId,
+    uint32 licensePercent,
+    bytes calldata
+) external nonReentrant onlyRoyaltyModule
+```
+
+라이선스 발행 시 로열티 관련 로직을 실행합니다.
+
+**Parameters:**
+
+* `ipId`: 라이선스가 발행되는 ipId (라이선서)
+* `licensePercent`: 발행되는 라이선스의 라이선스 비율
+
+### onLinkToParents
+
+```solidity
+function onLinkToParents(
+    address ipId,
+    address[] calldata parentIpIds,
+    address[] memory licenseRoyaltyPolicies,
+    uint32[] calldata licensesPercent,
+    bytes calldata
+) external nonReentrant onlyRoyaltyModule returns (uint32 newRoyaltyStackLRP)
+```
+
+부모에 연결 시 로열티 관련 로직을 실행합니다.
+
+**Parameters:**
+
+* `ipId`: 부모에 연결되는 자식 ipId
+* `parentIpIds`: 자식 ipId가 연결되는 부모 ipId들
+* `licenseRoyaltyPolicies`: 라이선스의 로열티 정책들
+* `licensesPercent`: 발행되는 라이선스의 라이선스 비율
+
+**Returns:**
+
+* `newRoyaltyStackLRP`: LRP 로열티 정책에 대한 자식 ipId의 로열티 스택
+
+### transferToVault
+
+```solidity
+function transferToVault(
+    address ipId,
+    address ancestorIpId,
+    address token
+) external whenNotPaused returns (uint256)
+```
+
+LRP 로열티 정책을 통해 청구 가능한 수익 토큰의 금액을 금고로 이전합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `ancestorIpId`: IP 자산의 조상 ipId
+* `token`: 이전할 토큰 주소
+
+**Returns:**
+
+* 이전된 수익 토큰의 금액
+
+### getPolicyRtsRequiredToLink
+
+```solidity
+function getPolicyRtsRequiredToLink(address ipId, uint32 licensePercent) external view returns (uint32)
+```
+
+자식을 주어진 IP 자산에 연결하는 데 필요한 로열티 토큰의 양을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `licensePercent`: 라이선스의 비율
+
+**Returns:**
+
+* 자식을 주어진 IP 자산에 연결하는 데 필요한 로열티 토큰의 양 (LRP의 경우 항상 0)
+
+### getPolicyRoyaltyStack
+
+```solidity
+function getPolicyRoyaltyStack(address ipId) external view returns (uint32)
+```
+
+주어진 IP 자산에 대한 LRP 로열티 스택을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티 스택을 가져올 ipId
+
+**Returns:**
+
+* LRP 로열티 정책에 대해 모든 조상에게 지불될 로열티 비율의 합
+
+### getPolicyRoyalty
+
+```solidity
+function getPolicyRoyalty(address ipId, address ancestorIpId) external returns (uint32)
+```
+
+LRP를 통한 IP 자산과 그 조상들 간의 로열티 비율을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티를 가져올 ipId
+* `ancestorIpId`: 로열티를 가져올 조상 ipId
+
+**Returns:**
+
+* LRP를 통한 IP 자산과 그 조상들 간의 로열티 비율
+
+### getTransferredTokens
+
+```solidity
+function getTransferredTokens(address ipId, address ancestorIpId, address token) external view returns (uint256)
+```
+
+LRP를 통해 자손 IP로부터 금고로 이전된 총 수명 수익 토큰을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `ancestorIpId`: IP 자산의 조상 ipId
+* `token`: 이전할 토큰 주소
+
+**Returns:**
+
+* LRP를 통해 자손 IP로부터 금고로 이전된 총 수명 수익 토큰
+
+### isSupportGroup
+
+```solidity
+function isSupportGroup() external view returns (bool)
+```
+
+로열티 정책이 그룹 작업을 지원하는지 여부를 반환합니다.
+
+**Returns:**
+
+* 참 (LRP 로열티 정책은 그룹 작업을 지원함)
+
+## 내부 함수
+
+### \_getRoyaltyStackLRP
+
+```solidity
+function _getRoyaltyStackLRP(address ipId) internal returns (uint32)
+```
+
+LRP 로열티 정책에 대한 주어진 IP 자산의 로열티 스택을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 로열티 스택을 가져올 ipId
+
+**Returns:**
+
+* LRP 로열티 정책에 대한 주어진 IP 자산의 로열티 스택
+
+### \_setRoyaltyLRP
+
+```solidity
+function _setRoyaltyLRP(address ipId, address parentIpId, uint32 royalty) internal
+```
+
+IP 자산과 그 조상 간의 주어진 링크에 대한 LRP 로열티를 설정합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티를 설정할 ipId
+* `parentIpId`: 로열티를 설정할 부모 ipId
+* `royalty`: LRP 라이선스 로열티 비율
+
+### \_getRoyaltyLRP
+
+```solidity
+function _getRoyaltyLRP(address ipId, address ancestorIpId) internal returns (uint32)
+```
+
+로열티 정책 LRP를 통해 IP 자산과 그 조상 간의 로열티 비율을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티를 가져올 ipId
+* `ancestorIpId`: 로열티를 가져올 조상 ipId
+
+**Returns:**
+
+* 로열티 정책 LRP를 통한 IP 자산과 그 조상 간의 로열티 비율
+
+### \_getRoyaltyPolicyLRPStorage
+
+```solidity
+function _getRoyaltyPolicyLRPStorage() private pure returns (RoyaltyPolicyLRPStorage storage $)
+```
+
+RoyaltyPolicyLRP의 저장소 구조체를 반환합니다.
+
+**Returns:**
+
+* RoyaltyPolicyLRP의 저장소 구조
+
+### \_authorizeUpgrade
+
+```solidity
+function _authorizeUpgrade(address newImplementation) internal override restricted
+```
+
+UUPSUpgradeable에 따라 업그레이드를 승인하는 훅입니다.
+
+**Parameters:**
+
+* `newImplementation`: 새 구현의 주소
+
+## 이벤트
+
+### RevenueTransferredToVault
+
+```solidity
+event RevenueTransferredToVault(address ipId, address ancestorIpId, address token, uint256 amount)
+```
+
+수익 토큰이 볼트로 전송될 때 발생하는 이벤트입니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `ancestorIpId`: IP 자산의 조상 ipId
+* `token`: 전송된 토큰 주소
+* `amount`: 전송된 토큰의 양
+
+## 보안 고려사항
+
+RoyaltyPolicyLRP 계약은 여러 보안 조치를 구현합니다:
+
+1. **접근 제어**: `onLicenseMinting` 및 `onLinkToParents` 같은 함수는 `onlyRoyaltyModule` 수정자를 통해 로열티 모듈에 의해서만 호출될 수 있습니다.
+
+2. **재진입 보호**: `nonReentrant` 수정자는 재진입 공격을 방지하기 위해 토큰 전송을 처리하는 함수에 사용됩니다.
+
+3. **일시 중지 가능성**: 계약은 `whenNotPaused` 수정자를 사용하여 긴급 상황에서 일시 중지될 수 있습니다.
+
+4. **안전한 토큰 전송**: 계약은 안전한 토큰 전송을 보장하기 위해 OpenZeppelin의 SafeERC20 라이브러리를 사용합니다.
+
+5. **업그레이드 가능성**: 계약은 UUPS 패턴을 사용하여 업그레이드 가능하며, 업그레이드 승인은 프로토콜 관리자로 제한됩니다.
+
+6. **입력 검증**: 계약은 입력을 검증하고 동일한 IP 간의 전송을 방지하는 등의 엣지 케이스를 확인합니다.
+
+## 로열티 희석 고려사항
+
+LRP(Liquid Relative Percentage) 로열티 정책은 각 리믹스된 IP가 직접적인 파생물에 의해 생성된 수익의 일정 비율을 받을 수 있게 합니다. 그러나 두 IP 사이에 더 많은 파생물이 생성됨에 따라 로열티가 희석될 수 있는 가능성을 이해하는 것이 중요합니다.
+
+이러한 희석은 더 많은 파생물 계층이 추가됨에 따라 원본 IP 창작자의 수익을 감소시킬 수 있습니다. 예를 들어:
+
+1. 창작자 1 - IP1을 등록하고, 10%의 LRP 라이선스를 발행하여 창작자 2에게 판매합니다.
+2. 창작자 2 - IP1의 파생물로 IP2를 등록하고 자신을 위해 20%의 LRP 라이선스를 발행합니다.
+3. 창작자 2 - IP2의 파생물로 IP3를 등록하고 시장에서 IP3를 상업적으로 홍보합니다.
+
+창작자 1의 수익은 IP3의 20% 로열티 중 10%만 받게 되어 실질적인 로열티가 2%로 희석됩니다. 만약 창작자 2가 IP2를 대신 홍보했다면, 창작자 1은 직접 10%를 받아 이러한 희석을 피할 수 있었을 것입니다.
+
+대조적으로, LAP(Liquid Absolute Percentage) 로열티 정책은 모든 후손 IP에 대해 고정된 비율을 적용하여 원 창작자를 희석으로부터 보호합니다.
+
+
+# RoyaltyPolicyLAP
+
+RoyaltyPolicyLAP (유동적 절대 비율) 컨트랙트는 유동적 절대 비율 메커니즘을 사용하여 주어진 IP 자산에 대한 로열티 분배 로직을 정의합니다. 이는 IP 자산과 그 조상들 간의 로열티 관계를 관리하며, 적절한 로열티 금고로 수익 토큰을 전송할 수 있게 합니다.
+
+## 상태 변수
+
+### RoyaltyPolicyLAPStorage
+
+```solidity
+struct RoyaltyPolicyLAPStorage {
+    mapping(address ipId => uint32) royaltyStackLAP;
+    mapping(address ipId => mapping(address ancestorIpId => uint32)) ancestorPercentLAP;
+    mapping(address ipId => mapping(address ancestorIpId => mapping(address token => uint256))) transferredTokenLAP;
+}
+```
+
+RoyaltyPolicyLAP의 저장소 구조는 다음을 포함합니다:
+
+* `royaltyStackLAP`: LAP 로열티 정책에 대해 모든 조상에게 지불해야 할 로열티 비율의 합
+* `ancestorPercentLAP`: LAP 로열티 정책에 대한 IP 자산과 주어진 조상 간의 로열티 비율
+* `transferredTokenLAP`: LAP를 통해 자손 IP로부터 금고로 전송된 총 평생 수익 토큰
+
+### IP\_GRAPH
+
+```solidity
+address public constant IP_GRAPH = address(0x0101)
+```
+
+IP 그래프 간의 관계를 추적하는 IP Graph 프리컴파일 컨트랙트의 주소입니다.
+
+### ROYALTY\_MODULE
+
+```solidity
+IRoyaltyModule public immutable ROYALTY_MODULE
+```
+
+Royalty Module 컨트랙트의 주소입니다.
+
+### IP\_GRAPH\_ACL
+
+```solidity
+IPGraphACL public immutable IP_GRAPH_ACL
+```
+
+IP Graph 접근 제어 목록 컨트랙트의 주소입니다.
+
+## 함수
+
+### constructor
+
+```solidity
+constructor(address royaltyModule, address ipGraphAcl)
+```
+
+RoyaltyPolicyLAP 컨트랙트의 생성자입니다.
+
+**Parameters:**
+
+* `royaltyModule`: RoyaltyModule 주소
+* `ipGraphAcl`: IPGraphACL 주소
+
+### initialize
+
+```solidity
+function initialize(address accessManager) external initializer
+```
+
+이 구현 컨트랙트의 초기화 함수입니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 컨트랙트의 주소입니다.
+
+### onLicenseMinting
+
+```solidity
+function onLicenseMinting(
+    address ipId,
+    uint32 licensePercent,
+    bytes calldata
+) external nonReentrant onlyRoyaltyModule
+```
+
+라이선스 발행 시 로열티 관련 로직을 실행합니다.
+
+**Parameters:**
+
+* `ipId`: 라이선스가 발행되는 ipId (라이선서)
+* `licensePercent`: 발행되는 라이선스의 라이선스 비율
+
+### onLinkToParents
+
+```solidity
+function onLinkToParents(
+    address ipId,
+    address[] calldata parentIpIds,
+    address[] memory licenseRoyaltyPolicies,
+    uint32[] calldata licensesPercent,
+    bytes calldata
+) external nonReentrant onlyRoyaltyModule returns (uint32 newRoyaltyStackLAP)
+```
+
+부모에 연결 시 로열티 관련 로직을 실행합니다.
+
+**Parameters:**
+
+* `ipId`: 부모에 연결되는 자식 ipId
+* `parentIpIds`: 자식 ipId가 연결되는 부모 ipId들
+* `licenseRoyaltyPolicies`: 라이선스의 로열티 정책들
+* `licensesPercent`: 발행되는 라이선스의 라이선스 비율
+
+**Returns:**
+
+* `newRoyaltyStackLAP`: LAP 로열티 정책에 대한 자식 ipId의 로열티 스택
+
+### transferToVault
+
+```solidity
+function transferToVault(
+    address ipId,
+    address ancestorIpId,
+    address token
+) external whenNotPaused returns (uint256)
+```
+
+LAP 로열티 정책을 통해 청구 가능한 수익 토큰의 금액을 볼트로 이전합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `ancestorIpId`: IP 자산의 조상 ipId
+* `token`: 이전할 토큰 주소
+
+**Returns:**
+
+* 이전된 수익 토큰의 금액
+
+### getPolicyRtsRequiredToLink
+
+```solidity
+function getPolicyRtsRequiredToLink(address ipId, uint32 licensePercent) external view returns (uint32)
+```
+
+주어진 IP 자산에 자식을 연결하는 데 필요한 로열티 토큰의 양을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `licensePercent`: 라이선스의 비율
+
+**Returns:**
+
+* 주어진 IP 자산에 자식을 연결하는 데 필요한 로열티 토큰의 양 (LAP의 경우 항상 0)
+
+### getPolicyRoyaltyStack
+
+```solidity
+function getPolicyRoyaltyStack(address ipId) external view returns (uint32)
+```
+
+주어진 IP 자산에 대한 LAP 로열티 스택을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티 스택을 가져올 ipId
+
+**Returns:**
+
+* LAP 로열티 정책에 대해 모든 조상에게 지불해야 할 로열티 비율의 합
+
+### getPolicyRoyalty
+
+```solidity
+function getPolicyRoyalty(address ipId, address ancestorIpId) external returns (uint32)
+```
+
+LAP를 통한 IP 자산과 그 조상 간의 로열티 비율을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티를 가져올 ipId
+* `ancestorIpId`: 로열티를 가져올 조상 ipId
+
+**Returns:**
+
+* LAP를 통한 IP 자산과 그 조상 간의 로열티 비율
+
+### getTransferredTokens
+
+```solidity
+function getTransferredTokens(address ipId, address ancestorIpId, address token) external view returns (uint256)
+```
+
+LAP를 통해 자손 IP로부터 볼트로 이전된 총 평생 수익 토큰을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `ancestorIpId`: IP 자산의 조상 ipId
+* `token`: 이전할 토큰 주소
+
+**Returns:**
+
+* LAP를 통해 자손 IP로부터 볼트로 이전된 총 평생 수익 토큰
+
+### isSupportGroup
+
+```solidity
+function isSupportGroup() external view returns (bool)
+```
+
+로열티 정책이 그룹 작업을 지원하는지 여부를 반환합니다.
+
+**Returns:**
+
+* 거짓 (LAP 로열티 정책은 그룹 작업을 지원하지 않음)
+
+## 내부 함수
+
+### \_getRoyaltyStackLAP
+
+```solidity
+function _getRoyaltyStackLAP(address ipId) internal returns (uint32)
+```
+
+LAP 로열티 정책에 대한 주어진 IP 자산의 로열티 스택을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티 스택을 가져올 ipId
+
+**Returns:**
+
+* LAP 로열티 정책에 대한 주어진 IP 자산의 로열티 스택
+
+### \_setRoyaltyLAP
+
+```solidity
+function _setRoyaltyLAP(address ipId, address parentIpId, uint32 royalty) internal
+```
+
+IP 자산과 그 조상 간의 주어진 링크에 대한 LAP 로열티를 설정합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티를 설정할 ipId
+* `parentIpId`: 로열티를 설정할 부모 ipId
+* `royalty`: LAP 라이선스 로열티 비율
+
+### \_getRoyaltyLAP
+
+```solidity
+function _getRoyaltyLAP(address ipId, address ancestorIpId) internal returns (uint32)
+```
+
+로열티 정책 LAP를 통한 IP 자산과 그 조상 간의 로열티 비율을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: 로열티를 가져올 ipId
+* `ancestorIpId`: 로열티를 가져올 조상 ipId
+
+**Returns:**
+
+* 로열티 정책 LAP를 통한 IP 자산과 그 조상 간의 로열티 비율
+
+### \_getRoyaltyPolicyLAPStorage
+
+```solidity
+function _getRoyaltyPolicyLAPStorage() private pure returns (RoyaltyPolicyLAPStorage storage $)
+```
+
+RoyaltyPolicyLAP의 저장 구조체를 반환합니다.
+
+**Returns:**
+
+* RoyaltyPolicyLAP의 저장 구조
+
+### \_authorizeUpgrade
+
+```solidity
+function _authorizeUpgrade(address newImplementation) internal override restricted
+```
+
+UUPSUpgradeable에 따라 업그레이드를 승인하는 훅입니다.
+
+**Parameters:**
+
+* `newImplementation`: 새 구현의 주소
+
+## 이벤트
+
+### RevenueTransferredToVault
+
+```solidity
+event RevenueTransferredToVault(address ipId, address ancestorIpId, address token, uint256 amount)
+```
+
+수익 토큰이 볼트로 이전될 때 발생하는 이벤트입니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ipId
+* `ancestorIpId`: IP 자산의 조상 ipId
+* `token`: 이전된 토큰 주소
+* `amount`: 이전된 토큰의 양
+
+## 보안 고려사항
+
+RoyaltyPolicyLAP 컨트랙트는 여러 보안 조치를 구현합니다:
+
+1. **접근 제어**: 다음과 같은 함수들 `onLicenseMinting` 및 `onLinkToParents` 는 `onlyRoyaltyModule` 수정자를 통해 Royalty Module에 의해서만 호출될 수 있습니다.
+
+2. **재진입 보호**: `nonReentrant` 수정자는 재진입 공격을 방지하기 위해 토큰 이전을 처리하는 함수에 사용됩니다.
+
+3. **일시 중지 기능**: 비상 상황에서 `whenNotPaused` 수정자를 사용하여 컨트랙트를 일시 중지할 수 있습니다.
+
+4. **안전한 토큰 이전**: 컨트랙트는 안전한 토큰 이전을 보장하기 위해 OpenZeppelin의 SafeERC20 라이브러리를 사용합니다.
+
+5. **업그레이드 가능성**: 컨트랙트는 UUPS 패턴을 사용하여 업그레이드 가능하며, 업그레이드 승인은 프로토콜 관리자로 제한됩니다.
+
+6. **입력 유효성 검사**: 컨트랙트는 입력을 검증하고 동일한 IP 간의 이전을 방지하는 등의 엣지 케이스를 확인합니다.
+
+
+# IPRoyaltyVault
+
+IPRoyaltyVault 계약은 주어진 IP에 대한 로열티 및 수익 토큰의 청구를 관리합니다. 이는 토큰 보유자가 스냅샷을 기반으로 수익 토큰의 몫을 청구하고, 조상들이 로열티 토큰을 수집할 수 있게 합니다.
+
+## 상태 변수
+
+### ipId
+
+```solidity
+address ipId
+```
+
+이 로열티 금고가 속한 IP ID입니다.
+
+### tokens
+
+```solidity
+EnumerableSet.AddressSet tokens
+```
+
+금고 내 수익 토큰의 집합입니다.
+
+### unclaimedRoyaltyTokens
+
+```solidity
+uint32 unclaimedRoyaltyTokens
+```
+
+청구되지 않은 로열티 토큰의 양입니다.
+
+### lastSnapshotTimestamp
+
+```solidity
+uint256 lastSnapshotTimestamp
+```
+
+마지막 스냅샷의 타임스탬프입니다.
+
+### ancestorsVaultAmount
+
+```solidity
+mapping(address token => uint256 amount) ancestorsVaultAmount
+```
+
+토큰 주소를 조상 금고의 양에 매핑합니다.
+
+### isCollectedByAncestor
+
+```solidity
+mapping(address ancestorIpId => bool isCollected) isCollectedByAncestor
+```
+
+조상이 로열티 토큰을 수집했는지 여부를 나타냅니다.
+
+### claimVaultAmount
+
+```solidity
+mapping(address token => uint256 amount) claimVaultAmount
+```
+
+토큰 주소를 청구 금고의 양에 매핑합니다.
+
+### claimableAtSnapshot
+
+```solidity
+mapping(uint256 snapshotId => mapping(address token => uint256 amount)) claimableAtSnapshot
+```
+
+스냅샷 ID와 토큰 주소를 해당 스냅샷에서의 청구 가능한 양에 매핑합니다.
+
+### unclaimedAtSnapshot
+
+```solidity
+mapping(uint256 snapshotId => uint32 amount) unclaimedAtSnapshot
+```
+
+스냅샷 ID를 해당 스냅샷에서의 청구되지 않은 토큰의 양에 매핑합니다.
+
+### isClaimedAtSnapshot
+
+```solidity
+mapping(uint256 snapshotId => mapping(address claimer => mapping(address token => bool isClaimed))) isClaimedAtSnapshot
+```
+
+청구자가 특정 스냅샷에서 토큰을 청구했는지 여부를 나타냅니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(
+    string memory name,
+    string memory symbol,
+    uint256 totalSupply,
+    uint32 royaltyStack,
+    address ipId_
+) external initializer
+```
+
+이 구현 계약의 초기화 함수입니다.
+
+**Parameters:**
+
+* `name`: 로열티 토큰의 이름입니다.
+* `symbol`: 로열티 토큰의 심볼입니다.
+* `totalSupply`: 로열티 토큰의 총 공급량입니다.
+* `royaltyStack`: IP 자산의 로열티 스택입니다.
+* `ipId_`: 이 로열티 금고가 속한 IP ID입니다.
+
+### addIpRoyaltyVaultTokens
+
+```solidity
+function addIpRoyaltyVaultTokens(address token) external nonReentrant whenNotPaused returns (bool)
+```
+
+로열티 금고에 토큰을 추가합니다.
+
+**Parameters:**
+
+* `token`: 추가할 토큰의 주소입니다.
+
+**Returns:**
+
+* `isAdded`: 토큰이 추가되었으면 true, 이미 금고에 있었다면 false입니다.
+
+### snapshot
+
+```solidity
+function snapshot() external whenNotPaused returns (uint256)
+```
+
+청구 가능한 수익 및 로열티 토큰 양의 스냅샷을 찍습니다.
+
+**Returns:**
+
+* `snapshotId`: 스냅샷의 ID입니다.
+
+### claimRevenueToken
+
+```solidity
+function claimRevenueToken(uint256[] calldata snapshotIds, address token) external nonReentrant whenNotPaused
+```
+
+토큰 보유자가 수익 토큰의 몫을 청구할 수 있게 합니다.
+
+**Parameters:**
+
+* `snapshotIds`: 청구할 스냅샷 ID들입니다.
+* `token`: 청구할 수익 토큰입니다.
+
+### collectRoyaltyTokens
+
+```solidity
+function collectRoyaltyTokens(address ancestorIpId) external nonReentrant whenNotPaused
+```
+
+조상들이 로열티 토큰과 누적된 수익 토큰을 청구할 수 있게 합니다.
+
+**Parameters:**
+
+* `ancestorIpId`: 로열티 토큰이 속한 조상의 IP ID입니다.
+
+### ipId
+
+```solidity
+function ipId() external view returns (address)
+```
+
+이 로열티 금고가 속한 IP ID를 반환합니다.
+
+**Returns:**
+
+* IP ID 주소입니다.
+
+### unclaimedRoyaltyTokens
+
+```solidity
+function unclaimedRoyaltyTokens() external view returns (uint32)
+```
+
+청구되지 않은 로열티 토큰의 양을 반환합니다.
+
+**Returns:**
+
+* 청구되지 않은 로열티 토큰의 양입니다.
+
+### lastSnapshotTimestamp
+
+```solidity
+function lastSnapshotTimestamp() external view returns (uint256)
+```
+
+마지막으로 스냅샷된 타임스탬프를 반환합니다.
+
+**Returns:**
+
+* 마지막 스냅샷 타임스탬프.
+
+### ancestorsVaultAmount
+
+```solidity
+function ancestorsVaultAmount(address token) external view returns (uint256)
+```
+
+조상 볼트에 있는 수익 토큰의 양을 반환합니다.
+
+**Parameters:**
+
+* `token`: 수익 토큰의 주소.
+
+**Returns:**
+
+* 조상 볼트에 있는 수익 토큰의 양.
+
+### isCollectedByAncestor
+
+```solidity
+function isCollectedByAncestor(address ancestorIpId) external view returns (bool)
+```
+
+조상이 로열티 토큰을 수집했는지 여부를 나타냅니다.
+
+**Parameters:**
+
+* `ancestorIpId`: 조상 IP ID 주소.
+
+**Returns:**
+
+* 조상이 로열티 토큰을 수집했다면 True.
+
+### claimVaultAmount
+
+```solidity
+function claimVaultAmount(address token) external view returns (uint256)
+```
+
+청구 볼트에 있는 수익 토큰의 양을 반환합니다.
+
+**Parameters:**
+
+* `token`: 수익 토큰의 주소.
+
+**Returns:**
+
+* 청구 볼트에 있는 수익 토큰의 양.
+
+### claimableAtSnapshot
+
+```solidity
+function claimableAtSnapshot(uint256 snapshotId, address token) external view returns (uint256)
+```
+
+주어진 스냅샷에서 청구 가능한 수익 토큰의 양을 반환합니다.
+
+**Parameters:**
+
+* `snapshotId`: 스냅샷 ID.
+* `token`: 수익 토큰의 주소.
+
+**Returns:**
+
+* 스냅샷에서 청구 가능한 수익 토큰의 양.
+
+### unclaimedAtSnapshot
+
+```solidity
+function unclaimedAtSnapshot(uint256 snapshotId) external view returns (uint32)
+```
+
+스냅샷에서 청구되지 않은 수익 토큰의 양을 반환합니다.
+
+**Parameters:**
+
+* `snapshotId`: 스냅샷 ID.
+
+**Returns:**
+
+* 스냅샷에서 청구되지 않은 수익 토큰의 양.
+
+### isClaimedAtSnapshot
+
+```solidity
+function isClaimedAtSnapshot(uint256 snapshotId, address claimer, address token) external view returns (bool)
+```
+
+청구자가 주어진 스냅샷에서 수익 토큰을 청구했는지 여부를 나타냅니다.
+
+**Parameters:**
+
+* `snapshotId`: 스냅샷 ID.
+* `claimer`: 청구자의 주소.
+* `token`: 수익 토큰의 주소.
+
+**Returns:**
+
+* 청구자가 스냅샷에서 수익 토큰을 청구했다면 True.
+
+### tokens
+
+```solidity
+function tokens() external view returns (address[] memory)
+```
+
+볼트에 있는 수익 토큰 목록을 반환합니다.
+
+**Returns:**
+
+* 수익 토큰 주소의 배열.
+
+## 보안 고려사항
+
+IPRoyaltyVault 계약은 여러 보안 조치를 구현합니다:
+
+1. **접근 제어**: 토큰 추가, 스냅샷 생성, 토큰 청구 기능은 적절한 수정자로 보호됩니다.
+
+2. **재진입 보호**: `nonReentrant` 수정자는 재진입 공격을 방지하기 위해 토큰 전송을 처리하는 함수에 사용됩니다.
+
+3. **일시 중지 기능**: 계약은 긴급 상황에서 `whenNotPaused` 수정자를 사용하여 일시 중지될 수 있습니다.
+
+4. **스냅샷 메커니즘**: 계약은 특정 시점의 보유량에 기반하여 수익 토큰의 공정한 분배를 보장하기 위해 스냅샷 메커니즘을 사용합니다.
+
+5. **청구 검증**: 계약은 동일한 주소에 의한 이중 청구를 방지하기 위해 청구된 토큰을 추적합니다.
+
+
+# IPAccountRegistry
+
+IPAccountRegistry는 IP 계정의 등록과 추적을 관리하는 책임이 있습니다. 이는 공개 ERC6551 레지스트리를 활용하여 Story 생태계 내에서 토큰화된 지적 재산 자산을 나타내는 IPAccount 계약을 배포합니다.
+
+## 상태 변수
+
+### IP\_ACCOUNT\_IMPL
+
+```solidity
+address public immutable IP_ACCOUNT_IMPL
+```
+
+IPAccount 구현 주소를 반환합니다.
+
+### IP\_ACCOUNT\_SALT
+
+```solidity
+bytes32 public immutable IP_ACCOUNT_SALT
+```
+
+IPAccount 솔트를 반환합니다.
+
+### ERC6551\_PUBLIC\_REGISTRY
+
+```solidity
+address public immutable ERC6551_PUBLIC_REGISTRY
+```
+
+공개 ERC6551 레지스트리 주소를 반환합니다.
+
+### IP\_ACCOUNT\_IMPL\_UPGRADEABLE\_BEACON
+
+```solidity
+address public immutable IP_ACCOUNT_IMPL_UPGRADEABLE_BEACON
+```
+
+IPAccount 구현 업그레이드 가능한 비콘 주소입니다.
+
+## 함수
+
+### ipAccount
+
+```solidity
+function ipAccount(uint256 chainId, address tokenContract, uint256 tokenId) public view returns (address)
+```
+
+주어진 NFT 토큰에 대한 IPAccount 주소를 반환합니다.
+
+**Parameters:**
+
+* `chainId`: IP Account가 위치한 체인 ID입니다.
+* `tokenContract`: IP Account와 연관된 토큰 계약의 주소입니다.
+* `tokenId`: IP Account와 연관된 토큰의 ID입니다.
+
+**Returns:**
+
+* `ipAccountAddress`: 주어진 NFT 토큰과 연관된 IP Account의 주소입니다.
+
+### getIPAccountImpl
+
+```solidity
+function getIPAccountImpl() external view override returns (address)
+```
+
+IPAccount 구현 주소를 반환합니다.
+
+**Returns:**
+
+* `address`: IPAccount 구현의 주소입니다.
+
+### \_registerIpAccount (내부)
+
+```solidity
+function _registerIpAccount(
+    uint256 chainId,
+    address tokenContract,
+    uint256 tokenId
+) internal returns (address ipAccountAddress)
+```
+
+IPAccount 구현으로 IPAccount 계약을 배포하고 새로운 IP의 주소를 반환합니다. IPAccount 배포는 공개 ERC6551 레지스트리에 위임됩니다.
+
+**Parameters:**
+
+* `chainId`: IP Account가 생성될 체인 ID입니다.
+* `tokenContract`: IP Account와 연관될 토큰 계약의 주소입니다.
+* `tokenId`: IP Account와 연관될 토큰의 ID입니다.
+
+**Returns:**
+
+* `ipAccountAddress`: 새로 생성된 IP Account의 주소입니다.
+
+### \_get6551AccountAddress (내부)
+
+```solidity
+function _get6551AccountAddress(
+    uint256 chainId,
+    address tokenContract,
+    uint256 tokenId
+) internal view returns (address)
+```
+
+ERC6551 레지스트리에서 IPAccount 주소를 가져오는 헬퍼 함수입니다.
+
+**Parameters:**
+
+* `chainId`: IP Account가 위치한 체인 ID입니다.
+* `tokenContract`: IP Account와 연관된 토큰 계약의 주소입니다.
+* `tokenId`: IP Account와 연관된 토큰의 ID입니다.
+
+**Returns:**
+
+* `address`: IP Account의 주소입니다.
+
+### \_upgradeIPAccountImpl (내부)
+
+```solidity
+function _upgradeIPAccountImpl(address newIpAccountImpl) internal
+```
+
+IPAccount 구현을 업그레이드하는 헬퍼 함수입니다.
+
+**Parameters:**
+
+* `newIpAccountImpl`: 새로운 IPAccount 구현의 주소입니다.
+
+
+# GroupIPAssetRegistry
+
+GroupIPAssetRegistry는 그룹 IP 자산(IPA)의 등록 및 추적을 관리하며, 여기에는 그룹 구성원과 보상 풀이 포함됩니다. 그룹 등록, 그룹 멤버십 관리 및 그룹 보상 풀 처리를 위한 기능을 제공합니다.
+
+## 상태 변수
+
+### MAX\_GROUP\_SIZE
+
+```solidity
+uint256 public constant MAX_GROUP_SIZE = 1000
+```
+
+그룹에 허용되는 최대 구성원 수입니다.
+
+### GROUPING\_MODULE
+
+```solidity
+IGroupingModule public immutable GROUPING_MODULE
+```
+
+프로토콜 전체 Grouping Module의 주소입니다.
+
+## 함수
+
+### registerGroup
+
+```solidity
+function registerGroup(
+    address groupNft,
+    uint256 groupNftId,
+    address rewardPool,
+    address registerFeePayer
+) external onlyGroupingModule whenNotPaused returns (address groupId)
+```
+
+그룹 IPA를 등록합니다.
+
+**Parameters:**
+
+* `groupNft`: 그룹 NFT의 주소입니다.
+* `groupNftId`: 그룹 NFT의 ID입니다.
+* `rewardPool`: 그룹 보상 풀의 주소입니다.
+* `registerFeePayer`: 등록 수수료를 지불하는 계정의 주소입니다.
+
+**Returns:**
+
+* `groupId`: 새로 등록된 그룹 IPA의 주소입니다.
+
+### whitelistGroupRewardPool
+
+```solidity
+function whitelistGroupRewardPool(address rewardPool, bool allowed) external onlyGroupingModule whenNotPaused
+```
+
+그룹 보상 풀을 화이트리스트에 등록합니다.
+
+**Parameters:**
+
+* `rewardPool`: 그룹 보상 풀의 주소입니다.
+* `allowed`: 그룹 보상 풀이 화이트리스트에 등록되었는지 여부입니다.
+
+### addGroupMember
+
+```solidity
+function addGroupMember(address groupId, address[] calldata ipIds) external onlyGroupingModule whenNotPaused
+```
+
+그룹 IPA에 구성원을 추가합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 IPA의 주소입니다.
+* `ipIds`: 그룹 IPA에 추가할 IP들의 주소입니다.
+
+### removeGroupMember
+
+```solidity
+function removeGroupMember(address groupId, address[] calldata ipIds) external onlyGroupingModule whenNotPaused
+```
+
+그룹 IPA에서 구성원을 제거합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 IPA의 주소입니다.
+* `ipIds`: 그룹 IPA에서 제거할 IP들의 주소입니다.
+
+### isRegisteredGroup
+
+```solidity
+function isRegisteredGroup(address groupId) external view returns (bool)
+```
+
+ID를 기반으로 그룹 IPA가 등록되었는지 확인합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 IPA의 주소입니다.
+
+**Returns:**
+
+* `isRegistered`: 그룹 IPA가 프로토콜에 등록되었는지 여부입니다.
+
+### getGroupRewardPool
+
+```solidity
+function getGroupRewardPool(address groupId) external view returns (address)
+```
+
+그룹 IPA의 그룹 보상 풀을 검색합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 IPA의 주소입니다.
+
+**Returns:**
+
+* `rewardPool`: 그룹 보상 풀의 주소입니다.
+
+### isWhitelistedGroupRewardPool
+
+```solidity
+function isWhitelistedGroupRewardPool(address rewardPool) external view returns (bool isWhitelisted)
+```
+
+그룹 보상 풀이 화이트리스트에 등록되어 있는지 확인합니다.
+
+**Parameters:**
+
+* `rewardPool`: 그룹 보상 풀의 주소입니다.
+
+**Returns:**
+
+* `isWhitelisted`: 그룹 보상 풀이 화이트리스트에 등록되어 있는지 여부입니다.
+
+### getGroupMembers
+
+```solidity
+function getGroupMembers(
+    address groupId,
+    uint256 startIndex,
+    uint256 size
+) external view returns (address[] memory results)
+```
+
+그룹 IPA의 그룹 구성원을 검색합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 IPA의 주소입니다.
+* `startIndex`: 검색할 그룹 구성원의 시작 인덱스입니다.
+* `size`: 검색할 그룹 구성원의 크기입니다.
+
+**Returns:**
+
+* `results`: 그룹 구성원들의 주소입니다.
+
+### containsIp
+
+```solidity
+function containsIp(address groupId, address ipId) external view returns (bool)
+```
+
+IP가 그룹 IPA의 구성원인지 확인합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 IPA의 주소입니다.
+* `ipId`: IP의 주소입니다.
+
+**Returns:**
+
+* `isMember`: IP가 그룹 IPA의 구성원인지 여부입니다.
+
+### totalMembers
+
+```solidity
+function totalMembers(address groupId) external view returns (uint256)
+```
+
+그룹 IPA의 총 구성원 수를 검색합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹 IPA의 주소입니다.
+
+**Returns:**
+
+* `totalMembers`: 그룹 IPA의 총 구성원 수입니다.
+
+
+# ModuleRegistry
+
+ModuleRegistry 계약은 Story 생태계 내에서 모듈을 등록하고 추적하는 데 사용됩니다. 이는 모든 프로토콜 모듈의 중앙 레지스트리 역할을 하여 다양한 모듈 유형과 구현의 쉬운 발견과 관리를 가능하게 합니다.
+
+## 상태 변수
+
+### ModuleRegistryStorage
+
+```solidity
+struct ModuleRegistryStorage {
+    mapping(string moduleName => address moduleAddress) modules;
+    mapping(address moduleAddress => string moduleType) moduleTypes;
+    mapping(string moduleType => bytes4 moduleTypeInterface) allModuleTypes;
+}
+```
+
+ModuleRegistry의 저장소 구조는 다음을 포함합니다:
+
+* `modules`: 모듈 이름을 해당 주소에 매핑
+* `moduleTypes`: 모듈 주소를 해당 유형에 매핑
+* `allModuleTypes`: 모듈 유형을 해당 인터페이스 ID에 매핑
+
+### ModuleRegistryStorageLocation
+
+```solidity
+bytes32 private constant ModuleRegistryStorageLocation
+```
+
+ModuleRegistry 저장소 구조의 저장 위치로, ERC-7201의 네임스페이스 저장 패턴을 따릅니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) public initializer
+```
+
+ModuleRegistry 계약을 초기화합니다.
+
+**Parameters:**
+
+* `accessManager`: 거버넌스 계약의 주소.
+
+### registerModuleType
+
+```solidity
+function registerModuleType(string memory name, bytes4 interfaceId) external override restricted
+```
+
+레지스트리에 인터페이스와 연관된 새로운 모듈 유형을 등록합니다.
+
+**Parameters:**
+
+* `name`: 등록할 모듈 유형의 이름.
+* `interfaceId`: 모듈 유형과 연관된 인터페이스 ID.
+
+### removeModuleType
+
+```solidity
+function removeModuleType(string memory name) external override restricted
+```
+
+레지스트리에서 모듈 유형을 제거합니다.
+
+**Parameters:**
+
+* `name`: 제거할 모듈 유형의 이름.
+
+### registerModule (기본 유형)
+
+```solidity
+function registerModule(string memory name, address moduleAddress) external restricted
+```
+
+기본 모듈 유형으로 레지스트리에 새 모듈을 등록합니다.
+
+**Parameters:**
+
+* `name`: 모듈의 이름.
+* `moduleAddress`: 모듈의 주소.
+
+### registerModule (특정 유형)
+
+```solidity
+function registerModule(string memory name, address moduleAddress, string memory moduleType) external restricted
+```
+
+특정 모듈 유형으로 레지스트리에 새 모듈을 등록합니다.
+
+**Parameters:**
+
+* `name`: 등록할 모듈의 이름.
+* `moduleAddress`: 모듈의 주소.
+* `moduleType`: 등록되는 모듈의 유형.
+
+### removeModule
+
+```solidity
+function removeModule(string memory name) external restricted
+```
+
+레지스트리에서 모듈을 제거합니다.
+
+**Parameters:**
+
+* `name`: 제거할 모듈의 이름.
+
+### isRegistered
+
+```solidity
+function isRegistered(address moduleAddress) external view returns (bool)
+```
+
+모듈이 프로토콜에 등록되어 있는지 확인합니다.
+
+**Parameters:**
+
+* `moduleAddress`: 모듈의 주소.
+
+**Returns:**
+
+* `bool`: 모듈이 등록되어 있으면 true, 그렇지 않으면 false.
+
+### getModule
+
+```solidity
+function getModule(string memory name) external view returns (address)
+```
+
+모듈의 주소를 반환합니다.
+
+**Parameters:**
+
+* `name`: 모듈의 이름.
+
+**Returns:**
+
+* `address`: 모듈의 주소.
+
+### getModuleType
+
+```solidity
+function getModuleType(address moduleAddress) external view returns (string memory)
+```
+
+주어진 모듈 주소의 모듈 유형을 반환합니다.
+
+**Parameters:**
+
+* `moduleAddress`: 모듈의 주소.
+
+**Returns:**
+
+* `string`: 문자열로 된 모듈의 유형.
+
+### getModuleTypeInterfaceId
+
+```solidity
+function getModuleTypeInterfaceId(string memory moduleType) external view returns (bytes4)
+```
+
+주어진 모듈 유형과 연관된 인터페이스 ID를 반환합니다.
+
+**Parameters:**
+
+* `moduleType`: 문자열로 된 모듈의 유형.
+
+**Returns:**
+
+* `bytes4`: 모듈 유형의 인터페이스 ID.
+
+## 내부 함수
+
+### \_registerModule
+
+```solidity
+function _registerModule(string memory name, address moduleAddress, string memory moduleType) internal
+```
+
+레지스트리에 새 모듈을 등록하는 내부 함수.
+
+**Parameters:**
+
+* `name`: 모듈의 이름.
+* `moduleAddress`: 모듈의 주소.
+* `moduleType`: 등록되는 모듈의 유형.
+
+### \_getModuleRegistryStorage
+
+```solidity
+function _getModuleRegistryStorage() private pure returns (ModuleRegistryStorage storage $)
+```
+
+ModuleRegistry의 저장소 구조체를 반환합니다.
+
+**Returns:**
+
+* `ModuleRegistryStorage`: ModuleRegistry의 저장소 구조.
+
+### \_authorizeUpgrade
+
+```solidity
+function _authorizeUpgrade(address newImplementation) internal override restricted
+```
+
+UUPSUpgradeable에 따라 업그레이드를 승인하는 훅.
+
+**Parameters:**
+
+* `newImplementation`: 새 구현의 주소.
+
+## 이벤트
+
+### ModuleAdded
+
+```solidity
+event ModuleAdded(string name, address moduleAddress, bytes4 moduleTypeInterfaceId, string moduleType)
+```
+
+새 모듈이 레지스트리에 추가될 때 발생하는 이벤트.
+
+**Parameters:**
+
+* `name`: 모듈의 이름.
+* `moduleAddress`: 모듈의 주소.
+* `moduleTypeInterfaceId`: 모듈 유형의 인터페이스 ID.
+* `moduleType`: 모듈의 유형.
+
+### ModuleRemoved
+
+```solidity
+event ModuleRemoved(string name, address moduleAddress)
+```
+
+모듈이 레지스트리에서 제거될 때 발생하는 이벤트.
+
+**Parameters:**
+
+* `name`: 모듈의 이름.
+* `moduleAddress`: 모듈의 주소.
+
+## 보안 고려사항
+
+ModuleRegistry 계약은 여러 보안 조치를 구현합니다:
+
+1. **접근 제어**: 대부분의 함수는 `restricted` 수정자를 통해 프로토콜 관리자만 호출할 수 있도록 제한됩니다.
+
+2. **입력 유효성 검사**: 계약은 모든 입력이 필요한 기준을 충족하는지 확인하기 위해 유효성을 검사합니다:
+   * 모듈 주소는 0이 아니어야 하며 계약이어야 합니다
+   * 이름과 모듈 유형은 빈 문자열일 수 없습니다
+   * 해당 유형의 모듈을 등록하기 전에 모듈 유형이 먼저 등록되어야 합니다
+   * 모듈은 해당 유형에 대해 예상되는 인터페이스를 지원해야 합니다
+
+3. **중복 방지**: 계약은 중복 등록을 방지합니다:
+   * 동일한 이름으로 모듈 유형을 두 번 등록할 수 없습니다
+   * 다른 이름으로 모듈을 두 번 등록할 수 없습니다
+   * 하나의 이름을 여러 모듈에 사용할 수 없습니다
+
+4. **업그레이드 가능성**: 계약은 UUPS 패턴을 사용하여 업그레이드 가능하며, 업그레이드 권한은 프로토콜 관리자로 제한됩니다.
+
+
+# LicenseRegistry
+
+LicenseRegistry는 IP ID 라이센서가 파생 IP를 생성하기 위해 부여한 라이센스를 나타내는 라이센스 NFT(LNFT)의 등록 및 추적을 관리합니다. 라이센스 템플릿, 라이센스 조건, 그리고 부모 IP와 파생 IP 자산 간의 관계를 관리하는 기능을 제공합니다.
+
+## 상태 변수
+
+### MAX\_PARENTS
+
+```solidity
+uint256 public constant MAX_PARENTS = 16
+```
+
+파생 IP가 가질 수 있는 최대 부모 IP 수입니다.
+
+### MAX\_ANCESTORS
+
+```solidity
+uint256 public constant MAX_ANCESTORS = 1024
+```
+
+파생 IP가 가질 수 있는 최대 조상 IP 수입니다.
+
+### IP\_GRAPH
+
+```solidity
+address public constant IP_GRAPH = address(0x0101)
+```
+
+IP 간의 관계를 추적하는 IP Graph 컨트랙트의 주소입니다.
+
+### GROUP\_IP\_ASSET\_REGISTRY
+
+```solidity
+IGroupIPAssetRegistry public immutable GROUP_IP_ASSET_REGISTRY
+```
+
+Group IP Asset Registry 컨트랙트의 주소입니다.
+
+### LICENSING\_MODULE
+
+```solidity
+ILicensingModule public immutable LICENSING_MODULE
+```
+
+Licensing Module 컨트랙트의 주소입니다.
+
+### DISPUTE\_MODULE
+
+```solidity
+IDisputeModule public immutable DISPUTE_MODULE
+```
+
+Dispute Module 컨트랙트의 주소입니다.
+
+### IP\_GRAPH\_ACL
+
+```solidity
+IPGraphACL public immutable IP_GRAPH_ACL
+```
+
+IP Graph Access Control List 컨트랙트의 주소입니다.
+
+### EXPIRATION\_TIME
+
+```solidity
+bytes32 public constant EXPIRATION_TIME = "EXPIRATION_TIME"
+```
+
+IP 계정 저장소에 만료 시간을 저장하는 데 사용되는 키입니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) public initializer
+```
+
+LicenseRegistry 컨트랙트를 초기화합니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 컨트랙트의 주소입니다.
+
+### setDefaultLicenseTerms
+
+```solidity
+function setDefaultLicenseTerms(address newLicenseTemplate, uint256 newLicenseTermsId) external restricted
+```
+
+기본적으로 모든 IP에 첨부되는 기본 라이센스 조건을 설정합니다.
+
+**Parameters:**
+
+* `newLicenseTemplate`: 새로운 기본 라이센스 템플릿의 주소입니다.
+* `newLicenseTermsId`: 새로운 기본 라이센스 조건의 ID입니다.
+
+### registerLicenseTemplate
+
+```solidity
+function registerLicenseTemplate(address licenseTemplate) external restricted
+```
+
+Story에 새로운 라이센스 템플릿을 등록합니다.
+
+**Parameters:**
+
+* `licenseTemplate`: 등록할 라이센스 템플릿의 주소입니다.
+
+### setLicensingConfigForLicense
+
+```solidity
+function setLicensingConfigForLicense(
+    address ipId,
+    address licenseTemplate,
+    uint256 licenseTermsId,
+    Licensing.LicensingConfig calldata licensingConfig
+) external onlyLicensingModule
+```
+
+특정 IP에 첨부된 특정 라이센스에 대한 민팅 라이센스 구성을 설정합니다.
+
+**Parameters:**
+
+* `ipId`: 구성이 설정되는 IP의 주소입니다.
+* `licenseTemplate`: 사용된 라이센스 템플릿의 주소입니다.
+* `licenseTermsId`: 라이센스 템플릿 내의 라이센스 조건 ID입니다.
+* `licensingConfig`: 라이센스 민팅을 위한 구성입니다.
+
+### attachLicenseTermsToIp
+
+```solidity
+function attachLicenseTermsToIp(
+    address ipId,
+    address licenseTemplate,
+    uint256 licenseTermsId
+) external onlyLicensingModule
+```
+
+IP에 라이센스 조건을 첨부합니다.
+
+**Parameters:**
+
+* `ipId`: 라이센스 조건이 첨부되는 IP의 주소입니다.
+* `licenseTemplate`: 라이센스 템플릿의 주소입니다.
+* `licenseTermsId`: 라이센스 조건의 ID입니다.
+
+### registerDerivativeIp
+
+```solidity
+function registerDerivativeIp(
+    address childIpId,
+    address[] calldata parentIpIds,
+    address licenseTemplate,
+    uint256[] calldata licenseTermsIds,
+    bool isUsingLicenseToken
+) external onlyLicensingModule
+```
+
+파생 IP와 부모 IP와의 관계를 등록합니다.
+
+**Parameters:**
+
+* `childIpId`: 파생 IP의 주소입니다.
+* `parentIpIds`: 부모 IP 주소들의 배열입니다.
+* `licenseTemplate`: 사용된 라이센스 템플릿의 주소입니다.
+* `licenseTermsIds`: 라이센스 조건 ID들의 배열입니다.
+* `isUsingLicenseToken`: 파생 IP가 라이센스 토큰과 함께 등록되었는지 여부입니다.
+
+### initializeLicenseTemplate
+
+```solidity
+function initializeLicenseTemplate(address ipId, address licenseTemplate) external onlyLicensingModule
+```
+
+IP에 라이센스 템플릿이 설정되어 있지 않은 경우, IP에 대한 라이센스 템플릿을 설정합니다.
+
+**Parameters:**
+
+* `ipId`: 라이센스 템플릿이 첨부되는 IP의 주소입니다.
+* `licenseTemplate`: 라이센스 템플릿의 주소입니다.
+
+### verifyMintLicenseToken
+
+```solidity
+function verifyMintLicenseToken(
+    address licensorIpId,
+    address licenseTemplate,
+    uint256 licenseTermsId,
+    bool isMintedByIpOwner
+) external view returns (Licensing.LicensingConfig memory)
+```
+
+라이센스 토큰의 민팅을 검증합니다.
+
+**Parameters:**
+
+* `licensorIpId`: 라이센서 IP의 주소입니다.
+* `licenseTemplate`: 라이센스 조건이 정의된 라이센스 템플릿의 주소입니다.
+* `licenseTermsId`: 라이센스 토큰을 민팅할 라이센스 조건의 ID입니다.
+* `isMintedByIpOwner`: 라이센스 토큰이 IP 소유자에 의해 민팅되는지 여부입니다.
+
+**Returns:**
+
+* `Licensing.LicensingConfig`: 라이센스 민팅을 위한 구성입니다.
+
+### verifyGroupAddIp
+
+```solidity
+function verifyGroupAddIp(
+    address groupId,
+    address groupRewardPool,
+    address ipId,
+    address groupLicenseTemplate,
+    uint256 groupLicenseTermsId
+) external view returns (Licensing.LicensingConfig memory ipLicensingConfig)
+```
+
+그룹이 주어진 IP를 추가할 수 있는지 검증합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹의 주소입니다.
+* `groupRewardPool`: 그룹의 보상 풀 주소입니다.
+* `ipId`: 그룹에 추가될 IP의 주소입니다.
+* `groupLicenseTemplate`: 그룹에 첨부된 라이센스 템플릿의 주소입니다.
+* `groupLicenseTermsId`: 그룹에 첨부된 라이센스 조건의 ID입니다.
+
+**Returns:**
+
+* `ipLicensingConfig`: IP에 첨부된 라이센스에 대한 구성입니다.
+
+### isRegisteredLicenseTemplate
+
+```solidity
+function isRegisteredLicenseTemplate(address licenseTemplate) external view returns (bool)
+```
+
+라이센스 템플릿이 등록되어 있는지 확인합니다.
+
+**Parameters:**
+
+* `licenseTemplate`: 확인할 라이선스 템플릿의 주소.
+
+**Returns:**
+
+* `bool`: 라이선스 템플릿이 등록되어 있는지 여부.
+
+### isDerivativeIp
+
+```solidity
+function isDerivativeIp(address childIpId) external view returns (bool)
+```
+
+IP가 파생 IP인지 확인합니다.
+
+**Parameters:**
+
+* `childIpId`: 확인할 IP의 주소.
+
+**Returns:**
+
+* `bool`: IP가 파생 IP인지 여부.
+
+### hasDerivativeIps
+
+```solidity
+function hasDerivativeIps(address parentIpId) external view returns (bool)
+```
+
+IP가 파생 IP를 가지고 있는지 확인합니다.
+
+**Parameters:**
+
+* `parentIpId`: 확인할 IP의 주소.
+
+**Returns:**
+
+* `bool`: IP가 파생 IP를 가지고 있는지 여부.
+
+### exists
+
+```solidity
+function exists(address licenseTemplate, uint256 licenseTermsId) external view returns (bool)
+```
+
+라이선스 조건이 존재하는지 확인합니다.
+
+**Parameters:**
+
+* `licenseTemplate`: 라이선스 조건이 정의된 라이선스 템플릿의 주소.
+* `licenseTermsId`: 라이선스 조건의 ID.
+
+**Returns:**
+
+* `bool`: 라이선스 조건이 존재하는지 여부.
+
+### hasIpAttachedLicenseTerms
+
+```solidity
+function hasIpAttachedLicenseTerms(
+    address ipId,
+    address licenseTemplate,
+    uint256 licenseTermsId
+) external view returns (bool)
+```
+
+IP가 라이선스 조건을 첨부했는지 확인합니다.
+
+**Parameters:**
+
+* `ipId`: 확인할 IP의 주소.
+* `licenseTemplate`: 라이선스 조건이 정의된 라이선스 템플릿의 주소.
+* `licenseTermsId`: 라이선스 조건의 ID.
+
+**Returns:**
+
+* `bool`: IP가 라이선스 조건을 첨부했는지 여부.
+
+### getAttachedLicenseTerms
+
+```solidity
+function getAttachedLicenseTerms(
+    address ipId,
+    uint256 index
+) external view returns (address licenseTemplate, uint256 licenseTermsId)
+```
+
+인덱스로 IP의 첨부된 라이선스 조건을 가져옵니다.
+
+**Parameters:**
+
+* `ipId`: IP의 주소.
+* `index`: IP의 모든 첨부된 라이선스 조건 배열 내에서 첨부된 라이선스 조건의 인덱스.
+
+**Returns:**
+
+* `licenseTemplate`: 라이선스 조건이 정의된 라이선스 템플릿의 주소.
+* `licenseTermsId`: 라이선스 조건의 ID.
+
+### getAttachedLicenseTermsCount
+
+```solidity
+function getAttachedLicenseTermsCount(address ipId) external view returns (uint256)
+```
+
+IP의 첨부된 라이선스 조건의 수를 가져옵니다.
+
+**Parameters:**
+
+* `ipId`: IP의 주소.
+
+**Returns:**
+
+* `uint256`: 첨부된 라이선스 조건의 수.
+
+### getDerivativeIp
+
+```solidity
+function getDerivativeIp(address parentIpId, uint256 index) external view returns (address childIpId)
+```
+
+인덱스로 IP의 파생 IP를 가져옵니다.
+
+**Parameters:**
+
+* `parentIpId`: IP의 주소.
+* `index`: IP의 모든 파생 IP 배열 내에서 파생 IP의 인덱스.
+
+**Returns:**
+
+* `childIpId`: 파생 IP의 주소.
+
+### getDerivativeIpCount
+
+```solidity
+function getDerivativeIpCount(address parentIpId) external view returns (uint256)
+```
+
+IP의 파생 IP 수를 가져옵니다.
+
+**Parameters:**
+
+* `parentIpId`: IP의 주소.
+
+**Returns:**
+
+* `uint256`: 파생 IP의 수.
+
+### getParentIp
+
+```solidity
+function getParentIp(address childIpId, uint256 index) external view returns (address parentIpId)
+```
+
+인덱스로 IP의 부모 IP를 가져옵니다.
+
+**Parameters:**
+
+* `childIpId`: IP의 주소.
+* `index`: IP의 모든 부모 IP 배열 내에서 부모 IP의 인덱스.
+
+**Returns:**
+
+* `parentIpId`: 부모 IP의 주소.
+
+### isParentIp
+
+```solidity
+function isParentIp(address parentIpId, address childIpId) external view returns (bool)
+```
+
+IP가 다른 IP의 부모인지 확인합니다.
+
+**Parameters:**
+
+* `parentIpId`: 잠재적 부모 IP의 주소.
+* `childIpId`: 잠재적 자식 IP의 주소.
+
+**Returns:**
+
+* `bool`: IP가 다른 IP의 부모인지 여부.
+
+### getParentIpCount
+
+```solidity
+function getParentIpCount(address childIpId) external view returns (uint256)
+```
+
+부모 IP의 수를 가져옵니다.
+
+**Parameters:**
+
+* `childIpId`: 자식 IP의 주소.
+
+**Returns:**
+
+* `uint256`: 부모 IP의 수.
+
+### getAncestorsCount
+
+```solidity
+function getAncestorsCount(address ipId) external returns (uint256)
+```
+
+조상 IP의 수를 가져옵니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ID.
+
+**Returns:**
+
+* `uint256`: 조상 IP의 수.
+
+### getLicensingConfig
+
+```solidity
+function getLicensingConfig(
+    address ipId,
+    address licenseTemplate,
+    uint256 licenseTermsId
+) external view returns (Licensing.LicensingConfig memory)
+```
+
+IP의 주어진 라이선스 조건에 대한 민팅 라이선스 구성을 검색합니다.
+
+**Parameters:**
+
+* `ipId`: IP의 주소.
+* `licenseTemplate`: 라이선스 조건이 정의된 라이선스 템플릿의 주소.
+* `licenseTermsId`: 라이선스 조건의 ID.
+
+**Returns:**
+
+* `Licensing.LicensingConfig`: 라이선스 민팅을 위한 구성.
+
+### getExpireTime
+
+```solidity
+function getExpireTime(address ipId) external view returns (uint256)
+```
+
+IP의 만료 시간을 가져옵니다.
+
+**Parameters:**
+
+* `ipId`: IP의 주소.
+
+**Returns:**
+
+* `uint256`: 만료 시간, 0은 만료되지 않음을 의미합니다.
+
+### isExpiredNow
+
+```solidity
+function isExpiredNow(address ipId) external view returns (bool)
+```
+
+IP가 만료되었는지 확인합니다.
+
+**Parameters:**
+
+* `ipId`: IP의 주소.
+
+**Returns:**
+
+* `bool`: IP가 만료되었는지 여부.
+
+### getDefaultLicenseTerms
+
+```solidity
+function getDefaultLicenseTerms() external view returns (address licenseTemplate, uint256 licenseTermsId)
+```
+
+기본 라이선스 조건을 반환합니다.
+
+**Returns:**
+
+* `licenseTemplate`: 기본 라이선스 템플릿의 주소.
+* `licenseTermsId`: 기본 라이선스 조건의 ID.
+
+### isDefaultLicense
+
+```solidity
+function isDefaultLicense(address licenseTemplate, uint256 licenseTermsId) external view returns (bool)
+```
+
+라이선스 조건이 기본 라이선스 조건인지 확인합니다.
+
+**Parameters:**
+
+* `licenseTemplate`: 라이선스 템플릿의 주소.
+* `licenseTermsId`: 라이선스 조건의 ID.
+
+**Returns:**
+
+* `bool`: 라이선스 조건이 기본 라이선스 조건인지 여부.
+
+### getParentLicenseTerms
+
+```solidity
+function getParentLicenseTerms(
+    address childIpId,
+    address parentIpId
+) external view returns (address licenseTemplate, uint256 licenseTermsId)
+```
+
+자식 IP가 부모 IP와 연결되는 라이선스 조건을 반환합니다.
+
+**Parameters:**
+
+* `childIpId`: 자식 IP의 주소.
+* `parentIpId`: 부모 IP의 주소.
+
+**Returns:**
+
+* `licenseTemplate`: 라이선스 템플릿의 주소.
+* `licenseTermsId`: 라이선스 조건의 ID.
+
+### getRoyaltyPercent
+
+```solidity
+function getRoyaltyPercent(
+    address ipId,
+    address licenseTemplate,
+    uint256 licenseTermsId
+) external view returns (uint32 royaltyPercent)
+```
+
+IP의 라이선스 조건의 로열티 비율을 반환합니다.
+
+**Parameters:**
+
+* `ipId`: IP의 주소.
+* `licenseTemplate`: 라이선스 조건이 정의된 라이선스 템플릿의 주소.
+* `licenseTermsId`: 라이선스 조건의 ID.
+
+**Returns:**
+
+* `royaltyPercent`: 로열티 비율. 100%는 100\_000\_000입니다.
+
+
+# IPAssetRegistry
+
+IPAssetRegistry는 Story에 등록된 모든 IP에 대한 진실의 원천 역할을 합니다. IP는 계약 주소, 토큰 ID 및 체인 ID로 식별되며, 이는 모든 NFT가 IP로 개념화될 수 있음을 의미합니다. IP가 프로토콜에 등록되면 해당 IP 자산이 생성되며, 이는 메타데이터 속성을 위한 IP 리졸버와 프로토콜 인증을 위한 IP 계정을 참조합니다.
+
+## 상태 변수
+
+### totalSupply
+
+```solidity
+uint256 totalSupply
+```
+
+프로토콜에 등록된 IP 자산의 총 수입니다.
+
+### treasury
+
+```solidity
+address treasury
+```
+
+등록 수수료를 받는 재무부의 주소입니다.
+
+### feeToken
+
+```solidity
+address feeToken
+```
+
+등록 수수료를 지불하는 데 사용되는 토큰의 주소입니다.
+
+### feeAmount
+
+```solidity
+uint96 feeAmount
+```
+
+등록 수수료의 금액입니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) public initializer
+```
+
+IPAssetRegistry 계약을 초기화합니다.
+
+**Parameters:**
+
+* `accessManager`: 접근 관리자의 주소입니다.
+
+### register
+
+```solidity
+function register(
+    uint256 chainid,
+    address tokenContract,
+    uint256 tokenId
+) external whenNotPaused returns (address id)
+```
+
+NFT를 IP 자산으로 등록하고 이에 대한 IP 계정을 생성합니다. IP가 이미 등록되어 있다면 IP 주소를 반환합니다.
+
+**Parameters:**
+
+* `chainid`: IP NFT가 위치한 체인의 식별자입니다.
+* `tokenContract`: NFT의 주소입니다.
+* `tokenId`: NFT의 토큰 식별자입니다.
+
+**Returns:**
+
+* `id`: 새로 등록된 IP의 주소입니다.
+
+### setRegistrationFee
+
+```solidity
+function setRegistrationFee(address treasury, address feeToken, uint96 feeAmount) external restricted
+```
+
+IP 자산의 등록 수수료를 설정합니다.
+
+**Parameters:**
+
+* `treasury`: 수수료를 받을 재무부의 주소입니다.
+* `feeToken`: 수수료를 지불하는 데 사용되는 토큰의 주소입니다.
+* `feeAmount`: 수수료의 금액입니다.
+
+### upgradeIPAccountImpl
+
+```solidity
+function upgradeIPAccountImpl(address newIpAccountImpl) external restricted
+```
+
+IP 계정 구현을 업그레이드합니다.
+
+**Parameters:**
+
+* `newIpAccountImpl`: 새로운 IP 계정 구현의 주소입니다.
+
+### ipId
+
+```solidity
+function ipId(uint256 chainId, address tokenContract, uint256 tokenId) public view returns (address)
+```
+
+IP NFT와 연관된 표준 IP 식별자를 가져옵니다. 이는 연결된 IP 계정의 주소와 동일합니다.
+
+**Parameters:**
+
+* `chainId`: IP가 위치한 체인의 식별자입니다.
+* `tokenContract`: IP의 주소입니다.
+* `tokenId`: IP의 토큰 식별자입니다.
+
+**Returns:**
+
+* `ipId`: IP의 표준 주소 식별자입니다.
+
+### isRegistered
+
+```solidity
+function isRegistered(address id) external view returns (bool)
+```
+
+ID를 기반으로 IP가 등록되었는지 확인합니다.
+
+**Parameters:**
+
+* `id`: IP의 표준 식별자입니다.
+
+**Returns:**
+
+* `isRegistered`: IP가 프로토콜에 등록되었는지 여부입니다.
+
+### totalSupply
+
+```solidity
+function totalSupply() external view returns (uint256)
+```
+
+프로토콜에 등록된 IP 자산의 총 수를 가져옵니다.
+
+**Returns:**
+
+* `uint256`: 등록된 IP 자산의 총 수입니다.
+
+### getTreasury
+
+```solidity
+function getTreasury() external view returns (address)
+```
+
+IP 자산의 재무부 주소를 검색합니다.
+
+**Returns:**
+
+* `treasury`: 재무부의 주소입니다.
+
+### getFeeToken
+
+```solidity
+function getFeeToken() external view returns (address)
+```
+
+IP 자산의 등록 수수료 토큰을 검색합니다.
+
+**Returns:**
+
+* `feeToken`: 수수료를 지불하는 데 사용되는 토큰의 주소입니다.
+
+### getFeeAmount
+
+```solidity
+function getFeeAmount() external view returns (uint96)
+```
+
+IP 자산의 등록 수수료 금액을 검색합니다.
+
+**Returns:**
+
+* `feeAmount`: 수수료의 금액입니다.
+
+
+# 예제 사용하기
+
+<CardGroup cols={2}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/src/Example.sol" icon="thumbs-up">
+    완성된 코드를 확인하세요.
+  </Card>
+
+  <Card title="비디오 설명" href="https://www.youtube.com/watch?v=X421IuZENqM" icon="video">
+    이 튜토리얼의 비디오 설명을 확인해보세요!
+  </Card>
+</CardGroup>
+
+# 스마트 컨트랙트 작성하기
+
+이제 각각의 개별 단계를 살펴보았으니, 우리만의 스마트 컨트랙트를 작성하고, 배포하고, 검증해봅시다.
+
+## IPA 등록, 라이선스 조건 등록, IPA에 연결하기
+
+이 첫 번째 섹션에서는 몇 가지 튜토리얼을 하나로 결합할 것입니다. 우리는 `mintAndRegisterAndCreateTermsAndAttach` 라는 이름의 함수를 만들 것입니다. 이 함수는 새로운 IP 자산을 발행하고 등록하며, 새로운 라이선스 조건을 등록하고, 이 조건들을 IP 자산에 연결할 수 있게 해줍니다. 또한 `receiver` 필드를 받아 새로운 IP 자산의 소유자로 지정할 것입니다.
+
+### 전제 조건
+
+* 완료: [IP 자산 등록하기](/developers/smart-contracts-guide/register-ip-asset)
+* 완료: [라이선스 조건 등록하기](/developers/smart-contracts-guide/register-terms)
+* 완료: [IPA에 조건 연결하기](/developers/smart-contracts-guide/attach-terms)
+
+### 우리의 컨트랙트 작성하기
+
+contracts/Example.sol 아래에 새 파일을 만들고 `./src/Example.sol`다음을 붙여넣으세요:
+
+<Note>
+  **컨트랙트 주소**
+
+  생성자에 전달할 컨트랙트 주소를 얻으려면 [배포된 스마트 컨트랙트](/developers/deployed-smart-contracts)로 이동하세요.
+</Note>
+
+```solidity src/Example.sol
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.26;
+
+import { IIPAssetRegistry } from "@storyprotocol/core/interfaces/registries/IIPAssetRegistry.sol";
+import { ILicensingModule } from "@storyprotocol/core/interfaces/modules/licensing/ILicensingModule.sol";
+import { IPILicenseTemplate } from "@storyprotocol/core/interfaces/modules/licensing/IPILicenseTemplate.sol";
+import { PILFlavors } from "@storyprotocol/core/lib/PILFlavors.sol";
+
+import { SimpleNFT } from "./mocks/SimpleNFT.sol";
+
+import { ERC721Holder } from "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+
+/// @notice An example contract that demonstrates how to mint an NFT, register it as an IP Asset,
+/// attach license terms to it, mint a license token from it, and register it as a derivative of the parent.
+contract Example is ERC721Holder {
+  IIPAssetRegistry public immutable IP_ASSET_REGISTRY;
+  ILicensingModule public immutable LICENSING_MODULE;
+  IPILicenseTemplate public immutable PIL_TEMPLATE;
+  address public immutable ROYALTY_POLICY_LAP;
+  address public immutable WIP;
+  SimpleNFT public immutable SIMPLE_NFT;
+
+  constructor(
+    address ipAssetRegistry,
+    address licensingModule,
+    address pilTemplate,
+    address royaltyPolicyLAP,
+    address wip
+  ) {
+    IP_ASSET_REGISTRY = IIPAssetRegistry(ipAssetRegistry);
+    LICENSING_MODULE = ILicensingModule(licensingModule);
+    PIL_TEMPLATE = IPILicenseTemplate(pilTemplate);
+    ROYALTY_POLICY_LAP = royaltyPolicyLAP;
+    WIP = wip;
+    // Create a new Simple NFT collection
+    SIMPLE_NFT = new SimpleNFT("Simple IP NFT", "SIM");
+  }
+
+  /// @notice Mint an NFT, register it as an IP Asset, and attach License Terms to it.
+  /// @param receiver The address that will receive the NFT/IPA.
+  /// @return tokenId The token ID of the NFT representing ownership of the IPA.
+  /// @return ipId The address of the IP Account.
+  /// @return licenseTermsId The ID of the license terms.
+  function mintAndRegisterAndCreateTermsAndAttach(
+    address receiver
+  ) external returns (uint256 tokenId, address ipId, uint256 licenseTermsId) {
+    // We mint to this contract so that it has permissions
+    // to attach license terms to the IP Asset.
+    // We will later transfer it to the intended `receiver`
+    tokenId = SIMPLE_NFT.mint(address(this));
+    ipId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), tokenId);
+
+    // register license terms so we can attach them later
+    licenseTermsId = PIL_TEMPLATE.registerLicenseTerms(
+      PILFlavors.commercialRemix({
+        mintingFee: 0,
+        commercialRevShare: 10 * 10 ** 6, // 10%
+        royaltyPolicy: ROYALTY_POLICY_LAP,
+        currencyToken: WIP
+      })
+    );
+
+    // attach the license terms to the IP Asset
+    LICENSING_MODULE.attachLicenseTerms(ipId, address(PIL_TEMPLATE), licenseTermsId);
+
+    // transfer the NFT to the receiver so it owns the IPA
+    SIMPLE_NFT.transferFrom(address(this), receiver, tokenId);
+  }
+}
+```
+
+## 라이선스 토큰 발행 및 파생물로 등록하기
+
+이 다음 섹션에서는 후반부 튜토리얼 몇 가지를 하나로 결합할 것입니다. 우리는 `mintLicenseTokenAndRegisterDerivative` 라는 이름의 함수를 만들 것입니다. 이 함수는 잠재적으로 다른 사용자가 자신의 "자식"(파생) IP 자산을 등록하고, "부모"(루트) IP 자산으로부터 라이선스 토큰을 발행하며, 자신의 자식 IPA를 부모 IPA의 파생물로 등록할 수 있게 해줍니다. 이 함수는 몇 가지 매개변수를 받습니다:
+
+1. `parentIpId`: 부모 IPA의 `ipId`tokenId
+2. `licenseTermsId`: 라이선스 토큰을 발행하고자 하는 라이선스 조건의 id
+3. `receiver`: 자식 IPA의 소유자
+
+### 전제 조건
+
+* 완료: [라이선스 토큰 발행하기](/developers/smart-contracts-guide/mint-license)
+* 완료: [파생물 등록하기](/developers/smart-contracts-guide/register-derivative)
+
+### 우리의 컨트랙트 작성하기
+
+Example.sol `Example.sol`컨트랙트에서 다음 함수를 맨 아래에 추가하세요:
+
+```solidity src/Example.sol
+/// @notice Mint and register a new child IPA, mint a License Token
+/// from the parent, and register it as a derivative of the parent.
+/// @param parentIpId The ipId of the parent IPA.
+/// @param licenseTermsId The ID of the license terms you will
+/// mint a license token from.
+/// @param receiver The address that will receive the NFT/IPA.
+/// @return childTokenId The token ID of the NFT representing ownership of the child IPA.
+/// @return childIpId The address of the child IPA.
+function mintLicenseTokenAndRegisterDerivative(
+  address parentIpId,
+  uint256 licenseTermsId,
+  address receiver
+) external returns (uint256 childTokenId, address childIpId) {
+  // We mint to this contract so that it has permissions
+  // to register itself as a derivative of another
+  // IP Asset.
+  // We will later transfer it to the intended `receiver`
+  childTokenId = SIMPLE_NFT.mint(address(this));
+  childIpId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), childTokenId);
+
+  // mint a license token from the parent
+  uint256 licenseTokenId = LICENSING_MODULE.mintLicenseTokens({
+    licensorIpId: parentIpId,
+    licenseTemplate: address(PIL_TEMPLATE),
+    licenseTermsId: licenseTermsId,
+    amount: 1,
+    // mint the license token to this contract so it can
+    // use it to register as a derivative of the parent
+    receiver: address(this),
+    royaltyContext: "", // for PIL, royaltyContext is empty string
+    maxMintingFee: 0,
+    maxRevenueShare: 0
+  });
+
+  uint256[] memory licenseTokenIds = new uint256[](1);
+  licenseTokenIds[0] = licenseTokenId;
+
+  // register the new child IPA as a derivative
+  // of the parent
+  LICENSING_MODULE.registerDerivativeWithLicenseTokens({
+    childIpId: childIpId,
+    licenseTokenIds: licenseTokenIds,
+    royaltyContext: "", // empty for PIL
+    maxRts: 0
+  });
+
+  // transfer the NFT to the receiver so it owns the child IPA
+  SIMPLE_NFT.transferFrom(address(this), receiver, childTokenId);
+}
+```
+
+# 우리의 컨트랙트 테스트하기
+
+test/Example.t.sol 아래에 또 다른 새 파일을 만들고 `test/Example.t.sol`다음을 붙여넣으세요:
+
+```solidity test/Example.t.sol
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.26;
+
+import { Test } from "forge-std/Test.sol";
+// for testing purposes only
+import { MockIPGraph } from "@storyprotocol/test/mocks/MockIPGraph.sol";
+import { IIPAssetRegistry } from "@storyprotocol/core/interfaces/registries/IIPAssetRegistry.sol";
+import { ILicenseRegistry } from "@storyprotocol/core/interfaces/registries/ILicenseRegistry.sol";
+
+import { Example } from "../src/Example.sol";
+import { SimpleNFT } from "../src/mocks/SimpleNFT.sol";
+
+// Run this test:
+// forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/Example.t.sol
+contract ExampleTest is Test {
+  address internal alice = address(0xa11ce);
+  address internal bob = address(0xb0b);
+
+  // For addresses, see https://docs.story.foundation/developers/deployed-smart-contracts
+  // Protocol Core - IPAssetRegistry
+  address internal ipAssetRegistry = 0x77319B4031e6eF1250907aa00018B8B1c67a244b;
+  // Protocol Core - LicenseRegistry
+  address internal licenseRegistry = 0x529a750E02d8E2f15649c13D69a465286a780e24;
+  // Protocol Core - LicensingModule
+  address internal licensingModule = 0x04fbd8a2e56dd85CFD5500A4A4DfA955B9f1dE6f;
+  // Protocol Core - PILicenseTemplate
+  address internal pilTemplate = 0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316;
+  // Protocol Core - RoyaltyPolicyLAP
+  address internal royaltyPolicyLAP = 0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E;
+  // Revenue Token - WIP
+  address internal wip = 0x1514000000000000000000000000000000000000;
+
+  SimpleNFT public SIMPLE_NFT;
+  Example public EXAMPLE;
+
+  function setUp() public {
+    // this is only for testing purposes
+    // due to our IPGraph precompile not being
+    // deployed on the fork
+    vm.etch(address(0x0101), address(new MockIPGraph()).code);
+
+    EXAMPLE = new Example(ipAssetRegistry, licensingModule, pilTemplate, royaltyPolicyLAP, wip);
+    SIMPLE_NFT = SimpleNFT(EXAMPLE.SIMPLE_NFT());
+  }
+
+  function test_mintAndRegisterAndCreateTermsAndAttach() public {
+    ILicenseRegistry LICENSE_REGISTRY = ILicenseRegistry(licenseRegistry);
+    IIPAssetRegistry IP_ASSET_REGISTRY = IIPAssetRegistry(ipAssetRegistry);
+
+    uint256 expectedTokenId = SIMPLE_NFT.nextTokenId();
+    address expectedIpId = IP_ASSET_REGISTRY.ipId(block.chainid, address(SIMPLE_NFT), expectedTokenId);
+
+    (uint256 tokenId, address ipId, uint256 licenseTermsId) = EXAMPLE.mintAndRegisterAndCreateTermsAndAttach(alice);
+
+    assertEq(tokenId, expectedTokenId);
+    assertEq(ipId, expectedIpId);
+    assertEq(SIMPLE_NFT.ownerOf(tokenId), alice);
+
+    assertTrue(LICENSE_REGISTRY.hasIpAttachedLicenseTerms(ipId, pilTemplate, licenseTermsId));
+    assertEq(LICENSE_REGISTRY.getAttachedLicenseTermsCount(ipId), 1);
+    (address licenseTemplate, uint256 attachedLicenseTermsId) = LICENSE_REGISTRY.getAttachedLicenseTerms({
+      ipId: ipId,
+      index: 0
+    });
+    assertEq(licenseTemplate, pilTemplate);
+    assertEq(attachedLicenseTermsId, licenseTermsId);
+  }
+
+  function test_mintLicenseTokenAndRegisterDerivative() public {
+    ILicenseRegistry LICENSE_REGISTRY = ILicenseRegistry(licenseRegistry);
+    IIPAssetRegistry IP_ASSET_REGISTRY = IIPAssetRegistry(ipAssetRegistry);
+
+    (uint256 parentTokenId, address parentIpId, uint256 licenseTermsId) = EXAMPLE
+    .mintAndRegisterAndCreateTermsAndAttach(alice);
+
+    (uint256 childTokenId, address childIpId) = EXAMPLE.mintLicenseTokenAndRegisterDerivative(
+      parentIpId,
+      licenseTermsId,
+      bob
+    );
+
+    assertTrue(LICENSE_REGISTRY.hasDerivativeIps(parentIpId));
+    assertTrue(LICENSE_REGISTRY.isParentIp(parentIpId, childIpId));
+    assertTrue(LICENSE_REGISTRY.isDerivativeIp(childIpId));
+    assertEq(LICENSE_REGISTRY.getDerivativeIpCount(parentIpId), 1);
+    assertEq(LICENSE_REGISTRY.getParentIpCount(childIpId), 1);
+    assertEq(LICENSE_REGISTRY.getParentIp({ childIpId: childIpId, index: 0 }), parentIpId);
+    assertEq(LICENSE_REGISTRY.getDerivativeIp({ parentIpId: parentIpId, index: 0 }), childIpId);
+  }
+}
+```
+
+forge test를 실행하세요`forge build`. 모든 것이 성공적이라면, 명령이 성공적으로 컴파일될 것입니다.
+
+이를 테스트하려면 다음 명령을 실행하세요:
+
+```bash
+forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/Example.t.sol
+```
+
+# 예제 컨트랙트 배포 및 검증하기
+
+CONTRACT\_ADDRESSES는 `--constructor-args`배포된 스마트 컨트랙트[배포된 스마트 컨트랙트](/developers/deployed-smart-contracts)에서 가져옵니다.
+
+```bash
+forge create \
+  --rpc-url https://aeneid.storyrpc.io/ \
+  --private-key $PRIVATE_KEY \
+  ./src/Example.sol:Example \
+  --verify \
+  --verifier blockscout \
+  --verifier-url https://aeneid.storyscan.io/api/ \
+  --constructor-args 0x77319B4031e6eF1250907aa00018B8B1c67a244b 0x04fbd8a2e56dd85CFD5500A4A4DfA955B9f1dE6f 0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316 0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E 0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E
+```
+
+모든 것이 올바르게 작동했다면, 콘솔에서 `Deployed to: 0xfb0923D531C1ca54AB9ee10CB8364b23d0C7F47d`와 같은 것을 볼 수 있을 것입니다. 그 주소를 [탐색기](https://aeneid.storyscan.io/)에 붙여넣고 검증된 컨트랙트를 확인하세요!
+
+# 잘 하셨습니다! :)
+
+<CardGroup cols={2}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/src/Example.sol" icon="thumbs-up">
+    완성된 코드를 확인하세요.
+  </Card>
+
+  <Card title="비디오 설명" href="https://www.youtube.com/watch?v=X421IuZENqM" icon="video">
+    이 튜토리얼의 비디오 설명을 확인해보세요!
+  </Card>
+</CardGroup>
+
+
+# Mint a License Token
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/3_LicenseToken.t.sol" icon="thumbs-up">
+  완성된 코드를 끝까지 따라가세요.
+</Card>
+
+이 섹션에서는 [License Token](/concepts/licensing-module/license-token)을 [IP Asset](/concepts/ip-asset/overview)에서 발행하는 방법을 보여줍니다. IP Asset에 [License Terms](/concepts/licensing-module/license-terms)가 첨부된 경우에만 License Token을 발행할 수 있습니다. License Token은 ERC-721로 발행됩니다.
+
+License Token을 발행하는 두 가지 이유가 있습니다:
+
+1. 라이선스를 보유하고 라이선스에 설명된 대로 기본 IP Asset을 사용할 수 있도록 하기 위해 (예: "적절한 귀속을 제공하고 수익의 5%를 공유하는 한 상업적으로 사용할 수 있음")
+2. 라이선스 토큰을 사용하여 다른 IP Asset을 그것의 파생작으로 연결하기 위해. *하지만 나중에 보시겠지만, 일부 SDK 함수는 파생작을 등록하기 위해 명시적으로 라이선스 토큰을 먼저 발행할 필요가 없으며, 실제로 뒤에서 이를 처리합니다.*
+
+## 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 완료하세요 [자체 프로젝트 설정](/developers/smart-contracts-guide/setup)
+2. IP Asset에 License Terms가 첨부되어 있어야 합니다. 방법은 [여기](/developers/smart-contracts-guide/attach-terms)
+
+## 라이선스 발행
+
+IP Asset (`ipId = 0x01`)에 License Terms (`licenseTermdId = 10`)가 첨부되어 있다고 가정해 봅시다. 우리는 이 조건으로 2개의 License Token을 특정 지갑 주소 (`0x02`)로 발행하고 싶습니다.
+
+<Warning>
+  **유료 라이선스**
+
+  일부 IP Asset에는 라이선스를 발행하는 사용자가 `mintingFee`를 지불해야 하는 라이선스 조건이 첨부되어 있을 수 있음을 유의하세요.
+</Warning>
+
+작동을 확인하고 결과를 검증하기 위해 `test/3_LicenseToken.t.sol` 아래에 테스트 파일을 만들어 봅시다:
+
+<Note>
+  **계약 주소**
+
+  Story 컨트랙트의 주소를 여러분을 위해 미리 채워 넣었습니다. 하지만 여기에서도 해당 주소들을 찾을 수 있습니다:[배포된 스마트 컨트랙트](/developers/deployed-smart-contracts)
+</Note>
+
+```solidity test/3_LicenseToken.t.sol
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.26;
+
+import { Test } from "forge-std/Test.sol";
+// for testing purposes only
+import { MockIPGraph } from "@storyprotocol/test/mocks/MockIPGraph.sol";
+import { IIPAssetRegistry } from "@storyprotocol/core/interfaces/registries/IIPAssetRegistry.sol";
+import { IPILicenseTemplate } from "@storyprotocol/core/interfaces/modules/licensing/IPILicenseTemplate.sol";
+import { ILicensingModule } from "@storyprotocol/core/interfaces/modules/licensing/ILicensingModule.sol";
+import { ILicenseToken } from "@storyprotocol/core/interfaces/ILicenseToken.sol";
+import { RoyaltyPolicyLAP } from "@storyprotocol/core/modules/royalty/policies/LAP/RoyaltyPolicyLAP.sol";
+import { PILFlavors } from "@storyprotocol/core/lib/PILFlavors.sol";
+import { PILTerms } from "@storyprotocol/core/interfaces/modules/licensing/IPILicenseTemplate.sol";
+
+import { SimpleNFT } from "../src/mocks/SimpleNFT.sol";
+
+// Run this test:
+// forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/3_LicenseToken.t.sol
+contract LicenseTokenTest is Test {
+    address internal alice = address(0xa11ce);
+    address internal bob = address(0xb0b);
+
+    // For addresses, see https://docs.story.foundation/developers/deployed-smart-contracts
+    // Protocol Core - IPAssetRegistry
+    IIPAssetRegistry internal IP_ASSET_REGISTRY = IIPAssetRegistry(0x77319B4031e6eF1250907aa00018B8B1c67a244b);
+    // Protocol Core - LicensingModule
+    ILicensingModule internal LICENSING_MODULE = ILicensingModule(0x04fbd8a2e56dd85CFD5500A4A4DfA955B9f1dE6f);
+    // Protocol Core - PILicenseTemplate
+    IPILicenseTemplate internal PIL_TEMPLATE = IPILicenseTemplate(0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316);
+    // Protocol Core - RoyaltyPolicyLAP
+    address internal ROYALTY_POLICY_LAP = 0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E;
+    // Protocol Core - LicenseToken
+    ILicenseToken internal LICENSE_TOKEN = ILicenseToken(0xFe3838BFb30B34170F00030B52eA4893d8aAC6bC);
+    // Revenue Token - MERC20
+    address internal MERC20 = 0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E;
+
+    SimpleNFT public SIMPLE_NFT;
+    uint256 public tokenId;
+    address public ipId;
+    uint256 public licenseTermsId;
+
+    function setUp() public {
+        // this is only for testing purposes
+        // due to our IPGraph precompile not being
+        // deployed on the fork
+        vm.etch(address(0x0101), address(new MockIPGraph()).code);
+
+        SIMPLE_NFT = new SimpleNFT("Simple IP NFT", "SIM");
+        tokenId = SIMPLE_NFT.mint(alice);
+        ipId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), tokenId);
+
+        licenseTermsId = PIL_TEMPLATE.registerLicenseTerms(
+            PILFlavors.commercialRemix({
+                mintingFee: 0,
+                commercialRevShare: 10 * 10 ** 6, // 10%
+                royaltyPolicy: ROYALTY_POLICY_LAP,
+                currencyToken: MERC20
+            })
+        );
+
+        vm.prank(alice);
+        LICENSING_MODULE.attachLicenseTerms(ipId, address(PIL_TEMPLATE), licenseTermsId);
+    }
+
+    /// @notice Mints license tokens for an IP Asset.
+    /// Anyone can mint a license token.
+    function test_mintLicenseToken() public {
+        uint256 startLicenseTokenId = LICENSING_MODULE.mintLicenseTokens({
+            licensorIpId: ipId,
+            licenseTemplate: address(PIL_TEMPLATE),
+            licenseTermsId: licenseTermsId,
+            amount: 2,
+            receiver: bob,
+            royaltyContext: "", // for PIL, royaltyContext is empty string
+            maxMintingFee: 0,
+            maxRevenueShare: 0
+        });
+
+        assertEq(LICENSE_TOKEN.ownerOf(startLicenseTokenId), bob);
+        assertEq(LICENSE_TOKEN.ownerOf(startLicenseTokenId + 1), bob);
+    }
+}
+```
+
+## 코드를 테스트하세요!
+
+실행하세요 `forge build`. 모든 것이 성공적이라면, 명령어가 성공적으로 컴파일될 것입니다.
+
+이제 다음 명령어를 실행하여 테스트를 실행하세요:
+
+```bash
+forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/3_LicenseToken.t.sol
+```
+
+## 파생작 등록하기
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/3_LicenseToken.t.sol" icon="thumbs-up">
+  완성된 코드를 끝까지 따라가보세요.
+</Card>
+
+이제 라이선스 토큰을 발행했으니, 이를 보유하거나 IP 자산을 파생작으로 연결하는 데 사용할 수 있습니다. 다음 페이지에서 이에 대해 살펴보겠습니다.
+
+
+# 설정
+
+이 가이드에서는 Story 스마트 컨트랙트 개발 환경을 몇 분 만에 설정하는 방법을 보여드리겠습니다.
+
+## 전제 조건
+
+* [Foundry 설치](https://book.getfoundry.sh/getting-started/installation)
+* [yarn 설치](https://classic.yarnpkg.com/lang/en/docs/install/)
+
+## 프로젝트 생성
+
+1. 실행 `foundryup`하여 최신 안정 버전의 미리 컴파일된 바이너리(forge, cast, anvil, chisel)를 자동으로 설치합니다
+2. 새 디렉토리에서 다음 명령을 실행합니다: `forge init`. 이것은 `foundry.toml`와 프로젝트 루트에 예제 프로젝트 파일들을 생성합니다. 기본적으로 forge init은 새로운 git 저장소도 초기화합니다.
+3. 새로운 yarn 프로젝트를 초기화합니다: `yarn init`. 또는 다음을 사용할 수 있습니다 `npm init` 또는 `pnpm init`.
+4. 루트 레벨의 `foundry.toml` 파일(프로젝트의 최상위 디렉토리에 위치)을 열고 다음으로 교체하세요:
+
+```toml
+[profile.default]
+out = 'out'
+libs = ['node_modules', 'lib']
+cache_path  = 'forge-cache'
+gas_reports = ["*"]
+optimizer = true
+optimizer_runs = 20000
+test = 'test'
+solc = '0.8.26'
+fs_permissions = [{ access = 'read', path = './out' }, { access = 'read-write', path = './deploy-out' }]
+evm_version = 'cancun'
+remappings = [
+    '@openzeppelin/=node_modules/@openzeppelin/',
+    '@storyprotocol/core/=node_modules/@story-protocol/protocol-core/contracts/',
+    '@storyprotocol/periphery/=node_modules/@story-protocol/protocol-periphery/contracts/',
+    'erc6551/=node_modules/erc6551/',
+    'forge-std/=node_modules/forge-std/src/',
+    'ds-test/=node_modules/ds-test/src/',
+    '@storyprotocol/test/=node_modules/@story-protocol/protocol-core/test/foundry/',
+    '@solady/=node_modules/solady/'
+]
+```
+
+5. 예제 컨트랙트 파일들을 제거합니다: `rm src/Counter.sol script/Counter.s.sol test/Counter.t.sol`
+
+## 의존성 설치
+
+이제 의존성을 설치할 준비가 되었습니다. Story Protocol 코어 및 주변 모듈을 통합하기 위해 다음을 실행하여 `package.json`에 추가하세요. 또한 `openzeppelin`와 `erc6551`를 컨트랙트와 테스트를 위한 의존성으로 설치할 것입니다.
+
+```bash
+# note: you can run them one-by-one, or all at once
+yarn add @story-protocol/protocol-core@https://github.com/storyprotocol/protocol-core-v1
+yarn add @story-protocol/protocol-periphery@https://github.com/storyprotocol/protocol-periphery-v1
+yarn add @openzeppelin/contracts
+yarn add @openzeppelin/contracts-upgradeable
+yarn add erc6551
+yarn add solady
+```
+
+또한, Foundry의 테스트 키트 작업을 위해 다음 `devDependencies`를 추가하는 것을 추천합니다:
+
+```bash
+yarn add -D https://github.com/dapphub/ds-test
+yarn add -D github:foundry-rs/forge-std#v1.7.6
+```
+
+이제 간단한 테스트 등록 컨트랙트를 만들 준비가 되었습니다!
+
+
+# IP 자산 등록하기
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/0_IPARegistrar.t.sol" icon="thumbs-up">
+  완성된 코드를 끝까지 따라가보세요.
+</Card>
+
+오프체인 IP(예: 책, 캐릭터, 그림 등)가 있다고 가정해 봅시다. Story에서 해당 IP를 등록하려면 먼저 NFT를 발행해야 합니다. 이 NFT는 IP에 대한 **소유권**입니다. 그런 다음 해당 NFT를 Story에 **등록**하여 [IP 자산](/concepts/ip-asset/overview)으로 만듭니다. 아래 튜토리얼에서 이 과정을 안내해 드리겠습니다.
+
+## 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 다음을 완료하세요: [자체 프로젝트 설정하기](/developers/smart-contracts-guide/setup)
+
+## 시작하기 전에
+
+두 가지 시나리오가 있습니다:
+
+1. 이미 **사용자 정의** ERC-721 NFT 계약이 있고 이를 통해 발행할 수 있습니다
+2. 발행을 위한 [SPG (Periphery)](/concepts/spg/overview) NFT 계약을 생성하고 싶습니다
+
+## 시나리오 #1: 이미 사용자 정의 ERC-721 NFT 계약이 있고 이를 통해 발행할 수 있습니다
+
+이미 NFT를 발행했거나 사용자 정의 ERC-721 계약을 사용하여 IP를 등록하려는 경우 이 섹션을 참조하세요.
+
+아래에서 볼 수 있듯이 등록 과정은 비교적 간단합니다. 우리는`SimpleNFT`을 예시로 사용하지만, 여러분은 자신의 ERC-721 계약으로 대체할 수 있습니다.
+
+해야 할 일은 단순히`register`을[IP Asset Registry](/concepts/registry/ip-asset-registry) with:
+
+* `chainid`- 간단히`block.chainid`
+* `tokenContract`- NFT 컬렉션의 주소
+* `tokenId`- NFT의 ID
+
+테스트 파일을`test/0_IPARegistrar.t.sol`에 생성하여 작동을 확인하고 결과를 검증해 보겠습니다:
+
+<Note>
+  **계약 주소**
+
+  Story 계약의 주소를 여러분을 위해 미리 입력해 두었습니다. 하지만 여기에서도 해당 주소를 찾을 수 있습니다:[배포된 스마트 계약](/developers/deployed-smart-contracts)
+
+  테스트에 사용하는`SimpleNFT`계약을 여기에서 볼 수 있습니다[here](https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/src/mocks/SimpleNFT.sol).
+</Note>
+
+<Info>
+  테스트에 사용하는`SimpleNFT`계약을 여기에서 볼 수 있습니다[here](https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/src/mocks/SimpleNFT.sol).
+</Info>
+
+```solidity test/0_IPARegistrar.t.sol
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.26;
+
+import { Test } from "forge-std/Test.sol";
+import { IIPAssetRegistry } from "@storyprotocol/core/interfaces/registries/IIPAssetRegistry.sol";
+
+// your own ERC-721 NFT contract
+import { SimpleNFT } from "../src/mocks/SimpleNFT.sol";
+
+// Run this test:
+// forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/0_IPARegistrar.t.sol
+contract IPARegistrarTest is Test {
+    address internal alice = address(0xa11ce);
+
+    // For addresses, see https://docs.story.foundation/developers/deployed-smart-contracts
+    // Protocol Core - IPAssetRegistry
+    IIPAssetRegistry internal IP_ASSET_REGISTRY = IIPAssetRegistry(0x77319B4031e6eF1250907aa00018B8B1c67a244b);
+
+    SimpleNFT public SIMPLE_NFT;
+
+    function setUp() public {
+        // Create a new Simple NFT collection
+        SIMPLE_NFT = new SimpleNFT("Simple IP NFT", "SIM");
+    }
+
+    /// @notice Mint an NFT and then register it as an IP Asset.
+    function test_register() public {
+        uint256 expectedTokenId = SIMPLE_NFT.nextTokenId();
+        address expectedIpId = IP_ASSET_REGISTRY.ipId(block.chainid, address(SIMPLE_NFT), expectedTokenId);
+
+        uint256 tokenId = SIMPLE_NFT.mint(alice);
+        address ipId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), tokenId);
+
+        assertEq(tokenId, expectedTokenId);
+        assertEq(ipId, expectedIpId);
+        assertEq(SIMPLE_NFT.ownerOf(tokenId), alice);
+    }
+}
+```
+
+## 시나리오 #2: SPG NFT 계약을 생성하여 발행을 대신하고 싶은 경우
+
+자체 사용자 정의 NFT 계약이 없다면 이 섹션을 참조하세요.
+
+이를 위해 우리는[SPG](/concepts/spg/overview)를 사용할 것입니다. 이는 여러 트랜잭션을 하나로 결합할 수 있게 해주는 유틸리티 계약입니다. 이 경우, SPG의`mintAndRegisterIp`함수를 사용하여 NFT 발행과 IP 자산으로의 등록을 동시에 수행합니다.
+
+를 사용하기 위해서는`mintAndRegisterIp`먼저 새로운`SPGNFT`컬렉션을 생성해야 합니다. 이는 단순히`createCollection`을`StoryProtocolGateway`계약에서 호출하면 됩니다. 또는 어떤 이유로 자체`SPGNFT`를 만들고 싶다면[ISPGNFT](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/interfaces/ISPGNFT.sol)계약 인터페이스를 구현할 수 있습니다. 아래 예시를 따라 새로운 SPGNFT를 초기화하는 데 사용할 수 있는 예시 매개변수를 확인하세요.
+
+자체 SPGNFT를 가지고 나면 해야 할 일은 단순히`mintAndRegisterIp` with:
+
+* `spgNftContract`- SPGNFT 계약의 주소
+* `recipient`- NFT를 받고 따라서 새로 등록된 IP의 소유자가 될 주소.*Note: remember that registering IP on Story is permissionless, so you can register an IP for someone else (by paying for the transaction) yet they can still be the owner of that IP Asset.*
+* `ipMetadata`- NFT와 IP에 연관된 메타데이터.[this](/concepts/ip-asset/overview#nft-vs-ip-metadata)섹션을 참조하여 NFT 및 IP 메타데이터 설정에 대해 더 잘 이해할 수 있습니다.
+
+1. 를 실행하여`touch test/0_IPARegistrar.t.sol`에 테스트 파일을 생성하세요`test/0_IPARegistrar.t.sol`. 그런 다음 다음 코드를 붙여넣으세요:
+
+<Note>
+  **계약 주소**
+
+  Story 계약의 주소를 여러분을 위해 미리 입력해 두었습니다. 하지만 여기에서도 해당 주소를 찾을 수 있습니다:[배포된 스마트 계약](/developers/deployed-smart-contracts)
+</Note>
+
+```solidity test/0_IPARegistrar.t.sol
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.26;
+
+import { Test } from "forge-std/Test.sol";
+import { IIPAssetRegistry } from "@storyprotocol/core/interfaces/registries/IIPAssetRegistry.sol";
+import { ISPGNFT } from "@storyprotocol/periphery/interfaces/ISPGNFT.sol";
+import { IRegistrationWorkflows } from "@storyprotocol/periphery/interfaces/workflows/IRegistrationWorkflows.sol";
+import { WorkflowStructs } from "@storyprotocol/periphery/lib/WorkflowStructs.sol";
+
+// Run this test:
+// forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/0_IPARegistrar.t.sol
+contract IPARegistrarTest is Test {
+    address internal alice = address(0xa11ce);
+
+    // For addresses, see https://docs.story.foundation/developers/deployed-smart-contracts
+    // Protocol Core - IPAssetRegistry
+    IIPAssetRegistry internal IP_ASSET_REGISTRY = IIPAssetRegistry(0x77319B4031e6eF1250907aa00018B8B1c67a244b);
+    // Protocol Periphery - RegistrationWorkflows
+    IRegistrationWorkflows internal REGISTRATION_WORKFLOWS =
+        IRegistrationWorkflows(0xbe39E1C756e921BD25DF86e7AAa31106d1eb0424);
+
+    ISPGNFT public SPG_NFT;
+
+    function setUp() public {
+        // Create a new NFT collection via SPG
+        SPG_NFT = ISPGNFT(
+            REGISTRATION_WORKFLOWS.createCollection(
+                ISPGNFT.InitParams({
+                    name: "Test Collection",
+                    symbol: "TEST",
+                    baseURI: "",
+                    contractURI: "",
+                    maxSupply: 100,
+                    mintFee: 0,
+                    mintFeeToken: address(0),
+                    mintFeeRecipient: address(this),
+                    owner: address(this),
+                    mintOpen: true,
+                    isPublicMinting: false
+                })
+            )
+        );
+    }
+
+    /// @notice Mint an NFT and register it in the same call via the Story Protocol Gateway.
+    /// @dev Requires the collection address that is passed into the `mintAndRegisterIp` function
+    /// to be created via SPG (createCollection), as done above. Or, a contract that
+    /// implements the `ISPGNFT` interface.
+    function test_mintAndRegisterIp() public {
+        uint256 expectedTokenId = SPG_NFT.totalSupply() + 1;
+        address expectedIpId = IP_ASSET_REGISTRY.ipId(block.chainid, address(SPG_NFT), expectedTokenId);
+
+        // Note: The caller of this function must be the owner of the SPG NFT Collection.
+        // In this case, the owner of the SPG NFT Collection is the contract itself
+        // because it deployed it in the `setup` function.
+        // We can make `alice` the recipient of the NFT though, which makes her the
+        // owner of not only the NFT, but therefore the IP Asset.
+        (address ipId, uint256 tokenId) = REGISTRATION_WORKFLOWS.mintAndRegisterIp(
+            address(SPG_NFT),
+            alice,
+            WorkflowStructs.IPMetadata({
+                ipMetadataURI: "https://ipfs.io/ipfs/QmZHfQdFA2cb3ASdmeGS5K6rZjz65osUddYMURDx21bT73",
+                ipMetadataHash: keccak256(
+                    abi.encodePacked(
+                        "{'title':'My IP Asset','description':'This is a test IP asset','createdAt':'','creators':[]}"
+                    )
+                ),
+                nftMetadataURI: "https://ipfs.io/ipfs/QmRL5PcK66J1mbtTZSw1nwVqrGxt98onStx6LgeHTDbEey",
+                nftMetadataHash: keccak256(
+                    abi.encodePacked(
+                        "{'name':'Test NFT','description':'This is a test NFT','image':'https://picsum.photos/200'}"
+                    )
+                )
+            }),
+            true
+        );
+
+        assertEq(ipId, expectedIpId);
+        assertEq(tokenId, expectedTokenId);
+        assertEq(SPG_NFT.ownerOf(tokenId), alice);
+    }
+}
+```
+
+## 테스트 실행 및 결과 확인
+
+2. 를 실행하세요`forge build`. 모든 것이 성공적이라면 명령이 성공적으로 컴파일될 것입니다.
+
+3. 이제 다음 명령을 실행하여 테스트를 실행하세요:
+
+```bash
+forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/0_IPARegistrar.t.sol
+```
+
+## IP에 라이선스 조건 추가
+
+축하합니다, IP를 등록하셨습니다!
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/0_IPARegistrar.t.sol" icon="thumbs-up">
+  완성된 코드를 끝까지 따라가세요.
+</Card>
+
+이제 IP가 등록되었으니[라이선스 조건](/concepts/licensing-module/license-terms)을 생성하고 첨부할 수 있습니다. 이를 통해 다른 사람들이 라이선스를 발행하고 조건에 따라 제한된 방식으로 여러분의 IP를 사용할 수 있게 됩니다.
+
+다음 페이지에서 이에 대해 살펴보겠습니다.
+
+
+# Register a Derivative
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/4_IPARemix.t.sol" icon="thumbs-up">
+  이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다룹니다.
+</Card>
+
+일단 [License Token](/concepts/licensing-module/license-token)이 IP Asset에서 발행되면, 해당 토큰(ERC-721 NFT)의 소유자는 이를 소각하여 자신의 IP Asset을 License Token과 연관된 IP Asset의 파생작으로 등록할 수 있습니다.
+
+## 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 완료하세요 [자체 프로젝트 설정](/developers/smart-contracts-guide/setup)
+2. 발행된 License Token이 있어야 합니다. 방법은 [여기](/developers/smart-contracts-guide/mint-license)
+
+## 파생작으로 등록하기
+
+작동을 확인하고 결과를 검증하기 위해 `test/4_IPARemix.t.sol` 아래에 테스트 파일을 만들어 봅시다:
+
+<Note>
+  **계약 주소**
+
+  Story 계약의 주소를 여러분을 위해 미리 채워 넣었습니다. 하지만 여기에서도 주소를 찾을 수 있습니다: [배포된 스마트 계약](/developers/deployed-smart-contracts)
+</Note>
+
+```solidity test/4_IPARemix.t.sol
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.26;
+
+import { Test } from "forge-std/Test.sol";
+// for testing purposes only
+import { MockIPGraph } from "@storyprotocol/test/mocks/MockIPGraph.sol";
+import { IIPAssetRegistry } from "@storyprotocol/core/interfaces/registries/IIPAssetRegistry.sol";
+import { ILicenseRegistry } from "@storyprotocol/core/interfaces/registries/ILicenseRegistry.sol";
+import { IPILicenseTemplate } from "@storyprotocol/core/interfaces/modules/licensing/IPILicenseTemplate.sol";
+import { ILicensingModule } from "@storyprotocol/core/interfaces/modules/licensing/ILicensingModule.sol";
+import { PILFlavors } from "@storyprotocol/core/lib/PILFlavors.sol";
+import { PILTerms } from "@storyprotocol/core/interfaces/modules/licensing/IPILicenseTemplate.sol";
+
+import { SimpleNFT } from "../src/mocks/SimpleNFT.sol";
+
+// Run this test:
+// forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/4_IPARemix.t.sol
+contract IPARemixTest is Test {
+    address internal alice = address(0xa11ce);
+    address internal bob = address(0xb0b);
+
+    // For addresses, see https://docs.story.foundation/developers/deployed-smart-contracts
+    // Protocol Core - IPAssetRegistry
+    IIPAssetRegistry internal IP_ASSET_REGISTRY = IIPAssetRegistry(0x77319B4031e6eF1250907aa00018B8B1c67a244b);
+    // Protocol Core - LicenseRegistry
+    ILicenseRegistry internal LICENSE_REGISTRY = ILicenseRegistry(0x529a750E02d8E2f15649c13D69a465286a780e24);
+    // Protocol Core - LicensingModule
+    ILicensingModule internal LICENSING_MODULE = ILicensingModule(0x04fbd8a2e56dd85CFD5500A4A4DfA955B9f1dE6f);
+    // Protocol Core - PILicenseTemplate
+    IPILicenseTemplate internal PIL_TEMPLATE = IPILicenseTemplate(0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316);
+    // Protocol Core - RoyaltyPolicyLAP
+    address internal ROYALTY_POLICY_LAP = 0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E;
+    // Revenue Token - MERC20
+    address internal MERC20 = 0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E;
+
+    SimpleNFT public SIMPLE_NFT;
+    uint256 public tokenId;
+    address public ipId;
+    uint256 public licenseTermsId;
+    uint256 public startLicenseTokenId;
+
+    function setUp() public {
+        // this is only for testing purposes
+        // due to our IPGraph precompile not being
+        // deployed on the fork
+        vm.etch(address(0x0101), address(new MockIPGraph()).code);
+
+        SIMPLE_NFT = new SimpleNFT("Simple IP NFT", "SIM");
+        tokenId = SIMPLE_NFT.mint(alice);
+        ipId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), tokenId);
+
+        licenseTermsId = PIL_TEMPLATE.registerLicenseTerms(
+            PILFlavors.commercialRemix({
+                mintingFee: 0,
+                commercialRevShare: 10 * 10 ** 6, // 10%
+                royaltyPolicy: ROYALTY_POLICY_LAP,
+                currencyToken: MERC20
+            })
+        );
+
+        vm.prank(alice);
+        LICENSING_MODULE.attachLicenseTerms(ipId, address(PIL_TEMPLATE), licenseTermsId);
+        startLicenseTokenId = LICENSING_MODULE.mintLicenseTokens({
+            licensorIpId: ipId,
+            licenseTemplate: address(PIL_TEMPLATE),
+            licenseTermsId: licenseTermsId,
+            amount: 2,
+            receiver: bob,
+            royaltyContext: "", // for PIL, royaltyContext is empty string
+            maxMintingFee: 0,
+            maxRevenueShare: 0
+        });
+    }
+
+    /// @notice Mints an NFT to be registered as IP, and then
+    /// linked as a derivative of alice's asset using the
+    /// minted license token.
+    function test_registerDerivativeWithLicenseTokens() public {
+        // First we mint an NFT and register it as an IP Asset,
+        // owned by Bob.
+        uint256 childTokenId = SIMPLE_NFT.mint(bob);
+        address childIpId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), childTokenId);
+
+        uint256[] memory licenseTokenIds = new uint256[](1);
+        licenseTokenIds[0] = startLicenseTokenId;
+
+        // Bob uses the License Token he has from Alice's IP
+        // to register his IP as a derivative of Alice's IP.
+        vm.prank(bob);
+        LICENSING_MODULE.registerDerivativeWithLicenseTokens({
+            childIpId: childIpId,
+            licenseTokenIds: licenseTokenIds,
+            royaltyContext: "", // empty for PIL
+            maxRts: 0
+        });
+
+        assertTrue(LICENSE_REGISTRY.hasDerivativeIps(ipId));
+        assertTrue(LICENSE_REGISTRY.isParentIp(ipId, childIpId));
+        assertTrue(LICENSE_REGISTRY.isDerivativeIp(childIpId));
+        assertEq(LICENSE_REGISTRY.getParentIpCount(childIpId), 1);
+        assertEq(LICENSE_REGISTRY.getDerivativeIpCount(ipId), 1);
+        assertEq(LICENSE_REGISTRY.getParentIp({ childIpId: childIpId, index: 0 }), ipId);
+        assertEq(LICENSE_REGISTRY.getDerivativeIp({ parentIpId: ipId, index: 0 }), childIpId);
+    }
+}
+```
+
+## 코드를 테스트하세요!
+
+실행하세요 `forge build`. 모든 것이 성공적이라면, 명령이 성공적으로 컴파일될 것입니다.
+
+이제 다음 명령을 실행하여 테스트를 실행하세요:
+
+```bash
+forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/4_IPARemix.t.sol
+```
+
+## 수익 지불 및 청구
+
+축하합니다, 파생 IP Asset을 등록하셨습니다!
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/4_IPARemix.t.sol" icon="thumbs-up">
+  이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다룹니다.
+</Card>
+
+이제 부모-자식 IP 관계를 설정했으니, 라이선스 조건에 따른 지불과 자동화된 수익 공유를 탐색할 수 있습니다. 이에 대해서는 다음 페이지에서 다룰 것입니다.
+
+
+# 스마트 계약 가이드
+
+이 섹션에서는 프로토콜 컨트랙트에 대해 간단히 살펴본 다음, 프로토콜 위에 구축을 시작하는 방법을 안내해 드리겠습니다. 아직 전체 아키텍처에 익숙하지 않다면, 먼저 [Architecture Overview](/concepts/overview) 섹션을 살펴보는 것을 추천합니다.
+
+## 스마트 컨트랙트 튜토리얼
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate" icon="thumbs-up">
+  튜토리얼을 건너뛰고 완성된 코드를 보세요. README 지침을 따라
+  테스트를 실행하거나 `/test` 폴더를 보면 모든 예제 계약을 볼 수 있습니다.
+</Card>
+
+**처음부터 설정하고 싶다면**, 다음 튜토리얼을 계속 진행하세요. 시작은 [Setup Your Own Project](/developers/smart-contracts-guide/setup) 단계부터입니다.
+
+## 우리의 스마트 계약
+
+현재 버전에서 우리의 Proof-of-Creativity 프로토콜은 모든 EVM 체인과 호환되며 Solidity로 작성된 스마트 계약 세트로 구성되어 있습니다. 개발자로서 상호 작용할 수 있는 두 개의 저장소가 있습니다:
+
+* [Story Protocol Core](https://github.com/storyprotocol/protocol-core-v1) - 이 저장소는 핵심 프로토콜 로직을 포함하고 있으며, 얇은 IP 레지스트리([IP Asset Registry](/concepts/registry/ip-asset-registry)), 일련의 [Modules](/concepts/modules/overview)로 구성되어 있으며 [Licensing](/concepts/licensing-module/overview), [Royalty](/concepts/royalty-module/overview), [Dispute](/concepts/dispute-module/overview), 메타데이터, 그리고 모듈 및 사용자 접근 제어를 관리하기 위한 모듈 관리자를 포함합니다.
+* [Story Protocol Periphery](https://github.com/storyprotocol/protocol-periphery-v1)- 핵심 계약이 기본 프로토콜 로직을 다루는 반면, 주변 계약은 UX를 크게 향상시키고 IPA 관리를 단순화하는 프로토콜 확장을 다룹니다. 이는 주로 [SPG](/concepts/spg/overview)를 통해 처리됩니다.
+
+## Story에서 계약 배포 및 검증
+
+<Note>
+  계약을 배포하고 검증하는 방법은 [Blockscout 공식 문서](https://docs.blockscout.com/developer-support/verifying-a-smart-contract/foundry-verification)에서 가져왔습니다.
+</Note>
+
+배포 직후 Blockscout으로 계약을 검증하세요 (Blockscout 홈페이지 탐색기 URL 끝에 "/api/"를 추가해야 합니다):
+
+```shell
+forge create \
+  --rpc-url <rpc_https_endpoint> \
+  --private-key $PRIVATE_KEY \
+  <contract_file>:<contract_name> \
+  --verify \
+  --verifier blockscout \
+  --verifier-url <blockscout_homepage_explorer_url>/api/
+```
+
+또는 foundry 스크립트를 사용하는 경우:
+
+```shell
+forge script <script_file> \
+  --rpc-url <rpc_https_endpoint> \
+  --private-key $PRIVATE_KEY \
+  --broadcast \
+  --verify \
+  --verifier blockscout \
+  --verifier-url <blockscout_homepage_explorer_url>/api/
+```
+
+<Warning>
+  의사 난수성을 위해 RANDAO를 사용하지 마세요. 대신 온체인 VRF(Pyth 또는 Gelato)를 사용하세요. 현재 RANDAO 값은 부모 블록 해시로 설정되어 있어 X-1 블록에 대해 무작위가 아닙니다.
+</Warning>
+
+
+# 라이선스 약관 등록하기
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/1_LicenseTerms.t.sol" icon="thumbs-up">
+  완성된 코드를 끝까지 따라가보세요.
+</Card>
+
+[License Terms](/concepts/licensing-module/license-terms)는 IP에서 발행된 라이선스에 대한 제한을 정의하는 구성 가능한 값의 집합입니다. 예를 들어, "이 라이선스를 발행하면 수익의 50%를 나와 공유해야 합니다." 전체 약관 세트는 [PIL Terms](/concepts/programmable-ip-license/pil-terms)에서 확인할 수 있습니다.
+
+## 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 다음을 완료하세요 [Setup Your Own Project](/developers/smart-contracts-guide/setup)
+
+## 시작하기 전에
+
+만약 **생성하려는 동일한 매개변수 집합에 대한 License Terms가 이미 존재한다면, 다시 생성할 필요가 없습니다**. License Terms는 프로토콜 전체에 적용되므로, 기존 License Terms를 `licenseTermsId`로 사용할 수 있습니다.
+
+## 라이선스 약관 등록하기
+
+전체 약관 세트는 [PIL Terms](/concepts/programmable-ip-license/pil-terms)에서 확인할 수 있습니다.
+
+작동을 확인하고 결과를 검증하기 위해 `test/1_LicenseTerms.t.sol` 아래에 테스트 파일을 만들어 봅시다:
+
+<Note>
+  **컨트랙트 주소**
+
+  Story 컨트랙트의 주소를 여러분을 위해 미리 채워 넣었습니다. 하지만 여기에서도 해당 주소들을 찾을 수 있습니다: [Deployed Smart Contracts](/developers/deployed-smart-contracts)
+</Note>
+
+```solidity test/1_LicenseTerms.t.sol
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.26;
+
+import { Test } from "forge-std/Test.sol";
+import { IPILicenseTemplate } from "@storyprotocol/core/interfaces/modules/licensing/IPILicenseTemplate.sol";
+import { PILTerms } from "@storyprotocol/core/interfaces/modules/licensing/IPILicenseTemplate.sol";
+
+// Run this test:
+// forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/1_LicenseTerms.t.sol
+contract LicenseTermsTest is Test {
+    address internal alice = address(0xa11ce);
+
+    // For addresses, see https://docs.story.foundation/developers/deployed-smart-contracts
+    // Protocol Core - PILicenseTemplate
+    IPILicenseTemplate internal PIL_TEMPLATE = IPILicenseTemplate(0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316);
+    // Protocol Core - RoyaltyPolicyLAP
+    address internal ROYALTY_POLICY_LAP = 0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E;
+    // Revenue Token - MERC20
+    address internal MERC20 = 0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E;
+
+    function setUp() public {}
+
+    /// @notice Registers new PIL Terms. Anyone can register PIL Terms.
+    function test_registerPILTerms() public {
+        PILTerms memory pilTerms = PILTerms({
+            transferable: true,
+            royaltyPolicy: ROYALTY_POLICY_LAP,
+            defaultMintingFee: 0,
+            expiration: 0,
+            commercialUse: true,
+            commercialAttribution: true,
+            commercializerChecker: address(0),
+            commercializerCheckerData: "",
+            commercialRevShare: 0,
+            commercialRevCeiling: 0,
+            derivativesAllowed: true,
+            derivativesAttribution: true,
+            derivativesApproval: true,
+            derivativesReciprocal: true,
+            derivativeRevCeiling: 0,
+            currency: MERC20,
+            uri: ""
+        });
+        uint256 licenseTermsId = PIL_TEMPLATE.registerLicenseTerms(pilTerms);
+
+        uint256 selectedLicenseTermsId = PIL_TEMPLATE.getLicenseTermsId(pilTerms);
+        assertEq(licenseTermsId, selectedLicenseTermsId);
+    }
+}
+```
+
+### PIL Flavors
+
+위에서 보시다시피, 많은 약관 중에서 선택해야 합니다.
+
+새로운 약관을 등록하는 데 도움이 되는 편의 함수들이 있습니다. 우리는 [PIL Flavors](/concepts/programmable-ip-license/pil-flavors)를 만들었습니다. 이는 어떤 약관을 사용할지 결정하는 데 도움이 되는 인기 있는 라이선스 약관 조합을 미리 구성한 것입니다. 이러한 PIL Flavors를 확인한 다음 다음과 같은 편의 함수를 사용하여 약관을 등록할 수 있습니다:
+
+<CardGroup cols={2}>
+  <Card title="비상업적 소셜 리믹싱" href="/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing" icon="file">
+    무료로 재사용 가능하며 출처를 밝혀야 합니다. 상업적 이용은 불가능합니다.
+  </Card>
+
+  <Card title="상업적 사용" href="/concepts/programmable-ip-license/pil-flavors#flavor-%232%3A-commercial-use" icon="file">
+    라이선스 사용료를 지불하고 출처를 밝혀야 하지만, 수익을 공유할 필요는 없습니다.
+  </Card>
+
+  <Card title="상업적 재사용" href="/concepts/programmable-ip-license/pil-flavors#flavor-%233%3A-commercial-remix" icon="file">
+    라이선스 사용료를 지불하고 출처를 밝혀야 하며, 발생한 수익의 일정 비율을 지불해야 합니다.
+  </Card>
+
+  <Card title="크리에이티브 커먼즈 저작자표시" href="/concepts/programmable-ip-license/pil-flavors#flavor-%234%3A-creative-commons-attribution" icon="file">
+    출처를 밝히면 무료로 재사용 및 상업적 사용이 가능합니다.
+  </Card>
+</CardGroup>
+
+예를 들어:
+
+```solidity Solidity
+import { PILFlavors } from "@storyprotocol/core/lib/PILFlavors.sol";
+
+PILTerms memory pilTerms = PILFlavors.commercialRemix({
+  mintingFee: 0,
+  commercialRevShare: 5 * 10 ** 6, // 5% rev share
+  royaltyPolicy: ROYALTY_POLICY_LAP,
+  currencyToken: MERC20
+});
+```
+
+## 코드를 테스트하세요!
+
+실행하세요 `forge build`. 모든 것이 성공적이라면, 명령어가 성공적으로 컴파일될 것입니다.
+
+이제 다음 명령어를 실행하여 테스트를 진행하세요:
+
+```bash
+forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/1_LicenseTerms.t.sol
+```
+
+## IP에 약관 첨부하기
+
+축하합니다, 새로운 라이선스 약관을 만들었습니다!
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/1_LicenseTerms.t.sol" icon="thumbs-up">
+  완성된 코드를 끝까지 따라가보세요.
+</Card>
+
+이제 새로운 라이선스 약관을 등록했으니, 이를 IP 자산에 첨부할 수 있습니다. 이를 통해 다른 사람들이 라이선스를 발급받고 약관에 따라 제한된 방식으로 당신의 IP를 사용할 수 있게 됩니다.
+
+다음 페이지에서 이에 대해 살펴보겠습니다.
+
+
+# Pay & Claim Revenue
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/5_Royalty.t.sol" icon="thumbs-up">
+  완성된 코드를 끝까지 따라가보세요.
+</Card>
+
+이 섹션에서는 IP Asset에 대한 지불 방법을 보여줍니다. 이를 수행하는 몇 가지 이유가 있습니다:
+
+1. 단순히 IP에 "팁"을 주고 싶을 때
+2. 조상 IP와의 라이선스 조건에 따라 특정 비율의 지불금을 전달해야 할 때
+
+두 시나리오 모두에서 아래의 `payRoyaltyOnBehalf` 함수를 사용하게 됩니다. 이 경우, [Royalty Module](/concepts/royalty-module/overview)이 자동으로 다양한 지불 흐름을 처리하여 지불 받는 IPA와 특정 `commercialRevShare`를 협상한 상위 IP Asset이 자신의 몫을 청구할 수 있도록 합니다.
+
+## 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 완료하세요 [자신의 프로젝트 설정하기](/developers/smart-contracts-guide/setup)
+2. 에 대한 기본적인 이해가 필요합니다 [Royalty Module](/concepts/royalty-module/overview)
+3. 이 예제를 작동시키기 위해 상업적 수익 공유에 대한 라이선스 조건이 있는 자식 IPA와 부모 IPA
+
+## 시작하기 전에
+
+함수를 사용하여 IP Asset에 지불할 수 있습니다 `payRoyaltyOnBehalf` 의 [Royalty Module](/concepts/royalty-module/overview).
+
+IP Asset에 를 사용하여 지불할 것입니다 [MockERC20](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E). 일반적으로 \$WIP로 지불하겠지만, 테스트를 위해 일부 토큰을 발행해야 하므로 MockERC20을 사용할 것입니다.
+
+다음 시나리오를 돕기 위해, 자식 IP Asset과 50%의 `commercialRevShare`를 협상한 부모 IP Asset이 있다고 가정해 봅시다.
+
+### 화이트리스트에 등록된 수익 토큰
+
+우리 프로토콜에 의해 화이트리스트에 등록된 토큰만 지불("수익") 토큰으로 사용될 수 있습니다. MockERC20은 그 토큰 중 하나입니다. 그 목록을 보려면 [여기](/developers/deployed-smart-contracts#whitelisted-revenue-tokens)를 참조하세요.
+
+## IP Asset에 지불하기
+
+다음과 같이 IP Asset에 지불할 수 있습니다:
+
+```solidity Solidity
+ROYALTY_MODULE.payRoyaltyOnBehalf(childIpId, address(0), address(MERC20), 10);
+```
+
+이는 10 \$MERC20를 의 `childIpId`의 [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault). 거기서 자식이 수익을 청구할 수 있습니다. 다음 섹션에서 이것의 작동 버전을 볼 수 있습니다.
+
+<Warning>
+  **Important: Approving the Royalty Module**
+
+  를 호출하기 전에 `payRoyaltyOnBehalf`, 로열티 모듈이 당신을 위해 토큰을 사용할 수 있도록 승인해야 합니다. 아래 섹션에서 우리가 `MERC20.approve(address(ROYALTY_MODULE), 10);`를 호출하는 것을 볼 수 있습니다. 그렇지 않으면 작동하지 않을 것입니다.
+</Warning>
+
+## 수익 청구
+
+지불이 이루어지면 결국 IP 자산의 [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault)에 도달합니다. 여기서 그들은 해당 IP 자산의 IP Royalty Vault에 대한 수익 공유 %를 나타내는 관련 로열티 토큰을 소유한 사람에게 청구/이전됩니다.
+
+IP 계정 ([IP Asset](/concepts/ip-asset/overview)을 나타내는 스마트 계약)은 처음 등록될 때 100%의 로열티 토큰을 보유합니다. 따라서 일반적으로 대부분의 로열티 토큰을 보유하고 있습니다.
+
+에서 테스트 파일을 만들어 `test/5_Royalty.t.sol`작동하는 것을 보고 결과를 확인해 봅시다:
+
+<Note>
+  **계약 주소**
+
+  Story 계약의 주소를 여러분을 위해 미리 채워 넣었습니다. 하지만 여기에서도 그 주소들을 찾을 수 있습니다: [배포된 스마트 계약](/developers/deployed-smart-contracts)
+</Note>
+
+```solidity test/5_Royalty.t.sol
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.26;
+
+import { Test } from "forge-std/Test.sol";
+// for testing purposes only
+import { MockIPGraph } from "@storyprotocol/test/mocks/MockIPGraph.sol";
+import { IPAssetRegistry } from "@storyprotocol/core/registries/IPAssetRegistry.sol";
+import { LicenseRegistry } from "@storyprotocol/core/registries/LicenseRegistry.sol";
+import { PILicenseTemplate } from "@storyprotocol/core/modules/licensing/PILicenseTemplate.sol";
+import { RoyaltyPolicyLAP } from "@storyprotocol/core/modules/royalty/policies/LAP/RoyaltyPolicyLAP.sol";
+import { PILFlavors } from "@storyprotocol/core/lib/PILFlavors.sol";
+import { PILTerms } from "@storyprotocol/core/interfaces/modules/licensing/IPILicenseTemplate.sol";
+import { LicensingModule } from "@storyprotocol/core/modules/licensing/LicensingModule.sol";
+import { LicenseToken } from "@storyprotocol/core/LicenseToken.sol";
+import { RoyaltyWorkflows } from "@storyprotocol/periphery/workflows/RoyaltyWorkflows.sol";
+import { RoyaltyModule } from "@storyprotocol/core/modules/royalty/RoyaltyModule.sol";
+import { MockERC20 } from "@storyprotocol/test/mocks/token/MockERC20.sol";
+
+import { SimpleNFT } from "../src/mocks/SimpleNFT.sol";
+
+// Run this test:
+// forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/5_Royalty.t.sol
+contract RoyaltyTest is Test {
+    address internal alice = address(0xa11ce);
+    address internal bob = address(0xb0b);
+
+    // For addresses, see https://docs.story.foundation/developers/deployed-smart-contracts
+    // Protocol Core - IPAssetRegistry
+    IPAssetRegistry internal IP_ASSET_REGISTRY = IPAssetRegistry(0x77319B4031e6eF1250907aa00018B8B1c67a244b);
+    // Protocol Core - LicenseRegistry
+    LicenseRegistry internal LICENSE_REGISTRY = LicenseRegistry(0x529a750E02d8E2f15649c13D69a465286a780e24);
+    // Protocol Core - LicensingModule
+    LicensingModule internal LICENSING_MODULE = LicensingModule(0x04fbd8a2e56dd85CFD5500A4A4DfA955B9f1dE6f);
+    // Protocol Core - PILicenseTemplate
+    PILicenseTemplate internal PIL_TEMPLATE = PILicenseTemplate(0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316);
+    // Protocol Core - RoyaltyPolicyLAP
+    RoyaltyPolicyLAP internal ROYALTY_POLICY_LAP = RoyaltyPolicyLAP(0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E);
+    // Protocol Core - LicenseToken
+    LicenseToken internal LICENSE_TOKEN = LicenseToken(0xFe3838BFb30B34170F00030B52eA4893d8aAC6bC);
+    // Protocol Core - RoyaltyModule
+    RoyaltyModule internal ROYALTY_MODULE = RoyaltyModule(0xD2f60c40fEbccf6311f8B47c4f2Ec6b040400086);
+    // Protocol Periphery - RoyaltyWorkflows
+    RoyaltyWorkflows internal ROYALTY_WORKFLOWS = RoyaltyWorkflows(0x9515faE61E0c0447C6AC6dEe5628A2097aFE1890);
+    // Mock - MERC20
+    MockERC20 internal MERC20 = MockERC20(0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E);
+
+    SimpleNFT public SIMPLE_NFT;
+    uint256 public tokenId;
+    address public ipId;
+    uint256 public licenseTermsId;
+    uint256 public startLicenseTokenId;
+    address public childIpId;
+
+    function setUp() public {
+        // this is only for testing purposes
+        // due to our IPGraph precompile not being
+        // deployed on the fork
+        vm.etch(address(0x0101), address(new MockIPGraph()).code);
+
+        SIMPLE_NFT = new SimpleNFT("Simple IP NFT", "SIM");
+        tokenId = SIMPLE_NFT.mint(alice);
+        ipId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), tokenId);
+
+        licenseTermsId = PIL_TEMPLATE.registerLicenseTerms(
+            PILFlavors.commercialRemix({
+                mintingFee: 0,
+                commercialRevShare: 10 * 10 ** 6, // 10%
+                royaltyPolicy: address(ROYALTY_POLICY_LAP),
+                currencyToken: address(MERC20)
+            })
+        );
+
+        vm.prank(alice);
+        LICENSING_MODULE.attachLicenseTerms(ipId, address(PIL_TEMPLATE), licenseTermsId);
+        startLicenseTokenId = LICENSING_MODULE.mintLicenseTokens({
+            licensorIpId: ipId,
+            licenseTemplate: address(PIL_TEMPLATE),
+            licenseTermsId: licenseTermsId,
+            amount: 2,
+            receiver: bob,
+            royaltyContext: "", // for PIL, royaltyContext is empty string
+            maxMintingFee: 0,
+            maxRevenueShare: 0
+        });
+
+        // Registers a child IP (owned by Bob) as a derivative of Alice's IP.
+        uint256 childTokenId = SIMPLE_NFT.mint(bob);
+        childIpId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), childTokenId);
+
+        uint256[] memory licenseTokenIds = new uint256[](1);
+        licenseTokenIds[0] = startLicenseTokenId;
+
+        vm.prank(bob);
+        LICENSING_MODULE.registerDerivativeWithLicenseTokens({
+            childIpId: childIpId,
+            licenseTokenIds: licenseTokenIds,
+            royaltyContext: "", // empty for PIL
+            maxRts: 0
+        });
+    }
+
+    /// @notice Pays MERC20 to Bob's IP. Some of this MERC20 is then claimable
+    /// by Alice's IP.
+    /// @dev In this case, this contract will act as the 3rd party paying MERC20
+    /// to Bob (the child IP).
+    function test_claimAllRevenue() public {
+        // ADMIN SETUP
+        // We mint 100 MERC20 to this contract so it has some money to pay.
+        MERC20.mint(address(this), 100);
+        // We have to approve the Royalty Module to spend MERC20 on our behalf, which
+        // it will do using `payRoyaltyOnBehalf`.
+        MERC20.approve(address(ROYALTY_MODULE), 10);
+
+        // This contract pays 10 MERC20 to Bob's IP.
+        ROYALTY_MODULE.payRoyaltyOnBehalf(childIpId, address(0), address(MERC20), 10);
+
+        // Now that Bob's IP has been paid, Alice can claim her share (1 MERC20, which
+        // is 10% as specified in the license terms)
+        address[] memory childIpIds = new address[](1);
+        address[] memory royaltyPolicies = new address[](1);
+        address[] memory currencyTokens = new address[](1);
+        childIpIds[0] = childIpId;
+        royaltyPolicies[0] = address(ROYALTY_POLICY_LAP);
+        currencyTokens[0] = address(MERC20);
+
+        uint256[] memory amountsClaimed = ROYALTY_WORKFLOWS.claimAllRevenue({
+            ancestorIpId: ipId,
+            claimer: ipId,
+            childIpIds: childIpIds,
+            royaltyPolicies: royaltyPolicies,
+            currencyTokens: currencyTokens
+        });
+
+        // Check that 1 MERC20 was claimed by Alice's IP Account
+        assertEq(amountsClaimed[0], 1);
+        // Check that Alice's IP Account now has 1 MERC20 in its balance.
+        assertEq(MERC20.balanceOf(ipId), 1);
+        // Check that Bob's IP now has 9 MERC20 in its Royalty Vault, which it
+        // can claim to its IP Account at a later point if he wants.
+        assertEq(MERC20.balanceOf(ROYALTY_MODULE.ipRoyaltyVaults(childIpId)), 9);
+    }
+}
+```
+
+## 코드를 테스트하세요!
+
+를 실행하세요 `forge build`. 모든 것이 성공적이라면, 명령이 성공적으로 컴파일될 것입니다.
+
+이제 다음 명령을 실행하여 테스트를 실행하세요:
+
+```bash
+forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/5_Royalty.t.sol
+```
+
+## IP 분쟁
+
+축하합니다, [Royalty Module](/concepts/royalty-module/overview)을 사용하여 수익을 청구했습니다!
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/5_Royalty.t.sol" icon="thumbs-up">
+  완성된 코드를 끝까지 따라가보세요.
+</Card>
+
+이제 IP 자산이 그들의 몫을 지불하지 않으면 어떻게 될까요? 우리는 온체인에서 IP에 대해 분쟁을 제기할 수 있습니다. 이는 다음 페이지에서 다룰 것입니다.
+
+<Warning>곧 출시됩니다!</Warning>
+
+
+# IPA에 약관 첨부하기
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/2_AttachTerms.t.sol" icon="thumbs-up">
+  완성된 코드를 끝까지 따라가보세요.
+</Card>
+
+이 섹션에서는 [License Terms](/concepts/licensing-module/license-terms)를 [IP Asset](/concepts/ip-asset/overview)에 첨부하는 방법을 보여줍니다. 약관을 첨부함으로써 사용자들은 IP로부터 [License Tokens](/concepts/licensing-module/license-token)(온체인 "라이선스")을 해당 약관으로 공개적으로 발행할 수 있습니다.
+
+## 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 다음을 완료하세요 [Setup Your Own Project](/developers/smart-contracts-guide/setup)
+2. License Terms를 생성하고 `licenseTermsId`를 가지고 있어야 합니다. [previous page](/developers/smart-contracts-guide/register-terms)를 따라 할 수 있습니다.
+
+## 라이선스 약관 첨부하기
+
+이제 약관을 생성하고 관련된 `licenseTermsId`를 가지고 있으므로, 기존 IP Asset에 이를 첨부할 수 있습니다.
+
+작동을 확인하고 결과를 검증하기 위해 `test/2_AttachTerms.t.sol` 아래에 테스트 파일을 만들어 봅시다:
+
+<Note>
+  **컨트랙트 주소**
+
+  Story 컨트랙트의 주소를 여러분을 위해 미리 채워 넣었습니다. 하지만 여기에서도 해당 주소들을 찾을 수 있습니다: [Deployed Smart Contracts](/developers/deployed-smart-contracts)
+</Note>
+
+```solidity test/2_AttachTerms.t.sol
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.26;
+
+import { Test } from "forge-std/Test.sol";
+// for testing purposes only
+import { MockIPGraph } from "@storyprotocol/test/mocks/MockIPGraph.sol";
+import { IIPAssetRegistry } from "@storyprotocol/core/interfaces/registries/IIPAssetRegistry.sol";
+import { ILicenseRegistry } from "@storyprotocol/core/interfaces/registries/ILicenseRegistry.sol";
+import { IPILicenseTemplate } from "@storyprotocol/core/interfaces/modules/licensing/IPILicenseTemplate.sol";
+import { ILicensingModule } from "@storyprotocol/core/interfaces/modules/licensing/ILicensingModule.sol";
+import { PILFlavors } from "@storyprotocol/core/lib/PILFlavors.sol";
+import { PILTerms } from "@storyprotocol/core/interfaces/modules/licensing/IPILicenseTemplate.sol";
+
+import { SimpleNFT } from "../src/mocks/SimpleNFT.sol";
+
+// Run this test:
+// forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/2_AttachTerms.t.sol
+contract AttachTermsTest is Test {
+    address internal alice = address(0xa11ce);
+
+    // For addresses, see https://docs.story.foundation/developers/deployed-smart-contracts
+    // Protocol Core - IPAssetRegistry
+    IIPAssetRegistry internal IP_ASSET_REGISTRY = IIPAssetRegistry(0x77319B4031e6eF1250907aa00018B8B1c67a244b);
+    // Protocol Core - LicenseRegistry
+    ILicenseRegistry internal LICENSE_REGISTRY = ILicenseRegistry(0x529a750E02d8E2f15649c13D69a465286a780e24);
+    // Protocol Core - LicensingModule
+    ILicensingModule internal LICENSING_MODULE = ILicensingModule(0x04fbd8a2e56dd85CFD5500A4A4DfA955B9f1dE6f);
+    // Protocol Core - PILicenseTemplate
+    IPILicenseTemplate internal PIL_TEMPLATE = IPILicenseTemplate(0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316);
+    // Protocol Core - RoyaltyPolicyLAP
+    address internal ROYALTY_POLICY_LAP = 0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E;
+    // Revenue Token - MERC20
+    address internal MERC20 = 0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E;
+
+    SimpleNFT public SIMPLE_NFT;
+    uint256 public tokenId;
+    address public ipId;
+    uint256 public licenseTermsId;
+
+    function setUp() public {
+        // this is only for testing purposes
+        // due to our IPGraph precompile not being
+        // deployed on the fork
+        vm.etch(address(0x0101), address(new MockIPGraph()).code);
+
+        SIMPLE_NFT = new SimpleNFT("Simple IP NFT", "SIM");
+        tokenId = SIMPLE_NFT.mint(alice);
+        ipId = IP_ASSET_REGISTRY.register(block.chainid, address(SIMPLE_NFT), tokenId);
+
+        // Register random Commercial Remix terms so we can attach them later
+        licenseTermsId = PIL_TEMPLATE.registerLicenseTerms(
+            PILFlavors.commercialRemix({
+                mintingFee: 0,
+                commercialRevShare: 10 * 10 ** 6, // 10%
+                royaltyPolicy: ROYALTY_POLICY_LAP,
+                currencyToken: MERC20
+            })
+        );
+    }
+
+    /// @notice Attaches license terms to an IP Asset.
+    /// @dev Only the owner of an IP Asset can attach license terms to it.
+    /// So in this case, alice has to be the caller of the function because
+    /// she owns the NFT associated with the IP Asset.
+    function test_attachLicenseTerms() public {
+        vm.prank(alice);
+        LICENSING_MODULE.attachLicenseTerms(ipId, address(PIL_TEMPLATE), licenseTermsId);
+
+        assertTrue(LICENSE_REGISTRY.hasIpAttachedLicenseTerms(ipId, address(PIL_TEMPLATE), licenseTermsId));
+        assertEq(LICENSE_REGISTRY.getAttachedLicenseTermsCount(ipId), 1);
+        (address licenseTemplate, uint256 attachedLicenseTermsId) = LICENSE_REGISTRY.getAttachedLicenseTerms({
+            ipId: ipId,
+            index: 0
+        });
+        assertEq(licenseTemplate, address(PIL_TEMPLATE));
+        assertEq(attachedLicenseTermsId, licenseTermsId);
+    }
+}
+```
+
+## 코드를 테스트하세요!
+
+다음을 실행하세요 `forge build`. 모든 것이 성공적이라면, 명령이 성공적으로 컴파일될 것입니다.
+
+이제 다음 명령을 실행하여 테스트를 실행하세요:
+
+```bash
+forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/2_AttachTerms.t.sol
+```
+
+## 라이선스 발행하기
+
+축하합니다, IPA에 약관을 첨부했습니다!
+
+<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/2_AttachTerms.t.sol" icon="thumbs-up">
+  완성된 코드를 끝까지 따라가보세요.
+</Card>
+
+이제 우리의 IP에 라이선스 약관을 첨부했으니, 다음 단계는 라이선스 토큰을 발행하는 것입니다. 이에 대해서는 다음 페이지에서 다룰 것입니다.
+
+
+# React에서 SDK 사용하기
+
+React에서 SDK를 설정한 후에는 [TypeScript SDK 가이드](/developers/typescript-sdk/overview)에서 설명한 대로 사용할 수 있습니다.
+
+<CardGroup cols={2}>
+  <Card title="작동하는 코드 예제" href="https://github.com/jacob-tucker/story-developer-sandbox" icon="thumbs-up">
+    Next.js에서 TypeScript SDK 함수를 설정하고 호출하는 것을 보여주는 작동하는 코드 예제
+  </Card>
+
+  <Card title="SDK 참조" href="/sdk-reference" icon="books">
+    SDK의 모든 함수에 대한 예제와 타입을 보여주는 전체 SDK 참조를 확인하세요.
+  </Card>
+</CardGroup>
+
+## 전제 조건
+
+1. 다음을 완료하세요 [React에서 SDK 설정](/developers/react-guide/setup/overview)
+
+## 예제
+
+다음은 React에서 SDK 함수를 호출하는 예제입니다. 이는 사용하는 모든 함수에 대해 동일하게 보일 것입니다:
+
+```jsx TestComponent.tsx
+import { custom, toHex } from 'viem';
+import { useWalletClient } from "wagmi";
+import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
+
+// example of how you would now use the fully setup sdk
+
+export default function TestComponent() {
+  const { data: wallet } = useWalletClient();
+
+  async function setupStoryClient(): Promise<StoryClient> {
+    const config: StoryConfig = {
+      wallet: wallet,
+      transport: custom(wallet!.transport),
+      chainId: "aeneid",
+    };
+    const client = StoryClient.newClient(config);
+    return client;
+  }
+
+  async function registerIp() {
+    const client = await setupStoryClient();
+    const response = await client.ipAsset.mintAndRegisterIp({
+      spgNftContract: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc',
+      ipMetadata: {
+        ipMetadataURI: "test-metadata-uri",
+        ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+        nftMetadataURI: "test-nft-metadata-uri",
+        nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+      },
+      txOptions: { waitForTransaction: true }
+    });
+    console.log(
+      `Root IPA created at tx hash ${response.txHash}, IPA ID: ${response.ipId}`
+    );
+  }
+
+  return (
+    {/* */}
+  )
+}
+```
+
+
+# React 가이드
+
+title: React Guide
+sidebarTitle: Overview
+description: React 기반 앱에서 작동하도록 TypeScript SDK를 통합하는 방법을 알아보세요.
+
+
+<CardGroup cols={3}>
+  <Card title="작동하는 코드 예제" href="https://github.com/jacob-tucker/story-developer-sandbox" icon="thumbs-up">
+    Next.js에서 TypeScript SDK 함수를 설정하고 호출하는 방법을 보여주는 작동하는 코드 예제를 보려면 "developer sandbox"를 로컬에 클론하세요.
+  </Card>
+
+  <Card title="라이브 샌드박스" href="https://sandbox.story.foundation" icon="umbrella-beach">
+    SDK의 소개 안내를 받으려면 developer sandbox의 라이브 버전을 사용해 보세요.
+  </Card>
+
+  <Card title="SDK 참조" href="/sdk-reference" icon="books">
+    SDK의 모든 함수에 대한 예제와 타입을 보여주는 전체 SDK 참조를 확인하세요.
+  </Card>
+</CardGroup>
+
+다음 일련의 튜토리얼에서는 React에서 TypeScript SDK를 설정하는 방법을 배우게 됩니다.
+
+
+# Reown (WalletConnect) 설정
+
+<Note>
+  **Optional: Official WalletConnect Docs**
+
+  공식 Wagmi + Reown 설치 문서를 [여기](https://docs.walletconnect.com/appkit/next/core/installation)에서 확인하세요.
+</Note>
+
+## 의존성 설치
+
+<CodeGroup>
+  ```bash npm
+  npm install --save @story-protocol/core-sdk @reown/appkit @reown/appkit-adapter-wagmi wagmi viem @tanstack/react-query
+  ```
+
+  ```bash pnpm
+  pnpm install @story-protocol/core-sdk viem
+  ```
+
+  ```bash yarn
+  yarn add @story-protocol/core-sdk viem
+  ```
+</CodeGroup>
+
+## 설정
+
+예제를 시작하기 전에 두 가지를 설정해야 합니다:
+
+1. RPC\_URL이 `NEXT_PUBLIC_RPC_PROVIDER_URL` 파일에 `.env`설정되어 있는지 확인하세요.
+   * 공개 기본값(`https://aeneid.storyrpc.io`)을 사용하거나 다른 RPC [여기](/network/network-info/aeneid#rpcs)에서 찾을 수 있습니다.
+2. WALLETCONNECT\_PROJECT\_ID가 `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` 파일에 `.env`설정되어 있는지 확인하세요. [Reown (이전 WalletConnect)](https://reown.com/)에 로그인하고 프로젝트를 생성하여 이를 수행하세요.
+
+<CodeGroup>
+  ```jsx config/index.tsx
+  import { cookieStorage, createStorage, http } from "@wagmi/core";
+  import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+  import { mainnet, arbitrum } from "@reown/appkit/networks";
+  import { aeneid } from "@story-protocol/core-sdk";
+
+  // Get projectId from https://cloud.reown.com
+  export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
+
+  if (!projectId) {
+    throw new Error("Project ID is not defined");
+  }
+
+  export const networks = [aeneid];
+
+  //Set up the Wagmi Adapter (Config)
+  export const wagmiAdapter = new WagmiAdapter({
+    storage: createStorage({
+      storage: cookieStorage,
+    }),
+    ssr: true,
+    projectId,
+    networks,
+  });
+
+  export const config = wagmiAdapter.wagmiConfig;
+  ```
+
+  ```jsx context/index.tsx
+  'use client'
+
+  import { wagmiAdapter, projectId } from '@/config'
+  import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+  import { createAppKit } from '@reown/appkit/react'
+  import { mainnet, arbitrum } from '@reown/appkit/networks'
+  import React, { type ReactNode } from 'react'
+  import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
+
+  // Set up queryClient
+  const queryClient = new QueryClient()
+
+  if (!projectId) {
+    throw new Error('Project ID is not defined')
+  }
+
+  // Set up metadata
+  const metadata = {
+    name: 'appkit-example',
+    description: 'AppKit Example',
+    url: 'https://appkitexampleapp.com', // origin must match your domain & subdomain
+    icons: ['https://avatars.githubusercontent.com/u/179229932']
+  }
+
+  // Create the modal
+  const modal = createAppKit({
+    adapters: [wagmiAdapter],
+    projectId,
+    networks: [mainnet, arbitrum],
+    defaultNetwork: mainnet,
+    metadata: metadata,
+    features: {
+      analytics: true // Optional - defaults to your Cloud configuration
+    }
+  })
+
+  function ContextProvider({ children, cookies }: { children: ReactNode; cookies: string | null }) {
+    const initialState = cookieToInitialState(wagmiAdapter.wagmiConfig as Config, cookies)
+
+    return (
+      <WagmiProvider config={wagmiAdapter.wagmiConfig as Config} initialState={initialState}>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      </WagmiProvider>
+    )
+  }
+
+  export default ContextProvider
+  ```
+
+  ```jsx app/layout.tsx
+  import type { Metadata } from 'next'
+  import { Inter } from 'next/font/google'
+  import './globals.css'
+
+  const inter = Inter({ subsets: ['latin'] })
+
+  import { headers } from 'next/headers' // added
+  import ContextProvider from '@/context'
+
+  export const metadata: Metadata = {
+    title: 'AppKit Example App',
+    description: 'Powered by Reown'
+  }
+
+  export default function RootLayout({
+    children
+  }: Readonly<{
+    children: React.ReactNode
+  }>) {
+
+    const headersObj = await headers();
+    const cookies = headersObj.get('cookie')
+
+    return (
+      <html lang="en">
+        <body className={inter.className}>
+          <ContextProvider cookies={cookies}>
+            <appkit-button />
+            {children}
+          </ContextProvider>
+        </body>
+      </html>
+    )
+  }
+  ```
+
+  ```jsx TestComponent.tsx
+  import { custom, toHex } from 'viem';
+  import { useWalletClient } from "wagmi";
+  import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
+
+  // example of how you would now use the fully setup sdk
+
+  export default function TestComponent() {
+    const { data: wallet } = useWalletClient();
+
+    async function setupStoryClient(): Promise<StoryClient> {
+      const config: StoryConfig = {
+        wallet: wallet,
+        transport: custom(wallet!.transport),
+        chainId: "aeneid",
+      };
+      const client = StoryClient.newClient(config);
+      return client;
+    }
+
+    async function registerIp() {
+      const client = await setupStoryClient();
+      const response = await client.ipAsset.register({
+        nftContract: '0x01...',
+        tokenId: '1',
+        ipMetadata: {
+          ipMetadataURI: "test-metadata-uri",
+          ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+          nftMetadataURI: "test-nft-metadata-uri",
+          nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+        },
+        txOptions: { waitForTransaction: true },
+      });
+      console.log(
+        `Root IPA created at tx hash ${response.txHash}, IPA ID: ${response.ipId}`
+      );
+    }
+
+    return (
+      {/* */}
+    )
+  }
+  ```
+</CodeGroup>
+
+
+# Dynamic 설정
+
+<Note>
+  **Optional: Official Dynamic Docs**
+
+  공식 Wagmi + Dynamic 설치 문서를 확인하세요[여기](https://docs.dynamic.xyz/react-sdk/using-wagmi).
+</Note>
+
+## 의존성 설치
+
+<CodeGroup>
+  ```bash npm
+  npm install --save @story-protocol/core-sdk viem wagmi @dynamic-labs/sdk-react-core @dynamic-labs/wagmi-connector @dynamic-labs/ethereum @tanstack/react-query
+  ```
+
+  ```bash pnpm
+  pnpm install @story-protocol/core-sdk viem
+  ```
+
+  ```bash yarn
+  yarn add @story-protocol/core-sdk viem
+  ```
+</CodeGroup>
+
+## 설정
+
+예제를 시작하기 전에 두 가지를 설정해야 합니다:
+
+1. 반드시`NEXT_PUBLIC_RPC_PROVIDER_URL`을 파일에 설정하세요.`.env` 파일.
+   * 공개 기본값을 사용할 수 있습니다 (`https://aeneid.storyrpc.io`) 또는 다른 RPC[여기](/network/network-info/aeneid#rpcs).
+2. 반드시`NEXT_PUBLIC_DYNAMIC_ENV_ID`을 파일에 설정하세요.`.env` 파일. 이를 위해[Dynamic](https://app.dynamic.xyz/)에 로그인하고 프로젝트를 생성하세요.
+
+<CodeGroup>
+  ```jsx Web3Providers.tsx
+  "use client";
+  import { createConfig, WagmiProvider } from "wagmi";
+  import { http } from 'viem';
+  import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+  import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
+  import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
+  import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
+  import { PropsWithChildren } from "react";
+  import { aeneid } from "@story-protocol/core-sdk";
+
+  // setup wagmi
+  const config = createConfig({
+    chains: [aeneid],
+    multiInjectedProviderDiscovery: false,
+    transports: {
+      [aeneid.id]: http(),
+    },
+  });
+  const queryClient = new QueryClient();
+
+  export default function Web3Providers({ children }: PropsWithChildren) {
+    return (
+      // setup dynamic
+      <DynamicContextProvider
+        settings={{
+          // Find your environment id at https://app.dynamic.xyz/dashboard/developer
+          environmentId: process.env.NEXT_PUBLIC_DYNAMIC_ENV_ID as string,
+          walletConnectors: [EthereumWalletConnectors],
+        }}
+      >
+        <WagmiProvider config={config}>
+          <QueryClientProvider client={queryClient}>
+            <DynamicWagmiConnector>
+              {children}
+            </DynamicWagmiConnector>
+          </QueryClientProvider>
+        </WagmiProvider>
+      </DynamicContextProvider>
+    );
+  }
+  ```
+
+  ```jsx layout.tsx
+  import type { Metadata } from "next";
+  import { Inter } from "next/font/google";
+  import "./globals.css";
+  import { PropsWithChildren } from "react";
+  import Web3Providers from "./Web3Providers";
+  import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
+
+  const inter = Inter({ subsets: ["latin"] });
+
+  export const metadata: Metadata = {
+    title: "Example",
+    description: "This is an Example DApp",
+  };
+
+  export default function RootLayout({ children }: PropsWithChildren) {
+    return (
+      <html lang="en">
+        <body>
+          <Web3Providers>
+            <DynamicWidget />
+            {children}
+          </Web3Providers>
+        </body>
+      </html>
+    );
+  }
+  ```
+
+  ```jsx TestComponent.tsx
+  import { custom, toHex } from 'viem';
+  import { useWalletClient } from "wagmi";
+  import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
+
+  // example of how you would now use the fully setup sdk
+
+  export default function TestComponent() {
+    const { data: wallet } = useWalletClient();
+
+    async function setupStoryClient(): Promise<StoryClient> {
+      const config: StoryConfig = {
+        wallet: wallet,
+        transport: custom(wallet!.transport),
+        chainId: "aeneid",
+      };
+      const client = StoryClient.newClient(config);
+      return client;
+    }
+
+    async function registerIp() {
+      const client = await setupStoryClient();
+      const response = await client.ipAsset.register({
+        nftContract: '0x01...',
+        tokenId: '1',
+        ipMetadata: {
+          ipMetadataURI: "test-metadata-uri",
+          ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+          nftMetadataURI: "test-nft-metadata-uri",
+          nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+        },
+        txOptions: { waitForTransaction: true },
+      });
+      console.log(
+        `Root IPA created at tx hash ${response.txHash}, IPA ID: ${response.ipId}`
+      );
+    }
+
+    return (
+      {/* */}
+    )
+  }
+  ```
+</CodeGroup>
+
+
+# Tomo 설정
+
+<Note>
+  **Optional: Official TomoEVMKit Docs**
+
+  공식 Wagmi + TomoEVMKit 설치 문서를 확인하세요[여기](https://docs.tomo.inc/tomo-sdk/tomoevmkit/quick-start).
+</Note>
+
+## 의존성 설치
+
+<CodeGroup>
+  ```bash npm
+  npm install --save @story-protocol/core-sdk @tomo-inc/tomo-evm-kit wagmi viem @tanstack/react-query
+  ```
+
+  ```bash pnpm
+  pnpm install @story-protocol/core-sdk viem
+  ```
+
+  ```bash yarn
+  yarn add @story-protocol/core-sdk viem
+  ```
+</CodeGroup>
+
+## 설정
+
+예제를 시작하기 전에 두 가지를 설정해야 합니다:
+
+1. 반드시`NEXT_PUBLIC_RPC_PROVIDER_URL`을 파일에 설정하세요.`.env` 파일.
+   * 공개 기본값을 사용할 수 있습니다 (`https://aeneid.storyrpc.io`) 또는 다른 RPC[여기](/network/network-info/aeneid#rpcs).
+2. 반드시`NEXT_PUBLIC_TOMO_CLIENT_ID`을 파일에 설정하세요.`.env` 파일. 이를 위해[Tomo 대시보드](https://dashboard.tomo.inc/)에 로그인하고 프로젝트를 생성하세요.
+3. 반드시`NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID`을 파일에 설정하세요.`.env` 파일. 이를 위해[Reown (이전 WalletConnect)](https://reown.com/)에 로그인하고 프로젝트를 생성하세요.
+
+<CodeGroup>
+  ```jsx Web3Providers.tsx
+  "use client";
+  import '@tomo-inc/tomo-evm-kit/styles.css';
+  import { getDefaultConfig, TomoEVMKitProvider } from "@tomo-inc/tomo-evm-kit";
+  import { WagmiProvider } from "wagmi";
+  import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+  import { PropsWithChildren } from "react";
+  import { aeneid } from "@story-protocol/core-sdk";
+
+  const config = getDefaultConfig({
+    appName: "Test Story App",
+    clientId: process.env.NEXT_PUBLIC_TOMO_CLIENT_ID as string,
+    projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID as string,
+    chains: [aeneid],
+    ssr: true, // If your dApp uses server side rendering (SSR)
+  });
+
+  const queryClient = new QueryClient();
+
+  export default function Web3Providers({ children }: PropsWithChildren) {
+    return (
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <TomoEVMKitProvider>
+            {children}
+          </TomoEVMKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    );
+  }
+  ```
+
+  ```jsx layout.tsx
+  import type { Metadata } from "next";
+  import { Inter } from "next/font/google";
+  import "./globals.css";
+  import { PropsWithChildren } from "react";
+  import Web3Providers from "./Web3Providers";
+  import { useConnectModal } from "@tomo-inc/tomo-evm-kit";
+
+  const inter = Inter({ subsets: ["latin"] });
+
+  export const metadata: Metadata = {
+    title: "Example",
+    description: "This is an Example DApp",
+  };
+
+  export default function RootLayout({ children }: PropsWithChildren) {
+    const { openConnectModal } = useConnectModal();
+
+    return (
+      <html lang="en">
+        <body>
+          <Web3Providers>
+            <button onClick={openConnectModal}>Connect Wallet</button>
+            {children}
+          </Web3Providers>
+        </body>
+      </html>
+    );
+  }
+  ```
+
+  ```jsx TestComponent.tsx
+  import { custom, toHex } from 'viem';
+  import { useWalletClient } from "wagmi";
+  import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
+
+  // example of how you would now use the fully setup sdk
+
+  export default function TestComponent() {
+    const { data: wallet } = useWalletClient();
+
+    async function setupStoryClient(): Promise<StoryClient> {
+      const config: StoryConfig = {
+        wallet: wallet,
+        transport: custom(wallet!.transport),
+        chainId: "aeneid",
+      };
+      const client = StoryClient.newClient(config);
+      return client;
+    }
+
+    async function registerIp() {
+      const client = await setupStoryClient();
+      const response = await client.ipAsset.register({
+        nftContract: '0x01...',
+        tokenId: '1',
+        ipMetadata: {
+          ipMetadataURI: "test-metadata-uri",
+          ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+          nftMetadataURI: "test-nft-metadata-uri",
+          nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+        },
+        txOptions: { waitForTransaction: true },
+      });
+      console.log(
+        `Root IPA created at tx hash ${response.txHash}, IPA ID: ${response.ipId}`
+      );
+    }
+
+    return (
+      {/* */}
+    )
+  }
+  ```
+</CodeGroup>
+
+
+# RainbowKit 설정
+
+<Note>
+  **Optional: Official RainbowKit Docs**
+
+  공식 Wagmi + RainbowKit 설치 문서를 확인하세요 [here](https://www.rainbowkit.com/docs/installation).
+</Note>
+
+## 의존성 설치
+
+<CodeGroup>
+  ```bash npm
+  npm install --save @story-protocol/core-sdk @rainbow-me/rainbowkit wagmi viem @tanstack/react-query
+  ```
+
+  ```bash pnpm
+  pnpm install @story-protocol/core-sdk viem
+  ```
+
+  ```bash yarn
+  yarn add @story-protocol/core-sdk viem
+  ```
+</CodeGroup>
+
+## 설정
+
+예제를 살펴보기 전에 두 가지를 설정해야 합니다:
+
+1. 반드시 `NEXT_PUBLIC_RPC_PROVIDER_URL` 파일에 `.env`을 설정하세요.
+   * 공개 기본값(`https://aeneid.storyrpc.io`)을 사용하거나 다른 RPC [here](/network/network-info/aeneid#rpcs)를 사용할 수 있습니다.
+2. 반드시 `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` 파일에 `.env`을 설정하세요. [Reown (prev. WalletConnect)](https://reown.com/)에 로그인하고 프로젝트를 생성하여 이를 수행하세요.
+
+<CodeGroup>
+  ```jsx Web3Providers.tsx
+  "use client";
+  import "@rainbow-me/rainbowkit/styles.css";
+  import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+  import { WagmiProvider } from "wagmi";
+  import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+  import { PropsWithChildren } from "react";
+  import { aeneid } from "@story-protocol/core-sdk";
+
+  const config = getDefaultConfig({
+    appName: "Test Story App",
+    projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID as string,
+    chains: [aeneid],
+    ssr: true, // If your dApp uses server side rendering (SSR)
+  });
+
+  const queryClient = new QueryClient();
+
+  export default function Web3Providers({ children }: PropsWithChildren) {
+    return (
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider>
+            {children}
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    );
+  }
+  ```
+
+  ```jsx layout.tsx
+  import type { Metadata } from "next";
+  import { Inter } from "next/font/google";
+  import "./globals.css";
+  import { PropsWithChildren } from "react";
+  import Web3Providers from "./Web3Providers";
+  import { ConnectButton } from "@rainbow-me/rainbowkit";
+
+  const inter = Inter({ subsets: ["latin"] });
+
+  export const metadata: Metadata = {
+    title: "Example",
+    description: "This is an Example DApp",
+  };
+
+  export default function RootLayout({ children }: PropsWithChildren) {
+    return (
+      <html lang="en">
+        <body>
+          <Web3Providers>
+            <ConnectButton />
+            {children}
+          </Web3Providers>
+        </body>
+      </html>
+    );
+  }
+  ```
+
+  ```jsx TestComponent.tsx
+  import { custom, toHex } from 'viem';
+  import { useWalletClient } from "wagmi";
+  import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
+
+  // example of how you would now use the fully setup sdk
+
+  export default function TestComponent() {
+    const { data: wallet } = useWalletClient();
+
+    async function setupStoryClient(): Promise<StoryClient> {
+      const config: StoryConfig = {
+        wallet: wallet,
+        transport: custom(wallet!.transport),
+        chainId: "aeneid",
+      };
+      const client = StoryClient.newClient(config);
+      return client;
+    }
+
+    async function registerIp() {
+      const client = await setupStoryClient();
+      const response = await client.ipAsset.register({
+        nftContract: '0x01...',
+        tokenId: '1',
+        ipMetadata: {
+          ipMetadataURI: "test-metadata-uri",
+          ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
+          nftMetadataURI: "test-nft-metadata-uri",
+          nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
+        },
+        txOptions: { waitForTransaction: true },
+      });
+      console.log(
+        `Root IPA created at tx hash ${response.txHash}, IPA ID: ${response.ipId}`
+      );
+    }
+
+    return (
+      {/* */}
+    )
+  }
+  ```
+</CodeGroup>
+
+
+# React 설정
+
+우리는 특정 React SDK를 가지고 있지 않지만, 우리는 React에서 TypeScript SDK를 사용할 수 있습니다. 이는 Metamask와 같은 JSON-RPC 계정으로 트랜잭션 서명 및 전송을 지연시키는 데 모두 동일하게 사용됩니다.**React에서 TypeScript SDK를 사용할 수 있습니다** 마찬가지로, Metamask와 같은 JSON-RPC 계정으로 트랜잭션 서명 및 전송을 지연시킬 수 있습니다.
+
+우리는 Web3 제공자로 wagmi를 사용하고 Dynamic이나 RainbowKit과 같은 지갑 제공자를 설치하는 것을 추천합니다. 우리는 다음 모든 것에 대한 예제를 제공합니다:[wagmi](https://wagmi.sh/)를 Web3 제공자로 사용한 다음 Dynamic 또는 RainbowKit과 같은 지갑 제공자를 설치합니다. 다음 모든 항목에 대한 예시를 제공합니다:
+
+* [Dynamic 설정](/developers/react-guide/setup/dynamic-setup)
+* [RainbowKit 설정](/developers/react-guide/setup/rainbowkit-setup)
+* [Reown (WalletConnect) 설정](/developers/react-guide/setup/reown-setup)
+* [Tomo 설정](/developers/react-guide/setup/tomo-setup)
+
+
+# 배포된 스마트 컨트랙트
+
+## 핵심 프로토콜 컨트랙트
+
+* GitHub에서 컨트랙트 보기 [here](https://github.com/storyprotocol/protocol-core-v1/tree/main)
+
+<CodeGroup>
+  ```json Aeneid Testnet
+  {
+    "AccessController": "0xcCF37d0a503Ee1D4C11208672e622ed3DFB2275a",
+    "ArbitrationPolicyUMA": "0xfFD98c3877B8789124f02C7E8239A4b0Ef11E936",
+    "CoreMetadataModule": "0x6E81a25C99C6e8430aeC7353325EB138aFE5DC16",
+    "CoreMetadataViewModule": "0xB3F88038A983CeA5753E11D144228Ebb5eACdE20",
+    "DisputeModule": "0x9b7A9c70AFF961C799110954fc06F3093aeb94C5",
+    "EvenSplitGroupPool": "0xf96f2c30b41Cb6e0290de43C8528ae83d4f33F89",
+    "GroupNFT": "0x4709798FeA84C84ae2475fF0c25344115eE1529f",
+    "GroupingModule": "0x69D3a7aa9edb72Bc226E745A7cCdd50D947b69Ac",
+    "IPAccountImplBeacon": "0x9825cc7A398D9C3dDD66232A8Ec76d5b05422581",
+    "IPAccountImplBeaconProxy": "0x00b800138e4D82D1eea48b414d2a2A8Aee9A33b1",
+    "IPAccountImplCode": "0xdeC03e0c63f800efD7C9d04A16e01E80cF57Bf79",
+    "IPAssetRegistry": "0x77319B4031e6eF1250907aa00018B8B1c67a244b",
+    "IPGraphACL": "0x1640A22a8A086747cD377b73954545e2Dfcc9Cad",
+    "IpRoyaltyVaultBeacon": "0x6928ba25Aa5c410dd855dFE7e95713d83e402AA6",
+    "IpRoyaltyVaultImpl": "0xbd0f3c59B6f0035f55C58893fA0b1Ac4aDEa50Dc",
+    "LicenseRegistry": "0x529a750E02d8E2f15649c13D69a465286a780e24",
+    "LicenseToken": "0xFe3838BFb30B34170F00030B52eA4893d8aAC6bC",
+    "LicensingModule": "0x04fbd8a2e56dd85CFD5500A4A4DfA955B9f1dE6f",
+    "ModuleRegistry": "0x022DBAAeA5D8fB31a0Ad793335e39Ced5D631fa5",
+    "PILicenseTemplate": "0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316",
+    "ProtocolAccessManager": "0xFdece7b8a2f55ceC33b53fd28936B4B1e3153d53",
+    "ProtocolPauseAdmin": "0xdd661f55128A80437A0c0BDA6E13F214A3B2EB24",
+    "RoyaltyModule": "0xD2f60c40fEbccf6311f8B47c4f2Ec6b040400086",
+    "RoyaltyPolicyLAP": "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E",
+    "RoyaltyPolicyLRP": "0x9156e603C949481883B1d3355c6f1132D191fC41"
+  }
+  ```
+
+  ```json Mainnet
+  {
+    "AccessController": "0xcCF37d0a503Ee1D4C11208672e622ed3DFB2275a",
+    "ArbitrationPolicyUMA": "0xfFD98c3877B8789124f02C7E8239A4b0Ef11E936",
+    "CoreMetadataModule": "0x6E81a25C99C6e8430aeC7353325EB138aFE5DC16",
+    "CoreMetadataViewModule": "0xB3F88038A983CeA5753E11D144228Ebb5eACdE20",
+    "DisputeModule": "0x9b7A9c70AFF961C799110954fc06F3093aeb94C5",
+    "EvenSplitGroupPool": "0xf96f2c30b41Cb6e0290de43C8528ae83d4f33F89",
+    "GroupNFT": "0x4709798FeA84C84ae2475fF0c25344115eE1529f",
+    "GroupingModule": "0x69D3a7aa9edb72Bc226E745A7cCdd50D947b69Ac",
+    "IPAccountImplBeacon": "0x9825cc7A398D9C3dDD66232A8Ec76d5b05422581",
+    "IPAccountImplBeaconProxy": "0x00b800138e4D82D1eea48b414d2a2A8Aee9A33b1",
+    "IPAccountImplCode": "0x7343646585443F1c3F64E4F08b708788527e1C77",
+    "IPAssetRegistry": "0x77319B4031e6eF1250907aa00018B8B1c67a244b",
+    "IPGraphACL": "0x1640A22a8A086747cD377b73954545e2Dfcc9Cad",
+    "IpRoyaltyVaultBeacon": "0x6928ba25Aa5c410dd855dFE7e95713d83e402AA6",
+    "IpRoyaltyVaultImpl": "0x63cC7611316880213f3A4Ba9bD72b0EaA2010298",
+    "LicenseRegistry": "0x529a750E02d8E2f15649c13D69a465286a780e24",
+    "LicenseToken": "0xFe3838BFb30B34170F00030B52eA4893d8aAC6bC",
+    "LicensingModule": "0x04fbd8a2e56dd85CFD5500A4A4DfA955B9f1dE6f",
+    "ModuleRegistry": "0x022DBAAeA5D8fB31a0Ad793335e39Ced5D631fa5",
+    "PILicenseTemplate": "0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316",
+    "ProtocolAccessManager": "0xFdece7b8a2f55ceC33b53fd28936B4B1e3153d53",
+    "ProtocolPauseAdmin": "0xdd661f55128A80437A0c0BDA6E13F214A3B2EB24",
+    "RoyaltyModule": "0xD2f60c40fEbccf6311f8B47c4f2Ec6b040400086",
+    "RoyaltyPolicyLAP": "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E",
+    "RoyaltyPolicyLRP": "0x9156e603C949481883B1d3355c6f1132D191fC41"
+  }
+  ```
+</CodeGroup>
+
+## 주변 컨트랙트
+
+* GitHub에서 컨트랙트 보기 [here](https://github.com/storyprotocol/protocol-periphery-v1)
+
+<CodeGroup>
+  ```json Aeneid Testnet
+  {
+    "DerivativeWorkflows": "0x9e2d496f72C547C2C535B167e06ED8729B374a4f",
+    "GroupingWorkflows": "0xD7c0beb3aa4DCD4723465f1ecAd045676c24CDCd",
+    "LicenseAttachmentWorkflows": "0xcC2E862bCee5B6036Db0de6E06Ae87e524a79fd8",
+    "OwnableERC20Beacon": "0xB83639aF55F03108091020b7c75a46e2eaAb4FfA",
+    "OwnableERC20Template": "0xf8D299af9CBEd49f50D7844DDD1371157251d0A7",
+    "RegistrationWorkflows": "0xbe39E1C756e921BD25DF86e7AAa31106d1eb0424",
+    "RoyaltyTokenDistributionWorkflows": "0xa38f42B8d33809917f23997B8423054aAB97322C",
+    "RoyaltyWorkflows": "0x9515faE61E0c0447C6AC6dEe5628A2097aFE1890",
+    "SPGNFTBeacon": "0xD2926B9ecaE85fF59B6FB0ff02f568a680c01218",
+    "SPGNFTImpl": "0x5266215a00c31AaA2f2BB7b951Ea0028Ea8b4e37",
+    "TokenizerModule": "0xAC937CeEf893986A026f701580144D9289adAC4C"
+  }
+  ```
+
+  ```json Mainnet
+  {
+    "DerivativeWorkflows": "0x9e2d496f72C547C2C535B167e06ED8729B374a4f",
+    "GroupingWorkflows": "0xD7c0beb3aa4DCD4723465f1ecAd045676c24CDCd",
+    "LicenseAttachmentWorkflows": "0xcC2E862bCee5B6036Db0de6E06Ae87e524a79fd8",
+    "OwnableERC20Beacon": "0x9a81C447C0b4C47d41d94177AEea3511965d3Bc9",
+    "OwnableERC20Template": "0xE6505ffc5A7C19B68cEc2311Cc35BC02d8f7e0B1",
+    "RegistrationWorkflows": "0xbe39E1C756e921BD25DF86e7AAa31106d1eb0424",
+    "RoyaltyTokenDistributionWorkflows": "0xa38f42B8d33809917f23997B8423054aAB97322C",
+    "RoyaltyWorkflows": "0x9515faE61E0c0447C6AC6dEe5628A2097aFE1890",
+    "SPGNFTBeacon": "0xD2926B9ecaE85fF59B6FB0ff02f568a680c01218",
+    "SPGNFTImpl": "0x6Cfa03Bc64B1a76206d0Ea10baDed31D520449F5",
+    "TokenizerModule": "0xAC937CeEf893986A026f701580144D9289adAC4C"
+  }
+  ```
+</CodeGroup>
+
+## 라이선스 훅
+
+* GitHub에서 컨트랙트 보기 [here](https://github.com/storyprotocol/protocol-periphery-v1/tree/main/contracts/hooks)
+
+<CodeGroup>
+  ```json Aeneid Testnet
+  {
+    "LockLicenseHook": "0x54C52990dA304643E7412a3e13d8E8923cD5bfF2",
+    "TotalLicenseTokenLimitHook": "0xaBAD364Bfa41230272b08f171E0Ca939bD600478"
+  }
+  ```
+
+  ```json Mainnet
+  {
+    "LockLicenseHook": "0x5D874d4813c4A8A9FB2AB55F30cED9720AEC0222",
+    "TotalLicenseTokenLimitHook": "0xB72C9812114a0Fc74D49e01385bd266A75960Cda"
+  }
+  ```
+</CodeGroup>
+
+## 화이트리스트에 등록된 수익 토큰
+
+아래 목록은 로열티 모듈에서 사용할 수 있는 화이트리스트에 등록된 수익 토큰을 포함하고 있습니다. 수익 토큰에 대해 더 자세히 알아보기 [here](/concepts/royalty-module/ip-royalty-vault).
+
+<Tabs>
+  <Tab title="Aeneid 테스트넷">
+    | 토큰     | 컨트랙트 주소                                      | Explorer                                                                                    | 민팅                                                                                                                    |
+    | :----- | :------------------------------------------- | :------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------- |
+    | WIP    | `0x1514000000000000000000000000000000000000` | [여기서 보기 ↗️](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000) | N/A                                                                                                                   |
+    | MERC20 | `0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E` | [여기서 보기 ↗️](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E) | [민팅 ↗️](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E?tab=write_contract#0x40c10f19) |
+  </Tab>
+
+  <Tab title="메인넷">
+    | 토큰  | 컨트랙트 주소                                      | Explorer                                                                                    | 민팅  |
+    | :-- | :------------------------------------------- | :------------------------------------------------------------------------------------------ | :-- |
+    | WIP | `0x1514000000000000000000000000000000000000` | [여기서 보기 ↗️](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000) | N/A |
+  </Tab>
+</Tabs>
+
+## 기타
+
+* **Multicall3**: 0xcA11bde05977b3631167028862bE2a173976CA11
+* **기본 라이선스 조건 ID** (비상업적 소셜 리믹싱): 1
+
+## 생태계 공식 컨트랙트
+
+아래는 공식 생태계 컨트랙트 목록입니다.
+
+### Story ENS
+
+<CodeGroup>
+  ```json Aeneid Testnet
+  {
+    "SidRegistry": "0x5dC881dDA4e4a8d312be3544AD13118D1a04Cb17",
+    "PublicResolver": "0x6D3B3F99177FB2A5de7F9E928a9BD807bF7b5BAD"
+  }
+  ```
+
+  ```json Mainnet
+  {
+    "SidRegistry": "0x5dC881dDA4e4a8d312be3544AD13118D1a04Cb17",
+    "PublicResolver": "0x6D3B3F99177FB2A5de7F9E928a9BD807bF7b5BAD"
+  }
+  ```
+</CodeGroup>
+
+
+# License Token 발행하기
+
+이 섹션에서는 IP Asset으로부터 License Token을 발행하는 방법을 보여줍니다. IP Asset에 License Terms가 첨부되어 있는 경우에만 License Token을 발행할 수 있습니다. License Token은 ERC-721로 발행됩니다.[License Token](/concepts/licensing-module/license-token)에서 [IP Asset](/concepts/ip-asset). IP Asset에 [License Terms](/concepts/licensing-module/license-terms)가 첨부되어 있는 경우에만 IP Asset에서 License Token을 발행할 수 있습니다. License Token은 ERC-721로 발행됩니다.
+
+License Token을 발행하는 두 가지 이유가 있습니다:
+
+1. 라이선스를 보유하고 라이선스에 명시된 대로 기본 IP 자산을 사용할 수 있습니다 (예: "적절한 귀속을 제공하고 수익의 5%를 공유하는 한 상업적으로 사용할 수 있음")
+2. 라이선스 토큰을 사용하여 다른 IP 자산을 그것의 파생물로 연결합니다.*하지만 나중에 보시겠지만, 일부 SDK 함수는 파생물을 등록하기 위해 명시적으로 라이선스 토큰을 먼저 발행할 필요가 없으며, 실제로 뒤에서 이를 처리합니다.*
+
+### 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 완료하세요 [TypeScript SDK 설정](/developers/typescript-sdk/setup)
+2. 라이선스 조건이 추가된 IP 자산. IPA에 라이선스 조건을 추가하는 방법 알아보기 [here](/developers/typescript-sdk/attach-terms).
+
+## 1. 라이선스 발행
+
+IP 자산 (`ipId = 0x01`)에 라이선스 조건 (`licenseTermdId = 10`)이 첨부되어 있다고 가정해 봅시다. 우리는 이 조건으로 특정 지갑 주소 (`0x02`)에 2개의 라이선스 토큰을 발행하고 싶습니다.
+
+<Warning>
+  일부 IP 자산에는 라이선스를 발행하는 사용자가 `defaultMintingFee`를 지불해야 하는 라이선스 조건이 첨부되어 있을 수 있음을 유의하세요. 그 예를 [TypeScript 튜토리얼](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts)에서 볼 수 있습니다.
+</Warning>
+
+<Note>
+  라이선스 토큰은 `licenseTermsId`가 이미 IP 자산에 첨부되어 있어 공개적으로 사용 가능한 라이선스인 경우에만 발행할 수 있습니다. 그러나 IP 소유자는 [private license](/concepts/licensing-module/license-token#private-licenses)를 IP 자산에 첨부되지 않은 `licenseTermsId`로 라이선스 토큰을 발행하여 만들 수 있습니다.
+</Note>
+
+<Info>
+  관련 문서:
+
+  [license.mintLicenseTokens](/sdk-reference/license#mintlicensetokens)
+</Info>
+
+```typescript main.ts
+// you should already have a client set up (prerequisite)
+import { client } from "./client";
+
+async function main() {
+  const response = await client.license.mintLicenseTokens({
+    licenseTermsId: "10",
+    licensorIpId: "0x641E638e8FCA4d4844F509630B34c9D524d40BE5",
+    receiver: "0x641E638e8FCA4d4844F509630B34c9D524d40BE5", // optional. if not provided, it will go to the tx sender
+    amount: 2,
+    maxMintingFee: BigInt(0), // disabled
+    maxRevenueShare: 100, // default
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `License Token minted at transaction hash ${response.txHash}, License IDs: ${response.licenseTokenIds}`
+  );
+}
+
+main();
+```
+
+### 1a. 라이선스 토큰 발행에 대한 제한 설정
+
+이는 IP 자산 소유자가 라이선스 토큰의 발행 대상이나 방법에 대한 제한을 설정하고자 할 때의 참고 사항입니다. 다음과 같은 작업을 할 수 있습니다:
+
+* 발행할 수 있는 라이선스의 최대 수 설정
+* 발행 대상이나 수량에 따른 동적 수수료 부과
+* 토큰 발행을 위한 특정 지갑 화이트리스트 설정
+
+... 등이 있습니다. 자세한 내용은 문서의 [License Config](/concepts/licensing-module/license-config) 섹션을 확인하세요.
+
+## 2. 파생물 등록
+
+이제 라이선스 토큰을 발행했으니, 이를 보유하거나 IP 자산을 파생물로 연결하는 데 사용할 수 있습니다. 다음 페이지에서 이에 대해 살펴보겠습니다.
+
+*하지만 나중에 보시겠지만, 일부 SDK 함수는 파생물을 등록하기 위해 명시적으로 라이선스 토큰을 먼저 발행할 필요가 없으며, 실제로 뒤에서 이를 처리합니다.*
+
+### 2a. 필요하지 않다면 라이선스 토큰을 왜 사용하나요?
+
+파생물을 등록하기 위해 **라이선스 토큰이 필요한** 몇 가지 경우가 있습니다:
+
+* 라이선스 토큰에 비공개 라이선스 조건이 포함되어 있어, 소유자가 수동으로 발행한 라이선스 토큰을 가지고 있어야만 파생물로 등록할 수 있습니다. 자세한 내용은 [here](/concepts/licensing-module/license-token#private-licenses)를 참조하세요.
+* 라이선스 토큰(NFT)을 발행하는 데 `mintingFee`가 들지만, 마켓플레이스에서 더 저렴한 가격으로 구매할 수 있었습니다. 이 경우 더 비싼 `defaultMintingFee`를 지불하는 것보다 라이선스 토큰으로 등록하는 것이 더 합리적입니다.
+
+
+# Setup
+
+### 전제 조건
+
+환경에 node 버전 18 이상과 npm 버전 8이 설치되어 있어야 합니다. node와 npm을 설치하려면 [Node.js 공식 웹사이트](https://nodejs.org)로 가서 최신 LTS(Long Term Support) 버전을 다운로드하는 것을 추천합니다.
+
+### 의존성 설치
+
+Story SDK[Story SDK](https://www.npmjs.com/package/@story-protocol/core-sdk) node 패키지와 [viem](https://www.npmjs.com/package/viem)을 설치하세요.
+
+<CodeGroup>
+  ```bash npm
+  npm install --save @story-protocol/core-sdk viem
+  ```
+
+  ```bash pnpm
+  pnpm install @story-protocol/core-sdk viem
+  ```
+
+  ```bash yarn
+  yarn add @story-protocol/core-sdk viem
+  ```
+</CodeGroup>
+
+## SDK 클라이언트 초기화
+
+다음으로 SDK 클라이언트를 초기화할 수 있습니다. 이를 수행하는 두 가지 방법이 있습니다:
+
+1. 개인 키 사용 (일부 백엔드 관리자에게 선호됨)
+2. Metamask와 같은 JSON-RPC 계정으로 사용자가 자신의 트랜잭션에 서명
+
+### 개인 키 계정 설정
+
+<CardGroup cols={1}>
+  <Card title="작동 예제" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/utils/config.ts" icon="thumbs-up">
+    Story SDK 클라이언트를 설정하는 방법에 대한 작동 예제는 TypeScript 튜토리얼을 확인하세요.
+  </Card>
+</CardGroup>
+
+아래 코드를 계속하기 전에:
+
+1. Make sure to have `WALLET_PRIVATE_KEY` 파일에 설정되어 있는지 확인하세요.`.env` 파일.
+2. Make sure to have `RPC_PROVIDER_URL` 파일에 설정되어 있는지 확인하세요.`.env` 파일.
+   * 공개 기본값을 사용할 수 있습니다 (`https://aeneid.storyrpc.io`) 또는 다른 RPC를 확인하세요 [here](/network/network-info/aeneid#rpcs).
+
+```typescript utils.ts
+import { http } from "viem";
+import { Account, privateKeyToAccount, Address } from "viem/accounts";
+import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
+
+const privateKey: Address = `0x${process.env.WALLET_PRIVATE_KEY}`;
+const account: Account = privateKeyToAccount(privateKey);
+
+const config: StoryConfig = {
+  account: account, // the account object from above
+  transport: http(process.env.RPC_PROVIDER_URL),
+  chainId: "aeneid",
+};
+export const client = StoryClient.newClient(config);
+```
+
+### React 설정 (예: Metamask)
+
+The [React Setup Guide](/developers/react-guide/setup/overview)는 TypeScript SDK를 사용하여 Metamask와 같은 JSON-RPC 계정으로 트랜잭션 서명 및 전송을 지연시키는 방법을 보여줍니다.
+
+
+# IP 자산 등록
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/register.ts" icon="thumbs-up">
+    완성된 코드를 끝까지 따라가보세요.
+  </Card>
+</CardGroup>
+
+오프체인 IP(예: 책, 캐릭터, 그림 등)가 있다고 가정해 봅시다. Story에서 해당 IP를 등록하려면 먼저 NFT를 발행해야 합니다. 이 NFT는 IP에 대한 **소유권**입니다. 그런 다음 **등록**하여 Story에서 [IP 자산](/concepts/ip-asset)으로 만듭니다. 아래 튜토리얼에서 이 과정을 안내해 드리겠습니다.
+
+### 사전 준비사항
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. TypeScript SDK 설정[TypeScript SDK 설정](/developers/typescript-sdk/setup)
+2. \[선택사항] [Pinata](https://pinata.cloud/)로 이동하여 새 API 키를 생성하세요. JWT를 `.env` file:
+
+```text .env
+PINATA_JWT=<YOUR_PINATA_JWT>
+```
+
+3. \[선택사항] `pinata-web3` dependency:
+
+```bash Terminal
+npm install pinata-web3
+```
+
+## 1. \[선택사항] IP 메타데이터 설정
+
+NFT와 IP에 메타데이터를 설정할 수 있지만, *필수는 아닙니다*. 이를 위해 [IPA 메타데이터 표준](/concepts/ip-asset/ipa-metadata-standard)을 확인하고 NFT와 IP 모두에 대한 메타데이터를 구성하세요.
+
+```typescript main.ts
+// you should already have a client set up (prerequisite)
+import { client } from "./utils";
+
+async function main() {
+  const ipMetadata = {
+    title: "Ippy",
+    description: "Official mascot of Story.",
+    image:
+      "https://ipfs.io/ipfs/QmSamy4zqP91X42k6wS7kLJQVzuYJuW2EN94couPaq82A8",
+    imageHash:
+      "0x21937ba9d821cb0306c7f1a1a2cc5a257509f228ea6abccc9af1a67dd754af6e",
+    mediaUrl:
+      "https://ipfs.io/ipfs/QmSamy4zqP91X42k6wS7kLJQVzuYJuW2EN94couPaq82A8",
+    mediaHash:
+      "0x21937ba9d821cb0306c7f1a1a2cc5a257509f228ea6abccc9af1a67dd754af6e",
+    mediaType: "image/png",
+    creators: [
+      {
+        name: "Story Foundation",
+        address: "0x67ee74EE04A0E6d14Ca6C27428B27F3EFd5CD084",
+        description: "The World's IP Blockchain",
+        contributionPercent: 100,
+        socialMedia: [
+          {
+            platform: "Twitter",
+            url: "https://twitter.com/storyprotocol",
+          },
+          {
+            platform: "Website",
+            url: "https://story.foundation",
+          },
+        ],
+      },
+    ],
+  };
+}
+
+main();
+```
+
+## 2. \[선택사항] NFT 메타데이터 설정
+
+NFT 메타데이터는 [ERC-721 메타데이터 표준](https://eips.ethereum.org/EIPS/eip-721)을 따릅니다.
+
+```typescript main.ts
+import { IpMetadata } from "@story-protocol/core-sdk";
+import { client } from "./utils";
+
+async function main() {
+  // previous code here ...
+
+  const nftMetadata = {
+    name: "Ownership NFT",
+    description: "This is an NFT representing owernship of our IP Asset.",
+    image: "https://picsum.photos/200",
+  };
+}
+
+main();
+```
+
+## 3. \[선택사항] IP 및 NFT 메타데이터를 IPFS에 업로드
+
+별도의 `uploadToIpfs` 파일에서 IP 및 NFT 메타데이터 객체를 IPFS에 업로드하는 함수를 만드세요:
+
+```typescript uploadToIpfs.ts
+import { PinataSDK } from "pinata-web3";
+
+const pinata = new PinataSDK({
+  pinataJwt: process.env.PINATA_JWT,
+});
+
+export async function uploadJSONToIPFS(jsonMetadata: any): Promise<string> {
+  const { IpfsHash } = await pinata.upload.json(jsonMetadata);
+  return IpfsHash;
+}
+```
+
+그런 다음 아래와 같이 해당 함수를 사용하여 메타데이터를 업로드할 수 있습니다:
+
+```typescript main.ts
+import { IpMetadata } from "@story-protocol/core-sdk";
+import { client } from "./utils";
+import { uploadJSONToIPFS } from "./uploadToIpfs";
+import { createHash } from "crypto";
+
+async function main() {
+  // previous code here ...
+
+  const ipIpfsHash = await uploadJSONToIPFS(ipMetadata);
+  const ipHash = createHash("sha256")
+    .update(JSON.stringify(ipMetadata))
+    .digest("hex");
+  const nftIpfsHash = await uploadJSONToIPFS(nftMetadata);
+  const nftHash = createHash("sha256")
+    .update(JSON.stringify(nftMetadata))
+    .digest("hex");
+}
+
+main();
+```
+
+## 4. NFT를 IP 자산으로 등록
+
+새로운 IP를 등록하려면 먼저 IP의 기본 소유권을 나타내는 NFT를 발행해야 한다는 점을 기억하세요. 이 NFT는 그 후 "등록"되어 [IP 자산](/concepts/ip-asset)이 됩니다.
+
+다행히도 `mintAndRegisterIp` 함수를 사용하여 NFT를 발행하고 동일한 트랜잭션에서 IP 자산으로 등록할 수 있습니다.
+
+이 함수는 발행할 SPG NFT 계약이 필요합니다.
+
+### 4a. 어떤 SPG NFT 계약 주소를 사용해야 하나요?
+
+간단히 말해, Aeneid 테스트넷에서 여러분을 위해 만든 공개 컬렉션을 사용할 수 있습니다: `0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc`. 메인넷에서, 또는 Aeneid에서 실제 시나리오를 테스트할 때도 **자체 계약을 생성**해야 합니다. 이는 아래 "사용자 정의 ERC-721 계약 사용" 섹션에서 설명합니다.
+
+<Accordion title="사용자 정의 ERC-721 계약 사용" icon="info">
+  우리가 제공하는 공개 컬렉션을 사용하는 것도 괜찮지만, 실제로 이를 수행할 때는 IP를 위한 자체 NFT 컬렉션을 만들어야 합니다. 이를 위한 두 가지 방법이 있습니다:
+
+  1. ISPGNFT[ISPGNFT](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/interfaces/ISPGNFT.sol) 인터페이스를 구현하는 계약을 배포하거나 SDK의 [createNFTCollection](/sdk-reference/nftclient#createnftcollection) 함수(아래 참조)를 사용하여 이를 대신 수행할 수 있습니다. 이렇게 하면 오직 여러분만이 발행할 수 있는 자체 SPG NFT 컬렉션을 얻게 됩니다.
+
+  ```typescript createSpgNftCollection.ts
+  import { zeroAddress } from "viem";
+  import { client } from "./utils";
+
+  async function createSpgNftCollection() {
+    const newCollection = await client.nftClient.createNFTCollection({
+      name: "Test NFTs",
+      symbol: "TEST",
+      isPublicMinting: false,
+      mintOpen: true,
+      mintFeeRecipient: zeroAddress,
+      contractURI: "",
+      txOptions: { waitForTransaction: true },
+    });
+
+    console.log("New collection created:", {
+      "SPG NFT Contract Address": newCollection.spgNftContract,
+      "Transaction Hash": newCollection.txHash,
+    });
+  }
+
+  createSpgNftCollection();
+  ```
+
+  2. 자체적으로 사용자 정의 ERC-721 NFT 컬렉션을 만들고 [register](/sdk-reference/ipasset#register) 함수를 사용하세요 - `nftContract`와 `tokenId`를 제공하세요 - *대신* `mintAndRegisterIp` 함수를 사용하는 것입니다. 작동하는 코드 예제는 [여기](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/registerCustom.ts)에서 확인할 수 있습니다. 이는 **이미 자체 로직이 있는 사용자 정의 NFT 계약이 있거나 IP 자체가 NFT인 경우에 유용합니다.**
+</Accordion>
+
+다음은 IP를 등록하는 코드입니다:
+
+<Info>
+  관련 문서:
+  [ipAsset.mintAndRegisterIp](/sdk-reference/ipasset#mintandregisterip)
+</Info>
+
+```typescript main.ts
+import { IpMetadata } from "@story-protocol/core-sdk";
+import { client } from "./utils";
+import { uploadJSONToIPFS } from "./uploadToIpfs";
+import { createHash } from "crypto";
+import { Address } from "viem";
+
+async function main() {
+  // previous code here ...
+
+  const response = await client.ipAsset.mintAndRegisterIp({
+    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+    ipMetadata: {
+      ipMetadataURI: `https://ipfs.io/ipfs/${ipIpfsHash}`,
+      ipMetadataHash: `0x${ipHash}`,
+      nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsHash}`,
+      nftMetadataHash: `0x${nftHash}`,
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  console.log(
+    `View on the explorer: https://aeneid.explorer.story.foundation/ipa/${response.ipId}`
+  );
+}
+
+main();
+```
+
+## 5. 완성된 코드 보기
+
+축하합니다, IP를 등록하셨습니다!
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/register.ts" icon="thumbs-up">
+    완성된 코드를 끝까지 따라가보세요.
+  </Card>
+</CardGroup>
+
+## 6. IP에 라이선스 조건 추가
+
+이제 IP가 등록되었으니 [라이선스 조건](/concepts/licensing-module/license-terms)을 생성하고 첨부할 수 있습니다. 이를 통해 다른 사람들이 라이선스를 발행하고 조건에 따라 제한된 방식으로 여러분의 IP를 사용할 수 있게 됩니다.
+
+다음 섹션에서 이에 대해 다루겠지만, `mintAndRegisterIp` function, you can **register IP + create terms + attach terms** all in the same step with the following functions:
+
+* [mintAndRegisterIpAssetWithPilTerms](/sdk-reference/ipasset#mintandregisteripassetwithpilterms)
+* [registerIpAndAttachPilTerms](/sdk-reference/ipasset#registeripandattachpilterms)
+
+
+# 분쟁 제기
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/dispute/disputeIp.ts" icon="thumbs-up">
+    이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다룹니다.
+  </Card>
+</CardGroup>
+
+이 섹션에서는 Story에서 IP에 대해 분쟁을 제기하는 방법을 보여줍니다. IP가 귀하의 소유인지 아닌지에 관계없이 IP에 대해 분쟁을 제기하고 싶은 경우가 많이 있습니다. Story에서 IP에 대한 분쟁 제기는 우리의[Dispute Module](/concepts/dispute-module)과[UMA Arbitration Policy](/concepts/dispute-module/uma-arbitration-policy)덕분에 쉽습니다.
+
+예를 들어, 당신이 그림을 등록했는데 다른 사람이 1픽셀만 다른 그 그림을 등록했다고 가정해 봅시다. 당신은`IMPROPER_REGISTRATION`태그를 따라 분쟁을 제기할 수 있으며, 이는 잠재적인 표절을 알립니다.
+
+이 튜토리얼에서는 IP를 분쟁 중인 것으로 표시하는 방법만 배우게 됩니다.
+
+### 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 다음을 완료하세요 [TypeScript SDK Setup](/developers/typescript-sdk/setup)
+2. 다음에 대한 기본적인 이해가 필요합니다 [Dispute Module](/concepts/dispute-module)
+
+## 1. IP 이의 제기
+
+IP 자산에 대해 이의를 제기하려면 다음이 필요합니다:
+
+* 이의를 제기하는 IP 자산의 `targetIpId` (아래에서는 테스트용을 사용합니다)
+* 이의 제기에 적용할 `targetTag`. [whitelisted tags](/concepts/dispute-module/overview#dispute-tags)만 적용할 수 있습니다.
+* `cid` (Content Identifier)는 IPFS에서 제공해야 하는 이의 제기 증거를 나타내는 고유 식별자입니다. 자세한 내용은 [here](/concepts/dispute-module/uma-arbitration-policy#dispute-evidence-submission-guidelines)에서 확인할 수 있습니다 (아래에서는 테스트용을 사용합니다).
+
+<Warning>
+  **CID는 한 번만 제공할 수 있습니다.** 사용된 후에는 다시 증거로 사용할 수 없습니다.
+</Warning>
+
+`main.ts` 파일을 만들고 아래 코드를 추가하세요:
+
+```typescript main.ts
+import { client } from "./utils";
+import { parseEther } from "viem";
+
+async function main() {
+  const disputeResponse = await client.dispute.raiseDispute({
+    targetIpId: "0x6b42d065aDCDA6fA83B59ad731841360dC5321fB",
+    // NOTE: you must use your own CID here, because every time it is used,
+    // the protocol does not allow you to use it again
+    cid: "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR",
+    // you must pick from one of the whitelisted tags here: https://docs.story.foundation/concepts/dispute-module#dispute-tags
+    targetTag: "IMPROPER_REGISTRATION",
+    bond: parseEther("0.1"), // minimum of 0.1
+    liveness: 2592000,
+    txOptions: { waitForTransaction: true },
+  });
+  console.log(
+    `Dispute raised at transaction hash ${disputeResponse.txHash}, Dispute ID: ${disputeResponse.disputeId}`
+  );
+}
+
+main();
+```
+
+## 2. 완성된 코드 보기
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/dispute/disputeIp.ts" icon="thumbs-up">
+    IP에 대한 이의 제기의 완성되고 작동하는 예시를 확인하세요.
+  </Card>
+</CardGroup>
+
+
+# 파생작 등록하기
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts" icon="thumbs-up">
+    이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다룹니다.
+  </Card>
+</CardGroup>
+
+이 섹션에서는 IP 자산을 다른 자산의 파생작으로 등록하는 방법을 보여줍니다.
+
+### 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 다음을 완료하세요 [TypeScript SDK 설정](/developers/typescript-sdk/setup)
+
+## 1. 시작하기 전에
+
+IP 자산을 다른 자산의 파생작으로 등록하는 방법은 여러 가지가 있습니다. 아래에서 어떤 함수를 사용해야 하는지 결정하는 데 도움을 드리겠습니다.
+
+<Note>
+  **아이디어가 없나요?** 가장 쉬운 방법을 기준으로 어떤 SDK 함수를 사용할지 결정하는 것이 가장 좋습니다. 하지만 아이디어가 전혀 없다면 다음 섹션으로 계속 진행하세요.
+</Note>
+
+<Tip>
+  참고로 이것이 혼란스럽다는 것을 인지하고 있으며, 곧 SDK를 업데이트하여 이 모든 것을 1개의 간단한 함수로 통합할 예정입니다. :)
+</Tip>
+
+이미 사용할 수 있는 [라이선스 토큰](/concepts/licensing-module/license-token)이 있나요?
+
+* ✅ 예: 파생 IP 자산이 이미 등록되어 있나요?
+  * ✅ 예: [registerDerivativeWithLicenseTokens](/sdk-reference/ipasset#registerderivativewithlicensetokens)
+  * ❌ 아니오: 자체 NFT 계약이 있거나 이미 발행된 NFT가 있나요?
+    * ✅ 예: [registerIpAndMakeDerivativeWithLicenseTokens](/sdk-reference/ipasset#registeripandmakederivativewithlicensetokens)
+    * ❌ 아니오: [mintAndRegisterIpAndMakeDerivativeWithLicenseTokens](/sdk-reference/ipasset#mintandregisteripandmakederivativewithlicensetokens)
+* ❌ 아니오: 파생 IP 자산이 이미 등록되어 있나요?
+  * ✅ 예: [registerDerivative](/sdk-reference/ipasset#registerderivative)
+  * ❌ 아니오: 자체 NFT 계약이 있거나 이미 발행된 NFT가 있나요?
+    * ✅ 예: [registerDerivativeIp](/sdk-reference/ipasset#registerderivativeip)
+    * ❌ 아니오: [mintAndRegisterIpAndMakeDerivative](/sdk-reference/ipasset#mintandregisteripandmakederivative)
+
+### 1a. 필요하지 않은데 라이선스 토큰을 사용하는 이유는 무엇인가요?
+
+파생작을 등록할 때 **라이선스 토큰이 필요한** 경우가 몇 가지 있습니다:
+
+* 라이선스 토큰에는 비공개 라이선스 조건이 포함되어 있으므로, 소유자가 수동으로 발행한 라이선스 토큰을 가지고 있어야만 파생물로 등록할 수 있습니다. 자세한 내용은 [here](/concepts/licensing-module/license-token#private-licenses).
+* 라이선스 토큰(NFT)을 발행하는 데는 `mintingFee` 비용이 들지만, 마켓플레이스에서 더 저렴한 가격으로 구매할 수 있었다면 더 비싼 `defaultMintingFee`를 지불하는 것보다 라이선스 토큰으로 등록하는 것이 더 합리적입니다.
+
+## 2. 파생물 등록
+
+<Note>
+  **이것은 단지 예시일 뿐입니다**. 위의 조사를 바탕으로 가장 적합한 파생 함수를 찾아내는 것이 좋습니다. 하지만 잘 모르겠고 한 가지 해결책을 단계별로 안내받고 싶다면, 다음 부분이 당신을 위한 것입니다.
+</Note>
+
+우리는 당신이 ❌ 라이선스 토큰이 없고, ❌ 파생 IP가 아직 등록되지 않았으며, ❌ 자체 NFT 계약이나 이미 발행된 NFT가 없다고 가정하겠습니다.
+
+**다음의 1-4단계를 따르세요** [IP 자산 등록](/developers/typescript-sdk/register-ip-asset). 이미 SPG NFT 컬렉션이 있다면 4단계를 건너뛸 수 있습니다. 그런 다음 여기로 돌아오세요.
+
+코드를 다음과 같이 수정하세요...
+
+1. 대신 `mintAndRegisterIp`를 사용하세요 `mintAndRegisterIpAndMakeDerivative`
+2. 필드를 추가하세요 `derivData`, 여기서:
+   * `parentIpIds`는 `ipIds`입니다. 파생물이 되고자 하는 부모의 **NOTE: Once you become a derivative, you cannot add more parents**
+   * `licenseTermIds`는 등록하고자 하는 라이선스 조건의 배열입니다. 이는 파생물이 준수해야 하는 조건들입니다
+
+이제 다음과 같이 함수를 호출할 수 있습니다:
+
+<Info>
+  관련 문서:
+
+  [ipAsset.mintAndRegisterIpAndMakeDerivative](/sdk-reference/ipasset#mintandregisteripandmakederivative)
+</Info>
+
+```typescript main.ts
+import { IpMetadata, DerivativeData } from "@story-protocol/core-sdk";
+import { client } from "./utils";
+import { uploadJSONToIPFS } from "./uploadToIpfs";
+import { createHash } from "crypto";
+import { Address } from "viem";
+
+async function main() {
+  // previous code here ...
+
+  const derivData: DerivativeData = {
+    // TODO: insert the parent's ipId
+    parentIpIds: [PARENT_IP_ID],
+    // TODO: insert the licenseTermsId attached to parent IpId
+    licenseTermsIds: [LICENSE_TERMS_ID],
+  };
+
+  const response = await client.ipAsset.mintAndRegisterIpAndMakeDerivative({
+    // TODO: insert your NFT contract address created by the SPG
+    spgNftContract: SPG_NFT_CONTRACT_ADDRESS as Address,
+    derivData,
+    ipMetadata: {
+      ipMetadataURI: `https://ipfs.io/ipfs/${ipIpfsHash}`,
+      ipMetadataHash: `0x${ipHash}`,
+      nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsHash}`,
+      nftMetadataHash: `0x${nftHash}`,
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Completed at transaction hash ${response.txHash}, IPA ID: ${response.ipId}, Token ID: ${response.tokenId}`
+  );
+}
+```
+
+## 3. 완성된 코드 보기
+
+축하합니다, 파생 IP 자산을 등록하셨습니다!
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/derivative/registerDerivativeCommercial.ts" icon="thumbs-up">
+    이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다루고 있습니다.
+  </Card>
+</CardGroup>
+
+## 4. 지불 및 수익 청구
+
+이제 부모-자식 IP 관계를 설정했으므로 라이선스 조건에 따른 지불 및 자동화된 수익 공유를 탐색할 수 있습니다. 이에 대해서는 다음 페이지에서 다루겠습니다.
+
+
+# 개요
+
+시작하는 가장 좋은 방법은 직접 손으로 만들어보며 구축을 시작하는 것입니다.
+
+<CardGroup cols={2}>
+  <Card title="작동하는 코드 예제" href="https://github.com/storyprotocol/typescript-tutorial" icon="thumbs-up">
+    다음의 모든 튜토리얼에 대한 매우 쉽고 간단한 작동하는 코드 예제.
+  </Card>
+
+  <Card title="SDK 참조" href="/sdk-reference" icon="books">
+    우리 SDK의 모든 함수에 대한 예제와 타입을 보여주는 전체 SDK 참조를 확인하세요.
+  </Card>
+</CardGroup>
+
+다음 일련의 튜토리얼에서는 Story SDK를 사용하여 IP 애플리케이션을 구축하는 방법과 아키텍처 개요에서 언급한 개념들을 배우게 될 것입니다.[아키텍처 개요](/concepts/overview).
+
+
+# IPA에 지불하기
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/royalty/payRevenue.ts" icon="thumbs-up">
+    이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다룹니다.
+  </Card>
+</CardGroup>
+
+이 섹션에서는 IP Asset에 지불하는 방법을 보여줍니다. 이를 수행하는 몇 가지 이유가 있습니다:
+
+1. 단순히 IP에 "팁"을 주고 싶을 때
+2. 조상 IP와의 라이선스 조건에 따라 특정 비율의 지불금을 전달해야 할 때
+
+두 시나리오 모두 아래의 `payRoyaltyOnBehalf` 함수를 사용합니다. 이 경우, [Royalty Module](/concepts/royalty-module)이 자동으로 다양한 지불 흐름을 처리하여 지불되는 IPA와 특정 `commercialRevShare`을 협상한 상위 IP Asset이 자신의 몫을 청구할 수 있도록 합니다.
+
+### 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 완료하세요 [TypeScript SDK 설정](/developers/typescript-sdk/setup)
+2. 에 대한 기본적인 이해가 필요합니다 [Royalty Module](/concepts/royalty-module)
+
+## 시작하기 전에
+
+다음 함수를 사용하여 IP Asset에 지불할 수 있습니다 `payRoyaltyOnBehalf`.
+
+IP Asset에 [\$WIP](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000)로 지불하게 됩니다. **\$WIP가 충분하지 않은 경우, 함수가 자동으로 동등한 양의 \$IP를 \$WIP로 래핑합니다.** 둘 다 충분하지 않으면 실패합니다.
+
+다음 시나리오를 이해하는 데 도움이 되도록, 자식 IP Asset과 50% `commercialRevShare`을 협상한 부모 IP Asset이 있다고 가정해 봅시다.
+
+### 화이트리스트에 등록된 수익 토큰
+
+우리 프로토콜에 의해 화이트리스트에 등록된 토큰만 지불("수익") 토큰으로 사용될 수 있습니다. \$WIP는 그 중 하나입니다. 그 목록을 보려면 [여기](/developers/deployed-smart-contracts#whitelisted-revenue-tokens)를 참조하세요.
+
+<Tip>
+  IP Asset에 지불하는 것을 테스트하고 싶다면, 테스트를 위해 자유롭게 발행할 수 있는 화이트리스트에 등록된 수익 토큰이 필요할 것입니다. 우리는 Aeneid 테스트넷에 [MockERC20](https://aeneid.storyscan.io/address/0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E?tab=write_contract#0x40c10f19)을 제공했으며, 이를 발행하고 지불에 사용할 수 있습니다. 그런 다음 준비가 되면 \$WIP를 사용해야 합니다.
+</Tip>
+
+## 시나리오 #1: IP Asset에 팁 주기
+
+이 시나리오에서는 멋져서 IP Asset에 2 \$WIP를 지불하고 싶은 외부 제3자 사용자입니다. 아래 함수를 호출할 때, `payerIpId`을 제로 주소로 설정해야 합니다. IP Asset을 대신하여 지불하는 것이 아니기 때문입니다. 또한, `amount`을 2로 설정합니다.
+
+<Info>
+  관련 문서:
+  [royalty.payRoyaltyOnBehalf](/sdk-reference/royalty#payroyaltyonbehalf)
+</Info>
+
+```typescript main.ts
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+// you should already have a client set up (prerequisite)
+import { client } from "./utils";
+import { zeroAddress, parseEther } from "viem";
+
+async function main() {
+  const payRoyalty = await client.royalty.payRoyaltyOnBehalf({
+    receiverIpId: "0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1", // the ip you're paying
+    payerIpId: zeroAddress,
+    token: WIP_TOKEN_ADDRESS,
+    amount: parseEther("2"), // 2 $WIP
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
+}
+
+main();
+```
+
+지불하는 IP Asset이 파생작이라고 가정해 봅시다. 그리고 부모와의 기존 라이선스 조건에 따라 50% `commercialRevShare`가 지정되어 있다면, 수익의 50%(2\*0.5 = 1)가 [Royalty Module](/concepts/royalty-module)덕분에 자동으로 부모가 청구할 수 있게 되어, 부모와 자식 IP Asset 모두 1 \$WIP를 얻게 됩니다. 이에 대해서는 다음 페이지에서 다루겠습니다.
+
+## 시나리오 #2: 지분 지불
+
+이 시나리오에서는 파생 IP Asset이 오프체인에서 2 USD를 벌었다고 가정해 봅시다. 파생작이 부모 IP Asset에게 수익의 50%를 빚지고 있기 때문에, 오프체인에서 부모에게 1 USD를 주고 끝낼 수 있습니다. 또는 온체인에서 부모에게 1 \$USD 상당을 보낼 수 있습니다 *(이 예시에서는 1 \$WIP = 1 USD라고 가정합시다)*.
+
+<Info>
+  관련 문서:
+  [royalty.payRoyaltyOnBehalf](/sdk-reference/royalty#payroyaltyonbehalf)
+</Info>
+
+```typescript main.ts
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+// you should already have a client set up (prerequisite)
+import { client } from "./utils";
+import { parseEther } from "viem";
+
+async function main() {
+  const payRoyalty = await client.royalty.payRoyaltyOnBehalf({
+    receiverIpId: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2", // parentIpId
+    payerIpId: "0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1", // childIpId
+    token: WIP_TOKEN_ADDRESS,
+    amount: parseEther("1"), // 1 $WIP
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
+}
+
+main();
+```
+
+### 복잡한 로열티 그래프
+
+자식이 오프체인에서 1,000 USD를 벌었고, 각 부모마다 다른 복잡한 라이선스 조건을 가진 거대한 조상 트리에 연결되어 있다고 가정해 봅시다. 이 시나리오에서는 각 부모에 대한 개별적인 지불을 계산할 수 없습니다. 대신, 당신이 번 금액을 *자신에게* 지불하고, [Royalty Module](/concepts/royalty-module) 각 조상이 자신의 몫을 받을 수 있도록 지불을 자동화할 것입니다.
+
+## 완성된 코드 보기
+
+축하합니다, 온체인에서 IP Asset에 대한 지불을 완료했습니다!
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/royalty/payRevenue.ts" icon="thumbs-up">
+    이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다루고 있습니다.
+  </Card>
+</CardGroup>
+
+## 수익 청구하기
+
+이제 수익을 지불했으니, 그것을 청구하는 방법을 배워야 합니다! 다음 페이지에서 이에 대해 다룰 것입니다.
+
+
+# 수익 청구
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/royalty/payRevenue.ts" icon="thumbs-up">
+    이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다룹니다.
+  </Card>
+</CardGroup>
+
+이 섹션에서는 IP 자산으로부터 지급될 수익을 청구하는 방법을 보여줍니다.
+
+수익을 청구할 수 있는 두 가지 주요 방법이 있습니다:
+
+1. **시나리오 #1**: 누군가가 내 IP 자산에 직접 지불하고, 나는 그 수익을 청구합니다.
+2. **시나리오 #2**: 누군가가 내 IP의 파생 IP 자산에 지불하고, 나는 라이선스 조건의 `commercialRevShare`에 기반하여 그들의 수익의 일정 비율에 대한 권리를 가집니다.
+
+### 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 다음을 완료하세요 [TypeScript SDK 설정](/developers/typescript-sdk/setup)
+2. 다음에 대한 기본적인 이해가 필요합니다 [로열티 모듈](/concepts/royalty-module)
+3. 당연히 청구할 지불이 있어야 합니다. 다음을 읽어보세요 [IPA에 지불하기](/developers/typescript-sdk/pay-ipa)
+
+## 시작하기 전에
+
+지불이 이루어지면 결국 IP 자산의 [IP 로열티 금고](/concepts/royalty-module/ip-royalty-vault)에 도달합니다. 여기서 해당 IP 자산의 IP 로열티 금고에 대한 수익 공유 비율을 나타내는 로열티 토큰을 소유한 사람에게 청구/이전됩니다.
+
+IP 계정([IP 자산](/concepts/ip-asset)을 나타내는 스마트 계약)은 처음 등록될 때 로열티 토큰의 100%를 보유합니다. 따라서 일반적으로 대부분의 로열티 토큰을 보유하고 있습니다.
+
+<Note>
+  **빠른 참고**. 아래 시나리오와 예시는 [유동적 절대 비율](/concepts/royalty-module/liquid-absolute-percentage) 로열티 정책을 사용합니다. 이는 현재 사용할 수 있는 두 가지 로열티 정책 중 하나입니다.
+</Note>
+
+## 시나리오 #1
+
+이 시나리오에서, 나는 IP 자산 3을 소유하고 있습니다. 누군가가 내 IP 자산 3에 직접 지불하고, 나는 그 수익을 청구합니다. 단계별로 살펴보겠습니다:
+
+1. 아래 다이어그램에서 볼 수 있듯이, IP 자산 4(IP 자산일 필요는 없으며 어떤 주소든 될 수 있습니다)가 IP 자산 3에 1M \$WIP를 지불하면, 850k \$WIP가 자동으로 IP 로열티 금고 3에 예치됩니다.
+
+   <Frame>
+     <img src="/images/concepts/lap-1.png" alt="Payment flow to IP Royalty Vault" />
+   </Frame>
+
+2. 이제 IP 자산 3은 IP 로열티 금고 3에 있는 수익을 청구하려고 합니다. 다음과 같이 보일 것입니다:
+
+   <Frame>
+     <img src="/images/concepts/lap-3.png" alt="Claiming revenue from IP Royalty Vault" />
+   </Frame>
+
+아래는 IP 자산 3이 위 이미지에 표시된 대로 SDK를 사용하여 수익을 청구하는 방법입니다:
+
+<Info>
+  관련 문서:
+  [royalty.claimAllRevenue](/sdk-reference/royalty#claimallrevenue)
+</Info>
+
+```typescript main.ts
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+// you should already have a client set up (prerequisite)
+import { client } from "./client";
+
+async function main() {
+  const claimRevenue = await client.royalty.claimAllRevenue({
+    // IP Asset 3's ipId
+    ancestorIpId: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
+    // whoever owns the royalty tokens associated with IP Royalty Vault 3
+    // (most likely the associated ipId, which is IP Asset 3's ipId)
+    claimer: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
+    currencyTokens: [WIP_TOKEN_ADDRESS],
+    childIpIds: [],
+    royaltyPolicies: [],
+    claimOptions: {
+      // If the wallet claiming the revenue is the owner of the
+      // IP Account/IP Asset (in other words, the owner of the
+      // IP's underlying NFT), `claimAllRevenue` will transfer all
+      // earnings to the user's external wallet holding the NFT
+      // instead of the IP Account, for convenience. You can disable it here.
+      autoTransferAllClaimedTokensFromIp: true,
+      // Unwraps the claimed $WIP to $IP for you
+      autoUnwrapIpTokens: true,
+    },
+  });
+
+  console.log(`Claimed revenue: ${claimRevenue.claimedTokens}`);
+}
+
+main();
+```
+
+## 시나리오 #2
+
+이 시나리오에서, 나는 IP 자산 1을 소유하고 있습니다. 누군가가 파생 IP 자산 3에 지불하고, 나는 라이선스 조건의 `commercialRevShare`에 기반하여 그들의 수익의 일정 비율에 대한 권리를 가집니다. 이는 시나리오 #1과 정확히 동일하지만 한 단계가 추가됩니다. 단계별로 살펴보겠습니다:
+
+1. 아래 다이어그램에서 볼 수 있듯이, IP 자산 4(IP 자산일 필요는 없으며 어떤 주소든 될 수 있습니다)가 IP 자산 3에 1M \$WIP를 지불하면, 150k \$WIP가 자동으로 조상들에게 분배될 LAP 로열티 정책 계약에 예치됩니다.
+
+   <Frame>
+     <img src="/images/concepts/lap-1.png" alt="Revenue distribution to royalty policy contract" />
+   </Frame>
+
+2. 그런 다음, 두 번째 단계에서 토큰은 협상된 [IP 로열티 금고](/concepts/royalty-module/ip-royalty-vault)에 기반하여 조상들의 `commercialRevShare` 라이선스 조건에 명시되어 있습니다.
+
+   <Frame>
+     <img src="/images/concepts/lap-2.png" alt="Revenue distribution to ancestors" />
+   </Frame>
+
+3. 마지막으로, IP 자산 1 & 2는 관련 IP 로열티 금고에 있는 수익을 청구하고자 합니다. 다음과 같이 보일 것입니다:
+
+   <Frame>
+     <img src="/images/concepts/lap-3.png" alt="Claiming revenue from ancestor IP Royalty Vaults" />
+   </Frame>
+
+아래는 위 이미지에서 보여진 것처럼 IP 자산 1(또는 2)이 SDK를 사용하여 수익을 청구하는 방법입니다:
+
+<Info>
+  관련 문서:
+  [royalty.claimAllRevenue](/sdk-reference/royalty#claimallrevenue)
+</Info>
+
+```typescript main.ts
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+// you should already have a client set up (prerequisite)
+import { client } from "./client";
+
+async function main() {
+  const claimRevenue = await client.royalty.claimAllRevenue({
+    // IP Asset 1's ipId
+    ancestorIpId: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    // whoever owns the royalty tokens associated with IP Royalty Vault 1
+    // (most likely the associated ipId, which is IP Asset 1's ipId)
+    claimer: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    currencyTokens: [WIP_TOKEN_ADDRESS],
+    // IP Asset 3's ipId
+    childIpIds: ["0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2"],
+    // Aeneid testnet address of RoyaltyPolicyLAP
+    royaltyPolicies: ["0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E"],
+    claimOptions: {
+      // If the wallet claiming the revenue is the owner of the
+      // IP Account/IP Asset (in other words, the owner of the
+      // IP's underlying NFT), `claimAllRevenue` will transfer all
+      // earnings to the user's external wallet holding the NFT
+      // instead of the IP Account, for convenience. You can disable it here.
+      autoTransferAllClaimedTokensFromIp: true,
+      // Unwraps the claimed $WIP to $IP for you
+      autoUnwrapIpTokens: true,
+    },
+  });
+
+  console.log(`Claimed revenue: ${claimRevenue.claimedTokens}`);
+}
+
+main();
+```
+
+## 완성된 코드 보기
+
+축하합니다, [Royalty Module](/concepts/royalty-module)을 사용하여 수익을 청구했습니다!
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/royalty/payRevenue.ts" icon="thumbs-up">
+    이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다루고 있습니다.
+  </Card>
+</CardGroup>
+
+## IP 분쟁 제기
+
+만약 IP 자산이 정당한 몫을 지불하지 않는다면 어떻게 될까요? 우리는 온체인에서 IP에 대해 분쟁을 제기할 수 있으며, 이는 다음 페이지에서 다룰 것입니다.
+
+
+# IPA에 약관 첨부
+
+이 섹션에서는 IP 자산에 라이선스 약관을 첨부하는 방법을 보여줍니다. 약관을 첨부함으로써 사용자는 해당 IP에서 그 약관으로 라이선스 토큰(온체인 "라이선스")을 공개적으로 발행할 수 있습니다.[라이선스 약관](/concepts/licensing-module/license-terms)을 [IP 자산](/concepts/ip-asset)에 첨부함으로써, 사용자들은 해당 IP로부터 이 약관을 가진 [라이선스 토큰](/concepts/licensing-module/license-token) (온체인 "라이선스")을 공개적으로 발행할 수 있습니다.
+
+### 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 완료하세요 [TypeScript SDK 설정](/developers/typescript-sdk/setup)
+
+## 1. 시작하기 전에
+
+IP 자산에 조건을 첨부하기 위해 기존 IP 자산이 필요하지 않다는 점을 언급해야 합니다. 다음 두 가지 함수를 사용하여 **IP 등록 + 조건 생성 + 조건 첨부**를 동일한 함수에서 수행할 수 있습니다:
+
+* [mintAndRegisterIpAssetWithPilTerms](/sdk-reference/ipasset#mintandregisteripassetwithpilterms)
+* [registerIpAndAttachPilTerms](/sdk-reference/ipasset#registeripandattachpilterms)
+
+## 2. 라이선스 조건 등록
+
+IP 자산에 조건을 첨부하기 위해 먼저 조건을 생성해 봅시다!
+
+[라이선스 조건](/concepts/licensing-module/license-terms)은 해당 조건을 가진 IP에서 발행된 라이선스에 대한 제한을 정의하는 구성 가능한 값의 집합입니다. 예를 들어, "이 라이선스를 발행하면 수익의 50%를 나와 공유해야 합니다." 전체 조건 세트는 [PIL 조건](/concepts/programmable-ip-license/pil-terms)에서 확인할 수 있습니다.
+
+<Note>
+  생성하려는 동일한 매개변수 세트에 대해 이미 프로토콜에 라이선스 조건이 존재하는 경우, 다시 생성할 필요가 없으며 함수는 단순히 기존의 `licenseTermsId`와 정의되지 않은 `txHash`를 반환합니다. 라이선스 조건은 프로토콜 전체에 적용되므로 `licenseTermsId`를 사용하여 기존 라이선스 조건을 사용할 수 있습니다.
+</Note>
+
+아래는 새로운 조건을 생성하는 방법을 보여주는 코드 예시입니다:
+
+<Info>
+  관련 문서:
+
+  [license.registerPILTerms](/sdk-reference/license#registerpilterms)
+</Info>
+
+```typescript main.ts
+import { LicenseTerms } from "@story-protocol/core-sdk";
+import { zeroAddress } from "viem";
+// you should already have a client set up (prerequisite)
+import { client } from "./utils";
+
+async function main() {
+  const licenseTerms: LicenseTerms = {
+    defaultMintingFee: 0n,
+    // must be a whitelisted revenue token from https://docs.story.foundation/developers/deployed-smart-contracts
+    // in this case, we use $WIP
+    currency: "0x1514000000000000000000000000000000000000",
+    // RoyaltyPolicyLAP address from https://docs.story.foundation/developers/deployed-smart-contracts
+    royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E",
+    transferable: false,
+    expiration: 0n,
+    commercialUse: false,
+    commercialAttribution: false,
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: "0x",
+    commercialRevShare: 0,
+    commercialRevCeiling: 0n,
+    derivativesAllowed: false,
+    derivativesAttribution: false,
+    derivativesApproval: false,
+    derivativesReciprocal: false,
+    derivativeRevCeiling: 0n,
+    uri: "",
+  };
+
+  const response = await client.license.registerPILTerms({
+    ...licenseTerms,
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
+  );
+}
+
+main();
+```
+
+### 2a. PIL 플레이버
+
+위에서 보듯이 많은 조건 중에서 선택해야 합니다.
+
+새로운 조건을 등록하는 데 도움이 되는 편의 함수가 있습니다. [PIL 플레이버](/concepts/programmable-ip-license/pil-flavors)를 만들었는데, 이는 사용할 조건을 결정하는 데 도움이 되는 미리 구성된 인기 있는 라이선스 조건 조합입니다. 다음 편의 함수를 사용하여 이러한 PIL 플레이버를 보고 조건을 등록할 수 있습니다:
+
+<CardGroup cols={4}>
+  <Card title="비상업적 소셜 리믹스" href="/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing" icon="file">
+    출처를 밝히는 무료 리믹스. 상업화 불가.
+  </Card>
+
+  {" "}
+
+  <Card title="상업적 사용" href="/concepts/programmable-ip-license/pil-flavors#flavor-%232%3A-commercial-use" icon="file">
+    출처를 밝히고 라이선스 사용료를 지불하지만 수익을 공유할 필요는 없습니다.
+  </Card>
+
+  {" "}
+
+  <Card title="상업적 리믹스" href="/concepts/programmable-ip-license/pil-flavors#flavor-%233%3A-commercial-remix" icon="file">
+    출처를 밝히고 라이선스 사용료를 지불하며 수익의 일정 비율을 지불합니다.
+  </Card>
+
+  <Card title="크리에이티브 커먼즈 저작자표시" href="/concepts/programmable-ip-license/pil-flavors#flavor-%234%3A-creative-commons-attribution" icon="file">
+    출처를 밝히는 무료 리믹스 및 상업적 사용.
+  </Card>
+</CardGroup>
+
+## 3. 라이선스 조건 첨부
+
+이제 조건을 생성하고 관련된 `licenseTermsId`를 가지고 있으므로, 다음과 같이 기존 IP 자산에 첨부할 수 있습니다:
+
+<Info>
+  관련 문서:
+
+  [license.attachLicenseTerms](/sdk-reference/license#attachlicenseterms)
+</Info>
+
+```typescript main.ts
+import { LicenseTerms } from "@story-protocol/core-sdk";
+import { zeroAddress } from "viem";
+// you should already have a client set up (prerequisite)
+import { client } from "./utils";
+
+async function main() {
+  // previous code here ...
+
+  const response = await client.license.attachLicenseTerms({
+    // insert your newly created license terms id here
+    licenseTermsId: LICENSE_TERMS_ID,
+    // insert the ipId you want to attach terms to here
+    ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+    txOptions: { waitForTransaction: true },
+  });
+
+  if (response.success) {
+    console.log(
+      `Attached License Terms to IPA at transaction hash ${response.txHash}.`
+    );
+  } else {
+    console.log(`License Terms already attached to this IPA.`);
+  }
+}
+
+main();
+```
+
+### 3a. 조건 생성 + 첨부
+
+언급할 가치가 있는 것은 **조건 생성 + 조건 첨부**를 모두 동일한 단계에서 [registerPilTermsAndAttach](/sdk-reference/ipasset#registerpiltermsandattach) 함수를 사용하여 수행할 수 있다는 것입니다. 가장 편리한 방법을 선택하세요!
+
+그리고 처음에 언급했듯이, 다음 두 가지 함수를 사용하여 **IP 등록 + 조건 생성 + 조건 첨부**를 동일한 함수에서 수행할 수 있습니다:
+
+* [mintAndRegisterIpAssetWithPilTerms](/sdk-reference/ipasset#mintandregisteripassetwithpilterms)
+* [registerIpAndAttachPilTerms](/sdk-reference/ipasset#registeripandattachpilterms)
+
+## 4. 라이선스 발행
+
+이제 IP에 라이선스 조건을 첨부했으므로 다음 단계는 라이선스 토큰을 발행하는 것입니다. 이에 대해서는 다음 페이지에서 다루겠습니다.
+
+
+# Dev Overview
+
+개발자라면 여기에 필요한 모든 것이 있습니다:
+
+<Tip>
+  무언가를 찾을 수 없나요? 우리의 [Builder Discord](https://discord.gg/storybuilders)에서 문서 작성자에게 도움을 요청하세요.
+</Tip>
+
+<CardGroup cols={3}>
+  <Card title="테스트넷 블록 탐색기" href="https://aeneid.storyscan.io" icon="house">
+    Story에서 모든 테스트넷 블록 및 트랜잭션 데이터를 확인하세요.
+  </Card>
+
+  <Card title="IP 관련 탐색기" href="https://aeneid.explorer.story.foundation" icon="user">
+    등록, 라이선싱 등 IP 상호 작용과 관련된 테스트넷 트랜잭션 데이터를 특별히 확인하세요.
+  </Card>
+
+  <Card title="빠른 시작" href="/quickstart" icon="truck-fast">
+    Story에서 빠르게 구축을 시작하세요.
+  </Card>
+</CardGroup>
+
+## SDK
+
+SDK를 배우기 위해 다음 리소스를 확인하세요:
+
+* [SDK Reference](/sdk-reference) - 각 함수에 대한 상세한 **설명과 예제**가 포함된 전체 SDK 참조를 확인하세요 ***(바로 코딩을 시작할 수 있도록 작동하는 코드 포함)***
+* [TypeScript SDK Guide](/developers/typescript-sdk/overview) - SDK의 가장 인기 있는 사용 사례(IP 등록, 조건 첨부, 파생 작품 등록 등)를 설정하고 구현하는 방법에 대한 상세하고 단계별 안내 ***(바로 코딩을 시작할 수 있도록 작동하는 코드 포함)***
+* [Tutorials](/developers/tutorials/overview) - "Story에서 음악을 어떻게 등록하나요?", "SDK로 지갑 없는 온보딩을 어떻게 구현하나요?" 등과 같은 더 구체적이고 외부 주제/튜토리얼 ***(바로 코딩을 시작할 수 있도록 작동하는 코드 포함)***
+
+## 스마트 컨트랙트
+
+프로토콜을 배우기 위해 다음 리소스를 확인하세요:
+
+* [Smart Contract Guide](/developers/smart-contracts-guide/overview) - 프로토콜의 가장 인기 있는 사용 사례를 설정하고 구현하는 방법에 대한 안내 ***(바로 코딩을 시작할 수 있도록 작동하는 코드 포함)***
+* [Deployed Smart Contracts](/developers/deployed-smart-contracts) - 모든 배포된 프로토콜 주소
+* [Tutorials](/developers/tutorials/overview) - 음악 등록, AI 생성 이미지 등록 등과 같은 더 구체적인 주제를 다루는 튜토리얼 포함 ***(바로 코딩을 시작할 수 있도록 작동하는 코드 포함)***
+
+<Warning>
+  Do not use `RANDAO` 를 의사 난수로 사용하지 마세요. 대신 온체인 VRF(Pyth 또는 Gelato)를 사용하세요. 현재, `RANDAO` 값은 부모 블록 해시로 설정되어 있어 X-1 블록에 대해 무작위가 아닙니다.
+</Warning>
+
+## API
+
+우리의 [API Reference](/api-reference)를 확인하세요.
+
+
+# Releases
+
+<CardGroup cols={1}>
+  <Card title="SDK" href="https://github.com/storyprotocol/sdk/releases" icon="github" arrow={true} />
+
+  {" "}
+
+  <Card title="배포된 스마트 컨트랙트 주소" href="/developers/deployed-smart-contracts" icon="file-contract" />
+
+  {" "}
+
+  <Card title="프로토콜 코어" href="https://github.com/storyprotocol/protocol-core-v1/releases" icon="github" arrow={true} />
+
+  {" "}
+
+  <Card title="프로토콜 주변부" href="https://github.com/storyprotocol/protocol-periphery-v1/releases" icon="github" arrow={true} />
+
+  {" "}
+
+  <Card title="Story - 합의 구현" href="https://github.com/piplabs/story/releases" icon="github" arrow={true} />
+
+  <Card title="Story Geth - 실행 계층 구현" href="https://github.com/piplabs/story-geth/releases" icon="github" arrow={true} />
+</CardGroup>
+
+
+# Register & Monetize Stability Images
+
+이 튜토리얼에서는 다음 방법을 배우게 됩니다:
+
+1. Stability AI로 이미지 생성하기
+2. Pinata IPFS에 이미지 업로드하기
+3. Story에 이미지를 IP로 등록하기
+4. IP에 라이선스 조건 첨부하기
+
+## 설명
+
+Stability AI를 사용하여 이미지를 생성했다고 가정해 봅시다. 이미지에 적절한 라이선스를 추가하지 않으면 다른 사람들이 자유롭게 사용할 수 있습니다. 이 튜토리얼에서는 Stability AI로 생성한 이미지에 라이선스를 추가하여 다른 사람들이 사용하려면 반드시 귀하로부터 적절한 라이선스를 받아야 하도록 하는 방법을 배우게 됩니다.
+
+## 0. 시작하기 전에
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 다음을 설치해야 합니다 [Node.js](https://nodejs.org/en/download) 및 [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm). 이전에 코딩을 해보셨다면 이미 설치되어 있을 것입니다.
+2. Story Network Testnet 지갑의 개인 키를 `.env` file:
+
+```yaml .env
+WALLET_PRIVATE_KEY=
+```
+
+3. 다음으로 이동하세요 [Pinata 대시보드](https://app.pinata.cloud/developers/api-keys) 새로운 API 키와 게이트웨이를 생성하세요. JWT와 게이트웨이를 `.env` file:
+
+```yaml .env
+PINATA_JWT=
+PINATA_GATEWAY=
+```
+
+4. 다음으로 이동하세요 [Stability](https://platform.stability.ai/account/keys) 새로운 API 키를 생성하세요. 새 키를 `.env` file:
+
+<Warning>
+  **Stability 크레딧**
+
+  이미지를 생성하려면 Stability 크레딧이 필요합니다. 방금 계정을 만들었다면 시작할 수 있는 몇 가지 크레딧이 포함된 무료 평가판이 있을 것입니다.
+</Warning>
+
+```yaml .env
+STABILITY_API_KEY=
+```
+
+5. 선호하는 RPC URL을 `.env` 파일에 추가하세요. 우리가 제공하는 기본 공개 URL을 사용할 수 있습니다:
+
+```yaml .env
+RPC_PROVIDER_URL=https://aeneid.storyrpc.io
+```
+
+6. 의존성을 설치하세요:
+
+```bash Terminal
+npm install @story-protocol/core-sdk pinata-web3 viem axios sharp form-data
+```
+
+## 1. 이미지 생성하기
+
+다음을 참조하세요 [Stability API 참조](https://platform.stability.ai/docs/api-reference) 원하는 모델을 사용하기 위해. 이 튜토리얼에서는 Stability의 **Stable Image Core** 생성 엔드포인트를 사용하여 이미지를 생성할 것입니다. 아래 내용은 그들의 문서에서 직접 가져온 것입니다.
+
+파일을 생성하고 `main.ts` 다음 코드를 추가하세요:
+
+```typescript main.ts
+import fs from "fs";
+import axios from "axios";
+import FormData from "form-data";
+
+async function main() {
+  const payload = {
+    prompt: "Lighthouse on a cliff overlooking the ocean",
+    output_format: "png",
+  };
+
+  const response = await axios.postForm(
+    `https://api.stability.ai/v2beta/stable-image/generate/core`,
+    axios.toFormData(payload, new FormData()),
+    {
+      validateStatus: undefined,
+      responseType: "arraybuffer",
+      headers: {
+        Authorization: `Bearer ${process.env.STABILITY_API_KEY}`,
+        Accept: "image/*",
+      },
+    }
+  );
+}
+
+main();
+```
+
+## 1.5. (선택사항) 이미지 압축하기
+
+Stability는 크기가 큰 이미지를 생성하므로 저장 비용이 많이 듭니다. 선택적으로 생성된 이미지를 압축하여 더 빠른 로딩 속도와 더 저렴한 저장 비용을 얻을 수 있습니다.
+
+```typescript main.ts
+import fs from "fs";
+import axios from "axios";
+import FormData from "form-data";
+
+async function main() {
+  // previous code here ...
+
+  const condensedImgBuffer = await sharp(response.data)
+    .png({ quality: 10 }) // Adjust the quality value as needed (between 0 and 100)
+    .toBuffer();
+}
+
+main();
+```
+
+## 2. IPFS에 이미지 저장하기
+
+이제 이미지가 생성되었으니 IPFS에 저장하여 접근할 수 있는 URL을 받아야 합니다. 이 튜토리얼에서는 [Pinata](https://pinata.cloud/)를 사용할 것입니다. 이는 이미지 저장을 쉽게 만들어주는 분산 저장 솔루션입니다.
+
+별도의 파일 `uploadToIpfs.ts`에서 함수를 생성하세요 `uploadBlobToIPFS` 이 함수는 우리의 버퍼를 IPFS에 업로드합니다:
+
+```typescript uploadToIpfs.ts
+import { PinataSDK } from "pinata-web3";
+
+const pinata = new PinataSDK({
+  pinataJwt: process.env.PINATA_JWT,
+  // you can put your pinata gateway here, or leave it empty
+  pinataGateway: process.env.PINATA_GATEWAY,
+});
+
+// upload our image to ipfs by putting it in a public group
+export async function uploadBlobToIPFS(
+  blob: Blob,
+  fileName: string
+): Promise<string> {
+  const file = new File([blob], fileName, { type: "image/png" });
+  const { IpfsHash } = await pinata.upload.file(file);
+  return IpfsHash;
+}
+```
+
+메인 파일로 돌아가서 `uploadBlobToIPFS` 함수를 호출하여 이미지를 저장하세요:
+
+```typescript main.ts
+import fs from "fs";
+import axios from "axios";
+import FormData from "form-data";
+import { uploadBlobToIPFS } from "./uploadToIpfs.ts";
+
+async function main() {
+  // previous code here ...
+
+  // convert the buffer to a blob
+  const blob = new Blob([condensedImgBuffer], { type: "image/png" });
+  // store the blob on ipfs
+  const imageCid = await uploadBlobToIPFS(blob, "lighthouse.png");
+}
+
+main();
+```
+
+## 3. Story 설정하기
+
+이제 이미지를 생성하고 저장했으니 Story에 IP로 등록할 수 있습니다. 먼저 설정을 해봅시다. `utils.ts` 파일에 다음 코드를 추가하세요:
+
+<Info>
+  관련 문서: [TypeScript SDK 설정](/developers/typescript-sdk/setup)
+</Info>
+
+```typescript utils.ts
+import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
+import { http } from "viem";
+import { privateKeyToAccount, Address, Account } from "viem/accounts";
+
+const privateKey: Address = `0x${process.env.WALLET_PRIVATE_KEY}`;
+export const account: Account = privateKeyToAccount(privateKey);
+
+const config: StoryConfig = {
+  account: account,
+  transport: http(process.env.RPC_PROVIDER_URL),
+  chainId: "aeneid",
+};
+export const client = StoryClient.newClient(config);
+```
+
+## 4. IP 메타데이터 설정하기
+
+다음을 참조하세요 [IPA 메타데이터 표준](/concepts/ip-asset/ipa-metadata-standard) IP의 메타데이터를 구성하세요. 아래와 같이 메타데이터를 적절히 포맷하세요:
+
+```typescript main.ts
+import fs from "fs";
+import axios from "axios";
+import FormData from "form-data";
+import { uploadBlobToIPFS } from "./uploadToIpfs.ts";
+import { client, account } from "./utils";
+
+async function main() {
+  // previous code here ...
+
+  const ipMetadata = {
+    title: "Lighthouse",
+    description: "A generated picture of a lighthouse.",
+    createdAt: "1728401700",
+    image: process.env.PINATA_GATEWAY + "/files/" + imageCid,
+    imageHash: "0x...", // a hash of the image
+    mediaUrl: process.env.PINATA_GATEWAY + "/files/" + imageCid,
+    mediaHash: "0x...", // a hash of the image
+    mediaType: "image/png",
+    creators: [
+      {
+        name: "Jacob Tucker",
+        address: "0x67ee74EE04A0E6d14Ca6C27428B27F3EFd5CD084",
+        description: "A cool dev rel person.",
+        contributionPercent: 100,
+        socialMedia: [
+          {
+            platform: "Twitter",
+            url: "https://x.com/jacobmtucker",
+          },
+        ],
+      },
+    ],
+  };
+}
+
+main();
+```
+
+## 5. NFT 메타데이터 설정하기
+
+NFT 메타데이터는 다음을 따릅니다 [ERC-721 메타데이터 표준](https://eips.ethereum.org/EIPS/eip-721).
+
+```typescript main.ts
+import fs from "fs";
+import axios from "axios";
+import FormData from "form-data";
+import { uploadBlobToIPFS } from "./uploadToIpfs.ts";
+import { client, account } from "./utils";
+
+async function main() {
+  // previous code here ...
+
+  const nftMetadata = {
+    name: "Ownership NFT",
+    description:
+      "This NFT represents ownership of the image generated by Stability",
+    image: process.env.PINATA_GATEWAY + "/files/" + imageCid,
+    attributes: [
+      {
+        key: "Model",
+        value: "Stability",
+      },
+      {
+        key: "Service",
+        value: "Stable Image Core",
+      },
+      {
+        key: "Prompt",
+        value: "Lighthouse on a cliff overlooking the ocean",
+      },
+    ],
+  };
+}
+
+main();
+```
+
+## 6. IP와 NFT 메타데이터를 IPFS에 업로드하기
+
+파일에서 `uploadToIpfs.ts` IP와 NFT 메타데이터 객체를 IPFS에 업로드하는 함수를 만드세요:
+
+```typescript uploadToIpfs.ts
+// previous code here ...
+
+export async function uploadJSONToIPFS(jsonMetadata: any): Promise<string> {
+  const { IpfsHash } = await pinata.upload.json(jsonMetadata);
+  return IpfsHash;
+}
+```
+
+그런 다음 아래와 같이 해당 함수를 사용하여 메타데이터를 업로드할 수 있습니다:
+
+```typescript main.ts
+import fs from "fs";
+import axios from "axios";
+import FormData from "form-data";
+import { uploadBlobToIPFS, uploadJSONToIPFS } from "./uploadToIpfs.ts";
+import { client, account } from "./utils";
+import { createHash } from "crypto";
+
+async function main() {
+  // previous code here ...
+
+  const ipIpfsHash = await uploadJSONToIPFS(ipMetadata);
+  const ipHash = createHash("sha256")
+    .update(JSON.stringify(ipMetadata))
+    .digest("hex");
+  const nftIpfsHash = await uploadJSONToIPFS(nftMetadata);
+  const nftHash = createHash("sha256")
+    .update(JSON.stringify(nftMetadata))
+    .digest("hex");
+}
+
+main();
+```
+
+## 7. 라이선스 조건 생성하기
+
+Story에 이미지를 등록할 때 [라이선스 조건](/concepts/licensing-module/license-terms)을 IP에 첨부할 수 있습니다. 이는 실제로 법적 구속력이 있는 조건으로, [라이선싱 모듈](/concepts/licensing-module)에 의해 온체인에서 강제되며, [분쟁 모듈](/concepts/dispute-module)에 의해 이의 제기가 가능하며, 최악의 경우 전통적인 방식으로 법정에서 오프체인으로 집행될 수 있습니다.
+
+우리가 만든 이미지를 수익화하고 싶다고 가정해 봅시다. 누군가 이 이미지를 사용하고 싶을 때마다(상품, 광고 등에) 10 \$WIP의 초기 발행 수수료를 지불해야 합니다. 또한 파생 작품으로 수익을 얻을 때마다 5%의 수익을 로열티로 지불해야 합니다.
+
+```typescript main.ts
+import fs from "fs";
+import axios from "axios";
+import FormData from "form-data";
+import { uploadBlobToIPFS, uploadJSONToIPFS } from "./uploadToIpfs.ts";
+import { client, account } from "./utils";
+import { createHash } from "crypto";
+import { LicenseTerms, WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+import { zeroAddress, parseEther } from "viem";
+
+async function main() {
+  // previous code here ...
+
+  const commercialRemixTerms: LicenseTerms = {
+    transferable: true,
+    royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/developers/deployed-smart-contracts
+    defaultMintingFee: parseEther("1"), // 1 $WIP
+    expiration: BigInt(0),
+    commercialUse: true,
+    commercialAttribution: true, // must give us attribution
+    commercializerChecker: zeroAddress,
+    commercializerCheckerData: zeroAddress,
+    commercialRevShare: 5, // can claim 50% of derivative revenue
+    commercialRevCeiling: BigInt(0),
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    derivativesApproval: false,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: BigInt(0),
+    currency: WIP_TOKEN_ADDRESS,
+    uri: "",
+  };
+}
+
+main();
+```
+
+## 8. NFT를 IP Asset으로 등록하기
+
+다음으로 NFT를 발행하고, 이를 [IP Asset](/concepts/ip-asset)으로 등록하고, [License Terms](/concepts/licensing-module/license-terms)를 IP에 설정한 다음, NFT와 IP 메타데이터를 모두 설정할 것입니다.
+
+다행히도, 우리는 `mintAndRegisterIp` 함수를 사용하여 NFT를 발행하고 동시에 IP Asset으로 등록할 수 있습니다.
+
+이 함수는 발행할 SPG NFT 컨트랙트가 필요합니다. 간단히 하기 위해, Aeneid 테스트넷에서 우리가 여러분을 위해 만든 공개 컬렉션을 사용할 수 있습니다: `0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc`.
+
+<Accordion title="자신만의 커스텀 ERC-721 컬렉션 만들기" icon="pen-circle">
+  우리가 제공하는 공개 컬렉션을 사용하는 것도 괜찮지만, 실제로 이를 수행할 때는 자신의 IP를 위한 NFT 컬렉션을 만들어야 합니다. 이를 위한 두 가지 방법이 있습니다:
+
+  1. 인터페이스를 구현하는 컨트랙트를 배포하거나, SDK의 [ISPGNFT](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/interfaces/ISPGNFT.sol) 함수를 사용하세요 [createNFTCollection](/sdk-reference/nftclient#createnftcollection) (아래 표시). 이렇게 하면 오직 여러분만 발행할 수 있는 자신만의 SPG NFT 컬렉션을 얻게 됩니다.
+
+  ```typescript createSpgNftCollection.ts
+  import { zeroAddress } from "viem";
+  import { client } from "./utils";
+
+  async function createSpgNftCollection() {
+    const newCollection = await client.nftClient.createNFTCollection({
+      name: "Test NFTs",
+      symbol: "TEST",
+      isPublicMinting: false,
+      mintOpen: true,
+      mintFeeRecipient: zeroAddress,
+      contractURI: "",
+      txOptions: { waitForTransaction: true },
+    });
+
+    console.log(
+      `New SPG NFT collection created at transaction hash ${newCollection.txHash}`
+    );
+    console.log(`NFT contract address: ${newCollection.spgNftContract}`);
+  }
+
+  createSpgNftCollection();
+  ```
+
+  2. 자신만의 커스텀 ERC-721 NFT 컬렉션을 만들고 [register](/sdk-reference/ipasset#register) 함수를 사용하세요 - `nftContract` 및 `tokenId` - *대신* `mintAndRegisterIp` 함수를 사용합니다. 작동하는 코드 예제는 [여기](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/registerCustom.ts)를 참조하세요. 이는 **이미 자신만의 커스텀 로직이 있는 커스텀 NFT 컨트랙트가 있거나, IP 자체가 NFT인 경우에 유용합니다.**
+</Accordion>
+
+<Info>
+  관련 문서:
+
+  [ipAsset.mintAndRegisterIp](/sdk-reference/ipasset#mintandregisterip)
+</Info>
+
+```typescript main.ts
+import fs from "fs";
+import axios from "axios";
+import FormData from "form-data";
+import { uploadBlobToIPFS, uploadJSONToIPFS } from "./uploadToIpfs.ts";
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+import { client, account } from "./utils";
+import { createHash } from "crypto";
+import { LicenseTerms } from "@story-protocol/core-sdk";
+import { zeroAddress, parseEther, Address } from "viem";
+
+async function main() {
+  // previous code here ...
+
+  const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
+    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+    // the terms we created in the previous step
+    licenseTermsData: [{ terms: commercialRemixTerms }],
+    ipMetadata: {
+      ipMetadataURI: process.env.PINATA_GATEWAY + "/files/" + ipIpfsHash,
+      ipMetadataHash: `0x${ipHash}`,
+      nftMetadataURI: process.env.PINATA_GATEWAY + "/files/" + nftIpfsHash,
+      nftMetadataHash: `0x${nftHash}`,
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  console.log(
+    `View on the explorer: https://aeneid.explorer.story.foundation/ipa/${response.ipId}`
+  );
+}
+
+main();
+```
+
+## 9. 완료!
+
+축하합니다! 이제 여러분의 이미지가 상업적 라이선스 조건과 함께 Story에 등록되었습니다.
+
+<CardGroup cols={1}>
+  <Card title="더 알아보기" href="/developers/tutorials" icon="book-open">
+    우리의 문서에서 더 많은 튜토리얼을 탐험해보세요
+  </Card>
+</CardGroup>
+
+
+# DALL·E AI 생성 이미지 보호하기
+
+이 튜토리얼에서는 DALL·E 2 AI 생성 이미지를 Story에 등록하여 라이선스하고 보호하는 방법을 배우게 됩니다.
+
+## 설명
+
+AI를 사용하여 이미지를 생성했다고 가정해 봅시다. 이미지에 적절한 라이선스를 추가하지 않으면 다른 사람들이 자유롭게 사용할 수 있습니다. 이 튜토리얼에서는 DALL·E 2 AI 생성 이미지에 라이선스를 추가하는 방법을 배워 다른 사람들이 사용하려면 반드시 귀하로부터 적절한 라이선스를 받아야 하도록 하는 방법을 배우게 됩니다.
+
+Story에 해당 IP를 등록하려면 먼저 해당 IP를 나타내는 NFT를 발행한 다음, 그 NFT를 Story에 등록하여 [IP Asset](/concepts/ip-asset)으로 만들어야 합니다.
+
+## 0. 시작하기 전에
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 다음을 설치해야 합니다: [Node.js](https://nodejs.org/en/download)와 [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm). 이전에 코딩을 해보셨다면 이미 설치되어 있을 것입니다.
+2. Story Network Testnet 지갑의 개인 키를 `.env` file:
+
+```yaml .env
+WALLET_PRIVATE_KEY=
+```
+
+3. 다음으로 이동: [Pinata](https://pinata.cloud/)에서 새 API 키를 생성하세요. JWT를 `.env` file:
+
+```yaml .env
+PINATA_JWT=
+```
+
+4. 다음으로 이동: [OpenAI](https://platform.openai.com/settings/organization/api-keys)에서 새 API 키를 생성하세요. 새 키를 `.env` file:
+
+<Warning>
+  **OpenAI 크레딧**
+
+  이미지를 생성하려면 OpenAI 크레딧이 필요합니다. 방금 계정을 만들었다면 시작할 수 있는 몇 가지 크레딧이 포함된 무료 평가판이 있을 것입니다.
+</Warning>
+
+```yaml .env
+OPENAI_API_KEY=
+```
+
+5. 선호하는 RPC URL을 `.env` 파일에 추가하세요. 우리가 제공하는 기본 공개 URL을 사용할 수 있습니다:
+
+```yaml .env
+RPC_PROVIDER_URL=https://aeneid.storyrpc.io
+```
+
+6. 의존성 설치:
+
+```bash Terminal
+npm install @story-protocol/core-sdk pinata-web3 viem openai
+```
+
+## 1. 이미지 생성
+
+다음 `main.ts` 파일에 이미지를 생성하는 다음 코드를 추가하세요:
+
+```typescript main.ts
+import OpenAI from "openai";
+
+async function main() {
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+
+  const image = await openai.images.generate({
+    model: "dall-e-2",
+    prompt: "A cute baby sea otter",
+  });
+
+  console.log(image.data[0].url); // the url to the newly created image
+}
+
+main();
+```
+
+## 2. Story Config 설정
+
+다음 `utils.ts` 파일에 Story Config를 설정하는 다음 코드를 추가하세요:
+
+<Info>
+  관련 문서: [TypeScript SDK 설정](/developers/typescript-sdk/setup)
+</Info>
+
+```typescript utils.ts
+import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
+import { http } from "viem";
+import { privateKeyToAccount, Address, Account } from "viem/accounts";
+
+const privateKey: Address = `0x${process.env.WALLET_PRIVATE_KEY}`;
+export const account: Account = privateKeyToAccount(privateKey);
+
+const config: StoryConfig = {
+  account: account,
+  transport: http(process.env.RPC_PROVIDER_URL),
+  chainId: "aeneid",
+};
+export const client = StoryClient.newClient(config);
+```
+
+## 3. IP 메타데이터 설정
+
+다음을 확인하세요: [IPA 메타데이터 표준](/concepts/ip-asset/ipa-metadata-standard)을 보고 IP에 대한 메타데이터를 구성하세요. `main.ts` 파일로 돌아가서 아래와 같이 메타데이터를 적절히 포맷하세요:
+
+```typescript main.ts
+import OpenAI from "openai";
+import { client, account } from "./utils";
+
+async function main() {
+  // previous code here ...
+
+  const ipMetadata = {
+    title: "Baby Sea Otter",
+    description: "A baby sea otter generated with DALL·E.",
+    createdAt: "1728401700",
+    image: image.data[0].url,
+    imageHash: "0x...", // a hash of the image
+    mediaUrl: image.data[0].url,
+    mediaHash: "0x...", // a hash of the image
+    mediaType: "image/png",
+    creators: [
+      {
+        name: "Jacob Tucker",
+        address: "0x67ee74EE04A0E6d14Ca6C27428B27F3EFd5CD084",
+        description: "A cool dev rel person.",
+        contributionPercent: 100,
+        socialMedia: [
+          {
+            platform: "Twitter",
+            url: "https://x.com/jacobmtucker",
+          },
+        ],
+      },
+    ],
+  };
+}
+
+main();
+```
+
+## 4. NFT 메타데이터 설정
+
+NFT 메타데이터는 [ERC-721 메타데이터 표준](https://eips.ethereum.org/EIPS/eip-721)을 따릅니다.
+
+```typescript main.ts
+import OpenAI from "openai";
+import { client, account } from "./utils";
+
+async function main() {
+  // previous code here ...
+
+  const nftMetadata = {
+    name: "Image Ownership NFT",
+    description:
+      "This NFT represents ownership of the image generated by Dall-E 2",
+    image: image.data[0].url,
+    attributes: [
+      {
+        key: "Model",
+        value: "dall-e-2",
+      },
+      {
+        key: "Prompt",
+        value: "A cute baby sea otter",
+      },
+    ],
+  };
+}
+
+main();
+```
+
+## 5. IP 업로드 및 등록
+
+이제 모든 메타데이터가 설정되었으므로 [IP Asset 등록하기](/developers/typescript-sdk/register-ip-asset#3-%5Boptional%5D-upload-your-ip-and-nft-metadata-to-ipfs)로 이동하여 **3단계(IP 및 NFT 메타데이터를 IPFS에 업로드)와 4단계(NFT를 IP Asset으로 등록)를 완료**하면 이 튜토리얼을 쉽게 완료할 수 있습니다.
+
+완료하면 등록된 AI 생성 이미지를 보여주는 IP-explorer 링크가 포함된 콘솔 로그가 표시될 것입니다.
+
+## 6. 완료!
+
+<CardGroup cols={1}>
+  <Card title="더 알아보기" href="/developers/tutorials" icon="book-open">
+    문서에서 더 많은 튜토리얼 탐색하기
+  </Card>
+</CardGroup>
+
+
+# "사례 연구: Ippy의 파생작 등록하기"
+
+[PiPi](https://pfp3.io/pipi/mint)는 Story에서 무료로 [Ippy](https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42), Story의 공식 마스코트의 파생 작품을 민팅할 수 있게 해주는 생성형 pfp 프로젝트입니다. Ippy에는 [Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing) 조건이 붙어 있어, 상업적으로 사용되지 않고 적절한 출처 표시가 이루어지는 한 누구나 사용하거나 파생 작품을 만들 수 있습니다.
+
+<CardGroup cols={3}>
+  <Card title="원본 Ippy" href="https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42" icon="house">
+    우리의 탐색기에서 원본 Ippy 마스코트를 확인하세요.
+  </Card>
+
+  {" "}
+
+  <Card title="PiPi 파생작" href="https://explorer.story.foundation/ipa/0xBB42BF2713ee736284C45B1b549a03625cc97e51" icon="house">
+    우리의 탐색기에서 PiPi 파생작을 확인하세요.
+  </Card>
+
+  <Card title="PiPi 계약 보기" href="https://www.storyscan.io/address/0x5C6b236A100d09f8A625dB87E11122749A9B71A6?tab=contract" icon="scroll">
+    PiPi 계약 소스 코드를 확인하세요.
+  </Card>
+</CardGroup>
+
+PiPi가 Ippy의 파생작으로 연결되면 자동으로 동일한 라이선스 조건(NCSR)을 상속받고 그 계보 그래프에 연결되며, 이는 우리의 탐색기에서 직접 확인할 수 있습니다:
+
+<Frame caption="오른쪽 하단에서 Ippy가 이 PiPi의 루트 IP임을 확인할 수 있습니다.">
+  <img src="/images/tutorials/pippy-explorer.png" alt="In the bottom right, you can see Ippy is the root IP of this PiPi." />
+</Frame>
+
+다음 튜토리얼에서는 이 PiPi 이미지들이 어떻게 정확히 공식 Ippy IP의 파생작으로 적절히 등록되었는지 배우게 될 것입니다.
+
+## 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 다음을 완료하세요 [자신의 프로젝트 설정하기](/developers/smart-contracts-guide/setup)
+
+## 1. 메타데이터 설정
+
+새로운 PiPi IP를 등록하기 전에 메타데이터를 설정해야 합니다. 두 가지 유형의 메타데이터가 있습니다:
+
+1. NFT 메타데이터
+2. IP 메타데이터
+
+<CardGroup cols={1}>
+  <Card title="NFT vs. IP 메타데이터" href="/concepts/ip-asset/overview#nft-vs-ip-metadata" icon="house">
+    NFT와 IP 메타데이터를 올바르게 설정하는 방법을 배우세요.
+  </Card>
+</CardGroup>
+
+다음 [PiPi](https://explorer.story.foundation/ipa/0xBB42BF2713ee736284C45B1b549a03625cc97e51)를 예로 들어, NFT & IP 메타데이터는 다음과 같아야 합니다:
+
+<CodeGroup>
+  ```json NFT Metadata
+  {
+    "name": "PiPi NFT #1103",
+    "image": "https://ipfs.io/ipfs/bafybeigsv4cgacndijwy6b7qhxbseonrybrcpbh47zrlm64gsjm4mlpb2q/nft_1103.jpeg",
+    "attributes": [
+      {
+        "trait_type": "Bg",
+        "value": "Orange"
+      },
+      {
+        "trait_type": "Body",
+        "value": "Pink"
+      },
+      {
+        "trait_type": "Eyes",
+        "value": "Cute"
+      },
+      {
+        "trait_type": "Cloth",
+        "value": "Blue"
+      },
+      {
+        "trait_type": "Glasses",
+        "value": "Neo"
+      },
+      {
+        "trait_type": "Hat",
+        "value": "Duck"
+      }
+    ],
+    "description": "Pipi - The first Derivative IP Asset NFT collection on Story Protocol. Limited 2222 generative PFPs inspired by the Ippy, official Story mascot."
+  }
+  ```
+
+  ```json IP Metadata
+  {
+    "title": "PiPi NFT",
+    "description": "Pipi - The first Derivative IP Asset NFT collection on Story Protocol. Limited 2222 generative PFPs inspired by the Ippy, official Story mascot.",
+    "image": "https://ipfs.io/ipfs/bafybeigsv4cgacndijwy6b7qhxbseonrybrcpbh47zrlm64gsjm4mlpb2q/nft_1103.jpeg",
+    "imageHash": "0xb930f3ba19350bddbcd8c180a3127086f6e454d29cd5b3db613c70bae2848329",
+    "mediaUrl": "https://ipfs.io/ipfs/bafybeigsv4cgacndijwy6b7qhxbseonrybrcpbh47zrlm64gsjm4mlpb2q/nft_1103.jpeg",
+    "mediaHash": "0xb930f3ba19350bddbcd8c180a3127086f6e454d29cd5b3db613c70bae2848329",
+    "mediaType": "image/jpeg",
+    "creators": [
+      {
+        "name": "PFP3",
+        "address": "0xF91510A17392Be6B3b6F620427051168A1e56A72",
+        "description": "PFP Generator",
+        "image": "https://utfs.io/f/XyGBmmuHQK18FodS0WDuqCo1LVerXR7sgm8vJnESazWcM5yB",
+        "socialMedia": [
+          {
+            "platform": "twitter",
+            "url": "https://x.com/pfp3_"
+          },
+          {
+            "platform": "website",
+            "url": "https://pfp3.io"
+          },
+          {
+            "platform": "discord",
+            "url": "https://discord.gg/pfp3"
+          }
+        ],
+        "role": "creator",
+        "contributionPercent": 100
+      }
+    ],
+    "tags": ["PiPi", "Derivative IPA", "NFT", "PF3", "PFP"],
+    "ipType": "NFT"
+  }
+  ```
+</CodeGroup>
+
+메타데이터를 작성한 후에는 IPFS에 업로드하고 나중에 NFT를 민팅할 때 설정할 수 있습니다.
+
+## 2. NFT 민팅하기
+
+Story에 IP를 등록하려면 먼저 NFT를 민팅해야 합니다. 이 NFT는 **소유권**을 나타냅니다 [IP 자산](/concepts/ip-asset)의.
+
+<CardGroup cols={1}>
+  <Card title="PiPi 계약 보기" href="https://www.storyscan.io/address/0x5C6b236A100d09f8A625dB87E11122749A9B71A6?tab=contract" icon="scroll">
+    PiPi 계약 소스 코드를 확인하세요.
+  </Card>
+</CardGroup>
+
+다음은 `_mintNFT` 함수의 일부입니다 `PiPi.sol` contract:
+
+```sol PiPi.sol
+contract PiPi is ERC721, Ownable, IERC721Receiver {
+
+  // ... some code here ...
+
+  function whitelistMint() external payable returns (string memory, address) {
+    require(whitelistMintEnabled, "Whitelist mint is not active");
+    require(whitelist[msg.sender], "Address not whitelisted");
+    require(mintedCount[msg.sender] < WHITELIST_MAX_P_WALLET, "Whitelist mint limit reached");
+    require(_totalSupply < MAX_SUPPLY, "Max supply reached");
+
+    return _mintNFT(msg.sender);
+  }
+
+  function _mintNFT(address recipient) internal returns (string memory, address) {
+    uint256 newTokenId = _totalSupply + 1;
+    _safeMint(address(this), newTokenId);
+
+    address ipId = _registerAsIPAsset(newTokenId);
+
+    string memory nftUri = tokenURI(newTokenId);
+    bytes32 metadataHash = keccak256(abi.encodePacked(nftUri));
+    CORE_METADATA_MODULE.setAll(ipId, nftUri, metadataHash, metadataHash);
+
+    registerDerivativeForToken(ipId);
+
+    _safeTransfer(address(this), recipient, newTokenId, "");
+
+    // ... more code here ...
+
+    return (nftUri, ipId);
+  }
+}
+```
+
+보시다시피, 사용자가 `whitelistMint`를 호출하면 `_mintNFT`를 호출합니다. 사용자가 화이트리스트에 있는지 확인한 후에요. 16번 줄에서 우리는 계약에 새로운 NFT를 민팅하고 있습니다.
+
+<Note>
+  **왜 우리는 NFT를 사용자가 아닌 계약에 민팅하나요?**
+
+  나중에 IP를 Ippy의 파생작으로 등록해야 합니다. 오직 소유자(NFT를 보유한 주소)만이 IP를 다른 IP의 파생작으로 등록할 수 있습니다. 따라서 우리는 NFT를 계약에 민팅 => 계약이 NFT를 IP로 등록하고 나중에 Ippy의 파생작으로 등록 => NFT를 사용자에게 전송하는 순서로 진행합니다.
+</Note>
+
+## 3. NFT를 IP로 등록하기
+
+새로운 NFT를 민팅한 후에는 이를 IP로 등록할 수 있습니다. 위의 18번 줄에서 `_registerAsIPAsset` function:
+
+```sol PiPi.sol
+function _registerAsIPAsset(uint256 tokenId) internal returns (address) {
+  try IP_ASSET_REGISTRY.register(block.chainid, address(this), tokenId) returns (address ipId) {
+    require(ipId != address(0), "IP Asset registration failed");
+    return ipId;
+  } catch Error(string memory reason) {
+    revert(reason);
+  } catch {
+    revert("IP Asset registration failed");
+  }
+}
+```
+
+이 모든 것은 `register` 함수를 [IP Asset Registry](/concepts/registry/ip-asset-registry)에서 호출하는 것입니다. 이는 새로운 [IP Asset](/concepts/ip-asset)을 우리 프로토콜에 생성하고, `ipId`를 반환합니다.
+
+## 4. IP에 메타데이터 설정하기
+
+이제 새로운 IP 자산을 등록했으니, 이전에 만든 메타데이터를 `CoreMetadataModule.sol`를 사용하여 NFT & IP에 설정할 수 있습니다. [여기](/concepts/ip-asset/overview#adding-nft-%26-ip-metadata-to-ip-asset)에서 설명한 대로, 우리는 4개의 매개변수를 설정해야 합니다:
+
+1. `nftMetadataHash`
+2. `nftMetadataURI`
+3. `ipMetadataHash`
+4. `ipMetadataURI`
+
+```sol PiPi.sol
+// handles the NFT's `nftMetadataHash`
+// handles the IP's `ipMetadataURI` and `ipMetadataHash`
+function _mintNFT(address recipient) internal returns (string memory, address) {
+
+  // ... some code here ...
+
+  string memory nftUri = tokenURI(newTokenId);
+  bytes32 metadataHash = keccak256(abi.encodePacked(nftUri));
+  CORE_METADATA_MODULE.setAll(ipId, nftUri, metadataHash, metadataHash);
+
+  // ... some code here ...
+
+}
+
+// handles the NFT's `nftMetadataURI`
+function tokenURI(uint256 tokenId) public view override returns (string memory) {
+  return string(abi.encodePacked(_baseUri, StringUtils.uint2str(tokenId), ".json"));
+}
+```
+
+## 5. 파생작으로 등록하기
+
+이제 NFT를 민팅하고, IP로 등록하고, 적절한 메타데이터를 설정했으니, Ippy의 파생작으로 등록할 수 있습니다. `PiPi.sol` 계약은 `registerDerivativeForToken`를 사용하여 이를 처리합니다:
+
+```sol PiPi.sol
+function registerDerivativeForToken(address ipId) internal {
+  address[] memory parentIpIds = new address[](1);
+  parentIpIds[0] = 0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42;
+
+  uint256[] memory licenseTermsIds = new uint256[](1);
+  licenseTermsIds[0] = 1;
+
+  address licenseTemplate = 0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316;
+  bytes memory royaltyContext = hex"0000000000000000000000000000000000000000";
+  uint256 maxMintingFee = 0;
+  uint32 maxRts = 0;
+  uint32 maxRevenueShare = 0;
+
+  LICENSING_MODULE.registerDerivative(
+    ipId,
+    parentIpIds,
+    licenseTermsIds,
+    licenseTemplate,
+    royaltyContext,
+    maxMintingFee,
+    maxRts,
+    maxRevenueShare
+  );
+}
+```
+
+이 함수는 `registerDerivative`를 호출합니다 [라이선싱 모듈](/concepts/licensing-module), 다음과 함께:
+
+* `ipId`: 3단계에서 얻은 새로운 `ipId`&#x20;
+* `parentIpIds`: Ippy의 를 포함하는 배열`ipId`, 이는 `0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42`
+* `licenseTermsIds`: 를 포함하는 배열`1`, 이는 의 라이선스 조건 ID입니다[Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing). 이는 파생작이 Ippy를 무료로 사용할 수 있지만 상업화할 수 없음을 의미합니다
+* `licenseTemplate`: 의 주소`PILicenseTemplate`, 에서 찾을 수 있음[배포된 스마트 컨트랙트](/developers/deployed-smart-contracts)
+* `royaltyContext`: 그냥 제로 주소로 설정
+* `maxMintingFee`, `maxRts`, 그리고 `maxRevenueShare` 는 0으로 설정할 수 있습니다. 라이선스 조건이 비상업적이기 때문에 이들은 아무 작용을 하지 않습니다.
+
+## 6. NFT 전송
+
+이제 컨트랙트가 IP를 파생작으로 등록하는 것을 처리했으므로, PiPi IP에 대한 소유권을 갖도록 사용자에게 NFT를 전송합니다:
+
+```sol PiPi.sol
+function _mintNFT(address recipient) internal returns (string memory, address) {
+  // ... some code here ...
+  _safeTransfer(address(this), recipient, newTokenId, "");
+  // ... some code here ...
+}
+```
+
+## 7. 완료!
+
+축하합니다, 공식 Ippy IP의 파생작을 등록했습니다!
+
+<CardGroup cols={2}>
+  <Card title="Explorer에서 보기" href="https://explorer.story.foundation/ipa/0xBB42BF2713ee736284C45B1b549a03625cc97e51" icon="house">
+    우리의 explorer에서 파생 PiPi를 확인하세요.
+  </Card>
+
+  <Card title="더 알아보기" href="/developers/tutorials" icon="book-open">
+    우리의 문서에서 더 많은 튜토리얼을 탐험해보세요
+  </Card>
+</CardGroup>
+
+
+# Story에서 이미지 파인튜닝하기
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/jacob-tucker/finetune-story-flux" icon="thumbs-up">
+    이 튜토리얼의 완성된 코드를 확인하세요.
+  </Card>
+</CardGroup>
+
+이 튜토리얼에서는 FLUX 파인튜닝 API를 사용하여 Story의 마스코트 "Ippy"의 여러 이미지를 가져와 AI 모델을 파인튜닝하여 프롬프트와 함께 유사한 이미지를 생성합니다. 그런 다음 Story에서 출력 IP를 수익화하고 보호할 것입니다.
+
+<Note>
+  **이 튜토리얼은 TypeScript로 작성되었습니다**
+
+  이 튜토리얼의 1-3단계는 다음을 기반으로 합니다 [FLUX 파인튜닝 베타 가이드](https://docs.bfl.ml/finetuning/), 여기에는 Python으로 API를 호출하는 예제가 포함되어 있지만 제가 TypeScript로 다시 작성했습니다.
+</Note>
+
+## 설명
+
+생성형 텍스트-이미지 모델은 종종 창작자의 고유한 비전을 완전히 포착하지 못하고 특정 객체, 브랜드 또는 시각적 스타일에 대한 지식이 부족합니다. FLUX Pro 파인튜닝 API를 사용하면 창작자들이 기존 이미지를 사용하여 AI를 파인튜닝하여 프롬프트와 함께 유사한 이미지를 생성할 수 있습니다.
+
+이미지가 생성되면 IP를 성장시키고 수익화하며 보호하기 위해 Story에 IP로 등록할 것입니다.
+
+## 0. 시작하기 전에
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 다음을 설치해야 합니다 [Node.js](https://nodejs.org/en/download) 및 [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm). 이전에 코딩을 해보셨다면 이미 설치되어 있을 것입니다.
+2. Story Network Testnet 지갑의 개인 키를 다음에 추가하세요 `.env` file:
+
+```yaml .env
+WALLET_PRIVATE_KEY=
+```
+
+3. 다음으로 이동하세요 [Pinata](https://pinata.cloud/) 그리고 새 API 키를 생성하세요. JWT를 다음에 추가하세요 `.env` file:
+
+```yaml .env
+PINATA_JWT=
+```
+
+4. 다음으로 이동하세요 [BFL](https://api.us1.bfl.ai/auth/profile) 그리고 새 API 키를 생성하세요. 새 키를 다음에 추가하세요 `.env` file:
+
+<Warning>
+  **BFL 크레딧**
+
+  이미지를 생성하려면 BFL 크레딧이 필요합니다. 방금 계정을 만들었다면 크레딧을 구매해야 합니다 [여기](https://api.us1.bfl.ai/auth/profile).
+
+  각 API 엔드포인트의 가격을 다음에서 확인할 수 있습니다 [여기](https://docs.bfl.ml/pricing/).
+</Warning>
+
+```yaml .env
+BFL_API_KEY=
+```
+
+5. 선호하는 Story RPC URL을 다음에 추가하세요 `.env` 파일. 우리가 제공하는 공개 기본 URL을 사용할 수 있습니다:
+
+```yaml .env
+RPC_PROVIDER_URL=https://aeneid.storyrpc.io
+```
+
+6. 의존성을 설치하세요:
+
+```bash Terminal
+npm install @story-protocol/core-sdk axios pinata-web3 viem
+```
+
+## 1. 훈련 데이터 컴파일
+
+파인튜닝을 생성하려면 입력 훈련 데이터가 필요합니다!
+
+1. 프로젝트에 라는 폴더를 만드세요 `images`. 해당 폴더에 파인튜닝하려는 이미지들을 추가하세요. *지원되는 형식: JPG, JPEG, PNG, WebP. 또한 5개 이상의 이미지를 사용하는 것이 좋습니다.*
+2. 텍스트 설명 추가 (선택사항): 같은 폴더에 이미지에 대한 설명이 포함된 텍스트 파일을 만드세요. 텍스트 파일은 해당 이미지와 동일한 이름을 가져야 합니다. *Example: if your image is "sample.jpg", create "sample.txt"*
+3. 폴더를 ZIP 파일로 압축하세요. 이름은 다음과 같아야 합니다 `images.zip`
+
+## 2. 파인튜닝 생성
+
+입력 이미지와 유사한 스타일의 이미지를 생성하려면 **파인튜닝**을 생성해야 합니다. 파인튜닝을 모든 입력 이미지를 알고 있고 새로운 이미지를 생성할 수 있는 AI로 생각하세요.
+
+FLUX의 `/v1/finetune` API 경로를 호출하는 함수를 만들어 봅시다. `flux` 폴더를 만들고, 그 폴더 안에 `requestFinetuning.ts` 파일을 추가하고 다음 코드를 추가하세요:
+
+<Note>
+  **공식 문서**
+
+  페이로드의 각 매개변수가 무엇인지 알아보려면 공식 `/v1/finetune` API 문서를 [여기](https://api.us1.bfl.ai/scalar#tag/tasks/POST/v1/finetune)에서 확인하세요.
+</Note>
+
+```typescript flux/requestFinetuning.ts
+import axios from "axios";
+import fs from "fs";
+
+interface FinetunePayload {
+  finetune_comment: string;
+  trigger_word: string;
+  file_data: string;
+  iterations: number;
+  mode: string;
+  learning_rate: number;
+  captioning: boolean;
+  priority: string;
+  lora_rank: number;
+  finetune_type: string;
+}
+
+export async function requestFinetuning(
+  zipPath: string,
+  finetuneComment: string,
+  triggerWord = "TOK",
+  mode = "general",
+  iterations = 300,
+  learningRate = 0.00001,
+  captioning = true,
+  priority = "quality",
+  finetuneType = "full",
+  loraRank = 32
+) {
+  if (!fs.existsSync(zipPath)) {
+    throw new Error(`ZIP file not found at ${zipPath}`);
+  }
+
+  const modes = ["character", "product", "style", "general"];
+  if (!modes.includes(mode)) {
+    throw new Error(`Invalid mode. Must be one of: ${modes.join(", ")}`);
+  }
+
+  const fileData = fs.readFileSync(zipPath);
+  const encodedZip = Buffer.from(fileData).toString("base64");
+
+  const url = "https://api.us1.bfl.ai/v1/finetune";
+  const headers = {
+    "Content-Type": "application/json",
+    "X-Key": process.env.BFL_API_KEY,
+  };
+
+  const payload: FinetunePayload = {
+    finetune_comment: finetuneComment,
+    trigger_word: triggerWord,
+    file_data: encodedZip,
+    iterations,
+    mode,
+    learning_rate: learningRate,
+    captioning,
+    priority,
+    lora_rank: loraRank,
+    finetune_type: finetuneType,
+  };
+
+  try {
+    const response = await axios.post(url, payload, { headers });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Finetune request failed: ${error}`);
+  }
+}
+```
+
+다음으로, `train.ts` 파일을 만들고 `requestFinetuning` 함수를 호출하세요:
+
+<Warning>
+  **Warning: This is expensive!**
+
+  새로운 파인튜닝을 생성하는 것은 비용이 많이 듭니다. 제가 이 튜토리얼을 작성할 당시 $2-$6 정도였습니다. "FLUX PRO FINETUNE: TRAINING" 섹션을 [가격 페이지](https://docs.bfl.ml/pricing/)에서 확인해 주세요.
+</Warning>
+
+```typescript train.ts
+import { requestFinetuning } from "./flux/requestFinetuning";
+
+async function main() {
+  const response = await requestFinetuning("./images.zip", "ippy-finetune");
+  console.log(response);
+}
+
+main();
+```
+
+이는 다음과 같은 내용을 로그로 출력할 것입니다:
+
+```json
+{
+  "finetune_id": "6fc5e628-6f56-48ec-93cb-c6a6b22bf5a"
+}
+```
+
+이것이 당신의 `finetune_id`이며, 다음 단계에서 이미지를 생성하는 데 사용될 것입니다.
+
+## 3. 파인튜닝 대기
+
+파인튜닝된 모델로 이미지를 생성하기 전에 FLUX가 훈련을 완료할 때까지 기다려야 합니다!
+
+우리의 `flux` 폴더에 `finetune-progress.ts` 파일을 만들고 다음 코드를 추가하세요:
+
+<Note>
+  **공식 문서**
+
+  페이로드의 각 매개변수가 무엇인지 알아보려면 공식 `/v1/get_result` API 문서를 [여기](https://api.us1.bfl.ai/scalar#tag/utility/GET/v1/get_result)에서 확인하세요.
+</Note>
+
+```typescript flux/finetuneProgress.ts
+import axios from "axios";
+
+export async function finetuneProgress(finetuneId: string) {
+  const url = "https://api.us1.bfl.ai/v1/get_result";
+  const headers = {
+    "Content-Type": "application/json",
+    "X-Key": process.env.BFL_API_KEY,
+  };
+  try {
+    const response = await axios.get(url, {
+      headers,
+      params: { id: finetuneId },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Finetune progress failed: ${error}`);
+  }
+}
+```
+
+다음으로, `finetune-progress.ts` 파일을 만들고 `finetuneProgress` 방금 만든 함수:
+
+```typescript finetune-progress.ts
+import { finetuneProgress } from "./flux/finetuneProgress";
+
+// input your finetune_id here
+const FINETUNE_ID = "";
+
+async function main() {
+  const progress = await finetuneProgress(FINETUNE_ID);
+  console.log(progress);
+}
+
+main();
+```
+
+이는 다음과 같은 내용을 로그에 출력할 것입니다:
+
+```json
+{
+  "id": "023a1507-369e-46e0-bd6d-1f3446d7d5f2",
+  "status": "Pending",
+  "result": null,
+  "progress": null
+}
+```
+
+보시다시피, 상태는 여전히 대기 중입니다. 다음 단계로 넘어가기 전에 훈련이 '준비' 상태가 될 때까지 기다려야 합니다.
+
+## 4. 추론 실행
+
+<Warning>
+  **Warning: This costs money.**
+
+  매우 저렴하지만, 추론을 실행하는 데는 비용이 들며, 이 튜토리얼을 작성하는 시점에서 \$0.06-0.07 정도입니다. [pricing page](https://docs.bfl.ml/pricing/)의 "FLUX PRO FINETUNE: INFERENCE" 섹션을 검토해 주세요.
+</Warning>
+
+이제 파인튜닝을 훈련했으니, 이 모델을 사용하여 이미지를 생성할 것입니다. "추론 실행"은 단순히 우리의 새로운 모델(그것의 `finetune_id`로 식별됨)을 사용하여 새로운 이미지를 생성하는 것을 의미합니다. 이 모델은 우리의 이미지로 훈련되었습니다.
+
+우리가 사용할 수 있는 여러 가지 추론 엔드포인트가 있으며, 각각 [their own pricing](https://docs.bfl.ml/pricing/)(페이지 하단에서 확인 가능)이 있습니다. 이 튜토리얼에서는 `/v1/flux-pro-1.1-ultra-finetuned` 엔드포인트를 사용할 것입니다. 이는 [here](https://api.us1.bfl.ai/scalar#tag/tasks/POST/v1/flux-pro-1.1-ultra-finetuned)에 문서화되어 있습니다.
+
+우리의 `flux` 폴더에 `finetuneInference.ts` 파일을 생성하고 다음 코드를 추가하세요:
+
+<Note>
+  **공식 문서**
+
+  페이로드의 각 매개변수가 무엇인지 알아보려면 공식 `/v1/flux-pro-1.1-ultra-finetuned` API 문서를 [here](https://api.us1.bfl.ai/scalar#tag/tasks/POST/v1/flux-pro-1.1-ultra-finetuned)에서 확인하세요.
+</Note>
+
+```typescript flux/finetineInference.ts
+import axios from "axios";
+
+export async function finetuneInference(
+  finetuneId: string,
+  prompt: string,
+  finetuneStrength = 1.2,
+  endpoint = "flux-pro-1.1-ultra-finetuned",
+  additionalParams: Record<string, any> = {}
+) {
+  const url = `https://api.us1.bfl.ai/v1/${endpoint}`;
+  const headers = {
+    "Content-Type": "application/json",
+    "X-Key": process.env.BFL_API_KEY,
+  };
+
+  const payload = {
+    finetune_id: finetuneId,
+    finetune_strength: finetuneStrength,
+    prompt,
+    ...additionalParams,
+  };
+
+  try {
+    const response = await axios.post(url, payload, { headers });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Finetune inference failed: ${error}`);
+  }
+}
+```
+
+다음으로, `inference.ts` 파일을 만들고 `finetuneInference` 함수를 호출하세요. 첫 번째 매개변수는 위의 스크립트를 실행하여 얻은 `finetune_id`이어야 하고, 두 번째 매개변수는 새 이미지를 생성하기 위한 프롬프트입니다.
+
+```typescript inference.ts
+import { finetuneInference } from "./flux/finetuneInference";
+
+// input your finetune_id here
+const FINETUNE_ID = "";
+// add your prompt here
+const PROMPT = "A picture of Ippy being really happy.";
+
+async function main() {
+  const inference = await finetuneInference(FINETUNE_ID, PROMPT);
+  console.log(inference);
+}
+
+main();
+```
+
+이는 다음과 같은 내용을 로그에 출력할 것입니다:
+
+```json
+{
+  "id": "023a1507-369e-46e0-bd6d-1f3446d7d5f2",
+  "status": "Pending",
+  "result": null,
+  "progress": null
+}
+```
+
+보시다시피, 상태는 여전히 대기 중입니다. 우리의 이미지를 볼 수 있을 때까지 생성이 준비될 때까지 기다려야 합니다. 이를 위해 새로운 추론을 가져와 준비되었는지 확인하고 그에 대한 세부 정보를 볼 수 있는 함수가 필요합니다.
+
+우리의 `flux` 폴더에 `getInference.ts` 파일을 만들고 다음 코드를 추가하세요:
+
+<Note>
+  **공식 문서**
+
+  페이로드의 각 매개변수가 무엇인지 알아보려면 공식 `/v1/get_result` API 문서를 [here](https://api.us1.bfl.ai/scalar#tag/utility/GET/v1/get_result)에서 확인하세요.
+</Note>
+
+```typescript flux/getInference.ts
+import axios from "axios";
+
+export async function getInference(id: string) {
+  const url = "https://api.us1.bfl.ai/v1/get_result";
+  const headers = {
+    "Content-Type": "application/json",
+    "X-Key": process.env.BFL_API_KEY,
+  };
+
+  try {
+    const response = await axios.get(url, { headers, params: { id } });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Inference retrieval failed: ${error}`);
+  }
+}
+```
+
+우리의 `inference.ts` 파일로 돌아가서, 추론이 준비될 때까지 계속해서 가져오는 루프를 추가해 봅시다. 준비되면 새 이미지를 볼 것입니다.
+
+```typescript inference.ts
+import { finetuneInference } from "./flux/finetuneInference";
+import { getInference } from "./flux/getInference";
+
+// input your finetune_id here
+const FINETUNE_ID = "";
+// add your prompt here
+const PROMPT = "A picture of Ippy being really happy.";
+
+async function main() {
+  const inference = await finetuneInference(FINETUNE_ID, PROMPT);
+
+  let inferenceData = await getInference(inference.id);
+  while (inferenceData.status != "Ready") {
+    console.log("Waiting for inference to complete...");
+    // wait 5 seconds
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    // fetch the inference again
+    inferenceData = await getInference(inference.id);
+  }
+  // now the inference data is ready
+  console.log(inferenceData);
+}
+
+main();
+```
+
+루프가 완료되면 최종 로그는 다음과 같을 것입니다:
+
+```json
+{
+  "id": "023a1507-369e-46e0-bd6d-1f3446d7d5f2",
+  "status": "Ready",
+  "result": {
+    "sample": "https://delivery-us1.bfl.ai/results/746585f8d1b341f3a8735ababa563ac1/sample.jpeg?se=2025-01-16T19%3A50%3A11Z&sp=r&sv=2024-11-04&sr=b&rsct=image/jpeg&sig=pPtWnntLqc49hfNnGPgTf4BzS6MZcBgHayrYkKe%2BZIc%3D",
+    "prompt": "A picture of Ippy being really happy."
+  },
+  "progress": null
+}
+```
+
+브라우저에 `sample`를 붙여넣어 최종 결과를 볼 수 있습니다! 이 이미지는 결국 사라질 것이므로 반드시 저장해 두세요.
+
+## 5. Story Config 설정
+
+다음으로 이 이미지를 Story에 [IP Asset](/concepts/ip-asset)으로 등록하여 IP를 수익화하고 라이선스를 부여할 것입니다. `story` 폴더를 만들고 `utils.ts` 파일을 추가하세요. 거기에 Story Config를 설정하기 위해 다음 코드를 추가하세요:
+
+<Info>
+  관련 문서: [TypeScript SDK Setup](/developers/typescript-sdk/setup)
+</Info>
+
+```typescript story/utils.ts
+import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
+import { http } from "viem";
+import { privateKeyToAccount, Address, Account } from "viem/accounts";
+
+const privateKey: Address = `0x${process.env.WALLET_PRIVATE_KEY}`;
+export const account: Account = privateKeyToAccount(privateKey);
+
+const config: StoryConfig = {
+  account: account,
+  transport: http(process.env.RPC_PROVIDER_URL),
+  chainId: "aeneid",
+};
+export const client = StoryClient.newClient(config);
+```
+
+## 6. 추론을 IPFS에 업로드
+
+이제 새로운 추론을 만들었으니, 이미지 `sample` 파일을 IPFS에 직접 저장해야 합니다. 샘플은 일시적이기 때문입니다.
+
+새로운 `pinata` 폴더에 `uploadToIpfs.ts` 파일을 만들고 이미지를 업로드하고 그에 대한 세부 정보를 얻는 함수를 만드세요:
+
+```typescript pinata/uploadToIpfs.ts
+import { PinataSDK } from "pinata-web3";
+
+const pinata = new PinataSDK({
+  pinataJwt: process.env.PINATA_JWT,
+});
+
+export async function uploadImageAndGetDetails(
+  imageUrl: string
+): Promise<{ ipfsCid: string; contentType: string; contentHash: string }> {
+  try {
+    const response = await axios.get(imageUrl, {
+      responseType: "arraybuffer",
+      validateStatus: (status) => status === 200,
+    });
+
+    const contentType = response.headers["content-type"];
+    if (!contentType?.startsWith("image/")) {
+      throw new Error("URL does not point to an image");
+    }
+
+    const extension = contentType.split("/")[1];
+    const filename = `${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2)}.${extension}`;
+
+    const buffer = Buffer.from(response.data);
+    const contentHash =
+      "0x" + createHash("sha256").update(buffer).digest("hex");
+    const file = new File([buffer], filename, { type: contentType });
+
+    const { IpfsHash } = await pinata.upload.file(file);
+    return { ipfsCid: IpfsHash, contentType, contentHash };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(`Failed to fetch image: ${error.message}`);
+    }
+    throw error;
+  }
+}
+```
+
+이제 다음 단계에서 이 함수를 사용할 것입니다.
+
+## 7. IP 메타데이터 설정
+
+당신의 `story` 폴더에 `registerIp.ts` 파일을 만드세요.
+
+다음의 [IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard)를 보고 아래와 같이 IP에 대한 메타데이터를 구성하세요:
+
+```typescript story/registerIp.ts
+import { client, account } from "./utils";
+import { uploadImageAndGetDetails } from "../pinata/uploadToIpfs";
+
+export async function registerIp(inference) {
+  const { ipfsCid, contentType, contentHash } = await uploadImageAndGetDetails(
+    inference.result.sample
+  );
+
+  // Docs: https://docs.story.foundation/concepts/ip-asset/ipa-metadata-standard
+  const ipMetadata = {
+    title: "Happy Ippy",
+    description:
+      "An image of Ippy being really happy, generated by FLUX's 1.1 [pro] ultra Finetune",
+    image: `https://ipfs.io/ipfs/${ipfsCid}`,
+    imageHash: contentHash,
+    mediaUrl: `https://ipfs.io/ipfs/${ipfsCid}`,
+    mediaHash: contentHash,
+    mediaType: contentType,
+    creators: [
+      {
+        name: "Jacob Tucker",
+        contributionPercent: 100,
+        address: account.address,
+      },
+    ],
+  };
+}
+```
+
+## 8. NFT 메타데이터 설정
+
+같은 `registerIp.ts` 파일에서 NFT 메타데이터를 구성하세요. 이는 [OpenSea ERC-721 Standard](https://docs.opensea.io/docs/metadata-standards)를 따릅니다.
+
+```typescript story/registerIp.ts
+import { client, account } from "./utils";
+import { uploadImageAndGetDetails } from "../pinata/uploadToIpfs";
+
+export async function registerIp(inference) {
+  // previous code here...
+
+  // Docs: https://docs.opensea.io/docs/metadata-standards
+  const nftMetadata = {
+    name: "Ippy Ownership NFT",
+    description:
+      "This NFT represents ownership of the Happy Ippy image generated by FLUX's 1.1 [pro] ultra Finetune",
+    image: `https://ipfs.io/ipfs/${ipfsCid}`,
+    attributes: [
+      {
+        key: "Model",
+        value: "FLUX 1.1 [pro] ultra Finetune",
+      },
+      {
+        key: "Prompt",
+        value: "A picture of Ippy being really happy.",
+      },
+    ],
+  };
+}
+```
+
+## 9. IP와 NFT 메타데이터를 IPFS에 업로드
+
+같은 `pinata` 폴더에서 IP & NFT 메타데이터 객체를 IPFS에 업로드하는 함수를 만드세요:
+
+```typescript pinata/uploadToIpfs.ts
+// previous code here ...
+
+export async function uploadJSONToIPFS(jsonMetadata: any): Promise<string> {
+  const { IpfsHash } = await pinata.upload.json(jsonMetadata);
+  return IpfsHash;
+}
+```
+
+그런 다음 아래와 같이 메타데이터를 업로드하는 데 해당 함수를 사용할 수 있습니다:
+
+```typescript story/registerIp.ts
+import { client, account } from "./utils";
+import {
+  uploadImageAndGetDetails,
+  uploadJSONToIPFS,
+} from "../pinata/uploadToIpfs";
+import { createHash } from "crypto";
+
+export async function registerIp(inference) {
+  // previous code here...
+
+  const ipIpfsHash = await uploadJSONToIPFS(ipMetadata);
+  const ipHash = createHash("sha256")
+    .update(JSON.stringify(ipMetadata))
+    .digest("hex");
+  const nftIpfsHash = await uploadJSONToIPFS(nftMetadata);
+  const nftHash = createHash("sha256")
+    .update(JSON.stringify(nftMetadata))
+    .digest("hex");
+}
+```
+
+## 10. NFT를 IP Asset으로 등록
+
+다음으로 NFT를 발행하고, 이를 [IP Asset](/concepts/ip-asset)으로 등록하고, [License Terms](/concepts/licensing-module/license-terms)를 IP에 설정한 다음, NFT와 IP 메타데이터를 모두 설정할 것입니다.
+
+다행히도 우리는 `mintAndRegisterIp` NFT를 발행하고 동일한 트랜잭션에서 IP 자산으로 등록하는 함수입니다.
+
+이 함수는 발행할 SPG NFT 컨트랙트가 필요합니다. 간단히 하기 위해 Aeneid 테스트넷에서 여러분을 위해 생성한 공개 컬렉션을 사용할 수 있습니다: `0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc`.
+
+<Accordion title="자체 커스텀 ERC-721 컬렉션 생성하기" icon="pen-circle">
+  우리가 제공하는 공개 컬렉션을 사용하는 것도 괜찮지만, 실제로 이를 수행할 때는 IP를 위한 자체 NFT 컬렉션을 만들어야 합니다. 이를 위한 두 가지 방법이 있습니다:
+
+  1. ISPGNFT[ISPGNFT](https://github.com/storyprotocol/protocol-periphery-v1/blob/main/contracts/interfaces/ISPGNFT.sol) 인터페이스를 구현하는 컨트랙트를 배포하거나 SDK의 [createNFTCollection](/sdk-reference/nftclient#createnftcollection) 함수(아래 참조)를 사용하여 이를 대신 수행할 수 있습니다. 이렇게 하면 오직 여러분만이 발행할 수 있는 자체 SPG NFT 컬렉션을 얻게 됩니다.
+
+     ```typescript createSpgNftCollection.ts
+     import { zeroAddress } from "viem";
+     import { client } from "./utils";
+
+     async function createSpgNftCollection() {
+       const newCollection = await client.nftClient.createNFTCollection({
+         name: "Test NFTs",
+         symbol: "TEST",
+         isPublicMinting: false,
+         mintOpen: true,
+         mintFeeRecipient: zeroAddress,
+         contractURI: "",
+         txOptions: { waitForTransaction: true },
+       });
+
+       console.log(
+         `New SPG NFT collection created at transaction hash ${newCollection.txHash}`
+       );
+       console.log(`NFT contract address: ${newCollection.spgNftContract}`);
+     }
+
+     createSpgNftCollection();
+     ```
+
+  2. 자체적으로 커스텀 ERC-721 NFT 컬렉션을 생성하고 [register](/sdk-reference/ipasset#register) 함수를 사용합니다 - `nftContract` 및 `tokenId` - *대신* `mintAndRegisterIp` 함수를 사용합니다. 작동하는 코드 예제는 [여기](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/registerCustom.ts)에서 확인할 수 있습니다. 이는 **이미 자체 커스텀 로직이 있는 커스텀 NFT 컨트랙트가 있거나, IP 자체가 NFT인 경우에 유용합니다.**
+</Accordion>
+
+<Info>
+  관련 문서:
+
+  [ipAsset.mintAndRegisterIp](/sdk-reference/ipasset#mintandregisterip)
+</Info>
+
+```typescript story/registerIp.ts
+import { client, account } from "./utils";
+import {
+  uploadImageAndGetDetails,
+  uploadJSONToIPFS,
+} from "../pinata/uploadToIpfs";
+import { createHash } from "crypto";
+import { Address } from "viem";
+
+export async function registerIp(inference) {
+  // previous code here ...
+
+  const response = await client.ipAsset.mintAndRegisterIp({
+    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+    ipMetadata: {
+      ipMetadataURI: `https://ipfs.io/ipfs/${ipIpfsHash}`,
+      ipMetadataHash: `0x${ipHash}`,
+      nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsHash}`,
+      nftMetadataHash: `0x${nftHash}`,
+    },
+    txOptions: { waitForTransaction: true },
+  });
+
+  console.log(
+    `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  console.log(
+    `View on the explorer: https://aeneid.explorer.story.foundation/ipa/${response.ipId}`
+  );
+}
+```
+
+## 11. 우리의 추론 등록하기
+
+이제 우리의 `registerIp` 함수를 완성했으니, 이를 우리의 `inference.ts` file:
+
+```typescript inference.ts
+import { finetuneInference } from "./flux/finetuneInference";
+import { getInference } from "./flux/getInference";
+import { registerIp } from "./story/registerIp";
+
+const FINETUNE_ID = "";
+const PROMPT = "A picture of Ippy being really happy.";
+
+async function main() {
+  const inference = await finetuneInference(FINETUNE_ID, PROMPT);
+
+  let inferenceData = await getInference(inference.id);
+  while (inferenceData.status != "Ready") {
+    console.log("Waiting for inference to complete...");
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    inferenceData = await getInference(inference.id);
+  }
+  // now the inference data is ready
+  console.log(inferenceData);
+
+  // add the function here
+  await registerIp(inferenceData);
+}
+
+main();
+```
+
+## 12. 완료!
+
+<CardGroup cols={2}>
+  <Card title="완성된 코드" href="https://github.com/jacob-tucker/finetune-story-flux" icon="thumbs-up">
+    이 튜토리얼의 완성된 코드를 확인하세요.
+  </Card>
+
+  <Card title="더 알아보기" href="/developers/tutorials" icon="book-open">
+    우리의 문서에서 더 많은 튜토리얼을 탐험해보세요
+  </Card>
+</CardGroup>
+
+
+# 개요
+
+## 등록
+
+* [Story에 IP를 등록하는 방법](/developers/tutorials/how-to-register-ip-on-story)
+* [Story에 음악을 등록하는 방법](/developers/tutorials/how-to-register-music-on-story)
+* [사례 연구: Ippy의 파생작 등록하기](/developers/tutorials/case-study-register-derivative-ippy)
+
+## 로열티
+
+* [IP에 팁 주는 방법](/developers/tutorials/how-to-tip-an-ip)
+
+## AI 테마
+
+* [DALL·E AI 생성 이미지 보호하기](/developers/tutorials/protect-dalle-ai-generated-images)
+* [Stability 이미지 등록 및 수익화하기](/developers/tutorials/register-stability-images)
+* [Story에서 이미지 파인튜닝하기](/developers/tutorials/finetune-images)
+
+## 지갑 없음 / 온보딩
+
+* [Privy를 이용한 이메일 로그인 및 스폰서 트랜잭션](/developers/tutorials/privy-tutorial)
+
+
+# Story에서 음악 등록하는 방법
+
+title: How to Register Music on Story
+description: Typescript SDK를 사용하여 Story에서 IP 자산으로 음악을 올바르게 등록하는 방법을 알아보세요.
+
+
+<CardGroup cols={2}>
+  <Card title="최종 결과 예시" href="https://aeneid.explorer.story.foundation/ipa/0x70920EaC7F9748Ac5A71C82310f1ac1C7eD11f02" icon="house">
+    이 튜토리얼을 따라한 후의 예시 결과를 확인하세요.
+  </Card>
+
+  <Card title="Justin Bieber가 Story에 옵니다!" href="https://x.com/StoryProtocol/status/1881713146274156951" icon="megaphone">
+    Justin Bieber의 "Peaches"는 Story에 오는 첫 번째 RWA 중 하나입니다. 발표를 확인해보세요!
+  </Card>
+</CardGroup>
+
+## 1. 노래 만들기
+
+Story에 음악을 등록하기 전에, 당연히 음악이 필요합니다! 이미 음악이 있다면, 음악 파일에 대한 직접적인 링크가 있는지 확인하세요. 예를 들어, `https://cdn1.suno.ai/dcd3076f-3aa5-400b-ba5d-87d30f27c311.mp3`. 이것이 아직 없다면, 음악 파일을 IPFS에 업로드할 수 있습니다:
+
+테스트 노래를 만들고 싶다면 [Suno](https://suno.com)로 이동하세요. 이는 AI 생성 음악을 위한 멋진 플랫폼입니다. 다음과 같이 테스트 노래를 얻을 수 있습니다:
+
+1. 노래를 만들기 위한 프롬프트 입력
+2. 최종 결과를 클릭하면 다음과 같은 URL로 이동합니다: `https://suno.com/song/dcd3076f-3aa5-400b-ba5d-87d30f27c311`
+3. URL에서 `SONG_ID`를 복사하세요 (`dcd3076f-3aa5-400b-ba5d-87d30f27c311`)
+4. 다음 URL을 복사하세요: `https://cdn1.suno.ai/${SONG_ID}.mp3`, 반드시 `SONG_ID`를 자신의 것으로 교체하세요.
+
+이것이 2단계에서 사용할 URL입니다.
+
+## 2. "IP 등록 방법" 튜토리얼 완료하기
+
+우리가 해야 할 대부분의 내용은 이미 [IP 자산 등록하기](/developers/typescript-sdk/register-ip-asset)에서 다루고 있습니다. 먼저 해당 튜토리얼을 완료한 다음 여기로 돌아오세요.
+
+## 3. 메타데이터 변경
+
+유일한 차이점은 메타데이터를 설정하는 방법입니다. 다음은 예시입니다:
+
+* `image.*`는 노래가 등록될 때 커버 이미지를 표시하는 데 사용됩니다
+* `media.*`는 오디오 파일에 사용됩니다. 또한 `media.*`에 전달된 필드는 [Story Attestation Service](/concepts/story-attestation-service)에 의해 침해 여부가 확인됩니다.
+
+```typescript main.ts
+const ipMetadata = {
+  title: "Midnight Marriage",
+  description: "This is a house-style song generated on suno.",
+  createdAt: "1740005219",
+  creators: [
+    {
+      name: "Jacob Tucker",
+      address: "0xA2f9Cf1E40D7b03aB81e34BC50f0A8c67B4e9112",
+      contributionPercent: 100,
+    },
+  ],
+  image:
+    "https://cdn2.suno.ai/image_large_8bcba6bc-3f60-4921-b148-f32a59086a4c.jpeg",
+  imageHash:
+    "0xc404730cdcdf7e5e54e8f16bc6687f97c6578a296f4a21b452d8a6ecabd61bcc",
+  mediaUrl: "https://cdn1.suno.ai/dcd3076f-3aa5-400b-ba5d-87d30f27c311.mp3",
+  mediaHash:
+    "0xb52a44f53b2485ba772bd4857a443e1fb942cf5dda73c870e2d2238ecd607aee",
+  mediaType: "audio/mpeg",
+};
+```
+
+이를 완료한 후, 다음과 같이 NFT 메타데이터를 설정할 수 있습니다:
+
+* `image`는 커버 이미지용입니다
+* `animation_url` 오디오 파일에 사용됩니다
+* `attributes` 포함하고 싶은 추가 속성들을 위해
+
+```typescript main.ts
+const nftMetadata = {
+  name: "Midnight Marriage",
+  description:
+    "This is a house-style song generated on suno. This NFT represents ownership of the IP Asset.",
+  image:
+    "https://cdn2.suno.ai/image_large_8bcba6bc-3f60-4921-b148-f32a59086a4c.jpeg",
+  animation_url:
+    "https://cdn1.suno.ai/dcd3076f-3aa5-400b-ba5d-87d30f27c311.mp3",
+  attributes: [
+    {
+      key: "Suno Artist",
+      value: "amazedneurofunk956",
+    },
+    {
+      key: "Artist ID",
+      value: "4123743b-8ba6-4028-a965-75b79a3ad424",
+    },
+    {
+      key: "Source",
+      value: "Suno.com",
+    },
+  ],
+};
+```
+
+## 4. 완료!
+
+스크립트를 실행하면 IP 자산을 등록하게 되며, 이는 다음과 같이 보일 것입니다 [this](https://aeneid.explorer.story.foundation/ipa/0x70920EaC7F9748Ac5A71C82310f1ac1C7eD11f02) 우리의 탐색기에서.
+
+탐색기가 메타데이터 형식을 인식하고, 페이지에서 직접 노래를 재생할 수 있는 것을 볼 수 있습니다!
+
+<CardGroup cols={1}>
+  <Card title="더 알아보기" href="/developers/tutorials" icon="book-open">
+    우리의 문서에서 더 많은 튜토리얼을 탐색해보세요
+  </Card>
+</CardGroup>
+
+
+# IP에 팁 주는 방법
+
+* [SDK 사용하기](#using-the-sdk)
+* [스마트 컨트랙트 사용하기](#using-a-smart-contract)
+
+# SDK 사용하기
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/royalty/payRevenue.ts" icon="thumbs-up">
+    간단한 파생 체인을 설정하고 자식 IP 자산에 팁을 주는 완성된 작동 예제를 확인하세요.
+  </Card>
+</CardGroup>
+
+이 튜토리얼에서는 TypeScript SDK를 사용하여 IP 자산에 돈을 보내는 방법("팁")을 배우게 됩니다.
+
+## 설명
+
+이 시나리오에서, 미키 마우스를 나타내는 부모 IP 자산이 있다고 가정해 봅시다. 다른 사람이 그 미키 마우스에 모자를 그려 파생(또는 "자식") IP 자산으로 등록합니다. 라이선스 조건은 자식이 모든 상업적 수익의 50%를 부모와 공유해야 한다고 명시합니다(`commercialRevShare = 50`). 다른 사람(제3자 사용자)이 와서 정말 멋지다고 생각해 파생 작품에 2 \$WIP를 보내고 싶어 합니다.
+
+이 예제의 목적상, 우리는 자식이 이미 파생 IP 자산으로 등록되어 있다고 가정할 것입니다. 이 방법을 배우는 데 도움이 필요하다면, 다음을 확인하세요: [파생 작품 등록하기](/developers/typescript-sdk/register-derivative).
+
+* 부모 IP ID: `0x42595dA29B541770D9F9f298a014bF912655E183`
+* 자식 IP ID: `0xeaa4Eed346373805B377F5a4fe1daeFeFB3D182a`
+
+## 0. 시작하기 전에
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 다음을 설치해야 합니다: [Node.js](https://nodejs.org/en/download)와 [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm). 이전에 코딩을 해보셨다면 이미 설치되어 있을 것입니다.
+2. Story Network Testnet 지갑의 개인 키를 다음에 추가하세요: `.env` file:
+
+```text env
+WALLET_PRIVATE_KEY=<YOUR_WALLET_PRIVATE_KEY>
+```
+
+3. 선호하는 RPC URL을 `.env` 파일에 추가하세요. 우리가 제공하는 공개 기본 URL을 사용할 수 있습니다:
+
+```text env
+RPC_PROVIDER_URL=https://aeneid.storyrpc.io
+```
+
+4. 의존성을 설치하세요:
+
+```bash Terminal
+npm install @story-protocol/core-sdk viem
+```
+
+## 1. Story Config 설정하기
+
+다음 `utils.ts` 파일에 Story Config를 설정하기 위해 다음 코드를 추가하세요:
+
+* 관련 문서: [TypeScript SDK Setup](/developers/typescript-sdk/setup)
+
+```typescript utils.ts
+import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
+import { http } from "viem";
+import { privateKeyToAccount, Address, Account } from "viem/accounts";
+
+const privateKey: Address = `0x${process.env.WALLET_PRIVATE_KEY}`;
+export const account: Account = privateKeyToAccount(privateKey);
+
+const config: StoryConfig = {
+  account: account,
+  transport: http(process.env.RPC_PROVIDER_URL),
+  chainId: "aeneid",
+};
+export const client = StoryClient.newClient(config);
+```
+
+## 2. 파생 IP 자산에 팁 주기
+
+이제 `main.ts` 파일을 생성하세요. 우리는 `payRoyaltyOnBehalf` 함수를 사용하여 파생 자산에 지불할 것입니다.
+
+IP 자산에 \[$WIP](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000). **Note that if you don't have enough $WIP로 지불하게 될 것입니다. 이 함수는 자동으로 동등한 양의 $IP into $WIP를 래핑할 것입니다.\*\* 둘 중 하나가 충분하지 않으면 실패할 것입니다.
+
+<Note>
+  **화이트리스트에 등록된 수익 토큰**
+
+  우리 프로토콜에 의해 화이트리스트에 등록된 토큰만 지불("수익") 토큰으로 사용될 수 있습니다. \$WIP는 그 토큰 중 하나입니다. 그 목록을 보려면 [here](/developers/deployed-smart-contracts)를 참조하세요.
+</Note>
+
+이제 우리는 `payRoyaltyOnBehalf` 함수를 호출할 수 있습니다. 이 경우:
+
+1. `receiverIpId`는 파생(자식) 자산의 `ipId`입니다
+2. `payerIpId`는 `zeroAddress`입니다. 왜냐하면 지불자는 제3자(모자를 쓴 미키 마우스가 멋지다고 생각하는 사람)이며, 반드시 다른 IP 자산일 필요는 없기 때문입니다
+3. `token`는 \$WIP의 주소입니다. 이는 [here](/concepts/royalty-module/ip-royalty-vault#whitelisted-revenue-tokens)
+4. `amount`는 2입니다. 팁을 주는 사람이 2 \$WIP를 보내고 싶어하기 때문입니다
+
+```typescript main.ts
+import { client } from "./utils";
+import { zeroAddress, parseEther } from "viem";
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+async function main() {
+  const response = await client.royalty.payRoyaltyOnBehalf({
+    receiverIpId: "0xeaa4Eed346373805B377F5a4fe1daeFeFB3D182a",
+    payerIpId: zeroAddress,
+    token: WIP_TOKEN_ADDRESS,
+    amount: parseEther("2"), // 2 $WIP
+    txOptions: { waitForTransaction: true },
+  });
+  console.log(`Paid royalty at transaction hash ${response.txHash}`);
+}
+
+main();
+```
+
+## 3. 자식이 받을 수익 청구하기
+
+이 시점에서 우리는 이미 튜토리얼을 마쳤습니다: IP 자산에 팁을 주는 방법을 배웠습니다. 하지만 자식과 부모가 받을 수익을 청구하고 싶다면 어떻게 해야 할까요?
+
+자식은 2 \$WIP를 받았습니다. 하지만 라이선스 조건의 `commercialRevenue = 50` 때문에 수익의 50%를 부모 IP와 공유한다는 것을 기억하세요.
+
+자식 IP는 다음을 호출하여 1 \$WIP를 청구할 수 있습니다: `claimAllRevenue` function:
+
+* `ancestorIpId`는 자금이 있는 로열티 금고와 연관된 IP 자산의 `ipId`입니다 (더 간단히 말하면, 이는 단순히 자식의 `ipId`입니다)
+* `currencyTokens`는 \$WIP의 주소를 포함하는 배열입니다. 이는 [here](/concepts/royalty-module/ip-royalty-vault#whitelisted-revenue-tokens)
+* `claimer`는 자식의 [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault)와 관련된 로열티 토큰을 보유하는 주소입니다. 기본적으로, 이들은 IP 계정에 있으며, 이는 단순히 자식 자산의 `ipId`입니다
+
+```typescript main.ts
+import { client } from "./utils";
+import { zeroAddress, parseEther } from "viem";
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+async function main() {
+  // previous code here ...
+  const response = await client.royalty.claimAllRevenue({
+    ancestorIpId: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
+    claimer: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
+    currencyTokens: [WIP_TOKEN_ADDRESS],
+    childIpIds: [],
+    royaltyPolicies: [],
+  });
+
+  console.log(`Claimed revenue: ${response.claimedTokens}`);
+}
+
+main();
+```
+
+## 4. 부모가 받을 수익 청구하기
+
+계속해서, 부모도 자신의 수익을 청구할 수 있어야 합니다. 이 예에서 부모는 1 $WIP since the child earned 2 $WIP와 라이선스 조건의 `commercialRevShare = 50`를 청구할 수 있어야 합니다.
+
+우리는 `claimAllRevenue` 함수를 사용하여 받을 수익 토큰을 청구할 것입니다.
+
+1. `ancestorIpId`는 부모("조상") 자산의 `ipId`입니다
+2. `claimer`는 부모의 [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault)와 관련된 로열티 토큰을 보유하는 주소입니다. 기본적으로, 이들은 IP 계정에 있으며, 이는 단순히 부모 자산의 `ipId`입니다
+3. `childIpIds`에는 자식 자산의 `ipId`가 포함될 것입니다
+4. `royaltyPolicies`에는 로열티 정책의 주소가 포함될 것입니다. [Royalty Module](/concepts/royalty-module)에서 설명한 대로, 이는 `RoyaltyPolicyLAP` 또는 `RoyaltyPolicyLRP`입니다. 라이선스 조건에 따라 다릅니다. 이 경우, 라이선스 조건이 `RoyaltyPolicyLAP`를 지정한다고 가정해 봅시다. 간단히 [Deployed Smart Contracts](/developers/deployed-smart-contracts)로 가서 올바른 주소를 찾으세요.
+5. `currencyTokens`는 \$WIP의 주소를 포함하는 배열입니다. 이는 [here](/concepts/royalty-module/ip-royalty-vault#whitelisted-revenue-tokens)
+
+```typescript main.ts
+import { client } from "./utils";
+import { zeroAddress, parseEther } from "viem";
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+async function main() {
+  // previous code here ...
+
+  const response = await client.royalty.claimAllRevenue({
+    ancestorIpId: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    claimer: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    currencyTokens: [WIP_TOKEN_ADDRESS],
+    childIpIds: ["0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2"],
+    royaltyPolicies: ["0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E"],
+  });
+
+  console.log(`Claimed revenue: ${response.claimedTokens}`);
+}
+
+main();
+```
+
+## 5. 완료!
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/royalty/payRevenue.ts" icon="thumbs-up">
+    간단한 파생 체인을 설정하고 자식 IP 자산에 팁을 주는 완성된 작동 예제를 확인하세요.
+  </Card>
+</CardGroup>
+
+# 스마트 컨트랙트 사용하기
+
+<CardGroup cols={1}>
+  <Card title="스마트 컨트랙트 튜토리얼로 이동" href="/developers/smart-contracts-guide/claim-revenue" icon="house">
+    여기에서 튜토리얼을 확인하세요!
+  </Card>
+</CardGroup>
+
+
+# Privy를 이용한 이메일 로그인 및 스폰서 트랜잭션
+
+<Card title="완성된 코드" href="https://github.com/jacob-tucker/story-privy-tutorial" icon="thumbs-up" color="#51af51">
+  이 튜토리얼의 완성된 코드를 확인하세요.
+</Card>
+
+여러분이 이 튜토리얼을 읽고 있는 이유는 아마도 다음 중 하나 또는 둘 다를 하고 싶어서일 것입니다:
+
+1. 지갑이 없는 사용자가 이메일로 앱에 로그인할 수 있게 하기 ("임베디드 지갑")
+2. 사용자가 가스비를 지불하지 않도록 트랜잭션을 스폰서하기 ("스마트 지갑")
+
+Privy가 이 두 가지를 설명하는 방식은 다음과 같습니다:
+
+> 임베디드 지갑은 Privy가 직접 제공하는 자체 보관 지갑으로, 애플리케이션에 직접 내장된 지갑 경험을 제공합니다. 임베디드 지갑은 브라우저 확장 프로그램이나 모바일 앱과 같은 별도의 지갑 클라이언트가 필요 없으며, 제품에서 직접 접근할 수 있습니다. 이는 주로 외부 지갑이 없거나 외부 지갑을 연결하고 싶지 않은 앱 사용자를 위해 설계되었습니다.
+>
+> 스마트 지갑은 계정 추상화의 기능을 통합한 프로그래밍 가능한 온체인 계정입니다. 몇 줄의 코드만으로 사용자를 위한 스마트 지갑을 만들어 가스 결제를 스폰서하고, 일괄 트랜잭션을 보내는 등의 작업을 할 수 있습니다.
+
+우리는 [Privy](https://www.privy.io/) + [Pimlico](https://www.pimlico.io/)를 사용하여 두 가지를 모두 구현할 것입니다.
+
+### ⚠️ 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. Privy의 대시보드[에서 새 프로젝트를 만듭니다](https://dashboard.privy.io)
+2. &#xNAN;**"App ID"**&#xB97C; **"App settings > API keys"** 아래에서 복사합니다. 로컬 프로젝트에서 `.env`.env.local 파일을 만들고 App ID를 추가합니다:
+
+```Text .env
+NEXT_PUBLIC_PRIVY_APP_ID=
+```
+
+3. 프로젝트 대시보드에서 "**Wallet Configuration > Smart wallets**" 아래의 스마트 지갑을 활성화하고 "**Kernel (ZeroDev)**"를 선택합니다. 아래와 같이:
+
+<Frame>
+  <img src="/images/tutorials/privy-tutorial-1.png" alt="Privy Dashboard" />
+</Frame>
+
+4. 스마트 지갑을 활성화하면 바로 아래에 다음 값으로 "Custom chain"을 설정해야 합니다:
+   1. Name: `Story Aeneid Testnet`
+   2. ID 번호: `1315`
+   3. RPC URL: `https://aeneid.storyrpc.io`
+   4. Bundler URL과 Paymaster URL의 경우, [Pimlico의 대시보드](https://dashboard.pimlico.io)로 가서 새 앱을 만듭니다. 그런 다음 "API Keys"를 클릭하고 새 API 키를 만든 후, 아래와 같이 "RPC URLs"를 클릭하고 네트워크로 "Story Aeneid Testnet"을 선택합니다:
+
+<Warning>
+  이는 테스트용입니다. 실제 시나리오에서는 앱을 대신하여 트랜잭션을 자동으로 스폰서하기 위해 Pimlico에서 적절한 스폰서십 정책과 결제 정보를 설정해야 합니다. 테스트넷에서는 이 작업을 할 필요가 없습니다.
+</Warning>
+
+<Frame>
+  <img src="/images/tutorials/pimlico-dashboard.png" alt="Pimlico Dashboard" />
+</Frame>
+
+5. 의존성을 설치합니다:
+
+```Text Terminal
+npm install @story-protocol/core-sdk permissionless viem @privy-io/react-auth
+```
+
+## 1. 임베디드 지갑 설정
+
+<CardGroup cols={1}>
+  <Card title="Privy 공식 튜토리얼" href="https://docs.privy.io/guide/react/wallets/smart-wallets/usage#setup" icon="house">
+    이 단계를 읽는 대신 설정을 위해 Privy의 공식 튜토리얼을 따르세요.
+  </Card>
+</CardGroup>
+
+<Note>
+  Privy의 튜토리얼을 [여기서](https://docs.privy.io/guide/react/wallets/embedded/creation) 읽을 수 있습니다. 이 튜토리얼은 임베디드 지갑 설정에 대해 설명하는데, 이는 사용자를 위한 이메일 로그인을 멋지게 표현한 것입니다. 아래 예제에서는 단순히 모든 사용자를 위해 임베디드 지갑을 만들지만, 그들의 튜토리얼을 읽어 더 많은 사용자 정의를 원할 수 있습니다.
+</Note>
+
+임베디드/스마트 지갑을 사용할 모든 컴포넌트를 `PrivyProvider`와 `SmartWalletsProvider`로 감싸야 합니다. `providers.tsx`providers.tsx (또는 원하는 이름) 파일에 다음 코드를 추가하세요:
+
+```jsx providers.tsx
+"use client";
+
+import { PrivyProvider } from "@privy-io/react-auth";
+import { SmartWalletsProvider } from "@privy-io/react-auth/smart-wallets";
+import { aeneid } from "@story-protocol/core-sdk";
+
+export default function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <PrivyProvider
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID as string}
+      config={{
+        // Customize Privy's appearance in your app
+        appearance: {
+          theme: "light",
+          accentColor: "#676FFF",
+          logo: "/story-logo.jpg",
+        },
+        // Create embedded wallets for users who don't have a wallet
+        // when they sign in with email
+        embeddedWallets: {
+          createOnLogin: "all-users",
+        },
+        defaultChain: aeneid,
+        supportedChains: [aeneid],
+      }}
+    >
+      <SmartWalletsProvider>{children}</SmartWalletsProvider>
+    </PrivyProvider>
+  );
+}
+```
+
+그런 다음 `layout.tsx`\_app.tsx에 다음과 같이 추가할 수 있습니다:
+
+```jsx layout.tsx
+import Providers from "@/providers/providers";
+
+/* other code here... */
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode,
+}>) {
+  return (
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}
+```
+
+## 2. 로그인 & 로그아웃
+
+다음과 같이 앱에 이메일 로그인을 추가할 수 있습니다:
+
+```jsx page.tsx
+import { usePrivy } from "@privy-io/react-auth";
+
+export default function Home() {
+  const { login, logout, user } = usePrivy();
+
+  useEffect(() => {
+    if (user) {
+      const smartWallet = user.linkedAccounts.find(
+        (account) => account.type === "smart_wallet"
+      );
+      // Logs the smart wallet's address
+      console.log(smartWallet.address);
+      // Logs the smart wallet type (e.g. 'safe', 'kernel', 'light_account', 'biconomy', 'thirdweb', 'coinbase_smart_wallet')
+      console.log(smartWallet.type);
+    }
+  }, [user]);
+
+  return (
+    <div>
+      <button onClick={user ? logout : login}>
+        {user ? "Logout" : "Login with Privy"}
+      </button>
+    </div>
+  );
+}
+```
+
+## 3. Privy로 메시지 서명하기
+
+<CardGroup cols={1}>
+  <Card title="Privy 공식 튜토리얼" href="https://docs.privy.io/guide/react/wallets/smart-wallets/usage#signing-messages" icon="house">
+    이 단계를 읽는 대신 메시지 서명을 위해 Privy의 공식 튜토리얼을 따르세요.
+  </Card>
+</CardGroup>
+
+생성된 스마트 지갑을 사용하여 메시지에 서명할 수 있습니다:
+
+```jsx page.tsx
+import { useSmartWallets } from "@privy-io/react-auth/smart-wallets";
+
+export default function Home() {
+  const { client: smartWalletClient } = useSmartWallets();
+
+  /* previous code here */
+
+  async function sign() {
+    const uiOptions = {
+      title: "Example Sign",
+      description: "This is an example for a user to sign.",
+      buttonText: "Sign",
+    };
+    const request = {
+      message: "IP is cool",
+    };
+    const signature = await smartWalletClient?.signMessage(request, {
+      uiOptions,
+    });
+  }
+
+  return (
+    <div>
+      {/* previous code here */}
+      <button onClick={sign}>Sign</button>
+    </div>
+  );
+}
+```
+
+## 4. 임의의 트랜잭션 보내기
+
+<CardGroup cols={1}>
+  <Card title="Privy 공식 튜토리얼" href="https://docs.privy.io/guide/react/wallets/smart-wallets/usage#sending-transactions" icon="house">
+    이 단계를 읽는 대신 트랜잭션 전송을 위해 Privy의 공식 튜토리얼을 따르세요.
+  </Card>
+</CardGroup>
+
+또한 생성된 스마트 지갑을 사용하여 사용자를 위한 트랜잭션을 스폰서할 수 있습니다:
+
+<CodeGroup>
+  ```jsx page.tsx
+  import { useSmartWallets } from "@privy-io/react-auth/smart-wallets";
+  import { encodeFunctionData } from "viem";
+  import { defaultNftContractAbi } from "./defaultNftContractAbi";
+
+  export default function Home() {
+    const { client: smartWalletClient } = useSmartWallets();
+
+    /* previous code here */
+
+    async function mintNFT() {
+      const uiOptions = {
+        title: "Mint NFT",
+        description: "This is an example transaction that mints an NFT.",
+        buttonText: "Mint",
+      };
+
+      const transactionRequest = {
+        to: "0x937bef10ba6fb941ed84b8d249abc76031429a9a", // example nft contract
+        data: encodeFunctionData({
+          abi: defaultNftContractAbi, // abi from another file
+          functionName: "mintNFT",
+          args: ["0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68", "test-uri"],
+        }),
+      } as const;
+
+      const txHash = await smartWalletClient?.sendTransaction(
+        transactionRequest,
+        { uiOptions }
+      );
+      console.log(`View Tx: https://aeneid.storyscan.io/tx/${txHash}`);
+    }
+
+    return (
+      <div>
+        {/* previous code here */}
+        <button onClick={mintNFT}>Mint NFT</button>
+      </div>
+    )
+  }
+  ```
+
+  ```Text defaultNftContractAbi.ts
+  export const defaultNftContractAbi = [
+    {
+      inputs: [],
+      stateMutability: "nonpayable",
+      type: "constructor",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "recipient",
+          type: "address",
+        },
+        {
+          internalType: "string",
+          name: "tokenURI",
+          type: "string",
+        },
+      ],
+      name: "mintNFT",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256",
+          name: "tokenId",
+          type: "uint256",
+        },
+      ],
+      name: "tokenURI",
+      outputs: [
+        {
+          internalType: "string",
+          name: "",
+          type: "string",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256",
+          name: "tokenId",
+          type: "uint256",
+        },
+      ],
+      name: "ownerOf",
+      outputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "symbol",
+      outputs: [
+        {
+          internalType: "string",
+          name: "",
+          type: "string",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "name",
+      outputs: [
+        {
+          internalType: "string",
+          name: "",
+          type: "string",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "totalSupply",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+  ];
+
+  ```
+</CodeGroup>
+
+## 5. Story SDK에서 트랜잭션 보내기
+
+또한 생성된 스마트 지갑을 사용하여 [🛠️ TypeScript SDK](/developers/typescript-sdk)에서 트랜잭션을 보낼 수 있습니다. 일부 함수는 `encodedTxData`를 반환하는 옵션이 있어, 이를 Privy의 스마트 지갑에 전달할 수 있습니다. [SDK 레퍼런스](/sdk-reference)에서 어떤 함수가 이를 지원하는지 확인할 수 있습니다.
+
+```jsx page.tsx
+import { useSmartWallets } from "@privy-io/react-auth/smart-wallets";
+import {
+  EncodedTxData,
+  StoryClient,
+  StoryConfig,
+} from "@story-protocol/core-sdk";
+import { http } from "viem";
+
+export default function Home() {
+  const { client: smartWalletClient } = useSmartWallets();
+
+  /* previous code here */
+
+  async function setupStoryClient() {
+    const config: StoryConfig = {
+      account: smartWalletClient!.account,
+      transport: http("https://aeneid.storyrpc.io"),
+      chainId: "aeneid",
+    };
+    const client = StoryClient.newClient(config);
+    return client;
+  }
+
+  async function registerIp() {
+    const storyClient = await setupStoryClient();
+
+    const response = await storyClient.ipAsset.mintAndRegisterIp({
+      spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc", // public spg contract for testing
+      txOptions: { encodedTxDataOnly: true },
+    });
+
+    const uiOptions = {
+      title: "Register IP",
+      description: "This is an example transaction that registers an IP.",
+      buttonText: "Register",
+    };
+
+    const txHash = await smartWalletClient?.sendTransaction(
+      response.encodedTxData as EncodedTxData,
+      { uiOptions }
+    );
+    console.log(`View Tx: https://aeneid.storyscan.io/tx/${txHash}`);
+  }
+
+  return (
+    <div>
+      {/* previous code here */}
+      <button onClick={registerIp}>Register IP</button>
+    </div>
+  );
+}
+```
+
+## 6. 완료!
+
+<CardGroup cols={2}>
+  <Card title="완성된 코드" href="https://github.com/jacob-tucker/story-privy-tutorial" icon="thumbs-up" iconColor="#51af51">
+    이 튜토리얼의 완성된 코드를 확인하세요.
+  </Card>
+
+  <Card title="더 알아보기" href="/developers/tutorials" icon="book-open">
+    우리의 문서에서 더 많은 튜토리얼을 탐험해보세요
+  </Card>
+</CardGroup>
+
+
+# Story에서 IP를 등록하는 방법
+
+<CardGroup cols={2}>
+  <Card title="SDK 사용하기" href="/developers/typescript-sdk/register-ip-asset" icon="house">
+    SDK를 사용하여 IP를 등록하는 방법을 배웁니다.
+  </Card>
+
+  <Card title="스마트 계약 사용하기" href="/developers/smart-contracts-guide/register-ip-asset" icon="house">
+    스마트 계약을 사용하여 IP를 등록하는 방법을 배웁니다.
+  </Card>
+</CardGroup>
+
+
+# Quickstart
+
+Story에서 빠르게 구축을 시작하고 싶으신가요... 그럼 시작해 봅시다!
+
+<Tip>
+  먼저 Story에 대해 알아보고 싶으신가요?
+
+  기술적인 세부 사항을 살펴보기 전에 Story에 대해 읽어보고 싶다면, 우리의 멋진 [Learn Hub](https://learn.story.foundation/)를 확인해보세요. Story의 누구, 무엇, 왜에 대해 설명해 드립니다.
+</Tip>
+
+<Frame
+  caption={
+  <>
+    Credit to the original tweet{" "}
+    <a href="https://x.com/devrelius/status/1898756162675196098">here</a>.
+  </>
+}
+>
+  <img src="https://files.readme.io/49a6d447c37d25ec4566db511dead5b70a641fab57088e1cbd24d8236e3bef19-image.png" alt="Story" />
+</Frame>
+
+***
+
+## 네트워크 추가
+
+지갑에 Story의 메인넷 또는 테스트넷을 활성화하세요.
+
+<CardGroup cols={2}>
+  <Card title="Story 메인넷 추가" icon="globe" href="https://chainid.network/chain/1514/">
+    지갑을 Story의 메인넷에 연결하세요.
+  </Card>
+
+  <Card title="Story 'Aeneid' 테스트넷 추가" icon="globe" href="https://chainid.network/chain/1315/">
+    지갑을 Story의 'Aeneid' 테스트넷에 연결하세요.
+  </Card>
+</CardGroup>
+
+## 모든 것을 건너뛰고 코드로 바로 가기.
+
+<CardGroup cols={3}>
+  <Card title="TypeScript 코드 예제" icon="screwdriver-wrench" href="https://github.com/storyprotocol/typescript-tutorial/tree/main">
+    이것은 당신이 확인할 수 있는 클론 가능한 퀵스타트입니다. 직접 클론하고
+    관련 README를 따라할 수 있습니다.
+  </Card>
+
+  <Card title="React 코드 예제" icon="react" href="https://github.com/jacob-tucker/story-developer-sandbox">
+    이것은 당신이 확인할 수 있는 클론 가능한 퀵스타트입니다. 직접 클론하고
+    관련 README를 따라할 수 있습니다.
+  </Card>
+
+  <Card title="스마트 컨트랙트 코드 예제" icon="scroll" href="https://github.com/storyprotocol/story-protocol-boilerplate">
+    이것은 당신이 확인할 수 있는 보일러플레이트입니다. 직접 클론하여 예제 스마트
+    컨트랙트를 학습하고, 테스트 실행을 위해 관련 README를 따라할 수 있습니다.
+  </Card>
+</CardGroup>
+
+## Story 네트워크 인프라
+
+모든 [Network Info](/network/network-info/overview)에서 RPC, 익스플로러, 그리고 faucet 정보를 확인하세요.
+
+## SDK 사용하기
+
+전체 [SDK Reference](/sdk-reference)를 확인하여 우리의 🛠️ **TypeScript SDK** (React에서도 사용 가능) 및 🐍 **Python SDK**의 모든 함수에 대한 설명과 예제를 확인하세요.
+
+또한 우리는 [🛠️ TypeScript SDK Guide](/developers/typescript-sdk)를 만들었습니다. 이는 더 단계별 안내서로, 인기 있는 함수와 사용 사례에 대한 자체적인 심층 튜토리얼을 포함하고 있습니다.
+
+## 배포된 스마트 컨트랙트
+
+배포된 스마트 컨트랙트의 주소는 [here](/developers/deployed-smart-contracts)에서 확인할 수 있습니다. 두 가지 종류의 컨트랙트가 있음을 주목하세요:
+
+* [Story Protocol Core](https://github.com/storyprotocol/protocol-core-v1) - 이 저장소는 핵심 프로토콜 로직을 포함하며, 얇은 IP 레지스트리([IP Asset Registry](/concepts/registry/ip-asset-registry)), 일련의 [🧱 Modules](/concepts/modules)로 구성되어 있으며, [📜 Licensing](/concepts/licensing-module), [💸 Royalty](/concepts/royalty-module), [❌ Dispute](/concepts/dispute-module), 메타데이터, 그리고 모듈 및 사용자 접근 제어를 관리하는 모듈 관리자에 대한 로직을 정의합니다.
+* [Story Protocol Periphery](https://github.com/storyprotocol/protocol-periphery-v1)- 핵심 컨트랙트가 기본 프로토콜 로직을 다루는 반면, 주변부 컨트랙트는 UX를 크게 향상시키고 IPA 관리를 단순화하는 프로토콜 확장을 다룹니다. 이는 주로 [📦 SPG](/concepts/spg)를 통해 처리됩니다.
+
+## API 사용하기
+
+전체 [API Reference](/api-reference)를 확인하여 API 사용 방법을 알아보세요. 가스 가격, 평균 블록 시간, 시가총액, 토큰 가격 등과 같은 일반적인 정보를 가져오려면 [Blockscout API](/api-reference/blockscout-api)를 확인하세요.
+
+## Story에 IP 등록하기
+
+가장 기본적인 질문부터 시작해 봅시다: *"내 앱에서 Story에 IP를 등록하려면 무엇이 필요한가요? 어떻게 해야 하나요?"*
+
+Story에 IP를 등록하려면 먼저 NFT가 필요합니다. 만약 당신의 IP가 ERC-721 NFT(예: Story의 Azuki 또는 Pudgy Penguin)라면 이미 준비된 것입니다. 그렇지 않다면 오프체인 IP를 대표하는 NFT를 민팅해야 합니다. 걱정하지 마세요, 다음 튜토리얼에서 이 과정을 도와드리겠습니다.
+
+그 다음, 해당 NFT를 Story에 등록하여 최종적으로 [🧩 IP Asset](/concepts/ip-asset)을 생성합니다. "IP Asset"은 Story에 등록된 당신의 IP로, 다음과 같은 기능을 갖추고 있습니다:
+
+* Story의 모든 [🧱 Modules](/concepts/modules) - 투명한 라이선싱, 자동 로열티 지불, 부당하게 등록된 IP에 대한 분쟁 해결 등
+* IP 보호 - [💊 Programmable IP License (PIL)](/concepts/programmable-ip-license)
+
+Story에 IP를 등록하려면 아래 튜토리얼을 따라하세요:
+
+<CardGroup cols={2}>
+  <Card title="SDK 사용하기" icon="thumbs-up" href="/developers/typescript-sdk/register-ip-asset">
+    TypeScript SDK를 사용하여 Story에 IP를 등록하는 방법을 배웁니다.
+  </Card>
+
+  <Card title="스마트 컨트랙트 사용하기" icon="thumbs-up" href="/developers/smart-contracts-guide/register-ip-asset">
+    스마트 컨트랙트를 사용하여 Story에 IP를 등록하는 방법을 배웁니다.
+  </Card>
+</CardGroup>
+
+### IP 메타데이터와 NFT 메타데이터의 차이
+
+개발자들이 Story에 IP를 등록하는 동안 자주 묻는 질문은 다음과 같습니다: *"NFT에 어떤 메타데이터가 첨부되어야 하고, 또 별도로 IP Asset에는 어떤 메타데이터가 예상되나요?"*
+
+이 질문에 대한 답변은 [NFT vs. IP Metadata](/concepts/ip-asset/overview#nft-vs-ip-metadata)를 참조하세요.
+
+## IP 라이선싱
+
+아마도 궁금하실 겁니다, *"Story의 온체인 라이선싱을 어떻게 활용할 수 있나요? 등록한 IP에 라이선스를 어떻게 준비할 수 있나요?"*
+
+당신의 [🧩 IP Asset](/concepts/ip-asset)에 어떤 종류의 라이선스나 라이선스 조건을 첨부하기 전에, 먼저 [💊 Programmable IP License (PIL)](/concepts/programmable-ip-license)이 실제로 무엇인지 이해하는 것이 좋습니다. 이 "PIL"은 Story에서 사용 가능한 [License Terms](/concepts/licensing-module/license-terms)를 정의하며, 이는 IP Asset에 첨부될 때 - 다른 사람들이 해당 IP Asset을 어떻게 사용할 수 있는지(상업적으로, 파생물 생성 등)를 정의합니다.
+
+우리의 튜토리얼은 IP Asset에 라이선스 조건을 첨부하는 방법을 정확히 보여줄 것입니다:
+
+<CardGroup cols={2}>
+  <Card title="SDK 사용하기" icon="thumbs-up" href="/developers/typescript-sdk/attach-terms">
+    TypeScript SDK를 사용하여 Story에서 IP에 라이선스 조건을 첨부하는 방법을
+    배웁니다.
+  </Card>
+
+  <Card title="스마트 컨트랙트 사용하기" icon="thumbs-up" href="/developers/smart-contracts-guide/attach-terms">
+    스마트 컨트랙트를 사용하여 Story에서 IP에 라이선스 조건을 첨부하는 방법을
+    배웁니다.
+  </Card>
+</CardGroup>
+
+<Note>
+  라이선싱과 그 배경에 있는 용어에 대한 자세한 정보는 [📜 Licensing Module](/concepts/licensing-module)을 확인하세요.
+</Note>
+
+## 로열티 / 수익 공유
+
+이제 궁금해하실 수 있습니다, *"내 IP Asset과 다른 사람의 IP Asset 사이에 자동 로열티 공유를 어떻게 설정하나요? 그리고 그 지불금을 어떻게 수집하나요?"*
+
+당신이 [License Terms](/concepts/licensing-module/license-terms)를 당신의 [🧩 IP Asset](/concepts/ip-asset)에 첨부할 때, 특정 상업적 조건을 지정할 수 있습니다. 예를 들어 `commercialRevShare`, 이는 파생 작품이 원본 IP와 공유해야 하는 수익(원본 및 파생 모든 출처로부터)의 양입니다. 라이선싱 질문에 대해서는 위의 섹션을 참조하세요.
+
+만약 누군가가 내 IP Asset의 파생물을 만들고 - 이 IP Asset의 라이선스 조건에 `commercialRevShare`가 예를 들어 10%라고 되어 있다면 - 그리고 그것으로 수익을 얻는다면, Story는 [💊 Programmable IP License (PIL)](/concepts/programmable-ip-license)을 통해 이 수익의 공유를 강제합니다 (그렇지 않으면 [❌ Dispute Module](/concepts/dispute-module)을 사용한 온체인 분쟁이나 전통적인 법적 중재로 이어집니다) 그리고 프로토콜 수준에서 상위 수익 공유를 처리합니다. 만약 파생 작품이 100 \$WIP를 벌었다면, 내 원본 IP Asset은 10 \$WIP를 청구할 수 있습니다.
+
+우리의 튜토리얼은 수익을 청구하는 방법을 정확히 보여줄 것입니다:
+
+<CardGroup cols={2}>
+  <Card title="SDK 사용하기" icon="thumbs-up" href="/developers/typescript-sdk/claim-revenue">
+    TypeScript SDK를 사용하여 Story에서 수익을 청구하는 방법을 배웁니다.
+  </Card>
+
+  <Card title="스마트 컨트랙트 사용하기" icon="thumbs-up" href="/developers/smart-contracts-guide/claim-revenue">
+    스마트 컨트랙트를 사용하여 Story에서 수익을 청구하는 방법을 배웁니다.
+  </Card>
+</CardGroup>
+
+<Note>
+  로열티와 그 기능에 대한 자세한 정보는 [Royalty Module](/concepts/royalty-module)을 확인하세요.
+</Note>
+
+## 분쟁
+
+이제 궁금해하실 수 있습니다, *"다른 사람이 내 IP를 훔치거나, 사용에 대한 적절한 수익을 지불하지 않을 경우 어떻게 실제로 분쟁을 제기할 수 있나요?"*
+
+"나쁜" IP를 제거하는 두 가지 주요 철학/방법이 있습니다.
+
+첫 번째는 [🕵️ Story Attestation Service](/concepts/story-attestation-service)입니다. 이는 IP 등록 시 자동으로 IP를 검토하는 다수의 침해 감지 제공자로 구성되어 있습니다 - AI, 수동 확인 등 자체 방법을 사용하여 - 그리고 IP가 침해하는 경우 (예: 피카츄 사진 등록) 플래그를 지정합니다. 그런 다음 [IP Portal](https://portal.story.foundation)과 같은 IP 검색 플랫폼이 리뷰를 표시하고 사용자가 IP 사용 여부를 결정할 수 있게 합니다.
+
+*예를 들어, 다양한 침해 제공자로부터 수백 개의 플래그가 지정된 IP는 아마도 정당한 IP가 아닐 것입니다.*
+
+두 번째는 [❌ Dispute Module](/concepts/dispute-module)을 사용하여 프로토콜 수준에서 공식적으로 IP에 태그를 지정하고 차단하는 것입니다. 누구나 IP에 플래그를 지정할 수 있으며, 이는 [UMA](https://uma.xyz)와 같은 중재 파트너에게 보내져 그 운명을 결정하게 됩니다. 공식적으로 태그가 지정되면, IP는 더 이상 프로토콜을 통해 수익을 얻거나 파생물을 만들 수 없습니다.
+
+*예를 들어, 누군가가 IP를 상업적으로 사용하면서 적절한 지불을 하지 않거나, 허용되지 않은 지역에서 사용하거나, NSFW 콘텐츠를 포함하는 경우입니다.*
+
+우리의 튜토리얼은 온체인에서 분쟁을 제기하는 방법을 정확히 보여줄 것입니다:
+
+<CardGroup cols={1}>
+  <Card title="SDK 사용하기" icon="thumbs-up" href="/developers/typescript-sdk/raise-dispute">
+    TypeScript SDK를 사용하여 Story에서 IP에 대해 분쟁을 제기하는 방법을 배웁니다.
+  </Card>
+</CardGroup>
+
+<Note>
+  온체인에서 분쟁을 제기하는 방법에 대한 자세한 정보는 [❌ Dispute Module](/concepts/dispute-module)을 확인하세요.
+</Note>
+
+
+# 5살에게 설명하듯이
+
+<Frame
+  caption={
+  <>
+    Credit to the original tweet{" "}
+    <a href="https://x.com/devrelius/status/1812865477657694513">here</a>
+  </>
+}
+>
+  <img src="/images/eli5.png" alt="explain like im five" />
+</Frame>
+
+<Frame
+  caption={
+  <>
+    Credit to the original tweet{" "}
+    <a href="https://x.com/jacobmtucker/status/1905602225600430206">here</a>
+  </>
+}
+>
+  <img src="/images/concepts/hdspip.png" alt="How Does Story Protect IP?" />
+</Frame>
+
+
+# 거버넌스
+
+Story 생태계의 관리자로서, Story 재단은 \$IP 토큰 보유자들과 더 넓은 생태계와 긴밀히 협력합니다. Story 재단은 Story DAO를 지원하여 운영 지원을 제공하고, 토큰 보유자 거버넌스 결정을 실행하며, 전반적인 생태계의 전략적 개발과 성장을 감독합니다. 이러한 관계는 Story 생태계 전반에 걸쳐 효율성과 안정성을 유지하면서 분산화된 거버넌스를 강화하도록 설계되었습니다.
+
+## Story DAO의 헌법
+
+<CardGroup cols={1}>
+  <Card title="Story DAO 헌법" href="https://story.foundation/constitution.pdf" icon="scroll" color="#ccb092">
+    전체 Story DAO 헌법을 읽어보세요.
+  </Card>
+</CardGroup>
+
+## 거버넌스에서 Story 재단의 역할
+
+<Accordion title="전략적 보조금" icon="money-check-dollar">
+  인프라 제공업체, 애플리케이션 개발자, 아티스트, 크리에이터, 브랜드 파트너십, 크리에이티브 스튜디오, 전략적 성장 파트너 등을 포함한 파트너 프로젝트를 통해 혁신과 연계된 전략적 보조금을 제공합니다.**전략적 보조금**을 통해 인프라 제공업체, 애플리케이션 개발자, 아티스트, 크리에이터, 브랜드 파트너십, 크리에이티브 스튜디오, 전략적 성장 파트너 등을 포함한 (이에 국한되지 않는) 파트너 프로젝트와의 혁신을 조율합니다.
+</Accordion>
+
+<Accordion title="네트워크 보안" icon="file-shield">
+  **보안 위원회를 만들고 이 위원회에 봉사할 구성원을 임명하여 네트워크 보안을 촉진합니다.**&#xBCF4;안 위원회를 만들고 이 위원회에서 봉사할 구성원을 임명함으로써
+</Accordion>
+
+<Accordion title="제안 구현" icon="scroll">
+  Story DAO 헌법에 명시된 절차에 따라 승인된 Story DAO의 제안을 구현하고 앱을 구축할 당사자들을 참여시켜 생태계와 프로토콜을 개발합니다. 여기에는 연구 자금 지원, 공공 교육, 보조금 프로그램 설립 등이 포함될 수 있습니다.**제안 실행** Story DAO 헌법에 명시된 절차에 따라 승인된 Story DAO의 제안을 실행하고 앱을 구축할 당사자들을 참여시킵니다. 여기에는 연구 자금 지원, 공공 교육, 보조금 프로그램 설립 등이 포함될 수 있습니다.
+</Accordion>
+
+<Accordion title="교육 이니셔티브 / 이벤트" icon="book">
+  Story Network, Story Protocol 및 생태계에 대한 인식을 높이고 홍보하기 위해 교육 이니셔티브를 조직하고 이벤트를 주최합니다.**교육 이니셔티브 및 이벤트 주최**를 통해 Story Network, Story Protocol 및 생태계에 대한 인식을 높이고 홍보합니다.
+</Accordion>
+
+<Accordion title="분산화" icon="globe">
+  Story DAO의 자율성과 분산화 증대를 옹호하고 지원합니다.**Story DAO의 자율성 및 탈중앙화 증대 지원**.
+</Accordion>
+
+<Accordion title="재무 관리" icon="piggy-bank">
+  **장기적인 생태계 성장을 촉진하고 재단의 지속적인 미션을 지원하기 위한 재무 관리 및 감독.**&#xC7A5;기적인 생태계 성장을 촉진하고 재단의 지속적인 미션을 지원하기 위한 감독.
+</Accordion>
+
+
 # "Introduction"
 
 <Frame>
