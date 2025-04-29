@@ -1,0 +1,262 @@
+---
+title: Dispute
+description: Story 내에서 분쟁을 관리할 수 있습니다.
+---
+
+## 분쟁
+
+### 메서드
+
+* raise\_dispute
+* cancel\_dispute
+* resolve\_dispute
+* tag\_if\_related\_ip\_infringed
+* dispute\_assertion
+* dispute\_id\_to\_assertion\_id
+
+### raise\_dispute
+
+주어진 ipId에 대해 분쟁을 제기합니다
+
+| 메서드             |
+| --------------- |
+| `raise_dispute` |
+
+Parameters:
+
+* `target_ip_id`: 분쟁의 대상이 되는 IP ID입니다.
+* `target_tag`: 분쟁의 대상 태그입니다. [분쟁 태그](https://docs.story.foundation/docs/dispute-module#dispute-tags)를 참조하세요. **Example: "IMPROPER\_REGISTRATION"**
+* `cid`: 분쟁 증거에 대한 콘텐츠 식별자(CID)입니다. 이는 분쟁 증거(문서, 이미지 등)를 IPFS에 업로드하여 얻어야 합니다. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
+* `liveness`: 분쟁에 대한 반대 분쟁을 제기할 수 있는 시간 창(초 단위)입니다 (30일).
+* `bond`: 분쟁 개시자가 풀에 선불로 지불하는 wrapper IP의 금액입니다. 이 분쟁에 대응하기 위해 분쟁의 상대방은 동일한 금액의 보증금을 제출해야 합니다. 분쟁의 승자는 원래 보증금을 돌려받고 상대방 보증금의 50%를 받습니다. 패자 보증금의 나머지 50%는 심사자에게 돌아갑니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  from web3 import Web3
+
+  response = story_client.Dispute.raise_dispute(
+      target_ip_id="0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+      # NOTE: you must use your own CID here, because every time it is used,
+      # the protocol does not allow you to use it again
+      cid="QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR",
+      # you must pick from one of the whitelisted tags here:
+      # https://docs.story.foundation/docs/dispute-module#dispute-tags
+      target_tag="IMPROPER_REGISTRATION",
+      bond=Web3.to_wei(0.1, 'ether'),  # minimum of 0.1
+      liveness=2592000,
+      tx_options={"wait_for_transaction": True}
+  )
+  print(f"Dispute raised at transaction hash {response['tx_hash']}, Dispute ID: {response['dispute_id']}")
+  ```
+
+  ```python Request Parameters
+  target_ip_id: str  # The IP ID that is the target of the dispute
+  target_tag: str  # The target tag of the dispute
+  cid: str  # Content Identifier for the dispute evidence
+  liveness: int  # Time window in seconds for counter disputes
+  bond: int  # Amount of wrapper IP for the dispute bond
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str,  # The transaction hash
+    "dispute_id": int  # The ID of the raised dispute
+  }
+  ```
+</CodeGroup>
+
+### cancel\_dispute
+
+진행 중인 분쟁을 취소합니다
+
+| 메서드              |
+| ---------------- |
+| `cancel_dispute` |
+
+Parameters:
+
+* `dispute_id`: 취소할 분쟁의 ID.
+* `data`: \[선택사항] 취소 과정에서 사용되는 추가 데이터. **기본값은 "0x"**&#xC785;니다.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.Dispute.cancel_dispute(
+      dispute_id=1,
+      tx_options={"wait_for_transaction": True}
+  )
+  print(f"Dispute cancelled at transaction hash {response['tx_hash']}")
+  ```
+
+  ```python Request Parameters
+  dispute_id: int  # The ID of the dispute to be cancelled
+  data: str = "0x"  # Optional: Additional data for cancellation
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### resolve\_dispute
+
+판결이 내려진 후 분쟁을 해결합니다
+
+| 메서드               |
+| ----------------- |
+| `resolve_dispute` |
+
+Parameters:
+
+* `dispute_id`: 해결할 분쟁의 ID.
+* `data`: 분쟁을 해결하기 위한 데이터.
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.Dispute.resolve_dispute(
+      dispute_id=1,
+      data="0x",
+      tx_options={"wait_for_transaction": True}
+  )
+  print(f"Dispute resolved at transaction hash {response}")
+  ```
+
+  ```python Request Parameters
+  dispute_id: int  # The ID of the dispute to be resolved
+  data: str # Additional data for resolution
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str  # The transaction hash
+  }
+  ```
+</CodeGroup>
+
+### tag\_if\_related\_ip\_infringed
+
+부모가 침해 태그로 태그되었거나 그룹 구성원이 침해 태그로 태그된 경우 파생물이나 그룹 IP에 태그를 지정합니다.
+
+| 메서드                           |
+| ----------------------------- |
+| `tag_if_related_ip_infringed` |
+
+Parameters:
+
+* `infringement_tags`: 분쟁과 관련된 태그 배열
+  * `infringement_tags[]['ip_id']`: `ip_id`에 태그를 지정
+  * `infringement_tags[]['dispute_id']`: 관련된 침해 부모 IP에 태그를 지정한 분쟁 ID
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  response = story_client.Dispute.tag_if_related_ip_infringed(
+    infringement_tags=[
+      {
+        "ip_id": "0xa1BaAA464716eC76A285Ef873d27f97645fE0366",
+        "dispute_id": 1
+      }
+    ],
+    tx_options={"wait_for_transaction": True}
+  )
+  print(f"Tagged related IP at transaction hash {response[0]}")
+  ```
+
+  ```python Request Parameters
+  infringement_tags: list  # List of dictionaries containing ip_id and dispute_id
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  [str]  # An array of transaction hashes
+  ```
+</CodeGroup>
+
+### dispute\_assertion
+
+다른 당사자가 IP에 대해 제기한 분쟁에 대해 반대 증거를 사용하여 대응합니다.
+
+이 메서드는 IP 소유자만이 반대 증거를 제공하여 분쟁에 대응하기 위해 호출할 수 있습니다. 반대 증거(예: 문서, 이미지)는 IPFS에 업로드되어야 하며, 해당 CID는 요청을 위해 해시로 변환됩니다.
+
+활성 기간은 두 부분으로 나뉩니다:
+
+* 활성 기간의 첫 번째 부분에서는 IP 소유자만이 메서드를 호출할 수 있습니다.
+* 두 번째 부분에서는 모든 주소에서 메서드를 호출할 수 있습니다.
+
+만약 `dispute_id`만 있다면, `dispute_id_to_assertion_id`를 호출하여 여기서 필요한 `assertion_id`를 얻으세요.
+
+<Warning>
+  IP 소유자가 wip 모듈을 사용하여 직접 예치해야 하는 \$WIP가 필요합니다.
+</Warning>
+
+| 메서드                 |
+| ------------------- |
+| `dispute_assertion` |
+
+Parameters:
+
+* `ip_id`: 분쟁의 대상이 되는 IP ID.
+* `assertion_id`: 분쟁이 제기된 주장의 식별자. `dispute_id`에서 `Dispute.dispute_id_to_assertion_id`를 호출하여 얻을 수 있습니다.
+* `counter_evidence_cid`: 반대 증거에 대한 콘텐츠 식별자(CID). 이는 분쟁 증거(문서, 이미지 등)를 IPFS에 업로드하여 얻어야 합니다. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
+* `tx_options`: \[선택사항] 트랜잭션 옵션 딕셔너리.
+
+<CodeGroup>
+  ```python Python
+  # First get the assertion_id from the dispute_id
+  assertion_id = story_client.Dispute.dispute_id_to_assertion_id(1)
+
+  # Then dispute the assertion
+  response = story_client.Dispute.dispute_assertion(
+    ip_id="0xa1BaAA464716eC76A285Ef873d27f97645fE0366",
+    assertion_id=assertion_id,
+    counter_evidence_cid="QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"
+  )
+  ```
+
+  ```python Request Parameters
+  ip_id: str  # The IP ID that is the target of the dispute
+  assertion_id: str  # The identifier of the assertion that was disputed
+  counter_evidence_cid: str  # Content Identifier (CID) for the counter evidence
+  tx_options: dict = None  # Optional: Transaction options
+  ```
+
+  ```python Response
+  {
+    "tx_hash": str,  # The transaction hash
+    "receipt": str # tx receipt
+  }
+  ```
+</CodeGroup>
+
+### dispute\_id\_to\_assertion\_id
+
+분쟁 ID를 주장 ID에 매핑합니다.
+
+| 메서드                          |
+| ---------------------------- |
+| `dispute_id_to_assertion_id` |
+
+Parameters:
+
+* `dispute_id`: 주장 ID로 변환할 분쟁 ID.
+
+<CodeGroup>
+  ```python Python
+  assertion_id = story_client.Dispute.dispute_id_to_assertion_id(1)
+  ```
+
+  ```python Request Parameters
+  dispute_id: int  # The dispute ID to convert
+  ```
+
+  ```python Response
+  str  # The assertion ID as a hex string
+  ```
+</CodeGroup>

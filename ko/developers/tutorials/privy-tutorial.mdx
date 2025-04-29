@@ -1,0 +1,438 @@
+---
+title: Privy를 이용한 이메일 로그인 및 스폰서 트랜잭션
+description: Privy와 Pimlico를 사용하여 이메일 로그인 및 스폰서 트랜잭션을 구현하는 방법을 알아보세요.
+---
+
+<Card title="완성된 코드" href="https://github.com/jacob-tucker/story-privy-tutorial" icon="thumbs-up" color="#51af51">
+  이 튜토리얼의 완성된 코드를 확인하세요.
+</Card>
+
+여러분이 이 튜토리얼을 읽고 있는 이유는 아마도 다음 중 하나 또는 둘 다를 하고 싶어서일 것입니다:
+
+1. 지갑이 없는 사용자가 이메일로 앱에 로그인할 수 있게 하기 ("임베디드 지갑")
+2. 사용자가 가스비를 지불하지 않도록 트랜잭션을 스폰서하기 ("스마트 지갑")
+
+Privy가 이 두 가지를 설명하는 방식은 다음과 같습니다:
+
+> 임베디드 지갑은 Privy가 직접 제공하는 자체 보관 지갑으로, 애플리케이션에 직접 내장된 지갑 경험을 제공합니다. 임베디드 지갑은 브라우저 확장 프로그램이나 모바일 앱과 같은 별도의 지갑 클라이언트가 필요 없으며, 제품에서 직접 접근할 수 있습니다. 이는 주로 외부 지갑이 없거나 외부 지갑을 연결하고 싶지 않은 앱 사용자를 위해 설계되었습니다.
+>
+> 스마트 지갑은 계정 추상화의 기능을 통합한 프로그래밍 가능한 온체인 계정입니다. 몇 줄의 코드만으로 사용자를 위한 스마트 지갑을 만들어 가스 결제를 스폰서하고, 일괄 트랜잭션을 보내는 등의 작업을 할 수 있습니다.
+
+우리는 [Privy](https://www.privy.io/) + [Pimlico](https://www.pimlico.io/)를 사용하여 두 가지를 모두 구현할 것입니다.
+
+### ⚠️ 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. Privy의 대시보드[에서 새 프로젝트를 만듭니다](https://dashboard.privy.io)
+2. &#xNAN;**"App ID"**&#xB97C; **"App settings > API keys"** 아래에서 복사합니다. 로컬 프로젝트에서 `.env`.env.local 파일을 만들고 App ID를 추가합니다:
+
+```Text .env
+NEXT_PUBLIC_PRIVY_APP_ID=
+```
+
+3. 프로젝트 대시보드에서 "**Wallet Configuration > Smart wallets**" 아래의 스마트 지갑을 활성화하고 "**Kernel (ZeroDev)**"를 선택합니다. 아래와 같이:
+
+<Frame>
+  <img src="/images/tutorials/privy-tutorial-1.png" alt="Privy Dashboard" />
+</Frame>
+
+4. 스마트 지갑을 활성화하면 바로 아래에 다음 값으로 "Custom chain"을 설정해야 합니다:
+   1. Name: `Story Aeneid Testnet`
+   2. ID 번호: `1315`
+   3. RPC URL: `https://aeneid.storyrpc.io`
+   4. Bundler URL과 Paymaster URL의 경우, [Pimlico의 대시보드](https://dashboard.pimlico.io)로 가서 새 앱을 만듭니다. 그런 다음 "API Keys"를 클릭하고 새 API 키를 만든 후, 아래와 같이 "RPC URLs"를 클릭하고 네트워크로 "Story Aeneid Testnet"을 선택합니다:
+
+<Warning>
+  이는 테스트용입니다. 실제 시나리오에서는 앱을 대신하여 트랜잭션을 자동으로 스폰서하기 위해 Pimlico에서 적절한 스폰서십 정책과 결제 정보를 설정해야 합니다. 테스트넷에서는 이 작업을 할 필요가 없습니다.
+</Warning>
+
+<Frame>
+  <img src="/images/tutorials/pimlico-dashboard.png" alt="Pimlico Dashboard" />
+</Frame>
+
+5. 의존성을 설치합니다:
+
+```Text Terminal
+npm install @story-protocol/core-sdk permissionless viem @privy-io/react-auth
+```
+
+## 1. 임베디드 지갑 설정
+
+<CardGroup cols={1}>
+  <Card title="Privy 공식 튜토리얼" href="https://docs.privy.io/guide/react/wallets/smart-wallets/usage#setup" icon="house">
+    이 단계를 읽는 대신 설정을 위해 Privy의 공식 튜토리얼을 따르세요.
+  </Card>
+</CardGroup>
+
+<Note>
+  Privy의 튜토리얼을 [여기서](https://docs.privy.io/guide/react/wallets/embedded/creation) 읽을 수 있습니다. 이 튜토리얼은 임베디드 지갑 설정에 대해 설명하는데, 이는 사용자를 위한 이메일 로그인을 멋지게 표현한 것입니다. 아래 예제에서는 단순히 모든 사용자를 위해 임베디드 지갑을 만들지만, 그들의 튜토리얼을 읽어 더 많은 사용자 정의를 원할 수 있습니다.
+</Note>
+
+임베디드/스마트 지갑을 사용할 모든 컴포넌트를 `PrivyProvider`와 `SmartWalletsProvider`로 감싸야 합니다. `providers.tsx`providers.tsx (또는 원하는 이름) 파일에 다음 코드를 추가하세요:
+
+```jsx providers.tsx
+"use client";
+
+import { PrivyProvider } from "@privy-io/react-auth";
+import { SmartWalletsProvider } from "@privy-io/react-auth/smart-wallets";
+import { aeneid } from "@story-protocol/core-sdk";
+
+export default function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <PrivyProvider
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID as string}
+      config={{
+        // Customize Privy's appearance in your app
+        appearance: {
+          theme: "light",
+          accentColor: "#676FFF",
+          logo: "/story-logo.jpg",
+        },
+        // Create embedded wallets for users who don't have a wallet
+        // when they sign in with email
+        embeddedWallets: {
+          createOnLogin: "all-users",
+        },
+        defaultChain: aeneid,
+        supportedChains: [aeneid],
+      }}
+    >
+      <SmartWalletsProvider>{children}</SmartWalletsProvider>
+    </PrivyProvider>
+  );
+}
+```
+
+그런 다음 `layout.tsx`\_app.tsx에 다음과 같이 추가할 수 있습니다:
+
+```jsx layout.tsx
+import Providers from "@/providers/providers";
+
+/* other code here... */
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode,
+}>) {
+  return (
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}
+```
+
+## 2. 로그인 & 로그아웃
+
+다음과 같이 앱에 이메일 로그인을 추가할 수 있습니다:
+
+```jsx page.tsx
+import { usePrivy } from "@privy-io/react-auth";
+
+export default function Home() {
+  const { login, logout, user } = usePrivy();
+
+  useEffect(() => {
+    if (user) {
+      const smartWallet = user.linkedAccounts.find(
+        (account) => account.type === "smart_wallet"
+      );
+      // Logs the smart wallet's address
+      console.log(smartWallet.address);
+      // Logs the smart wallet type (e.g. 'safe', 'kernel', 'light_account', 'biconomy', 'thirdweb', 'coinbase_smart_wallet')
+      console.log(smartWallet.type);
+    }
+  }, [user]);
+
+  return (
+    <div>
+      <button onClick={user ? logout : login}>
+        {user ? "Logout" : "Login with Privy"}
+      </button>
+    </div>
+  );
+}
+```
+
+## 3. Privy로 메시지 서명하기
+
+<CardGroup cols={1}>
+  <Card title="Privy 공식 튜토리얼" href="https://docs.privy.io/guide/react/wallets/smart-wallets/usage#signing-messages" icon="house">
+    이 단계를 읽는 대신 메시지 서명을 위해 Privy의 공식 튜토리얼을 따르세요.
+  </Card>
+</CardGroup>
+
+생성된 스마트 지갑을 사용하여 메시지에 서명할 수 있습니다:
+
+```jsx page.tsx
+import { useSmartWallets } from "@privy-io/react-auth/smart-wallets";
+
+export default function Home() {
+  const { client: smartWalletClient } = useSmartWallets();
+
+  /* previous code here */
+
+  async function sign() {
+    const uiOptions = {
+      title: "Example Sign",
+      description: "This is an example for a user to sign.",
+      buttonText: "Sign",
+    };
+    const request = {
+      message: "IP is cool",
+    };
+    const signature = await smartWalletClient?.signMessage(request, {
+      uiOptions,
+    });
+  }
+
+  return (
+    <div>
+      {/* previous code here */}
+      <button onClick={sign}>Sign</button>
+    </div>
+  );
+}
+```
+
+## 4. 임의의 트랜잭션 보내기
+
+<CardGroup cols={1}>
+  <Card title="Privy 공식 튜토리얼" href="https://docs.privy.io/guide/react/wallets/smart-wallets/usage#sending-transactions" icon="house">
+    이 단계를 읽는 대신 트랜잭션 전송을 위해 Privy의 공식 튜토리얼을 따르세요.
+  </Card>
+</CardGroup>
+
+또한 생성된 스마트 지갑을 사용하여 사용자를 위한 트랜잭션을 스폰서할 수 있습니다:
+
+<CodeGroup>
+  ```jsx page.tsx
+  import { useSmartWallets } from "@privy-io/react-auth/smart-wallets";
+  import { encodeFunctionData } from "viem";
+  import { defaultNftContractAbi } from "./defaultNftContractAbi";
+
+  export default function Home() {
+    const { client: smartWalletClient } = useSmartWallets();
+
+    /* previous code here */
+
+    async function mintNFT() {
+      const uiOptions = {
+        title: "Mint NFT",
+        description: "This is an example transaction that mints an NFT.",
+        buttonText: "Mint",
+      };
+
+      const transactionRequest = {
+        to: "0x937bef10ba6fb941ed84b8d249abc76031429a9a", // example nft contract
+        data: encodeFunctionData({
+          abi: defaultNftContractAbi, // abi from another file
+          functionName: "mintNFT",
+          args: ["0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68", "test-uri"],
+        }),
+      } as const;
+
+      const txHash = await smartWalletClient?.sendTransaction(
+        transactionRequest,
+        { uiOptions }
+      );
+      console.log(`View Tx: https://aeneid.storyscan.io/tx/${txHash}`);
+    }
+
+    return (
+      <div>
+        {/* previous code here */}
+        <button onClick={mintNFT}>Mint NFT</button>
+      </div>
+    )
+  }
+  ```
+
+  ```Text defaultNftContractAbi.ts
+  export const defaultNftContractAbi = [
+    {
+      inputs: [],
+      stateMutability: "nonpayable",
+      type: "constructor",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "recipient",
+          type: "address",
+        },
+        {
+          internalType: "string",
+          name: "tokenURI",
+          type: "string",
+        },
+      ],
+      name: "mintNFT",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256",
+          name: "tokenId",
+          type: "uint256",
+        },
+      ],
+      name: "tokenURI",
+      outputs: [
+        {
+          internalType: "string",
+          name: "",
+          type: "string",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256",
+          name: "tokenId",
+          type: "uint256",
+        },
+      ],
+      name: "ownerOf",
+      outputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "symbol",
+      outputs: [
+        {
+          internalType: "string",
+          name: "",
+          type: "string",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "name",
+      outputs: [
+        {
+          internalType: "string",
+          name: "",
+          type: "string",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "totalSupply",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+  ];
+
+  ```
+</CodeGroup>
+
+## 5. Story SDK에서 트랜잭션 보내기
+
+또한 생성된 스마트 지갑을 사용하여 [🛠️ TypeScript SDK](/developers/typescript-sdk)에서 트랜잭션을 보낼 수 있습니다. 일부 함수는 `encodedTxData`를 반환하는 옵션이 있어, 이를 Privy의 스마트 지갑에 전달할 수 있습니다. [SDK 레퍼런스](/sdk-reference)에서 어떤 함수가 이를 지원하는지 확인할 수 있습니다.
+
+```jsx page.tsx
+import { useSmartWallets } from "@privy-io/react-auth/smart-wallets";
+import {
+  EncodedTxData,
+  StoryClient,
+  StoryConfig,
+} from "@story-protocol/core-sdk";
+import { http } from "viem";
+
+export default function Home() {
+  const { client: smartWalletClient } = useSmartWallets();
+
+  /* previous code here */
+
+  async function setupStoryClient() {
+    const config: StoryConfig = {
+      account: smartWalletClient!.account,
+      transport: http("https://aeneid.storyrpc.io"),
+      chainId: "aeneid",
+    };
+    const client = StoryClient.newClient(config);
+    return client;
+  }
+
+  async function registerIp() {
+    const storyClient = await setupStoryClient();
+
+    const response = await storyClient.ipAsset.mintAndRegisterIp({
+      spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc", // public spg contract for testing
+      txOptions: { encodedTxDataOnly: true },
+    });
+
+    const uiOptions = {
+      title: "Register IP",
+      description: "This is an example transaction that registers an IP.",
+      buttonText: "Register",
+    };
+
+    const txHash = await smartWalletClient?.sendTransaction(
+      response.encodedTxData as EncodedTxData,
+      { uiOptions }
+    );
+    console.log(`View Tx: https://aeneid.storyscan.io/tx/${txHash}`);
+  }
+
+  return (
+    <div>
+      {/* previous code here */}
+      <button onClick={registerIp}>Register IP</button>
+    </div>
+  );
+}
+```
+
+## 6. 완료!
+
+<CardGroup cols={2}>
+  <Card title="완성된 코드" href="https://github.com/jacob-tucker/story-privy-tutorial" icon="thumbs-up" iconColor="#51af51">
+    이 튜토리얼의 완성된 코드를 확인하세요.
+  </Card>
+
+  <Card title="더 알아보기" href="/developers/tutorials" icon="book-open">
+    우리의 문서에서 더 많은 튜토리얼을 탐험해보세요
+  </Card>
+</CardGroup>

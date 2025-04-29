@@ -1,0 +1,213 @@
+---
+title: GroupingModule
+---
+
+Grouping Module은 Story의 IPA 그룹화를 위한 주요 진입점입니다. 다음과 같은 책임을 갖습니다:
+
+* 그룹 등록
+* 그룹에 IP 추가
+* 그룹에서 IP 제거
+* 보상 청구
+
+## 상태 변수
+
+### name
+
+```solidity
+string public constant override name = GROUPING_MODULE_KEY
+```
+
+모듈의 이름을 반환합니다.
+
+### ROYALTY\_MODULE
+
+```solidity
+IRoyaltyModule public immutable ROYALTY_MODULE
+```
+
+프로토콜 전체의 표준 RoyaltyModule을 반환합니다.
+
+### LICENSE\_TOKEN
+
+```solidity
+ILicenseToken public immutable LICENSE_TOKEN
+```
+
+프로토콜 전체의 표준 LicenseToken을 반환합니다.
+
+### GROUP\_NFT
+
+```solidity
+IGroupNFT public immutable GROUP_NFT
+```
+
+GROUP NFT 컨트랙트의 주소를 반환합니다.
+
+### GROUP\_IP\_ASSET\_REGISTRY
+
+```solidity
+IGroupIPAssetRegistry public immutable GROUP_IP_ASSET_REGISTRY
+```
+
+프로토콜 전체의 표준 Group IP Asset Registry를 반환합니다.
+
+### LICENSE\_REGISTRY
+
+```solidity
+ILicenseRegistry public immutable LICENSE_REGISTRY
+```
+
+프로토콜 전체의 표준 LicenseRegistry를 반환합니다.
+
+### DISPUTE\_MODULE
+
+```solidity
+IDisputeModule public immutable DISPUTE_MODULE
+```
+
+프로토콜 전체의 분쟁 모듈을 반환합니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) public initializer
+```
+
+이 구현 컨트랙트의 초기화 함수입니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 컨트랙트의 주소입니다.
+
+### registerGroup
+
+```solidity
+function registerGroup(address groupPool) external nonReentrant whenNotPaused returns (address groupId)
+```
+
+Group IPA를 등록합니다.
+
+**Parameters:**
+
+* `groupPool`: 그룹 풀의 주소입니다.
+
+**Returns:**
+
+* `groupId`: 새로 등록된 Group IPA의 주소입니다.
+
+### whitelistGroupRewardPool
+
+```solidity
+function whitelistGroupRewardPool(address rewardPool, bool allowed) external restricted
+```
+
+그룹 보상 풀을 화이트리스트에 등록합니다.
+
+**Parameters:**
+
+* `rewardPool`: 그룹 보상 풀의 주소입니다.
+* `allowed`: 그룹 보상 풀이 화이트리스트에 등록되었는지 여부입니다.
+
+### addIp
+
+```solidity
+function addIp(
+    address groupIpId,
+    address[] calldata ipIds,
+    uint256 maxAllowedRewardShare
+) external nonReentrant whenNotPaused verifyPermission(groupIpId)
+```
+
+그룹에 IP를 추가합니다. 이 함수는 Group IP 소유자 또는 승인된 운영자가 호출해야 합니다.
+
+**Parameters:**
+
+* `groupIpId`: 그룹 IP의 주소입니다.
+* `ipIds`: IP ID들입니다.
+* `maxAllowedRewardShare`: 각 멤버 IP에 할당할 수 있는 최대 보상 공유 비율입니다.
+
+### removeIp
+
+```solidity
+function removeIp(
+    address groupIpId,
+    address[] calldata ipIds
+) external nonReentrant whenNotPaused verifyPermission(groupIpId)
+```
+
+그룹에서 IP를 제거합니다. 이 함수는 Group IP 소유자 또는 승인된 운영자가 호출해야 합니다.
+
+**Parameters:**
+
+* `groupIpId`: 그룹 IP의 주소입니다.
+* `ipIds`: IP ID들입니다.
+
+### claimReward
+
+```solidity
+function claimReward(address groupId, address token, address[] calldata ipIds) external nonReentrant whenNotPaused
+```
+
+보상을 청구합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹의 주소입니다.
+* `token`: 토큰의 주소입니다.
+* `ipIds`: IP ID들입니다.
+
+### collectRoyalties
+
+```solidity
+function collectRoyalties(
+    address groupId,
+    address token
+) external nonReentrant whenNotPaused returns (uint256 royalties)
+```
+
+로열티를 풀에 수집하여 그룹 멤버 IP들이 청구할 수 있도록 합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹의 주소입니다.
+* `token`: 토큰의 주소입니다.
+
+**Returns:**
+
+* `royalties`: 수집된 로열티의 양입니다.
+
+### name
+
+```solidity
+function name() external pure override returns (string memory)
+```
+
+모듈의 이름을 반환합니다.
+
+**Returns:**
+
+* `string`: 모듈의 이름입니다.
+
+### getClaimableReward
+
+```solidity
+function getClaimableReward(
+    address groupId,
+    address token,
+    address[] calldata ipIds
+) external view returns (uint256[] memory)
+```
+
+그룹 내 각 IP에 대해 사용 가능한 보상을 반환합니다.
+
+**Parameters:**
+
+* `groupId`: 그룹의 주소입니다.
+* `token`: 토큰의 주소입니다.
+* `ipIds`: IP ID들입니다.
+
+**Returns:**
+
+* `uint256[] memory`: 각 IP에 대한 보상입니다.

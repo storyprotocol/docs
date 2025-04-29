@@ -1,0 +1,599 @@
+---
+title: Become a Validator
+description: Story Network에서 검증자 노드를 운영하는 가이드
+icon: lock
+---
+
+## 빠른 링크
+
+<CardGroup cols={2}>
+  <Card title="Story Geth 릴리스" icon="github" href="https://github.com/piplabs/story-geth/releases">
+    최신 Story Geth 클라이언트 릴리스 다운로드
+  </Card>
+
+  <Card title="Story 릴리스" icon="github" href="https://github.com/piplabs/story/releases/">
+    최신 Story 합의 클라이언트 릴리스 다운로드
+  </Card>
+</CardGroup>
+
+# 개요
+
+이 섹션에서는 자신의 validator를 실행하는 방법을 안내합니다. Validator 작업은`story` 합의 클라이언트를 통해 수행할 수 있습니다.
+
+<Note>
+  아래 작업은 노드를 실행할 필요가 없습니다! 그러나 스테이킹 보상에 참여하려면 validator 노드를 실행해야 합니다.
+</Note>
+
+진행하기 전에 delegator와 validator의 차이점을 숙지하는 것이 중요합니다:
+
+* A **validator**는 합의에 참여하는 전체 노드로, 서명된 키가`priv_validator_key.json` 파일에 있습니다.`story` 데이터 디렉토리 아래에 있습니다. validator 키 세부 정보를 출력하려면[validator 키 내보내기 섹션](/network/become-a-validator#validator-key-export)
+* A **delegator**는 IP를 보유하고`IP` 합의 보상에 참여하고자 하지만 직접 validator를 실행할 필요가 없는 계정 운영자를 말합니다.
+
+Story 바이너리가 있는 폴더에`story` 파일을 추가하고`.env` 계정에`PRIVATE_KEY` IP가 충전된`IP` 계정을 추가하세요.**아래의 모든 작업에 delegator 계정을 사용하는 것을 권장합니다.**
+
+<Note>
+  validator 자체로 트랜잭션을 발행할 수도 있습니다. validator에 해당하는 EVM
+  개인 키를 얻으려면[Validator
+  키 내보내기](#validator-key-export) 섹션을 참조하세요.
+</Note>
+
+password.txt`.env` 파일은 다음과 같아야 합니&#xB2E4;*(0x 접두사를 추가하지 않도록 주의하세요):*
+
+```bash
+# ~/.env
+PRIVATE_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+이제 다양한 validator 작업을 수행할 준비가 되었습니다! 아래에서 CLI를 통해 지원되는 모든 작업을 안내해 드리겠습니다:
+
+## Validator 키 내보내기
+
+기본적으로 Story를 실행하면`./story init` validator 키가 생성됩니다. validator 키를 보려면 다음 명령을 실행하세요:
+
+```bash
+./story validator export [flags]
+```
+
+이 명령은 압축 및 비압축 형식으로 validator 공개 키 파일을 출력합니다. 기본적으로 공개 식별을 위해 16진수로 인코딩된 압축 키를 사용합니다.
+
+```text
+Compressed Public Key (hex): 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984
+Compressed Public Key (base64): A73HuJQLq+kibVLX+imaH689ZKgvgJiJJWyPFGlYpjmE
+Uncompressed Public Key (hex): 04bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a6398496b9e2af0a3a1d199c3cc1d09ee899336a530c185df6b46a9735b25e79a493af
+EVM Address: 0x9EacBe2C3B1eb0a9FC14106d97bd3A1F89efdDCc
+Validator Address: storyvaloper1p470h0jtph4n5hztallp8vznq8ehylsw9vpddx
+Delegator Address: story1p470h0jtph4n5hztallp8vznq8ehylswtr4vxd
+```
+
+**사용 가능한 플래그:**
+
+* `--export-evm-key`: (문자열) validator의 파생된 EVM 개인 키를 기본 데이터 구성 디렉토리로 내보냅니다
+* `--export-evm-key-path`: (문자열) validator의 파생된 EVM 개인 키에 대해 다른 다운로드 위치를 지정합니다
+* `--keyfile`: (문자열) Tendermint 키 파일 경로 (기본값 "/home/ubuntu/.story/story/config/priv\_validator\_key.json")
+
+<Tip>
+  delegator가 아닌 validator로 트랜잭션을 발행하려면
+  키를 password.txt`.env` 파일로 내보내고 IP가
+  전송되었는지 확인하세요. 예를 들어`./story validator export --export-evm-key --evm-key-path
+    .env`
+</Tip>
+
+## Validator 생성
+
+새 validator를 생성하려면 다음 명령을 실행하세요:
+
+```bash Locked token node
+./story validator create
+			 --stake ${AMOUNT_TO_STAKE_IN_WEI} \
+			 --moniker ${VALIDATOR_NAME} \
+       --rpc ${rpc} \
+		   --chain-id ${chain_id} \
+			 --commission-rate ${rate} \
+ 			 --unlocked=false
+```
+
+```Text Unlocked token node
+./story validator create
+			 --stake ${AMOUNT_TO_STAKE_IN_WEI} \
+			 --moniker ${VALIDATOR_NAME} \
+       --rpc ${rpc} \
+		   --chain-id ${chain_id} \
+			 --commission-rate ${rate} \
+```
+
+이 명령은 priv\_validator\_key.json에 저장된 validator 키에 해당하는 validator를 생성하고,`priv_validator_key.json` validator에게 자체 스테이킹을 위한`{$AMOUNT_TO_STAKE_IN_WEI}` IP를 제공합니다.
+
+<Note>
+  합의에 참여하려면 최소 1024 IP가 스테이킹되어야 합니다 (이는`1024000000000000000000 wei`에 해당합니다)!
+</Note>
+
+아래는 validator 설정을 추가로 사용자 정의할 수 있는 선택적 플래그 목록입니다:
+
+**사용 가능한 플래그:**
+
+* `--stake`: validator가 자체 위임할 금액을 wei 단위로 설정합니다 (기본값은`1024000000000000000000` wei입니다).
+* `--moniker`: 네트워크의 사용자에게 표시되는 validator의 사용자 정의 이름을 정의합니다.
+* `--chain-id`: 트랜잭션의 Chain ID를 지정합니다. 기본값은`1516`입니다.
+* `--commission-rate`: validator의 수수료율을 bips 단위로 설정합니다 (1% = 100 bips). 예를 들어,`1000`는 10% 수수료를 나타냅니다 (기본값은`1000`입니다).
+* `--explorer`: 블록체인 탐색기의 URL을 지정합니다 (기본값:[https://www.storyscan.io](https://www.storyscan.io)).
+* `--keyfile`: Tendermint 키 파일의 경로를 지정합니다 (기본값:`$HOME/.story/story/config/priv_validator_key.json`).
+* `--max-commission-change-rate`: validator의 수수료가 변경될 수 있는 최대 비율을 bips 단위로 설정합니다. 예를 들어,`100`는 최대 1% 변경을 나타냅니다 (기본값은`1000`입니다).
+* `--max-commission-rate`: validator가 부과할 수 있는 최대 수수료율을 bips 단위로 정의합니다. 예를 들어,`5000`는 50% 최대 비율을 허용합니다 (기본값은`5000`입니다).
+* `--private-key`: 트랜잭션 서명에 지정된 개인 키를 사용합니다. 설정하지 않으면`priv_validator_key.json`의 키가 사용됩니다.
+* `--rpc`: 네트워크에 연결할 RPC URL을 설정합니다 (기본값:[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)).
+* `--unlocked`: 잠금 해제된 토큰 스테이킹이 지원되는지 결정합니다 (`true`는 잠금 해제된 스테이킹,`false`는 잠긴 스테이킹). 기본값은`true`입니다.
+* `--story-api`: 잠재적인 자금 손실을 방지합니다. 기본적으로`http://localhost:1317`값을 설정해야 합니다
+
+### 생성 명령 사용 예시
+
+```bash
+story validator create
+	--stake 1024000000000000000000
+  --moniker "timtimtim"
+  --commission-rate 700
+  --validator-pubkey "<validator_pubkey>" # if you dont have a .env
+  --rpc "https://mainnet.storyrpc.io"
+	--chain-id 1514
+```
+
+### validator 확인하기
+
+생성되면 다음을 사용하여`Explorer URL`트랜잭션을 확인하세요. 성공하면 귀하의 validator 공개 키(*에서 찾을 수 있음`priv_validator_key.json` 파일)*&#xAC00; 다음 엔드포인트의 일부로 나열되어 있는 것을 볼 수 있습니다:
+
+```bash
+curl https://testnet.storyrpc.io/validators | jq .
+```
+
+축하합니다, 이제 당신은 Story의 최초 IP validator 중 한 명입니다!
+
+## Validator 스테이킹
+
+기존 validator에 스테이킹하려면 다음 명령을 실행하세요:
+
+```bash
+./story validator stake \
+   --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+   --stake ${AMOUNT_TO_STAKE_IN_WEI}
+   --staking-period ${STAKING_PERIOD}
+```
+
+* 귀하의 고유한`${VALIDATOR_PUB_KEY_IN_HEX}`는 다음 명령을 실행하여 찾을 수 있습니다`./story validator export` 명령을`Compressed Public Key (hex)`로.
+* 트랜잭션이 유효하려면 최소 1024 IP 가치(`*1024000000000000000000 wei`)를 스테이킹해야 합니다
+
+스테이킹이 완료되면`Explorer URL`를 사용하여 트랜잭션을 확인할 수 있습니다. 앞서 언급했듯이, 우리의[validator 엔드포인트](https://mainnet.storyrpc.io/validators)를 사용하여 validator의 새로운 투표 권한을 확인할 수 있습니다.
+
+**사용 가능한 플래그:**
+
+* `--validator-pubkey`: (문자열) 스테이킹할 validator의 공개 키
+* `--stake`: (문자열) wei 단위로 스테이킹할 IP 양
+* `--chain-id`: (정수) 트랜잭션에 사용할 체인 ID (기본값: 1514)
+* `--explorer`: (문자열) 블록체인 탐색기의 URL
+* `--help`,`-h`: stake 명령에 대한 도움말 정보 표시
+* `--private-key`: (문자열) 트랜잭션에 사용되는 개인 키
+* `--rpc`: (문자열) 네트워크에 연결할 RPC URL
+* `--staking-period`: (stakingPeriod) 스테이킹 기간 (옵션: "flexible", "short", "medium", "long") (기본값: flexible)
+* `--story-api`: 잠재적인 자금 손실 방지. 기본적으로`http://localhost:1317`를 값으로 설정해야 합니다
+
+### 스테이킹 명령 사용 예시
+
+```bash
+./story validator stake \
+  --validator-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
+  --stake 1024000000000000000000
+  --staking-period "short"
+```
+
+## Validator 언스테이킹
+
+validator에서 언스테이킹하려면 다음 명령을 실행하세요:
+
+```bash
+./story validator unstake \
+  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+  --unstake ${AMOUNT_TO_UNSTAKE_IN_WEI} \
+	--delegation-id ${ID_STAKING_PERIOD}
+```
+
+이것은 선택한 validator에서`${AMOUNT_TO_UNSTAKE_IN_WEI}` IP를 언스테이킹합니다. 트랜잭션이 유효하려면 최소 1024 IP 가치(`*1024000000000000000000 wei`)를 언스테이킹해야 합니다.
+
+스테이킹 작업과 마찬가지로`Explorer URL`를 사용하여 트랜잭션을 확인하고 우리의[validator 엔드포인트](https://mainnet.storyrpc.io/validators)를 사용하여 validator의 새로 감소된 투표 권한을 다시 확인하세요.
+
+**사용 가능한 플래그:**
+
+* `--chain-id`: (정수) 트랜잭션에 사용할 체인 ID (기본값: 1514)
+* `--delegation-id`: (uint32) 위임 ID (유연한 스테이킹의 경우 0)
+* `--explorer`: (문자열) 블록체인 탐색기의 URL (기본값: "[https://www.storyscan.io](https://www.storyscan.io)")
+* `--help`,`-h`: unstake 명령에 대한 도움말
+* `--private-key`: (문자열) 트랜잭션에 사용되는 개인 키
+* `--rpc`: (문자열) 네트워크에 연결할 RPC URL (기본값: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+* `--unstake`: (문자열) wei 단위로 언스테이킹할 양
+* `--validator-pubkey`: (문자열) Validator의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--story-api`: 잠재적인 자금 손실 방지. 기본적으로`http://localhost:1317`를 값으로 설정해야 합니다
+
+### 언스테이킹 명령 사용 예시
+
+```bash
+./story validator unstake \
+   --validator-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
+   --unstake 1024000000000000000000 \
+   --delegation-id 1
+```
+
+## Validator 대리 스테이킹
+
+다른 위임자를 대신하여 스테이킹하려면 다음 명령을 실행하세요:
+
+```bash
+./story validator stake-on-behalf \
+  --delegator-address ${DELEGATOR_EVM} \
+  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+  --stake ${AMOUNT_TO_STAKE_IN_WEI} \
+  --staking-period ${STAKING_PERIOD} \
+  --rpc
+  --chain-id
+```
+
+이것은 제공된 위임자를 대신하여`${AMOUNT_TO_STAKE_IN_WEI}` IP를 validator에게 스테이킹합니다. 트랜잭션이 유효하려면 최소 1024 IP 가치(`*1024000000000000000000 wei`)를 스테이킹해야 합니다.
+
+다른 스테이킹 작업과 마찬가지로`Explorer URL`를 사용하여 트랜잭션을 확인하고 우리의[validator 엔드포인트](https://mainnet.storyrpc.io/validators)를 사용하여 validator의 증가된 투표 권한을 다시 확인하세요.
+
+**사용 가능한 플래그:**
+
+* `--chain-id`: (정수) 트랜잭션에 사용할 체인 ID (기본값: 1514)
+* `--delegator-address`: (문자열) 위임자의 EVM 주소
+* `--explorer`: (문자열) 블록체인 탐색기의 URL (기본값: "[https://www.storyscan.io](https://www.storyscan.io)")
+* `--help`,`-h`: stake-on-behalf 명령에 대한 도움말
+* `--private-key`: (문자열) 트랜잭션에 사용되는 개인 키
+* `--rpc`: (문자열) 네트워크에 연결할 RPC URL (기본값: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+* `--stake`: (문자열) validator가 자체 위임할 wei 단위의 양
+* `--staking-period`: (stakingPeriod) 스테이킹 기간 (옵션: "flexible", "short", "medium", "long") (기본값: flexible)
+* `--validator-pubkey`: (문자열) Validator의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--story-api`: 잠재적인 자금 손실 방지. 기본적으로`http://localhost:1317`를 값으로 설정해야 합니다
+
+### 대리 스테이킹 명령 사용 예시
+
+```bash
+./story validator stake-on-behalf \
+   --delegator-address 0xF84ce113FCEe12d78Eb41590c273498157c91520 \
+   --validator-pubkey 03e42b4d778cda2f3612c85161ba7c0aad1550a872f3279d99e028a1dfa7854930 \
+   --stake 1024000000000000000000 \
+   --staking-period "short" \
+	 --rpc \
+   --chain-id
+```
+
+## Validator 대리 언스테이킹
+
+위임자를 대신하여 언스테이킹할 수도 있습니다. 그러나 이를 위해서는 해당 위임자의 승인된 운영자로 등록되어 있어야 합니다. 운영자로서 다른 위임자를 대신하여 언스테이킹하려면 다음 명령을 실행하세요:
+
+```bash
+./story validator unstake-on-behalf \
+  --delegator-address ${DELEGATOR_PUB_KEY_IN_HEX} \
+  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+  --unstake ${AMOUNT_TO_STAKE_IN_WEI} \
+  --rpc \
+  --chain-id
+```
+
+이것은 위임자를 대신하여`${AMOUNT_TO_STAKE_IN_WEI}` IP를 validator에서 언스테이킹합니다. 단, 해당 위임자의 등록된 운영자여야 합니다. 트랜잭션이 유효하려면 최소 1024 IP 가치(`*1024000000000000000000 wei`)를 언스테이킹해야 합니다.
+
+다른 스테이킹 작업과 마찬가지로, `Explorer URL`를 사용하여 트랜잭션을 확인하고 우리의 [validator endpoint](https://mainnet.storyrpc.io/validators)를 사용하여 검증인의 감소된 투표력을 다시 확인하세요.
+
+**사용 가능한 플래그:**
+
+* `--chain-id`: (int) 트랜잭션에 사용할 체인 ID (기본값: 1514)
+* `--delegator-address`: (string) 위임자의 EVM 주소
+* `--explorer`: (string) 블록체인 탐색기의 URL (기본값: "[https://www.storyscan.io](https://www.storyscan.io)")
+* `--help`, `-h`: unstake-on-behalf 명령에 대한 도움말
+* `--private-key`: (string) 트랜잭션에 사용되는 개인 키
+* `--rpc`: (string) 네트워크에 연결할 RPC URL (기본값: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+* `--unstake`: (string) 언스테이크할 금액 (wei 단위)
+* `--validator-pubkey`: (string) 검증인의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--story-api`: 잠재적인 자금 손실을 방지합니다. 기본적으로 `http://localhost:1317`를 값으로 설정해야 합니다
+
+### Unstake-on-behalf 명령 사용 예시
+
+```bash
+./story validator unstake-on-behalf \
+   --delegator-address 0xF84ce113FCEe12d78Eb41590c273498157c91520 \
+   --validator-pubkey 03e42b4d778cda2f3612c85161ba7c0aad1550a872f3279d99e028a1dfa7854930 \
+   --unstake 1024000000000000000000 \
+   --rpc \
+   --chain-id
+```
+
+## 검증인 언제일
+
+검증인이 감금된 경우, 예를 들어 상당한 다운타임을 경험한 경우, 다음 명령을 사용하여 대상 검증인을 언제일할 수 있습니다:
+
+```Text Bash
+./story validator unjail \
+  --private-key ${PRIVATE_KEY} \
+  --rpc
+  --chain-id
+```
+
+트랜잭션이 유효하려면 트랜잭션을 제출하는 지갑에 최소 1 IP가 필요합니다.
+
+**사용 가능한 플래그:**
+
+* `--chain-id`: (int) 트랜잭션에 사용할 체인 ID
+* `--explorer`: (string) 블록체인 탐색기의 URL
+* `--private-key`: (string) 트랜잭션에 사용되는 개인 키
+* `--rpc`: (string) 네트워크에 연결할 RPC URL
+* `--story-api`: 잠재적인 자금 손실을 방지합니다. 기본적으로 `http://localhost:1317`를 값으로 설정해야 합니다
+
+### 언제일 명령 사용 예시
+
+```bash
+./story validator unjail \
+  --validator-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
+  --rpc \
+  --chain-id
+```
+
+## 검증인 대리 언제일
+
+권한이 있는 운영자인 경우, 다음 명령을 사용하여 검증인을 대신하여 언제일할 수 있습니다:
+
+```bash
+./story validator unjail-on-behalf \
+  --private-key ${PRIVATE_KEY} \
+  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+  --rpc \
+  --chain-id
+```
+
+**사용 가능한 플래그:**
+
+* `--chain-id`: (int) 트랜잭션에 사용할 체인 ID
+* `--explorer`: (string) 블록체인 탐색기의 URL
+* `--private-key`: (string) 트랜잭션에 사용되는 개인 키
+* `--rpc`: (string) 네트워크에 연결할 RPC URL
+* `--validator-pubkey`: (string) 검증인의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--story-api`: 잠재적인 자금 손실을 방지합니다. 기본적으로 `http://localhost:1317`를 값으로 설정해야 합니다
+
+### 대리 언제일 명령 사용 예시
+
+```bash
+./story validator unjail-on-behalf \
+  --private-key 0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef \
+  --validator-pubkey 03e42b4d778cda2f3612c85161ba7c0aad1550a872f3279d99e028a1dfa7854930 \
+  --rpc \
+  --chain-id
+```
+
+## 검증인 재위임
+
+한 검증인에서 다른 검증인으로 재위임하려면 다음 명령을 실행하세요:
+
+```bash
+./story validator redelegate \
+  --validator-src-pubkey ${VALIDATOR_SRC_PUB_KEY_IN_HEX} \
+  --validator-dst-pubkey ${VALIDATOR_DST_PUB_KEY_IN_HEX} \
+  --redelegate ${AMOUNT_TO_REDELEGATE_IN_WEI}
+  --rpc \
+  --chain-id
+```
+
+**사용 가능한 플래그:**
+
+* `--chain-id`: (int) 트랜잭션에 사용할 체인 ID (기본값 1514)
+* `--delegation-id`: (uint32) 위임 ID (유연한 스테이킹의 경우 0)
+* `--explorer`: (string) 블록체인 탐색기의 URL (기본값 "[https://www.storyscan.io](https://www.storyscan.io)")
+* `--help`, `-h`: 재위임 명령에 대한 도움말
+* `--private-key`: (string) 트랜잭션에 사용되는 개인 키
+* `--redelegate`: (string) 재위임할 금액 (wei 단위)
+* `--rpc`: (string) 네트워크에 연결할 RPC URL (기본값 "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+* `--validator-dst-pubkey`: (string) 목적지 검증인의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--validator-src-pubkey`: (string) 출발지 검증인의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--story-api`: 잠재적인 자금 손실을 방지합니다. 기본적으로 `http://localhost:1317`를 값으로 설정해야 합니다
+
+### 재위임 명령 사용 예시
+
+```bash
+./story validator redelegate \
+  --validator-src-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
+  --validator-dst-pubkey 02ed58a9319aba87f60fe08e87bc31658dda6bfd7931686790a2ff803846d4e59c \
+  --redelegate 1024000000000000000000 \
+  --rpc \
+  --chain-id
+```
+
+## 검증인 대리 재위임
+
+권한이 있는 운영자인 경우, 다음 명령을 사용하여 위임자를 대신하여 한 검증인에서 다른 검증인으로 재위임할 수 있습니다:
+
+```bash
+./story validator redelegate-on-behalf \
+  --delegator-address ${DELEGATOR_EVM_ADDRESS} \
+  --validator-src-pubkey ${VALIDATOR_SRC_PUB_KEY_IN_HEX} \
+  --validator-dst-pubkey ${VALIDATOR_DST_PUB_KEY_IN_HEX} \
+  --redelegate ${AMOUNT_TO_REDELEGATE_IN_WEI} \
+  --rpc \
+  --chain-id
+```
+
+**사용 가능한 플래그:**
+
+* `--chain-id`: (int) 트랜잭션에 사용할 체인 ID (기본값 1514)
+* `--delegation-id`: (uint32) 위임 ID (유연한 스테이킹의 경우 0)
+* `--delegator-address`: (string) 위임자의 EVM 주소
+* `--explorer`: (string) 블록체인 탐색기의 URL (기본값 "[https://www.storyscan.io](https://www.storyscan.io)")
+* `--help`, `-h`: redelegate-on-behalf 명령에 대한 도움말
+* `--private-key`: (string) 트랜잭션에 사용되는 개인 키
+* `--redelegate`: (string) 재위임할 금액 (wei 단위)
+* `--rpc`: (string) 네트워크에 연결할 RPC URL (기본값 "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+* `--validator-dst-pubkey`: (string) 목적지 검증인의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--validator-src-pubkey`: (string) 출발지 검증인의 16진수로 인코딩된 압축된 33바이트 secp256k1 공개 키
+* `--story-api`: 잠재적인 자금 손실을 방지합니다. 기본적으로 `http://localhost:1317`를 값으로 설정해야 합니다
+
+### 대리 재위임 명령 사용 예시
+
+```bash
+./story validator redelegate-on-behalf \
+  --delegator-address 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab \
+  --validator-src-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
+  --validator-dst-pubkey 02ed58a9319aba87f60fe08e87bc31658dda6bfd7931686790a2ff803846d4e59c \
+  --redelegate 1024000000000000000000 \
+  --rpc \
+  --chain-id
+```
+
+## 운영자 설정
+
+위임자는 자신을 대신하여 언스테이크하거나 재위임할 운영자를 추가할 수 있습니다. 운영자를 추가하려면 다음 명령을 실행하세요:
+
+* `--chain-id` int 트랜잭션에 사용할 체인 ID (기본값 1514)
+* `--explorer` string 블록체인 탐색기의 URL (기본값 "[https://www.storyscan.io](https://www.storyscan.io)")
+* `--operator` string 위임자에게 운영자를 설정합니다
+* `--private-key` string 트랜잭션에 사용되는 개인 키
+* `--rpc` string 네트워크에 연결할 RPC URL (기본값 "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+
+```bash
+./story validator set-operator \
+  --operator ${OPERATOR_EVM_ADDRESS} \
+  --rpc \
+  --chain-id \
+  --story-api ${STORY_API_URL}
+```
+
+트랜잭션이 유효하려면 트랜잭션을 제출하는 지갑에 최소 1 IP가 필요합니다.
+
+### 운영자 추가 명령어 사용 예시
+
+```bash
+./story validator set-operator \
+  --operator 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab \
+  --rpc \
+  --chain-id \
+  --story-api http://localhost:1317
+```
+
+## 운영자 해제
+
+운영자를 제거하려면 다음 명령어를 실행하세요:
+
+```bash
+./story validator unset-operator \
+  --operator ${OPERATOR_EVM_ADDRESS} \
+  --rpc \
+  --chain-id \
+  --story-api ${STORY_API_URL}
+```
+
+### 운영자 제거 명령어 사용 예시
+
+```bash
+./story validator remove-operator \
+  --operator 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab \
+  --rpc \
+  --chain-id \
+  --story-api http://localhost:1317
+```
+
+## 보상 주소 설정
+
+위임자가 스테이킹 및 출금 보상을 받는 주소를 변경하려면 다음을 실행할 수 있습니다:
+
+```bash
+./story validator set-rewards-address \
+  --rewards-address ${OPERATOR_EVM_ADDRESS} \
+  --story-api ${STORY_API_URL}
+```
+
+트랜잭션이 유효하려면 트랜잭션을 제출하는 지갑에 최소 1 IP가 필요합니다.
+
+### 출금 주소 설정 명령어 사용 예시
+
+```bash
+./story validator set-rewards-address \
+  --rewards-address 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab
+  --story-api http://localhost:1317
+```
+
+## 출금 주소 설정
+
+위임자가 스테이킹 및 출금 보상을 받는 주소를 변경하려면 다음을 실행할 수 있습니다:
+
+```bash
+./story validator set-withdrawal-address \
+  --withdrawal-address ${OPERATOR_EVM_ADDRESS} \
+  --story-api ${STORY_API_URL}
+```
+
+트랜잭션이 유효하려면 트랜잭션을 제출하는 지갑에 최소 1 IP가 필요합니다.
+
+### 출금 주소 설정 명령어 사용 예시
+
+```bash
+./story validator set-withdrawal-address \
+  --withdrawal-address 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab
+  --story-api http://localhost:1317
+```
+
+## 검증자 수수료 업데이트
+
+검증자의 수수료율을 변경하려면 다음을 실행할 수 있습니다:
+
+```
+./story validator update-validator-commission \
+		--commission-rate ${NEW_COMMISSION}
+```
+
+### 검증자 수수료 업데이트 예시
+
+```
+./story validator update-validator-commission \
+		--commission-rate 5000
+```
+
+## Story API 활성화
+
+Prerequisites:
+
+1. 전체 노드가 동기화되고 최신 블록과 일치하는지 확인하세요
+
+활성화 단계:
+
+1. 다음으로 이동 `${STORY_DATA_ROOT}/config/story.toml`
+2. 설정 `enable = true` 섹션 아래의 `[api]` 섹션
+3. 노드 재시작
+
+그런 다음 `http://localhost:1317` 를 `-story-api` 값으로 사용할 수 있습니다
+
+## 검증자를 다른 기계로 마이그레이션
+
+<Warning>
+  검증자 노드를 새 기계로 마이그레이션하기 전에 현재 노드가 완전히 종료되었는지 확인하세요. 활성 검증자를 복원하려고 하면 "이중 서명"이라는 중대한 오류가 발생할 수 있으며, 이는 위임된 지분이 삭감될 수 있습니다.
+</Warning>
+
+1. 검증자를 위한 새로운 환경을 구성하는 것부터 시작하세요. 새로운 전체 노드가 네트워크의 최신 블록과 완전히 동기화되었는지 확인하세요.
+2. 우발적인 이중 서명을 방지하기 위해, 새 인스턴스를 활성화하기 전에 원래 검증자 노드를 완전히 종료하는 것이 필수적입니다. 시스템 재부팅 후 자동으로 재시작되는 것을 방지하기 위해 Story 서비스 파일을 삭제하는 것을 권장합니다. 또한 `priv_validator_key.json` 와 `priv_validator_state.json` 를 백업하고 활성 검증자를 실행 중인 현재 서버에서 제거하세요. 이러한 단계를 건너뛰면 블록 누락이나 기타 페널티가 발생할 수 있습니다.
+
+```bash
+# Step 1: Stop the original validator node
+sudo systemctl stop <your_service_file_name>.service
+
+# Step 2: Disable the Story service to prevent automatic restarts
+sudo systemctl disable <your_service_file_name>.service
+
+# Step 3: Delete the Story service file to prevent it from starting on reboot
+sudo rm /etc/systemd/system/<your_service_file_name>.service
+
+# Step 4: Back up the `priv_validator_key.json` file securely, e.g., using SFTP:
+# Use an SFTP client or a secure method to download the file without displaying it in the terminal
+# If needed for verification purposes only, you may view it with the following command:
+cat ~/.story/story/config/priv_validator_key.json
+
+# Step 5: Remove the `priv_validator_key.json` file from the current server
+rm ~/.story/story/config/priv_validator_key.json
+```
+
+3. 새 기계의 `priv_validator_key.json` 와 `priv_validator_state.json` 를 `~/.story/story/config/` 디렉토리에서 찾으세요. 이 파일을 이전 검증자의 백업 복사본으로 교체하세요.
+
+<Warning>
+  진행하기 전에 원래 서버에서 이전 검증자를 종료하고 다시 시작하지 마세요!
+</Warning>
+
+4. 개인 키 파일을 전송한 후, 새 설정에서 검증자 노드를 재시작하세요. 이렇게 하면 검증자가 네트워크에 다시 통합되어 검증 역할을 재개할 수 있습니다.

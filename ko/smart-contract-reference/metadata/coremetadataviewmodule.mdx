@@ -1,0 +1,222 @@
+---
+title: CoreMetadataViewModule
+---
+
+CoreMetadataViewModule은 Story 내의 IP 자산의 핵심 메타데이터에 대한 읽기 전용 액세스를 제공하는 뷰 모듈입니다. IP 자산에서 metadataURI, metadataHash, NFT 토큰 URI 및 등록 날짜와 같은 메타데이터 정보를 검색합니다.
+
+## 상태 변수
+
+### name
+
+```solidity
+string public constant override name = CORE_METADATA_VIEW_MODULE_KEY
+```
+
+모듈의 이름을 반환합니다.
+
+### IP\_ASSET\_REGISTRY
+
+```solidity
+address public immutable IP_ASSET_REGISTRY
+```
+
+IP Asset Registry 컨트랙트의 주소입니다.
+
+### MODULE\_REGISTRY
+
+```solidity
+address public immutable MODULE_REGISTRY
+```
+
+Module Registry 컨트랙트의 주소입니다.
+
+### coreMetadataModule
+
+```solidity
+address public coreMetadataModule
+```
+
+CoreMetadataModule 컨트랙트의 주소입니다.
+
+## 함수
+
+### constructor
+
+```solidity
+constructor(address ipAssetRegistry, address moduleRegistry)
+```
+
+CoreMetadataViewModule 컨트랙트를 초기화합니다.
+
+**Parameters:**
+
+* `ipAssetRegistry`: IP Asset Registry 컨트랙트의 주소입니다.
+* `moduleRegistry`: Module Registry 컨트랙트의 주소입니다.
+
+### updateCoreMetadataModule
+
+```solidity
+function updateCoreMetadataModule() external
+```
+
+ModuleRegistry에서 검색하여 이 뷰 모듈에서 사용하는 CoreMetadataModule의 주소를 업데이트합니다.
+
+### getCoreMetadata
+
+```solidity
+function getCoreMetadata(address ipId) external view returns (CoreMetadata memory)
+```
+
+IP 자산의 모든 핵심 메타데이터를 검색합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `CoreMetadata`: IP 자산의 모든 핵심 메타데이터를 포함하는 구조체입니다.
+
+### getMetadataURI
+
+```solidity
+function getMetadataURI(address ipId) public view returns (string memory)
+```
+
+CoreMetadataModule에 의해 설정된 IP 자산의 metadataURI를 검색합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `string`: IP 자산의 metadataURI입니다.
+
+### getMetadataHash
+
+```solidity
+function getMetadataHash(address ipId) public view returns (bytes32)
+```
+
+CoreMetadataModule에 의해 설정된 IP 자산의 메타데이터 해시를 검색합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `bytes32`: IP 자산의 메타데이터 해시입니다.
+
+### getRegistrationDate
+
+```solidity
+function getRegistrationDate(address ipId) public view returns (uint256)
+```
+
+IPAssetRegistry에서 IP 자산의 등록 날짜를 검색합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `uint256`: IP 자산의 등록 날짜입니다.
+
+### getNftTokenURI
+
+```solidity
+function getNftTokenURI(address ipId) public view returns (string memory)
+```
+
+IP 자산이 바인딩된 NFT의 TokenURI를 검색합니다. 가능한 경우 CoreMetadataModule의 TokenURI를 우선적으로 사용합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `string`: IP 자산에 바인딩된 NFT TokenURI입니다.
+
+### getNftMetadataHash
+
+```solidity
+function getNftMetadataHash(address ipId) public view returns (bytes32)
+```
+
+CoreMetadataModule에 의해 설정된 IP 자산의 NFT 메타데이터 해시를 검색합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `bytes32`: IP 자산의 NFT 메타데이터 해시입니다.
+
+### getOwner
+
+```solidity
+function getOwner(address ipId) public view returns (address)
+```
+
+IP 자산의 소유자를 검색합니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `address`: IP 자산 소유자의 주소입니다.
+
+### getJsonString
+
+```solidity
+function getJsonString(address ipId) external view returns (string memory)
+```
+
+IP 자산에 대한 표준 NFT 메타데이터 스키마에 따라 형식화된 JSON 문자열을 생성합니다. 이 함수는 모든 관련 메타데이터 필드를 포함하여 IPAssetRegistry와 CoreMetadataModule 모두에서 메타데이터를 통합합니다. CoreMetadataModule의 "NFT TokenURI"가 우선순위를 가집니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 주소입니다.
+
+**Returns:**
+
+* `string`: IP 자산의 모든 메타데이터를 나타내는 base64로 인코딩된 JSON 문자열입니다.
+
+### isSupported
+
+```solidity
+function isSupported(address ipAccount) external view returns (bool)
+```
+
+주어진 IP 계정에 대해 뷰 모듈이 지원되는지 확인합니다.
+
+**Parameters:**
+
+* `ipAccount`: IP 계정의 주소입니다.
+
+**Returns:**
+
+* `bool`: 뷰 모듈이 지원되면 true, 그렇지 않으면 false입니다.
+
+### supportsInterface
+
+```solidity
+function supportsInterface(bytes4 interfaceId) public view virtual override(BaseModule, IERC165) returns (bool)
+```
+
+IERC165 인터페이스를 구현합니다.
+
+**Parameters:**
+
+* `interfaceId`: 인터페이스 식별자입니다.
+
+**Returns:**
+
+* `bool`: 컨트랙트가 인터페이스를 지원하면 true, 그렇지 않으면 false입니다.

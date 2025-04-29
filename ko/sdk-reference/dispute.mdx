@@ -1,0 +1,280 @@
+---
+title: 분쟁
+description: DisputeClient를 사용하여 Story 내에서 분쟁을 관리할 수 있습니다.
+---
+
+## DisputeClient
+
+### 메서드
+
+* raiseDispute
+* cancelDispute
+* resolveDispute
+* tagIfRelatedIpInfringed
+* disputeAssertion
+* disputeIdToAssertionId
+
+### raiseDispute
+
+주어진 ipId에 대해 분쟁을 제기합니다
+
+| 메서드            | 타입                                                                |
+| -------------- | ----------------------------------------------------------------- |
+| `raiseDispute` | `(request: RaiseDisputeRequest) => Promise<RaiseDisputeResponse>` |
+
+Parameters:
+
+* `request.targetIpId`: 분쟁의 대상이 되는 IP ID입니다.
+* `request.targetTag`: 분쟁의 대상 태그입니다. [dispute tags](https://docs.story.foundation/docs/dispute-module#dispute-tags)를 참조하세요. **Example: "IMPROPER\_REGISTRATION"**
+* `request.cid`: 분쟁 증거에 대한 콘텐츠 식별자(CID)입니다. 이는 분쟁 증거(문서, 이미지 등)를 IPFS에 업로드하여 얻어야 합니다. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
+* `request.liveness`: liveness는 반대 분쟁이 제시될 수 있는 시간 창(초 단위)입니다(30일).
+* `request.bond`: \[선택사항] **지정하지 않으면 최소 보증금 값으로 기본 설정됩니다**. 분쟁 개시자가 풀에 선불로 지불하는 wrapper IP의 금액입니다. 이 분쟁에 대응하기 위해 분쟁의 상대방은 동일한 금액의 보증금을 제출해야 합니다. 분쟁의 승자는 원래 보증금과 상대방 보증금의 50%를 돌려받습니다. 패자 보증금의 나머지 50%는 검토자에게 돌아갑니다.
+* `request.wipOptions`: \[선택사항]
+  * `request.wipOptions.enableAutoWrapIp`: \[선택 사항]기본적으로 현재 WIP 잔액이 수수료를 충당하지 못할 경우 IP가 WIP로 전환됩니다. 이를 `false`로 설정하여 이 동작을 비활성화할 수 있습니다.**Default: true**
+  * `request.wipOptions.enableAutoApprove`: \[선택 사항]WIP가 필요하지만 현재 허용량이 충분하지 않을 때 WIP 사용을 자동으로 승인합니다. 이를 `false`로 설정하여 이 동작을 비활성화할 수 있습니다.**Default: true**
+* `request.txOptions`: \[선택 사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const response = await client.dispute.raiseDispute({
+    targetIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    // NOTE: you must use your own CID here, because every time it is used,
+    // the protocol does not allow you to use it again
+    cid: "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR",
+    // you must pick from one of the whitelisted tags here:
+    // https://docs.story.foundation/docs/dispute-module#dispute-tags
+    targetTag: "IMPROPER_REGISTRATION",
+    bond: parseEther("0.1"), // minimum of 0.1
+    liveness: 2592000,
+    txOptions: { waitForTransaction: true },
+  });
+  console.log(
+    `Dispute raised at transaction hash ${disputeResponse.txHash}, Dispute ID: ${disputeResponse.disputeId}`
+  );
+  ```
+
+  ```typescript Request Type
+  export type RaiseDisputeRequest = WithTxOptions & {
+    targetIpId: Address;
+    cid: string;
+    targetTag: string;
+    liveness: bigint | number | string;
+    bond?: bigint | number | string;
+    wipOptions?: {
+      enableAutoWrapIp?: boolean;
+      enableAutoApprove?: boolean;
+    };
+  };
+  ```
+
+  ```typescript Response Type
+  export type RaiseDisputeResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+    disputeId?: bigint;
+  };
+  ```
+</CodeGroup>
+
+### cancelDispute
+
+진행 중인 분쟁을 취소합니다
+
+| 메서드             | 타입                                                                  |
+| --------------- | ------------------------------------------------------------------- |
+| `cancelDispute` | `(request: CancelDisputeRequest) => Promise<CancelDisputeResponse>` |
+
+Parameters:
+
+* `request.disputeId`: 취소할 분쟁의 ID.
+* `request.data`: \[선택 사항] 취소 과정에서 사용되는 추가 데이터. **기본값은 "0x"**&#xC785;니다.
+* `request.txOptions`: \[선택 사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript
+  const response = await client.dispute.cancelDispute({
+    disputeId: 1,
+    txOptions: { waitForTransactions: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type CancelDisputeRequest = {
+    disputeId: number | string | bigint;
+    data?: Hex;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type CancelDisputeResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### resolveDispute
+
+판결 후 분쟁을 해결합니다
+
+| 메서드              | 타입                                                                    |
+| ---------------- | --------------------------------------------------------------------- |
+| `resolveDispute` | `(request: ResolveDisputeRequest) => Promise<ResolveDisputeResponse>` |
+
+Parameters:
+
+* `request.disputeId`: 해결할 분쟁의 ID.
+* `request.data`: \[선택 사항] 분쟁을 해결하기 위한 데이터. **기본값은 "0x"**&#xC785;니다.
+* `request.txOptions`: \[선택 사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript
+  const response = await client.dispute.resolveDispute({
+    disputeId: 1,
+    data: "0x",
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type ResolveDisputeRequest = {
+    disputeId: number | string | bigint;
+    data?: Hex;
+    txOptions?: TxOptions;
+  };
+  ```
+
+  ```typescript Response Type
+  export type ResolveDisputeResponse = {
+    txHash?: string;
+    encodedTxData?: EncodedTxData;
+  };
+  ```
+</CodeGroup>
+
+### tagIfRelatedIpInfringed
+
+부모가 침해 태그로 태그되었거나 그룹 구성원이 침해 태그로 태그된 경우 파생물 또는 그룹 IP에 태그를 지정합니다.
+
+| 메서드                       | 타입                                                                            |
+| ------------------------- | ----------------------------------------------------------------------------- |
+| `tagIfRelatedIpInfringed` | `(request: TagIfRelatedIpInfringedRequest) => Promise<TransactionResponse[]>` |
+
+Parameters:
+
+* `request.infringementTags[]`: 분쟁과 관련된 태그 배열
+  * `request.infringementTags[].ipId`: 태그할 `ipId`
+  * `request.infringementTags[].disputeId`: 관련된 침해 부모 IP를 태그한 분쟁 ID
+* `request.options`: \[선택 사항]
+  * `request.options.useMulticallWhenPossible`: \[선택 사항] 가능한 경우 multicall을 사용하여 호출을 하나의 트랜잭션으로 일괄 처리합니다. infringementTag가 하나만 제공되는 경우 multicall은 사용되지 않습니다. **Default: true**
+* `request.txOptions`: \[선택 사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript
+  const response = await client.dispute.tagIfRelatedIpInfringed({
+    infringementTags: [
+      {
+        ipId: "0xa1BaAA464716eC76A285Ef873d27f97645fE0366",
+        disputeId: 1,
+      },
+    ],
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type TagIfRelatedIpInfringedRequest = {
+    infringementTags: {
+      ipId: Address;
+      disputeId: number | string | bigint;
+    }[];
+    options?: {
+      useMulticallWhenPossible?: boolean;
+    };
+  } & WithTxOptions;
+  ```
+
+  ```typescript Response Type
+  export type TransactionResponse = {
+    txHash: Hex;
+
+    /** Transaction receipt, only available if waitForTransaction is set to true */
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+### disputeAssertion
+
+반대 증거를 사용하여 다른 당사자가 IP에 대해 제기한 분쟁에 대응합니다.
+
+이 메서드는 IP 소유자만 반대 증거를 제공하여 분쟁에 대응할 수 있습니다. 반대 증거(예: 문서, 이미지)는 IPFS에 업로드되어야 하며, 해당 CID는 요청을 위해 해시로 변환됩니다.
+
+만약 `disputeId`만 있다면, `disputeIdToAssertionId`를 호출하여 여기서 필요한 `assertionId`를 얻으세요.
+
+| 메서드                | 타입                                                                   |
+| ------------------ | -------------------------------------------------------------------- |
+| `disputeAssertion` | `(request: DisputeAssertionRequest) => Promise<TransactionResponse>` |
+
+Parameters:
+
+* `request.ipId`: 분쟁의 대상이 되는 IP ID.
+* `request.assertionId`: 분쟁된 주장의 식별자. `disputeId`에서 `dispute.disputeIdToAssertionId`를 호출하여 얻을 수 있습니다.
+* `request.counterEvidenceCID`: 반대 증거에 대한 콘텐츠 식별자(CID). 이는 분쟁 증거(문서, 이미지 등)를 IPFS에 업로드하여 얻어야 합니다. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
+* `request.wipOptions`: \[선택 사항]
+  * `request.wipOptions.enableAutoWrapIp`: \[선택 사항]기본적으로 현재 WIP 잔액이 수수료를 충당하지 못할 경우 IP가 WIP로 전환됩니다. 이를 `false`로 설정하여 이 동작을 비활성화할 수 있습니다. **Default: true**
+  * `request.wipOptions.enableAutoApprove`: \[선택 사항]WIP가 필요하지만 현재 허용량이 충분하지 않을 때 WIP 사용을 자동으로 승인합니다. 이를 `false`로 설정하여 이 동작을 비활성화할 수 있습니다. **Default: true**
+* `request.txOptions`: \[선택 사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript
+  const assertionId = await client.dispute.disputeIdToAssertionId(1);
+
+  const result = await client.dispute.disputeAssertion({
+    ipId: "0xa1BaAA464716eC76A285Ef873d27f97645fE0366",
+    assertionId: assertionId,
+    counterEvidenceCID: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk",
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type DisputeAssertionRequest = {
+    ipId: Address;
+    assertionId: Hex;
+    counterEvidenceCID: string;
+    wipOptions?: {
+      enableAutoWrapIp?: boolean;
+      enableAutoApprove?: boolean;
+    };
+  } & WithTxOptions;
+  ```
+
+  ```typescript Response Type
+  export type TransactionResponse = {
+    txHash: Hex;
+
+    /** Transaction receipt, only available if waitForTransaction is set to true */
+    receipt?: TransactionReceipt;
+  };
+  ```
+</CodeGroup>
+
+### disputeIdToAssertionId
+
+분쟁 ID를 주장 ID에 매핑합니다
+
+| 메서드                      | 타입                                    |
+| ------------------------ | ------------------------------------- |
+| `disputeIdToAssertionId` | `(disputeId: number) => Promise<Hex>` |
+
+Parameters:
+
+* `request.disputeId`: 분쟁 ID.
+
+```typescript
+const result = await client.dispute.disputeIdToAssertionId(1);
+```

@@ -1,0 +1,189 @@
+---
+title: WIP Client
+description: Story 내에서 WIP (Wrapped IP) 토큰의 래핑/언래핑을 처리하는 데 사용됩니다.
+---
+
+## WipClient
+
+### 메서드
+
+* deposit
+* withdraw
+* approve
+* balanceOf
+* transfer
+* transferFrom
+
+### deposit
+
+선택한 양의 IP를 WIP로 래핑합니다. WIP는 IP를 전송한 지갑으로 입금됩니다.
+
+| 메서드       | 타입                          |
+| --------- | --------------------------- |
+| `deposit` | `(request: DepositRequest)` |
+
+Parameters:
+
+* `request.amount`: 입금할 금액.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const response = await client.wipClient.deposit({
+    amount: parseEther("10"), // 10 IP tokens
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type DepositRequest = WithTxOptions & {
+    amount: TokenAmountInput;
+  };
+  ```
+</CodeGroup>
+
+### withdraw
+
+선택한 양의 WIP를 IP로 언래핑합니다.
+
+| 메서드        | 타입                           |
+| ---------- | ---------------------------- |
+| `withdraw` | `(request: WithdrawRequest)` |
+
+Parameters:
+
+* `request.amount`: 출금할 금액.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const response = await client.wipClient.withdraw({
+    amount: parseEther("5"), // 5 WIP tokens
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type WithdrawRequest = WithTxOptions & {
+    amount: TokenAmountInput;
+  };
+  ```
+</CodeGroup>
+
+### approve
+
+지갑의 WIP 잔액을 사용할 수 있도록 지출자를 승인합니다.
+
+| 메서드       | 타입                          |
+| --------- | --------------------------- |
+| `approve` | `(request: ApproveRequest)` |
+
+Parameters:
+
+* `request.amount`: 승인할 WIP 토큰의 양.
+* `request.spender`: WIP 토큰을 사용할 주소
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const response = await client.wipClient.approve({
+    spender: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    amount: parseEther("20"), // 20 WIP tokens
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type ApproveRequest = WithTxOptions & {
+    spender: Address;
+    amount: TokenAmountInput;
+  };
+  ```
+</CodeGroup>
+
+### balanceOf
+
+주소의 WIP 잔액을 반환합니다.
+
+| 메서드         | 타입                                   |
+| ----------- | ------------------------------------ |
+| `balanceOf` | `(addr: Address) => Promise<bigint>` |
+
+Parameters:
+
+* `addr`: 잔액을 확인하려는 주소.
+
+### transfer
+
+수신자에게 `amount` WIP를 전송합니다 `to`.
+
+| 메서드        | 타입                           |
+| ---------- | ---------------------------- |
+| `transfer` | `(request: TransferRequest)` |
+
+Parameters:
+
+* `request.to`: 전송할 대상.
+* `request.amount`: 전송할 금액.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const response = await client.wipClient.transfer({
+    to: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    amount: parseEther("3"), // 3 WIP tokens
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type TransferRequest = WithTxOptions & {
+    to: Address;
+    amount: TokenAmountInput;
+  };
+  ```
+</CodeGroup>
+
+### transferFrom
+
+에서 `amount` WIP를 `from` 수신자에게 전송합니다 `to`.
+
+| 메서드            | 타입                               |
+| -------------- | -------------------------------- |
+| `transferFrom` | `(request: TransferFromRequest)` |
+
+Parameters:
+
+* `request.to`: 전송할 대상.
+* `request.amount`: 전송할 금액.
+* `request.from`: 전송할 주소.
+* `request.txOptions`: \[선택사항] 트랜잭션 [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+  ```typescript TypeScript
+  import { parseEther } from "viem";
+
+  const response = await client.wipClient.transferFrom({
+    to: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
+    amount: parseEther("2"), // 2 WIP tokens
+    from: "0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68",
+    txOptions: { waitForTransaction: true },
+  });
+  ```
+
+  ```typescript Request Type
+  export type TransferFromRequest = WithTxOptions & {
+    to: Address;
+    amount: TokenAmountInput;
+    from: Address;
+  };
+  ```
+</CodeGroup>

@@ -1,0 +1,169 @@
+---
+title: 수익 청구
+description: TypeScript에서 자식 IP 자산으로부터 지급될 수익을 청구하는 방법을 알아보세요.
+---
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/royalty/payRevenue.ts" icon="thumbs-up">
+    이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다룹니다.
+  </Card>
+</CardGroup>
+
+이 섹션에서는 IP 자산으로부터 지급될 수익을 청구하는 방법을 보여줍니다.
+
+수익을 청구할 수 있는 두 가지 주요 방법이 있습니다:
+
+1. **시나리오 #1**: 누군가가 내 IP 자산에 직접 지불하고, 나는 그 수익을 청구합니다.
+2. **시나리오 #2**: 누군가가 내 IP의 파생 IP 자산에 지불하고, 나는 라이선스 조건의 `commercialRevShare`에 기반하여 그들의 수익의 일정 비율에 대한 권리를 가집니다.
+
+### 전제 조건
+
+튜토리얼을 시작하기 전에 완료해야 할 몇 가지 단계가 있습니다.
+
+1. 다음을 완료하세요 [TypeScript SDK 설정](/developers/typescript-sdk/setup)
+2. 다음에 대한 기본적인 이해가 필요합니다 [로열티 모듈](/concepts/royalty-module)
+3. 당연히 청구할 지불이 있어야 합니다. 다음을 읽어보세요 [IPA에 지불하기](/developers/typescript-sdk/pay-ipa)
+
+## 시작하기 전에
+
+지불이 이루어지면 결국 IP 자산의 [IP 로열티 금고](/concepts/royalty-module/ip-royalty-vault)에 도달합니다. 여기서 해당 IP 자산의 IP 로열티 금고에 대한 수익 공유 비율을 나타내는 로열티 토큰을 소유한 사람에게 청구/이전됩니다.
+
+IP 계정([IP 자산](/concepts/ip-asset)을 나타내는 스마트 계약)은 처음 등록될 때 로열티 토큰의 100%를 보유합니다. 따라서 일반적으로 대부분의 로열티 토큰을 보유하고 있습니다.
+
+<Note>
+  **빠른 참고**. 아래 시나리오와 예시는 [유동적 절대 비율](/concepts/royalty-module/liquid-absolute-percentage) 로열티 정책을 사용합니다. 이는 현재 사용할 수 있는 두 가지 로열티 정책 중 하나입니다.
+</Note>
+
+## 시나리오 #1
+
+이 시나리오에서, 나는 IP 자산 3을 소유하고 있습니다. 누군가가 내 IP 자산 3에 직접 지불하고, 나는 그 수익을 청구합니다. 단계별로 살펴보겠습니다:
+
+1. 아래 다이어그램에서 볼 수 있듯이, IP 자산 4(IP 자산일 필요는 없으며 어떤 주소든 될 수 있습니다)가 IP 자산 3에 1M \$WIP를 지불하면, 850k \$WIP가 자동으로 IP 로열티 금고 3에 예치됩니다.
+
+   <Frame>
+     <img src="/images/concepts/lap-1.png" alt="Payment flow to IP Royalty Vault" />
+   </Frame>
+
+2. 이제 IP 자산 3은 IP 로열티 금고 3에 있는 수익을 청구하려고 합니다. 다음과 같이 보일 것입니다:
+
+   <Frame>
+     <img src="/images/concepts/lap-3.png" alt="Claiming revenue from IP Royalty Vault" />
+   </Frame>
+
+아래는 IP 자산 3이 위 이미지에 표시된 대로 SDK를 사용하여 수익을 청구하는 방법입니다:
+
+<Info>
+  관련 문서:
+  [royalty.claimAllRevenue](/sdk-reference/royalty#claimallrevenue)
+</Info>
+
+```typescript main.ts
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+// you should already have a client set up (prerequisite)
+import { client } from "./client";
+
+async function main() {
+  const claimRevenue = await client.royalty.claimAllRevenue({
+    // IP Asset 3's ipId
+    ancestorIpId: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
+    // whoever owns the royalty tokens associated with IP Royalty Vault 3
+    // (most likely the associated ipId, which is IP Asset 3's ipId)
+    claimer: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
+    currencyTokens: [WIP_TOKEN_ADDRESS],
+    childIpIds: [],
+    royaltyPolicies: [],
+    claimOptions: {
+      // If the wallet claiming the revenue is the owner of the
+      // IP Account/IP Asset (in other words, the owner of the
+      // IP's underlying NFT), `claimAllRevenue` will transfer all
+      // earnings to the user's external wallet holding the NFT
+      // instead of the IP Account, for convenience. You can disable it here.
+      autoTransferAllClaimedTokensFromIp: true,
+      // Unwraps the claimed $WIP to $IP for you
+      autoUnwrapIpTokens: true,
+    },
+  });
+
+  console.log(`Claimed revenue: ${claimRevenue.claimedTokens}`);
+}
+
+main();
+```
+
+## 시나리오 #2
+
+이 시나리오에서, 나는 IP 자산 1을 소유하고 있습니다. 누군가가 파생 IP 자산 3에 지불하고, 나는 라이선스 조건의 `commercialRevShare`에 기반하여 그들의 수익의 일정 비율에 대한 권리를 가집니다. 이는 시나리오 #1과 정확히 동일하지만 한 단계가 추가됩니다. 단계별로 살펴보겠습니다:
+
+1. 아래 다이어그램에서 볼 수 있듯이, IP 자산 4(IP 자산일 필요는 없으며 어떤 주소든 될 수 있습니다)가 IP 자산 3에 1M \$WIP를 지불하면, 150k \$WIP가 자동으로 조상들에게 분배될 LAP 로열티 정책 계약에 예치됩니다.
+
+   <Frame>
+     <img src="/images/concepts/lap-1.png" alt="Revenue distribution to royalty policy contract" />
+   </Frame>
+
+2. 그런 다음, 두 번째 단계에서 토큰은 협상된 [IP 로열티 금고](/concepts/royalty-module/ip-royalty-vault)에 기반하여 조상들의 `commercialRevShare` 라이선스 조건에 명시되어 있습니다.
+
+   <Frame>
+     <img src="/images/concepts/lap-2.png" alt="Revenue distribution to ancestors" />
+   </Frame>
+
+3. 마지막으로, IP 자산 1 & 2는 관련 IP 로열티 금고에 있는 수익을 청구하고자 합니다. 다음과 같이 보일 것입니다:
+
+   <Frame>
+     <img src="/images/concepts/lap-3.png" alt="Claiming revenue from ancestor IP Royalty Vaults" />
+   </Frame>
+
+아래는 위 이미지에서 보여진 것처럼 IP 자산 1(또는 2)이 SDK를 사용하여 수익을 청구하는 방법입니다:
+
+<Info>
+  관련 문서:
+  [royalty.claimAllRevenue](/sdk-reference/royalty#claimallrevenue)
+</Info>
+
+```typescript main.ts
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+// you should already have a client set up (prerequisite)
+import { client } from "./client";
+
+async function main() {
+  const claimRevenue = await client.royalty.claimAllRevenue({
+    // IP Asset 1's ipId
+    ancestorIpId: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    // whoever owns the royalty tokens associated with IP Royalty Vault 1
+    // (most likely the associated ipId, which is IP Asset 1's ipId)
+    claimer: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    currencyTokens: [WIP_TOKEN_ADDRESS],
+    // IP Asset 3's ipId
+    childIpIds: ["0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2"],
+    // Aeneid testnet address of RoyaltyPolicyLAP
+    royaltyPolicies: ["0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E"],
+    claimOptions: {
+      // If the wallet claiming the revenue is the owner of the
+      // IP Account/IP Asset (in other words, the owner of the
+      // IP's underlying NFT), `claimAllRevenue` will transfer all
+      // earnings to the user's external wallet holding the NFT
+      // instead of the IP Account, for convenience. You can disable it here.
+      autoTransferAllClaimedTokensFromIp: true,
+      // Unwraps the claimed $WIP to $IP for you
+      autoUnwrapIpTokens: true,
+    },
+  });
+
+  console.log(`Claimed revenue: ${claimRevenue.claimedTokens}`);
+}
+
+main();
+```
+
+## 완성된 코드 보기
+
+축하합니다, [Royalty Module](/concepts/royalty-module)을 사용하여 수익을 청구했습니다!
+
+<CardGroup cols={1}>
+  <Card title="완성된 코드" href="https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/royalty/payRevenue.ts" icon="thumbs-up">
+    이 페이지의 모든 내용은 이 작동하는 코드 예제에서 다루고 있습니다.
+  </Card>
+</CardGroup>
+
+## IP 분쟁 제기
+
+만약 IP 자산이 정당한 몫을 지불하지 않는다면 어떻게 될까요? 우리는 온체인에서 IP에 대해 분쟁을 제기할 수 있으며, 이는 다음 페이지에서 다룰 것입니다.

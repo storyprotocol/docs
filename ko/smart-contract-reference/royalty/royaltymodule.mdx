@@ -1,0 +1,283 @@
+---
+title: RoyaltyModule
+---
+
+RoyaltyModule은 Story에서 로열티 지불을 처리하는 주요 진입점입니다. IP 소유자가 자신의 IP 자산에 대한 로열티 정책을 설정할 수 있게 하고, 파생 IP 소유자가 부모 IP에 로열티를 지불할 수 있게 합니다.
+
+## 상태 변수
+
+### LICENSE\_REGISTRY
+
+```solidity
+ILicenseRegistry public immutable LICENSE_REGISTRY
+```
+
+라이선스 조건과 토큰을 추적하는 License Registry 계약의 주소입니다.
+
+### DISPUTE\_MODULE
+
+```solidity
+IDisputeModule public immutable DISPUTE_MODULE
+```
+
+분쟁 해결을 처리하는 Dispute Module 계약의 주소입니다.
+
+### licensingModule
+
+```solidity
+address licensingModule
+```
+
+Licensing Module 계약의 주소입니다.
+
+### isWhitelistedRoyaltyPolicy
+
+```solidity
+mapping(address royaltyPolicy => bool isWhitelisted) isWhitelistedRoyaltyPolicy
+```
+
+로열티 정책이 화이트리스트에 등록되어 있는지 나타냅니다.
+
+### isWhitelistedRoyaltyToken
+
+```solidity
+mapping(address token => bool) isWhitelistedRoyaltyToken
+```
+
+로열티 토큰이 화이트리스트에 등록되어 있는지 나타냅니다.
+
+### royaltyPolicies
+
+```solidity
+mapping(address ipId => address royaltyPolicy) royaltyPolicies
+```
+
+IP ID를 해당 로열티 정책에 매핑합니다.
+
+## 함수
+
+### initialize
+
+```solidity
+function initialize(address accessManager) external initializer
+```
+
+이 구현 계약의 초기화 함수입니다.
+
+**Parameters:**
+
+* `accessManager`: 프로토콜 관리자 역할 계약의 주소입니다.
+
+### setLicensingModule
+
+```solidity
+function setLicensingModule(address licensing) external restricted
+```
+
+라이선싱 모듈을 설정합니다.
+
+**Parameters:**
+
+* `licensing`: 라이선스 모듈의 주소입니다.
+
+### whitelistRoyaltyPolicy
+
+```solidity
+function whitelistRoyaltyPolicy(address royaltyPolicy, bool allowed) external restricted
+```
+
+로열티 정책을 화이트리스트에 등록합니다.
+
+**Parameters:**
+
+* `royaltyPolicy`: 로열티 정책의 주소입니다.
+* `allowed`: 로열티 정책이 화이트리스트에 등록되어 있는지 여부를 나타냅니다.
+
+### whitelistRoyaltyToken
+
+```solidity
+function whitelistRoyaltyToken(address token, bool allowed) external restricted
+```
+
+로열티 토큰을 화이트리스트에 등록합니다.
+
+**Parameters:**
+
+* `token`: 토큰 주소입니다.
+* `allowed`: 토큰이 화이트리스트에 등록되어 있는지 여부를 나타냅니다.
+
+### onLicenseMinting
+
+```solidity
+function onLicenseMinting(
+    address ipId,
+    address royaltyPolicy,
+    bytes calldata licenseData,
+    bytes calldata externalData
+) external nonReentrant onlyLicensingModule
+```
+
+라이선스 발행 시 로열티 관련 로직을 실행합니다.
+
+**Parameters:**
+
+* `ipId`: 라이선스가 발행되는 ipId (라이센서).
+* `royaltyPolicy`: 발행되는 라이선스의 로열티 정책 주소.
+* `licenseData`: 각 로열티 정책에 맞춤화된 라이선스 데이터.
+* `externalData`: 각 로열티 정책에 맞춤화된 외부 데이터.
+
+### onLinkToParents
+
+```solidity
+function onLinkToParents(
+    address ipId,
+    address royaltyPolicy,
+    address[] calldata parentIpIds,
+    bytes[] memory licenseData,
+    bytes calldata externalData
+) external nonReentrant onlyLicensingModule
+```
+
+부모에 연결 시 로열티 관련 로직을 실행합니다.
+
+**Parameters:**
+
+* `ipId`: 부모에 연결되는 자식 ipId.
+* `royaltyPolicy`: 소각되는 모든 라이선스의 공통 로열티 정책 주소.
+* `parentIpIds`: 자식 ipId가 연결되는 부모 ipId들.
+* `licenseData`: 각 로열티 정책에 맞춤화된 라이선스 데이터.
+* `externalData`: 각 로열티 정책에 맞춤화된 외부 데이터.
+
+### payRoyaltyOnBehalf
+
+```solidity
+function payRoyaltyOnBehalf(
+    address receiverIpId,
+    address payerIpId,
+    address token,
+    uint256 amount
+) external nonReentrant whenNotPaused
+```
+
+함수 호출자가 지불자 IP 자산을 대신하여 수취자 IP 자산에게 로열티를 지불할 수 있도록 합니다.
+
+**Parameters:**
+
+* `receiverIpId`: 로열티를 받는 ipId.
+* `payerIpId`: 로열티를 지불하는 ipId.
+* `token`: 로열티 지불에 사용할 토큰.
+* `amount`: 지불할 금액.
+
+### payLicenseMintingFee
+
+```solidity
+function payLicenseMintingFee(
+    address receiverIpId,
+    address payerAddress,
+    address licenseRoyaltyPolicy,
+    address token,
+    uint256 amount
+) external onlyLicensingModule
+```
+
+라이선스 발행 수수료를 지불할 수 있게 합니다.
+
+**Parameters:**
+
+* `receiverIpId`: 로열티를 받는 ipId.
+* `payerAddress`: 로열티를 지불하는 주소.
+* `licenseRoyaltyPolicy`: 발행되는 라이선스의 로열티 정책.
+* `token`: 로열티 지불에 사용할 토큰.
+* `amount`: 지불할 금액.
+
+### licensingModule
+
+```solidity
+function licensingModule() external view returns (address)
+```
+
+라이선싱 모듈 주소를 반환합니다.
+
+**Returns:**
+
+* 라이선싱 모듈의 주소.
+
+### isWhitelistedRoyaltyPolicy
+
+```solidity
+function isWhitelistedRoyaltyPolicy(address royaltyPolicy) external view returns (bool)
+```
+
+로열티 정책이 화이트리스트에 등록되어 있는지 나타냅니다.
+
+**Parameters:**
+
+* `royaltyPolicy`: 로열티 정책의 주소.
+
+**Returns:**
+
+* `isWhitelisted`: 로열티 정책이 화이트리스트에 등록되어 있으면 True.
+
+### isWhitelistedRoyaltyToken
+
+```solidity
+function isWhitelistedRoyaltyToken(address token) external view returns (bool)
+```
+
+로열티 토큰이 화이트리스트에 등록되어 있는지 나타냅니다.
+
+**Parameters:**
+
+* `token`: 로열티 토큰의 주소.
+
+**Returns:**
+
+* `isWhitelisted`: 로열티 토큰이 화이트리스트에 등록되어 있으면 True.
+
+### royaltyPolicies
+
+```solidity
+function royaltyPolicies(address ipId) external view returns (address)
+```
+
+주어진 IP 자산에 대한 로열티 정책을 나타냅니다.
+
+**Parameters:**
+
+* `ipId`: IP 자산의 ID.
+
+**Returns:**
+
+* `royaltyPolicy`: 로열티 정책의 주소.
+
+### supportsInterface
+
+```solidity
+function supportsInterface(bytes4 interfaceId) public view virtual override(BaseModule, IERC165) returns (bool)
+```
+
+IERC165 인터페이스 지원.
+
+**Parameters:**
+
+* `interfaceId`: 인터페이스 식별자.
+
+**Returns:**
+
+* 인터페이스가 지원되면 true를 반환합니다.
+
+## 보안 고려사항
+
+RoyaltyModule 계약은 다음과 같은 여러 보안 조치를 구현합니다:
+
+1. **접근 제어**: 대부분의 관리 기능은 `restricted` 수정자를 통해 프로토콜 관리자만 호출할 수 있도록 제한됩니다.
+
+2. **모듈 상호작용 제어**: `onLicenseMinting` 및 `payLicenseMintingFee` 같은 함수는 `onlyLicensingModule` 수정자를 통해 라이선싱 모듈에서만 호출할 수 있습니다.
+
+3. **재진입 방지**: `nonReentrant` 수정자는 재진입 공격을 방지하기 위해 토큰 전송을 처리하는 함수에 사용됩니다.
+
+4. **일시 중지 가능성**: 계약은 `whenNotPaused` 수정자를 사용하여 비상 상황에서 일시 중지될 수 있습니다.
+
+5. **화이트리스트 메커니즘**: 계약은 로열티 정책과 토큰에 대한 화이트리스트를 구현하여 승인된 구성 요소만 로열티 시스템과 상호 작용할 수 있도록 합니다.
+
+6. **분쟁 해결 통합**: 계약은 로열티 지불과 관련된 분쟁을 처리하기 위해 분쟁 모듈과 통합됩니다.

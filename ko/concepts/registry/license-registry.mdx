@@ -1,0 +1,55 @@
+---
+title: License Registry
+description: Story에서 라이선스 관련 상태를 관리하는 레지스트리에 대해 알아보세요.
+---
+
+<CardGroup cols={1}>
+  <Card title="LicenseRegistry.sol" href="https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/registries/LicenseRegistry.sol" icon="scroll" color="#ccb092">
+    라이선스 레지스트리의 스마트 컨트랙트를 확인하세요.
+  </Card>
+</CardGroup>
+
+라이선스 레지스트리는 프로토콜 내의 모든 라이선스 관련 상태를 저장합니다. 여기에는 [Programmable IP License (PIL💊)](/concepts/programmable-ip-license/overview)와 같은 새로운 라이선스 템플릿 등록, 개별 [IP Assets](/concepts/ip-asset/overview)에 라이선스 첨부, 파생작 등록 등과 같은 글로벌 상태 관리가 포함됩니다:
+
+```solidity LicenseRegistry.sol
+/// @dev Storage of the LicenseRegistry
+/// @param defaultLicenseTemplate The default license template address
+/// @param defaultLicenseTermsId The default license terms ID
+/// @param registeredLicenseTemplates Registered license templates
+/// @param registeredRoyaltyPolicies Registered royalty policies
+/// @param registeredCurrencyTokens Registered currency tokens
+/// @param parentIps Mapping of parent IPs to derivative IPs
+/// @param parentLicenseTerms Mapping of parent IPs to license terms used to link to derivative IPs
+/// @param childIps Mapping of derivative IPs to parent IPs
+/// @param attachedLicenseTerms Mapping of attached license terms to IP IDs
+/// @param licenseTemplates Mapping of license templates to IP IDs
+/// @param expireTimes Mapping of IP IDs to expire times
+/// @param licensingConfigs Mapping of minting license configs to a licenseTerms of an IP
+/// @dev Storage structure for the LicenseRegistry
+/// @custom:storage-location erc7201:story-protocol.LicenseRegistry
+struct LicenseRegistryStorage {
+  address defaultLicenseTemplate;
+  uint256 defaultLicenseTermsId;
+  mapping(address licenseTemplate => bool isRegistered) registeredLicenseTemplates;
+  mapping(address childIpId => EnumerableSet.AddressSet parentIpIds) parentIps;
+  mapping(address childIpId => mapping(address parentIpId => uint256 licenseTermsId)) parentLicenseTerms;
+  mapping(address parentIpId => EnumerableSet.AddressSet childIpIds) childIps;
+  mapping(address ipId => EnumerableSet.UintSet licenseTermsIds) attachedLicenseTerms;
+  mapping(address ipId => address licenseTemplate) licenseTemplates;
+  mapping(bytes32 ipLicenseHash => Licensing.LicensingConfig licensingConfig) licensingConfigs;
+}
+```
+
+### 주요 함수
+
+```solidity LicenseRegistry.sol
+function attachLicenseTermsToIp(address ipId, address licenseTemplate, uint256 licenseTermsId) external onlyLicensingModule
+```
+
+이 함수를 사용하면 IP Asset에 라이선스 조건을 첨부할 수 있습니다.
+
+```solidity LicenseRegistry.sol
+function registerDerivativeIp(address childIpId, address[] calldata parentIpIds, address licenseTemplate, uint256[] calldata licenseTermsIds, bool isUsingLicenseToken) external onlyLicensingModule
+```
+
+이 함수를 사용하면 IP Asset을 다른 IP Asset의 파생작으로 등록할 수 있어, [💸 Royalty Module](/concepts/royalty-module/overview)에서 청구 가능한 로열티 흐름과 같은 기능을 활용할 수 있습니다.
