@@ -178,9 +178,14 @@
                         "pages": [
                           "concepts/royalty-module/overview",
                           "concepts/royalty-module/ip-royalty-vault",
-                          "concepts/royalty-module/liquid-absolute-percentage",
-                          "concepts/royalty-module/liquid-relative-percentage",
-                          "concepts/royalty-module/external-royalty-policies"
+                          {
+                            "group": "Royalty Policies",
+                            "pages": [
+                              "concepts/royalty-module/liquid-absolute-percentage",
+                              "concepts/royalty-module/liquid-relative-percentage",
+                              "concepts/royalty-module/external-royalty-policies"
+                            ]
+                          }
                         ]
                       },
                       {

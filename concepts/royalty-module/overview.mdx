@@ -118,7 +118,7 @@ There are two common scenarios when revenue flow would be initiated:
 | Minting a License       | When someone mints a license to use your IP, or registers a derivative of an IP Asset (which requires having a license) | `mintLicenseTokens`, `registerDerviative` |
 | Paying Revenue Directly | When someone directly sends revenue to an IP Asset either as a tip or to forward due revenue to the chain.              | `payRoyaltyOnBehalf`                      |
 
-Let's see what happens when IP Asset 3 earns money using the `payRoyaltyOnBehalf` function.
+Let's see what happens when IP Asset 3 earns money using the [payRoyaltyOnBehalf](/sdk-reference/royalty#payroyaltyonbehalf) function.
 
 <Steps>
 
@@ -171,7 +171,15 @@ Next, the Royalty Module will split the payment based on the **royalty stack** (
 
 ## Claiming Revenue
 
-The above walked through what happens when a payment is made. However, in order to actually get the revenue, the revenue must be claimed to whoever holds the Royalty Tokens!
+The above walked through what happens when a payment is made. However, in order to actually get the revenue, the revenue must be claimed to whoever holds the Royalty Tokens.
+
+<Accordion title="Why do we separate payment and claiming processes?" icon="face-thinking">
+
+Imagine an IP graph with thousands of ancestors. If we were to pay, distribute, and claim all at once, the transaction would be too large to handle. By separating the payment and claiming processes, we can break down the process into smaller chunks that are more gas efficient.
+
+</Accordion>
+
+Claiming revenue can be done with the [claimAllRevenue](/sdk-reference/royalty#claimallrevenue) function. Let's see how it works.
 
 <Note>
 
