@@ -10,6 +10,8 @@ description: Used to mint a new SPG collection for use with Story.
 - createNFTCollection
 - getMintFeeToken
 - getMintFee
+- setTokenURI
+- getTokenURI
 
 ### createNFTCollection
 
@@ -131,3 +133,80 @@ const mintFee = await client.nftClient.getMintFee("0x01");
 ```
 
 </CodeGroup>
+
+### setTokenURI
+
+Sets the token URI for a given token.
+
+| Method        | Type                                                            |
+| ------------- | --------------------------------------------------------------- |
+| `setTokenURI` | `(request: SetTokenURIRequest) => Promise<TransactionResponse>` |
+
+Parameters:
+
+- `request.spgNftContract`: The address of the NFT contract.
+- `request.tokenId`: The ID of the token.
+- `request.tokenURI`: The URI to set.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+const response = await client.nftClient.setTokenURI({
+  spgNftContract: "0x01",
+  tokenId: 1,
+  tokenURI:
+    "https://ipfs.io/ipfs/QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk",
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type SetTokenURIRequest = {
+  spgNftContract: Address;
+  tokenId: bigint | number;
+  tokenURI: string;
+  txOptions?: TxOptions;
+};
+```
+
+```typescript Response Type
+export type TransactionResponse = {
+  txHash: Hex;
+  /** Transaction receipt, only available if waitForTransaction is set to true */
+  receipt?: TransactionReceipt;
+};
+```
+
+</CodeGroup>
+
+### getTokenURI
+
+Returns the token URI for a given token.
+
+| Method        | Type                                               |
+| ------------- | -------------------------------------------------- |
+| `getTokenURI` | `(request: GetTokenURIRequest) => Promise<string>` |
+
+Parameters:
+
+- `request.spgNftContract`: The address of the SPG NFT contract.
+- `request.tokenId`: The ID of the token.
+
+<CodeGroup>
+
+```typescript TypeScript
+const tokenURI = await client.nftClient.getTokenURI({
+  spgNftContract: "0x01",
+  tokenId: 1,
+});
+```
+
+</CodeGroup>
+
+```typescript Request Type
+export type GetTokenURIRequest = {
+  spgNftContract: Address;
+  tokenId: bigint | number;
+};
+```
