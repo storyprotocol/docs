@@ -10861,8 +10861,9 @@ PILTerms({
 
 ```typescript TypeScript
 import { zeroAddress } from "viem";
+import { LicenseTerms } from "@story-protocol/core-sdk";
 
-const nonCommercialSocialRemix = {
+const nonCommercialSocialRemix: LicenseTerms = {
   transferable: true,
   royaltyPolicy: zeroAddress,
   defaultMintingFee: 0n,
@@ -10943,8 +10944,9 @@ PILTerms({
 
 ```typescript TypeScript
 import { zeroAddress, parseEther } from "viem";
+import { LicenseTerms } from "@story-protocol/core-sdk";
 
-const commercialUse = {
+const commercialUse: LicenseTerms = {
   transferable: true,
   royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
   defaultMintingFee: MINTING_FEE, // ex. parseEther("1") (which means it costs 1 $WIP to mint)
@@ -11030,8 +11032,9 @@ PILTerms({
 
 ```typescript TypeScript
 import { zeroAddress, parseEther } from "viem";
+import { LicenseTerms } from "@story-protocol/core-sdk";
 
-const commercialRemix = {
+const commercialRemix: LicenseTerms = {
   transferable: true,
   royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
   defaultMintingFee: MINTING_FEE, // ex. parseEther("1") (which means it costs 1 $WIP to mint)
@@ -11113,8 +11116,9 @@ PILTerms({
 
 ```typescript TypeScript
 import { zeroAddress } from "viem";
+import { LicenseTerms } from "@story-protocol/core-sdk";
 
-const creativeCommonsAttribution = {
+const creativeCommonsAttribution: LicenseTerms = {
   transferable: true,
   royaltyPolicy: ROYALTY_POLICY, // ex. RoyaltyPolicyLAP address
   defaultMintingFee: 0n,
