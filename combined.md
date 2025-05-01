@@ -11,6 +11,9 @@
 - registerCommercialUsePIL
 - registerCommercialRemixPIL
 - getLicenseTerms
+- predictMintingLicenseFee
+- setLicensingConfig
+- getLicensingConfig
 
 ### attachLicenseTerms
 
@@ -498,6 +501,76 @@ export type SetLicensingConfigResponse = {
   success?: boolean;
 };
 ```
+
+### getLicensingConfig
+
+Gets the licensing configuration for a specific license terms of an IP.
+
+| Method               | Type                                                      |
+| -------------------- | --------------------------------------------------------- |
+| `getLicensingConfig` | `(request: GetLicensingConfigRequest) => LicensingConfig` |
+
+Parameters:
+
+- `request.ipId`: The address of the IP for which the configuration is being set.
+- `request.licenseTermsId`: The ID of the license terms within the license template.
+- `request.licenseTemplate`: \[Optional] The address of the license template used.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+const licensingConfig = await client.license.getLicensingConfig({
+  ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+  licenseTermsId: 1,
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type GetLicensingConfigRequest = {
+  /** The address of the IP for which the configuration is being set. */
+  ipId: Address;
+  /** The ID of the license terms within the license template. */
+  licenseTermsId: number | bigint;
+  /**
+   * The address of the license template.
+   * Defaults to {@link https://docs.story.foundation/docs/programmable-ip-license | PIL} address if not provided.
+   */
+  licenseTemplate?: Address;
+};
+```
+
+```typescript Response Type
+export type LicensingConfig = {
+  /** Whether the licensing configuration is active. If false, the configuration is ignored. */
+  isSet: boolean;
+  /** The minting fee to be paid when minting license tokens. */
+  mintingFee: bigint;
+  /**
+   * The licensingHook is an address to a smart contract that implements the `ILicensingHook` interface.
+   * This contract's `beforeMintLicenseTokens` function is executed before a user mints a License Token,
+   * allowing for custom validation or business logic to be enforced during the minting process.
+   * For detailed documentation on licensing hook, visit {@link https://docs.story.foundation/concepts/hooks#licensing-hooks}
+   */
+  licensingHook: Address;
+  /**
+   * The data to be used by the licensing hook.
+   * Set to a zero hash if no data is provided.
+   */
+  hookData: Hex;
+  /** The commercial revenue share percentage (from 0 to 100%, represented as 100_000_000). */
+  commercialRevShare: number;
+  /** Whether the licensing is disabled or not. If this is true, then no licenses can be minted and no more derivatives can be attached at all. */
+  disabled: boolean;
+  /** The minimum percentage of the group’s reward share (from 0 to 100%, represented as 100_000_000) that can be allocated to the IP when it is added to the group. */
+  expectMinimumGroupRewardShare: number;
+  /** The address of the expected group reward pool. The IP can only be added to a group with this specified reward pool address, or zero address if the IP does not want to be added to any group. */
+  expectGroupRewardPool: Address;
+};
+```
+
+</CodeGroup>
 
 
 # Royalty
@@ -2876,7 +2949,7 @@ If you only have a `dispute_id`, call `dispute_id_to_assertion_id` to get the `a
 
 <Warning>
   You will need $WIP that the IP owner will have to deposit themselves using the
-  wip module.
+  `deposit` function in the [WIP Client](/sdk-reference/python/wipclient).
 </Warning>
 
 | Method              |
@@ -5204,6 +5277,8 @@ export type CommonRegistrationResponse = {
 - createNFTCollection
 - getMintFeeToken
 - getMintFee
+- setTokenURI
+- getTokenURI
 
 ### createNFTCollection
 
@@ -5325,6 +5400,83 @@ const mintFee = await client.nftClient.getMintFee("0x01");
 ```
 
 </CodeGroup>
+
+### setTokenURI
+
+Sets the token URI for a given token.
+
+| Method        | Type                                                            |
+| ------------- | --------------------------------------------------------------- |
+| `setTokenURI` | `(request: SetTokenURIRequest) => Promise<TransactionResponse>` |
+
+Parameters:
+
+- `request.spgNftContract`: The address of the NFT contract.
+- `request.tokenId`: The ID of the token.
+- `request.tokenURI`: The URI to set.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+const response = await client.nftClient.setTokenURI({
+  spgNftContract: "0x01",
+  tokenId: 1,
+  tokenURI:
+    "https://ipfs.io/ipfs/QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk",
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type SetTokenURIRequest = {
+  spgNftContract: Address;
+  tokenId: bigint | number;
+  tokenURI: string;
+  txOptions?: TxOptions;
+};
+```
+
+```typescript Response Type
+export type TransactionResponse = {
+  txHash: Hex;
+  /** Transaction receipt, only available if waitForTransaction is set to true */
+  receipt?: TransactionReceipt;
+};
+```
+
+</CodeGroup>
+
+### getTokenURI
+
+Returns the token URI for a given token.
+
+| Method        | Type                                               |
+| ------------- | -------------------------------------------------- |
+| `getTokenURI` | `(request: GetTokenURIRequest) => Promise<string>` |
+
+Parameters:
+
+- `request.spgNftContract`: The address of the SPG NFT contract.
+- `request.tokenId`: The ID of the token.
+
+<CodeGroup>
+
+```typescript TypeScript
+const tokenURI = await client.nftClient.getTokenURI({
+  spgNftContract: "0x01",
+  tokenId: 1,
+});
+```
+
+</CodeGroup>
+
+```typescript Request Type
+export type GetTokenURIRequest = {
+  spgNftContract: Address;
+  tokenId: bigint | number;
+};
+```
 
 
 # "Implementing ATCP/IP"
