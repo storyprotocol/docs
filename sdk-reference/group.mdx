@@ -13,6 +13,11 @@ description: GroupClient allows you to create groups and add IP Assets to them.
 - registerGroupAndAttachLicense
 - registerGroupAndAttachLicenseAndAddIps
 - collectAndDistributeGroupRoyalties
+- addIpsToGroup
+- getClaimableReward
+- removeIpsFromGroup
+- claimReward
+- collectRoyalties
 
 ### registerGroup
 
@@ -230,6 +235,220 @@ export type CollectAndDistributeGroupRoyaltiesResponse = {
      */
     amountAfterFee: bigint;
   }[];
+};
+```
+
+</CodeGroup>
+
+### addIpsToGroup
+
+Adds IPs to a group. The function must be called by the Group IP owner or an authorized operator.
+
+| Method          | Type                                                      |
+| --------------- | --------------------------------------------------------- |
+| `addIpsToGroup` | `(request: AddIpRequest) => Promise<TransactionResponse>` |
+
+Parameters:
+
+- `request.groupIpId`: The ID of the group IP to add the IPs to.
+- `request.ipIds`: The addresses of the IPs to add to the Group IP. IP IDs must be attached to the group IP license terms.
+- `request.maxAllowedRewardSharePercentage`: [Optional] The maximum reward share percentage that can be allocated to each member IP. Must be between 0 and 100 (where 100% represents 100_000_000). Default is 100.
+- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+const response = await client.groupClient.addIpsToGroup({
+  groupIpId: "0x01",
+  ipIds: ["0x02", "0x03"],
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type AddIpRequest = {
+  groupIpId: Address;
+  ipIds: Address[];
+  maxAllowedRewardSharePercentage?: number;
+  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+};
+```
+
+```typescript Response Type
+export type TransactionResponse = {
+  txHash: Hash;
+  receipt?: TransactionReceipt;
+};
+```
+
+</CodeGroup>
+
+### getClaimableReward
+
+Returns the available reward for each IP in the group.
+
+| Method               | Type                                                        |
+| -------------------- | ----------------------------------------------------------- |
+| `getClaimableReward` | `(request: GetClaimableRewardRequest) => Promise<bigint[]>` |
+
+Parameters:
+
+- `request.groupIpId`: The ID of the group IP.
+- `request.currencyToken`: The address of the currency (revenue) token to check.
+- `request.memberIpIds`: The IDs of the member IPs to check rewards for.
+
+<CodeGroup>
+
+```typescript TypeScript
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+const rewards = await client.groupClient.getClaimableReward({
+  groupIpId: "0x01",
+  currencyToken: WIP_TOKEN_ADDRESS,
+  memberIpIds: ["0x02", "0x03"],
+});
+```
+
+```typescript Request Type
+export type GetClaimableRewardRequest = {
+  groupIpId: Address;
+  currencyToken: Address;
+  memberIpIds: Address[];
+};
+```
+
+```typescript Response Type
+// Returns an array of bigint values representing the claimable reward amount for each member IP
+type Response = bigint[];
+```
+
+</CodeGroup>
+
+### removeIpsFromGroup
+
+Removes IPs from a group. The function must be called by the Group IP owner or an authorized operator.
+
+| Method               | Type                                                                   |
+| -------------------- | ---------------------------------------------------------------------- |
+| `removeIpsFromGroup` | `(request: RemoveIpsFromGroupRequest) => Promise<TransactionResponse>` |
+
+Parameters:
+
+- `request.groupIpId`: The ID of the group IP to remove the IPs from.
+- `request.ipIds`: The addresses of the IPs to remove from the Group IP.
+- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+const response = await client.groupClient.removeIpsFromGroup({
+  groupIpId: "0x01",
+  ipIds: ["0x02", "0x03"],
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type RemoveIpsFromGroupRequest = {
+  groupIpId: Address;
+  ipIds: Address[];
+  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+};
+```
+
+```typescript Response Type
+export type TransactionResponse = {
+  txHash: Hash;
+  receipt?: TransactionReceipt;
+};
+```
+
+</CodeGroup>
+
+### claimReward
+
+Claims reward for member IPs in a group. Emits an on-chain [ClaimedReward](https://github.com/storyprotocol/protocol-core-v1/blob/v1.3.1/contracts/interfaces/modules/grouping/IGroupingModule.sol#L31) event.
+
+| Method        | Type                                                            |
+| ------------- | --------------------------------------------------------------- |
+| `claimReward` | `(request: ClaimRewardRequest) => Promise<ClaimRewardResponse>` |
+
+Parameters:
+
+- `request.groupIpId`: The ID of the group IP.
+- `request.currencyToken`: The address of the currency (revenue) token to claim.
+- `request.memberIpIds`: The IDs of the member IPs to distribute the rewards to.
+- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+const response = await client.groupClient.claimReward({
+  groupIpId: "0x01",
+  currencyToken: WIP_TOKEN_ADDRESS,
+  memberIpIds: ["0x02", "0x03"],
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type ClaimRewardRequest = {
+  groupIpId: Address;
+  currencyToken: Address;
+  memberIpIds: Address[];
+  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+};
+```
+
+```typescript Response Type
+export type ClaimRewardResponse = {
+  txHash: Hash;
+  claimedReward?: GroupingModuleClaimedRewardEvent[];
+};
+```
+
+</CodeGroup>
+
+### collectRoyalties
+
+Collects royalties into the pool, making them claimable by group member IPs. Emits an on-chain [CollectedRoyaltiesToGroupPool](https://github.com/storyprotocol/protocol-core-v1/blob/v1.3.1/contracts/interfaces/modules/grouping/IGroupingModule.sol#L38) event.
+
+| Method             | Type                                                                      |
+| ------------------ | ------------------------------------------------------------------------- |
+| `collectRoyalties` | `(request: CollectRoyaltiesRequest) => Promise<CollectRoyaltiesResponse>` |
+
+Parameters:
+
+- `request.groupIpId`: The ID of the group IP.
+- `request.currencyToken`: The address of the currency (revenue) token to collect.
+- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+const response = await client.groupClient.collectRoyalties({
+  groupIpId: "0x01",
+  currencyToken: WIP_TOKEN_ADDRESS,
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type CollectRoyaltiesRequest = {
+  groupIpId: Address;
+  currencyToken: Address;
+  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+};
+```
+
+```typescript Response Type
+export type CollectRoyaltiesResponse = {
+  txHash: Hash;
+  collectedRoyalties?: bigint;
 };
 ```
 
