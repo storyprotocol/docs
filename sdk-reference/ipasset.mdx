@@ -18,6 +18,7 @@ description: IPAssetClient allows you to create, get, and list IP Assets within 
 - registerPilTermsAndAttach
 - mintAndRegisterIpAndMakeDerivativeWithLicenseTokens
 - registerIpAndMakeDerivativeWithLicenseTokens
+- batchRegisterIpAssetsWithOptimizedWorkflows
 
 ### Navigating Around the IPAssetClient
 
@@ -960,6 +961,91 @@ export type CommonRegistrationResponse = {
   tokenId?: bigint;
   receipt?: TransactionReceipt;
 };
+```
+
+</CodeGroup>
+
+## batchRegisterIpAssetsWithOptimizedWorkflows
+
+Batch register multiple IP assets in optimized transactions, supporting various registration methods. This method optimizes transaction processing by grouping related workflow requests together and intelligently selecting between multicall3 and SPG's multicall based on compatibility.
+
+The batching strategy significantly reduces gas costs and improves transaction throughput by minimizing the number of separate blockchain transactions. It also handles complex workflows like royalty token distribution automatically.
+
+The method supports automatic token handling for minting fees:
+
+- If the wallet's IP token balance is insufficient to cover minting fees, it automatically wraps native IP tokens into WIP tokens
+- It checks allowances for all required spenders and automatically approves them if their current allowance is lower than needed
+- These automatic processes can be configured through the `wipOptions` parameter
+
+Supported registration methods:
+
+- mintAndRegisterIpAndMakeDerivative
+- mintAndRegisterIpAssetWithPilTerms
+- mintAndRegisterIpAndAttachPILTermsAndDistributeRoyaltyTokens
+- mintAndRegisterIpAndMakeDerivativeAndDistributeRoyaltyTokens
+- registerDerivativeIpAndAttachLicenseTermsAndDistributeRoyaltyTokens
+- registerIpAndAttachPilTerms
+- registerIPAndAttachLicenseTermsAndDistributeRoyaltyTokens
+- registerDerivativeIp
+
+| Method                                        | Type                                                                                                                            |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `batchRegisterIpAssetsWithOptimizedWorkflows` | `(request: BatchRegisterIpAssetsWithOptimizedWorkflowsRequest) => Promise<BatchRegisterIpAssetsWithOptimizedWorkflowsResponse>` |
+
+Parameters:
+
+- `request.requests`: Array of registration requests. Each request can be any of the supported registration method types.
+- `request.wipOptions`: [Optional] Configuration options for WIP token handling.
+- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { toHex } from "viem";
+
+const response =
+  await client.ipAsset.batchRegisterIpAssetsWithOptimizedWorkflows({
+    requests: [
+      // Example of a mintAndRegisterIpAssetWithPilTerms request
+      {
+        spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+        allowDuplicates: true,
+        ipMetadata: {
+          ipMetadataURI: "test-uri-1",
+          ipMetadataHash: toHex("test-metadata-hash-1", { size: 32 }),
+          nftMetadataHash: toHex("test-nft-metadata-hash-1", { size: 32 }),
+          nftMetadataURI: "test-nft-uri-1",
+        },
+      },
+      // Example of a registerDerivativeIp request
+      {
+        nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73",
+        tokenId: "127",
+        derivData: {
+          parentIpIds: ["0xd142822Dc1674154EaF4DDF38bbF7EF8f0D8ECe4"],
+          licenseTermsIds: ["1"],
+        },
+      },
+    ],
+    txOptions: { waitForTransaction: true },
+  });
+
+console.log("Batch registration results:", response.registrationResults);
+if (response.distributeRoyaltyTokensTxHashes) {
+  console.log(
+    "Royalty distribution tx hashes:",
+    response.distributeRoyaltyTokensTxHashes
+  );
+}
+```
+
+```txt Request Type
+See the BatchRegistrationRequest type: https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/ipAsset.ts
+
+```
+
+```txt Response Type
+See the BatchRegistrationResponse type: https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/ipAsset.ts
 ```
 
 </CodeGroup>
