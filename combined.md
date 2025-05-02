@@ -1539,6 +1539,11 @@ const result = await client.dispute.disputeIdToAssertionId(1);
 - registerGroupAndAttachLicense
 - registerGroupAndAttachLicenseAndAddIps
 - collectAndDistributeGroupRoyalties
+- addIpsToGroup
+- getClaimableReward
+- removeIpsFromGroup
+- claimReward
+- collectRoyalties
 
 ### registerGroup
 
@@ -1756,6 +1761,220 @@ export type CollectAndDistributeGroupRoyaltiesResponse = {
      */
     amountAfterFee: bigint;
   }[];
+};
+```
+
+</CodeGroup>
+
+### addIpsToGroup
+
+Adds IPs to a group. The function must be called by the Group IP owner or an authorized operator.
+
+| Method          | Type                                                      |
+| --------------- | --------------------------------------------------------- |
+| `addIpsToGroup` | `(request: AddIpRequest) => Promise<TransactionResponse>` |
+
+Parameters:
+
+- `request.groupIpId`: The ID of the group IP to add the IPs to.
+- `request.ipIds`: The addresses of the IPs to add to the Group IP. IP IDs must be attached to the group IP license terms.
+- `request.maxAllowedRewardSharePercentage`: [Optional] The maximum reward share percentage that can be allocated to each member IP. Must be between 0 and 100 (where 100% represents 100_000_000). Default is 100.
+- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+const response = await client.groupClient.addIpsToGroup({
+  groupIpId: "0x01",
+  ipIds: ["0x02", "0x03"],
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type AddIpRequest = {
+  groupIpId: Address;
+  ipIds: Address[];
+  maxAllowedRewardSharePercentage?: number;
+  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+};
+```
+
+```typescript Response Type
+export type TransactionResponse = {
+  txHash: Hash;
+  receipt?: TransactionReceipt;
+};
+```
+
+</CodeGroup>
+
+### getClaimableReward
+
+Returns the available reward for each IP in the group.
+
+| Method               | Type                                                        |
+| -------------------- | ----------------------------------------------------------- |
+| `getClaimableReward` | `(request: GetClaimableRewardRequest) => Promise<bigint[]>` |
+
+Parameters:
+
+- `request.groupIpId`: The ID of the group IP.
+- `request.currencyToken`: The address of the currency (revenue) token to check.
+- `request.memberIpIds`: The IDs of the member IPs to check rewards for.
+
+<CodeGroup>
+
+```typescript TypeScript
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+const rewards = await client.groupClient.getClaimableReward({
+  groupIpId: "0x01",
+  currencyToken: WIP_TOKEN_ADDRESS,
+  memberIpIds: ["0x02", "0x03"],
+});
+```
+
+```typescript Request Type
+export type GetClaimableRewardRequest = {
+  groupIpId: Address;
+  currencyToken: Address;
+  memberIpIds: Address[];
+};
+```
+
+```typescript Response Type
+// Returns an array of bigint values representing the claimable reward amount for each member IP
+type Response = bigint[];
+```
+
+</CodeGroup>
+
+### removeIpsFromGroup
+
+Removes IPs from a group. The function must be called by the Group IP owner or an authorized operator.
+
+| Method               | Type                                                                   |
+| -------------------- | ---------------------------------------------------------------------- |
+| `removeIpsFromGroup` | `(request: RemoveIpsFromGroupRequest) => Promise<TransactionResponse>` |
+
+Parameters:
+
+- `request.groupIpId`: The ID of the group IP to remove the IPs from.
+- `request.ipIds`: The addresses of the IPs to remove from the Group IP.
+- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+const response = await client.groupClient.removeIpsFromGroup({
+  groupIpId: "0x01",
+  ipIds: ["0x02", "0x03"],
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type RemoveIpsFromGroupRequest = {
+  groupIpId: Address;
+  ipIds: Address[];
+  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+};
+```
+
+```typescript Response Type
+export type TransactionResponse = {
+  txHash: Hash;
+  receipt?: TransactionReceipt;
+};
+```
+
+</CodeGroup>
+
+### claimReward
+
+Claims reward for member IPs in a group. Emits an on-chain [ClaimedReward](https://github.com/storyprotocol/protocol-core-v1/blob/v1.3.1/contracts/interfaces/modules/grouping/IGroupingModule.sol#L31) event.
+
+| Method        | Type                                                            |
+| ------------- | --------------------------------------------------------------- |
+| `claimReward` | `(request: ClaimRewardRequest) => Promise<ClaimRewardResponse>` |
+
+Parameters:
+
+- `request.groupIpId`: The ID of the group IP.
+- `request.currencyToken`: The address of the currency (revenue) token to claim.
+- `request.memberIpIds`: The IDs of the member IPs to distribute the rewards to.
+- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+const response = await client.groupClient.claimReward({
+  groupIpId: "0x01",
+  currencyToken: WIP_TOKEN_ADDRESS,
+  memberIpIds: ["0x02", "0x03"],
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type ClaimRewardRequest = {
+  groupIpId: Address;
+  currencyToken: Address;
+  memberIpIds: Address[];
+  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+};
+```
+
+```typescript Response Type
+export type ClaimRewardResponse = {
+  txHash: Hash;
+  claimedReward?: GroupingModuleClaimedRewardEvent[];
+};
+```
+
+</CodeGroup>
+
+### collectRoyalties
+
+Collects royalties into the pool, making them claimable by group member IPs. Emits an on-chain [CollectedRoyaltiesToGroupPool](https://github.com/storyprotocol/protocol-core-v1/blob/v1.3.1/contracts/interfaces/modules/grouping/IGroupingModule.sol#L38) event.
+
+| Method             | Type                                                                      |
+| ------------------ | ------------------------------------------------------------------------- |
+| `collectRoyalties` | `(request: CollectRoyaltiesRequest) => Promise<CollectRoyaltiesResponse>` |
+
+Parameters:
+
+- `request.groupIpId`: The ID of the group IP.
+- `request.currencyToken`: The address of the currency (revenue) token to collect.
+- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+const response = await client.groupClient.collectRoyalties({
+  groupIpId: "0x01",
+  currencyToken: WIP_TOKEN_ADDRESS,
+  txOptions: { waitForTransaction: true },
+});
+```
+
+```typescript Request Type
+export type CollectRoyaltiesRequest = {
+  groupIpId: Address;
+  currencyToken: Address;
+  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
+};
+```
+
+```typescript Response Type
+export type CollectRoyaltiesResponse = {
+  txHash: Hash;
+  collectedRoyalties?: bigint;
 };
 ```
 
@@ -4321,6 +4540,7 @@ Additional utility and extra clients:
 - registerPilTermsAndAttach
 - mintAndRegisterIpAndMakeDerivativeWithLicenseTokens
 - registerIpAndMakeDerivativeWithLicenseTokens
+- batchRegisterIpAssetsWithOptimizedWorkflows
 
 ### Navigating Around the IPAssetClient
 
@@ -5263,6 +5483,91 @@ export type CommonRegistrationResponse = {
   tokenId?: bigint;
   receipt?: TransactionReceipt;
 };
+```
+
+</CodeGroup>
+
+## batchRegisterIpAssetsWithOptimizedWorkflows
+
+Batch register multiple IP assets in optimized transactions, supporting various registration methods. This method optimizes transaction processing by grouping related workflow requests together and intelligently selecting between multicall3 and SPG's multicall based on compatibility.
+
+The batching strategy significantly reduces gas costs and improves transaction throughput by minimizing the number of separate blockchain transactions. It also handles complex workflows like royalty token distribution automatically.
+
+The method supports automatic token handling for minting fees:
+
+- If the wallet's IP token balance is insufficient to cover minting fees, it automatically wraps native IP tokens into WIP tokens
+- It checks allowances for all required spenders and automatically approves them if their current allowance is lower than needed
+- These automatic processes can be configured through the `wipOptions` parameter
+
+Supported registration methods:
+
+- mintAndRegisterIpAndMakeDerivative
+- mintAndRegisterIpAssetWithPilTerms
+- mintAndRegisterIpAndAttachPILTermsAndDistributeRoyaltyTokens
+- mintAndRegisterIpAndMakeDerivativeAndDistributeRoyaltyTokens
+- registerDerivativeIpAndAttachLicenseTermsAndDistributeRoyaltyTokens
+- registerIpAndAttachPilTerms
+- registerIPAndAttachLicenseTermsAndDistributeRoyaltyTokens
+- registerDerivativeIp
+
+| Method                                        | Type                                                                                                                            |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `batchRegisterIpAssetsWithOptimizedWorkflows` | `(request: BatchRegisterIpAssetsWithOptimizedWorkflowsRequest) => Promise<BatchRegisterIpAssetsWithOptimizedWorkflowsResponse>` |
+
+Parameters:
+
+- `request.requests`: Array of registration requests. Each request can be any of the supported registration method types.
+- `request.wipOptions`: [Optional] Configuration options for WIP token handling.
+- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+import { toHex } from "viem";
+
+const response =
+  await client.ipAsset.batchRegisterIpAssetsWithOptimizedWorkflows({
+    requests: [
+      // Example of a mintAndRegisterIpAssetWithPilTerms request
+      {
+        spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+        allowDuplicates: true,
+        ipMetadata: {
+          ipMetadataURI: "test-uri-1",
+          ipMetadataHash: toHex("test-metadata-hash-1", { size: 32 }),
+          nftMetadataHash: toHex("test-nft-metadata-hash-1", { size: 32 }),
+          nftMetadataURI: "test-nft-uri-1",
+        },
+      },
+      // Example of a registerDerivativeIp request
+      {
+        nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73",
+        tokenId: "127",
+        derivData: {
+          parentIpIds: ["0xd142822Dc1674154EaF4DDF38bbF7EF8f0D8ECe4"],
+          licenseTermsIds: ["1"],
+        },
+      },
+    ],
+    txOptions: { waitForTransaction: true },
+  });
+
+console.log("Batch registration results:", response.registrationResults);
+if (response.distributeRoyaltyTokensTxHashes) {
+  console.log(
+    "Royalty distribution tx hashes:",
+    response.distributeRoyaltyTokensTxHashes
+  );
+}
+```
+
+```txt Request Type
+See the BatchRegistrationRequest type: https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/ipAsset.ts
+
+```
+
+```txt Response Type
+See the BatchRegistrationResponse type: https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/ipAsset.ts
 ```
 
 </CodeGroup>
