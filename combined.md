@@ -26,8 +26,8 @@ Attaches license terms to an IP.
 Parameters:
 
 - `request.ipId`: The address of the IP to which the license terms are attached.
-- `request.licenseTemplate`: The address of the license template.
 - `request.licenseTermsId`: The ID of the license terms.
+- `request.licenseTemplate`: \[Optional] The address of the license template.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
@@ -512,7 +512,7 @@ Gets the licensing configuration for a specific license terms of an IP.
 
 Parameters:
 
-- `request.ipId`: The address of the IP for which the configuration is being set.
+- `request.ipId`: The address of the IP for which the configuration is being fetched.
 - `request.licenseTermsId`: The ID of the license terms within the license template.
 - `request.licenseTemplate`: \[Optional] The address of the license template used.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
