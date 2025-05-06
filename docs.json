@@ -316,14 +316,34 @@
                 "group": "Tutorials",
                 "pages": [
                   "developers/tutorials/overview",
-                  "developers/tutorials/finetune-images",
-                  "developers/tutorials/protect-dalle-ai-generated-images",
-                  "developers/tutorials/register-stability-images",
-                  "developers/tutorials/how-to-register-ip-on-story",
-                  "developers/tutorials/how-to-register-music-on-story",
-                  "developers/tutorials/how-to-tip-an-ip",
-                  "developers/tutorials/case-study-register-derivative-ippy",
-                  "developers/tutorials/privy-tutorial"
+                  {
+                    "group": "Registration",
+                    "pages": [
+                      "developers/tutorials/how-to-register-ip-on-story",
+                      "developers/tutorials/how-to-register-music-on-story",
+                      "developers/tutorials/case-study-register-derivative-ippy"
+                    ]
+                  },
+                  {
+                    "group": "Royalty",
+                    "pages": ["developers/tutorials/how-to-tip-an-ip"]
+                  },
+                  {
+                    "group": "AI-Themed",
+                    "pages": [
+                      "developers/tutorials/protect-dalle-ai-generated-images",
+                      "developers/tutorials/register-stability-images",
+                      "developers/tutorials/finetune-images"
+                    ]
+                  },
+                  {
+                    "group": "Wallet-less / Onboarding",
+                    "pages": ["developers/tutorials/privy-tutorial"]
+                  },
+                  {
+                    "group": "Miscellaneous",
+                    "pages": ["developers/tutorials/encode-func-data"]
+                  }
                 ]
               }
             ]
