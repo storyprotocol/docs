@@ -156,7 +156,7 @@ User=$USER
 Group=$GROUP
 ExecStart=${which cosmovisor} run run \
 --api-enable \
---api-address=0.0.0.0:1317
+--api-address=${API_ADDRESS}
 Restart=on-failure
 RestartSec=5s
 LimitNOFILE=65535
@@ -176,6 +176,8 @@ EOF
 # Enable the cosmovisor service
 sudo systemctl enable cosmovisor
 sudo systemctl daemon-reload
+
+sudo systemctl stop story
 
 
 # Start the cosmovisor service
