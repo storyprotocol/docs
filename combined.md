@@ -1,3 +1,77 @@
+# Governance
+
+As the steward of the Story ecosystem, the Story Foundation works in close alignment with $IP Tokenholders and the broader ecosystem. The Story Foundation supports the Story DAO by providing operational support, executing tokenholder governance decisions, and overseeing strategic development and growth of the overall ecosystem. This relationship is designed to empower decentralized governance while preserving efficiency and stability throughout the Story ecosystem.
+
+## Story DAO's Constitution
+
+<CardGroup cols={1}>
+  <Card
+    title="Story DAO Constitution"
+    href="https://story.foundation/constitution.pdf"
+    icon="scroll"
+    color="#ccb092"
+  >
+    Read the entire Story DAO constitution.
+  </Card>
+</CardGroup>
+
+## Story Foundation’s Role in Governance
+
+<Accordion title="Strategic Grants" icon="money-check-dollar">
+  Provide **strategic grants** to align with innovation via partner projects
+  including, but not limited to, infrastructure providers, application
+  developers, artists, creators, brand partnerships, creative studios, and
+  strategic growth partners.
+</Accordion>
+
+<Accordion title="Network Security" icon="file-shield">
+  **Promote network security** by creating a security council and appointing
+  members to serve on this council.
+</Accordion>
+
+<Accordion title="Implement Proposals" icon="scroll">
+  Developing the ecosystem and protocol by **implementing proposals** of the
+  Story DAO that are approved in accordance with the process outlined in the
+  Story DAO Constitution and engaging parties to build apps. This may include
+  funding research, public education, and establishing grant programs.
+</Accordion>
+
+<Accordion title="Educational Initiatives / Events" icon="book">
+  Organizing **educational initiatives and hosting events** to increase
+  awareness of and promote the Story Network, Story Protocol and ecosystem.
+</Accordion>
+
+<Accordion title="Decentralization" icon="globe">
+  Advocating for and **supporting increased autonomy and decentralization** of
+  the Story DAO.
+</Accordion>
+
+<Accordion title="Treasury Management" icon="piggy-bank">
+  **Treasury management** and oversight to foster long-term ecosystem growth and
+  support the Foundation’s ongoing mission.
+</Accordion>
+
+
+# Story Protocol Disclaimer
+
+The Foundation may directly or indirectly purchase and sell Story tokens ($IP) at any time and
+from time to time in its sole discretion for any reason and it has previously engaged in such
+purchase and sale transactions. Such purchases and sales may be made through open market
+transactions, OTC trades, block trades, in privately negotiated transactions or by other means.
+The Foundation may also, from time to time, enter into programmatic sales and/or purchase
+plans with respect to the sale and/or purchase of Story tokens. The volume, price, timing and
+manner of any sales and purchases and other parameters will be determined by the Foundation in
+its sole discretion. These transactions may involve the Foundation selling Story tokens at a price
+(or at an average price) that is greater than the price (or the average price) at which the
+Foundation purchases Story tokens in close proximity to one another or over time. This notice
+does not obligate the Foundation to sell or purchase any specific amount of Story tokens or
+within any specific time period and, if any such purchases or sales are commenced, may be
+modified, suspended or discontinued at any time without notice at the discretion of the
+Foundation. **The Foundation will enter into such transactions on a proprietary basis for its own
+benefit and account and, for the avoidance of doubt, will not enter into any such transactions as
+agent or otherwise on behalf of, or for the benefit of, any other person.**
+
+
 # "FAQ"
 
 <AccordionGroup>
@@ -143,60 +217,6 @@ Ultimately Story is not a system built to prevent bad actors, rather it is meant
 </Accordion>
 
 </AccordionGroup>
-
-
-# Governance
-
-As the steward of the Story ecosystem, the Story Foundation works in close alignment with $IP Tokenholders and the broader ecosystem. The Story Foundation supports the Story DAO by providing operational support, executing tokenholder governance decisions, and overseeing strategic development and growth of the overall ecosystem. This relationship is designed to empower decentralized governance while preserving efficiency and stability throughout the Story ecosystem.
-
-## Story DAO's Constitution
-
-<CardGroup cols={1}>
-  <Card
-    title="Story DAO Constitution"
-    href="https://story.foundation/constitution.pdf"
-    icon="scroll"
-    color="#ccb092"
-  >
-    Read the entire Story DAO constitution.
-  </Card>
-</CardGroup>
-
-## Story Foundation’s Role in Governance
-
-<Accordion title="Strategic Grants" icon="money-check-dollar">
-  Provide **strategic grants** to align with innovation via partner projects
-  including, but not limited to, infrastructure providers, application
-  developers, artists, creators, brand partnerships, creative studios, and
-  strategic growth partners.
-</Accordion>
-
-<Accordion title="Network Security" icon="file-shield">
-  **Promote network security** by creating a security council and appointing
-  members to serve on this council.
-</Accordion>
-
-<Accordion title="Implement Proposals" icon="scroll">
-  Developing the ecosystem and protocol by **implementing proposals** of the
-  Story DAO that are approved in accordance with the process outlined in the
-  Story DAO Constitution and engaging parties to build apps. This may include
-  funding research, public education, and establishing grant programs.
-</Accordion>
-
-<Accordion title="Educational Initiatives / Events" icon="book">
-  Organizing **educational initiatives and hosting events** to increase
-  awareness of and promote the Story Network, Story Protocol and ecosystem.
-</Accordion>
-
-<Accordion title="Decentralization" icon="globe">
-  Advocating for and **supporting increased autonomy and decentralization** of
-  the Story DAO.
-</Accordion>
-
-<Accordion title="Treasury Management" icon="piggy-bank">
-  **Treasury management** and oversight to foster long-term ecosystem growth and
-  support the Foundation’s ongoing mission.
-</Accordion>
 
 
 # "Introduction"
