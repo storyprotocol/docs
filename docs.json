@@ -589,11 +589,11 @@
             ]
           },
           {
-            "tab": "Governance",
+            "tab": "Foundation",
             "groups": [
               {
-                "group": "Get Started",
-                "pages": ["governance"]
+                "group": "Overview",
+                "pages": ["foundation/governance", "foundation/disclaimer"]
               }
             ]
           }
