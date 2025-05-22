@@ -67,9 +67,9 @@ Foundation purchases Story tokens in close proximity to one another or over time
 does not obligate the Foundation to sell or purchase any specific amount of Story tokens or
 within any specific time period and, if any such purchases or sales are commenced, may be
 modified, suspended or discontinued at any time without notice at the discretion of the
-Foundation. **The Foundation will enter into such transactions on a proprietary basis for its own
+Foundation. The Foundation will enter into such transactions on a proprietary basis for its own
 benefit and account and, for the avoidance of doubt, will not enter into any such transactions as
-agent or otherwise on behalf of, or for the benefit of, any other person.**
+agent or otherwise on behalf of, or for the benefit of, any other person.
 
 
 # "FAQ"
@@ -213,6 +213,11 @@ We will support a few ways, including the [❌ Dispute Module](/concepts/dispute
 A more nuanced answer to this (one that we're constantly exploring/improving upon) is there may be additional ways to deter IP infringement. For example, a staking validation mechanism where users could stake tokens on a piece of IP being valid, and if it were to be disputed and marked as copyright, the tokens get slashed and distributed to the creator who was harmed. Additionally we've thought of introducing external IP infringement detection services directly into our L1 at the lowest level that could flag or automatically mark IP as potential infringement the moment its registered.
 
 Ultimately Story is not a system built to prevent bad actors, rather it is meant to help facilitate honest actors to more easily register their IP, remix from others, and set proper terms for their work. The protocol is permissionless and stopping bad actors entirely would be near impossible, but we can try to disincentivize them as best we can. Much like how the pirating of media plummeted when Apple Music, Spotify, and Netflix made such media more accessible by creating a "path of least resistance", we see a similar future with Story & IP.
+
+</Accordion>
+
+<Accordion title="What are the disclaimers?">
+View the [disclaimers](/foundation/disclaimer).
 
 </Accordion>
 
