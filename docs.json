@@ -240,6 +240,10 @@
                   "concepts/programmable-ip-license/pil-flavors",
                   "concepts/programmable-ip-license/how-does-story-protect-ip"
                 ]
+              },
+              {
+                "group": "Notices",
+                "pages": ["foundation/disclaimer"]
               }
             ]
           },
