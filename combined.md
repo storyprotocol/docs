@@ -18892,9 +18892,9 @@ export type RegisterPILResponse = {
 
 Gets License Terms of the given ID.
 
-| Method            | Type                                 |           |                                                       |
-| :---------------- | :----------------------------------- | :-------- | :---------------------------------------------------- |
-| `getLicenseTerms` | \`(selectedLicenseTermsId: string \\ | number \\ | bigint) => PiLicenseTemplateGetLicenseTermsResponse\` |
+| Method            | Type                                                                                               |
+| :---------------- | :------------------------------------------------------------------------------------------------- |
+| `getLicenseTerms` | `(selectedLicenseTermsId: string \| number \| bigint) => PiLicenseTemplateGetLicenseTermsResponse` |
 
 Parameters:
 
