@@ -243,7 +243,7 @@
               },
               {
                 "group": "Notices",
-                "pages": ["foundation/disclaimer"]
+                "pages": ["notices"]
               }
             ]
           },
