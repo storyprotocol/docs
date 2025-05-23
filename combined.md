@@ -1540,6 +1540,13 @@ The Story Attestation Service is undergoing active development. If you run any f
 
 The [💊 Programmable IP License (PIL)](/concepts/programmable-ip-license/overview) is very configurable, but we support popular pre-configured License Terms (also known as "flavors") for ease of use. We expect these to be the most popular options:
 
+<Frame>
+  <img
+    src="/images/concepts/pil-flavor-compare.png"
+    alt="PIL Flavor Comparison"
+  />
+</Frame>
+
 ## Flavor #1: Non-Commercial Social Remixing
 
 <Note>
