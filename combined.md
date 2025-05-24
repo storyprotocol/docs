@@ -55,7 +55,7 @@ As the steward of the Story ecosystem, the Story Foundation works in close align
 # Story Protocol Disclaimer
 
 The Foundation may directly or indirectly purchase and sell Story tokens ($IP) at any time and
-from time to time in its sole discretion for any reason and it has previously engaged in such
+from time to time in its sole discretion for any reason, including, without limitation, in order to support market stability, the Foundation's operations and long-term ecosystem growth, and it has previously engaged in such
 purchase and sale transactions. Such purchases and sales may be made through open market
 transactions, OTC trades, block trades, in privately negotiated transactions or by other means.
 The Foundation may also, from time to time, enter into programmatic sales and/or purchase
