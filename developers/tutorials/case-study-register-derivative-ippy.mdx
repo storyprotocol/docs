@@ -3,7 +3,7 @@ title: "Case Study: Registering a Derivative of Ippy"
 description: A Case Study showing how PiPi, a generative pfp project, registers derivatives of Story's official Ippy mascot.
 ---
 
-[PiPi](https://pfp3.io/pipi/mint) is a free generative pfp project on Story that lets you mint derivative artworks of [Ippy](https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42), Story's official mascot. Ippy has [Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing) terms attached, which means anyone can use it or create derivative works as long as it's not used commercially and proper attribution is shown.
+[PiPi](https://pfp3.io/pipi/mint) is a free generative pfp project on Story that lets you mint derivative artworks of [Ippy](https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42), Story's official mascot. Ippy has [Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#non-commercial-social-remixing) terms attached, which means anyone can use it or create derivative works as long as it's not used commercially and proper attribution is shown.
 
 <CardGroup cols={3}>
   <Card
@@ -295,7 +295,7 @@ This function calls `registerDerivative` in the [Licensing Module](/concepts/lic
 
 - `ipId`: the new `ipId` we got in step 3
 - `parentIpIds`: an array that contains Ippy's `ipId`, which is `0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42`
-- `licenseTermsIds`: an array containing `1`, which is the license term ID of [Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing). This means the derivative can use Ippy for free but not commercialize it
+- `licenseTermsIds`: an array containing `1`, which is the license term ID of [Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#non-commercial-social-remixing). This means the derivative can use Ippy for free but not commercialize it
 - `licenseTemplate`: the address of `PILicenseTemplate`, found in [Deployed Smart Contracts](/developers/deployed-smart-contracts)
 - `royaltyContext`: just set to zero address
 - `maxMintingFee`, `maxRts`, and `maxRevenueShare` can be set to 0. They don't do anything because the license terms are non-commercial.

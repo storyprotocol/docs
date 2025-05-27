@@ -15,8 +15,8 @@ description: TypeScript에서 IP 자산에 라이선스 약관을 첨부하는 �
 
 IP 자산에 조건을 첨부하기 위해 기존 IP 자산이 필요하지 않다는 점을 언급해야 합니다. 다음 두 가지 함수를 사용하여 **IP 등록 + 조건 생성 + 조건 첨부**를 동일한 함수에서 수행할 수 있습니다:
 
-* [mintAndRegisterIpAssetWithPilTerms](/sdk-reference/ipasset#mintandregisteripassetwithpilterms)
-* [registerIpAndAttachPilTerms](/sdk-reference/ipasset#registeripandattachpilterms)
+- [mintAndRegisterIpAssetWithPilTerms](/sdk-reference/ipasset#mintandregisteripassetwithpilterms)
+- [registerIpAndAttachPilTerms](/sdk-reference/ipasset#registeripandattachpilterms)
 
 ## 2. 라이선스 조건 등록
 
@@ -25,7 +25,11 @@ IP 자산에 조건을 첨부하기 위해 먼저 조건을 생성해 봅시다!
 [라이선스 조건](/concepts/licensing-module/license-terms)은 해당 조건을 가진 IP에서 발행된 라이선스에 대한 제한을 정의하는 구성 가능한 값의 집합입니다. 예를 들어, "이 라이선스를 발행하면 수익의 50%를 나와 공유해야 합니다." 전체 조건 세트는 [PIL 조건](/concepts/programmable-ip-license/pil-terms)에서 확인할 수 있습니다.
 
 <Note>
-  생성하려는 동일한 매개변수 세트에 대해 이미 프로토콜에 라이선스 조건이 존재하는 경우, 다시 생성할 필요가 없으며 함수는 단순히 기존의 `licenseTermsId`와 정의되지 않은 `txHash`를 반환합니다. 라이선스 조건은 프로토콜 전체에 적용되므로 `licenseTermsId`를 사용하여 기존 라이선스 조건을 사용할 수 있습니다.
+  생성하려는 동일한 매개변수 세트에 대해 이미 프로토콜에 라이선스 조건이
+  존재하는 경우, 다시 생성할 필요가 없으며 함수는 단순히 기존의
+  `licenseTermsId`와 정의되지 않은 `txHash`를 반환합니다. 라이선스 조건은
+  프로토콜 전체에 적용되므로 `licenseTermsId`를 사용하여 기존 라이선스 조건을
+  사용할 수 있습니다.
 </Note>
 
 아래는 새로운 조건을 생성하는 방법을 보여주는 코드 예시입니다:
@@ -33,7 +37,8 @@ IP 자산에 조건을 첨부하기 위해 먼저 조건을 생성해 봅시다!
 <Info>
   관련 문서:
 
-  [license.registerPILTerms](/sdk-reference/license#registerpilterms)
+[license.registerPILTerms](/sdk-reference/license#registerpilterms)
+
 </Info>
 
 ```typescript main.ts
@@ -86,23 +91,35 @@ main();
 새로운 조건을 등록하는 데 도움이 되는 편의 함수가 있습니다. [PIL 플레이버](/concepts/programmable-ip-license/pil-flavors)를 만들었는데, 이는 사용할 조건을 결정하는 데 도움이 되는 미리 구성된 인기 있는 라이선스 조건 조합입니다. 다음 편의 함수를 사용하여 이러한 PIL 플레이버를 보고 조건을 등록할 수 있습니다:
 
 <CardGroup cols={4}>
-  <Card title="비상업적 소셜 리믹스" href="/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing" icon="file">
+  <Card title="비상업적 소셜 리믹스" href="/concepts/programmable-ip-license/pil-flavors#non-commercial-social-remixing" icon="file">
     출처를 밝히는 무료 리믹스. 상업화 불가.
   </Card>
 
-  {" "}
+{" "}
 
-  <Card title="상업적 사용" href="/concepts/programmable-ip-license/pil-flavors#flavor-%232%3A-commercial-use" icon="file">
-    출처를 밝히고 라이선스 사용료를 지불하지만 수익을 공유할 필요는 없습니다.
-  </Card>
+{" "}
 
-  {" "}
+<Card
+  title="상업적 사용"
+  href="/concepts/programmable-ip-license/pil-flavors#commercial-use"
+  icon="file"
+>
+  출처를 밝히고 라이선스 사용료를 지불하지만 수익을 공유할 필요는 없습니다.
+</Card>
 
-  <Card title="상업적 리믹스" href="/concepts/programmable-ip-license/pil-flavors#flavor-%233%3A-commercial-remix" icon="file">
-    출처를 밝히고 라이선스 사용료를 지불하며 수익의 일정 비율을 지불합니다.
-  </Card>
+{" "}
 
-  <Card title="크리에이티브 커먼즈 저작자표시" href="/concepts/programmable-ip-license/pil-flavors#flavor-%234%3A-creative-commons-attribution" icon="file">
+{" "}
+
+<Card
+  title="상업적 리믹스"
+  href="/concepts/programmable-ip-license/pil-flavors#commercial-remix"
+  icon="file"
+>
+  출처를 밝히고 라이선스 사용료를 지불하며 수익의 일정 비율을 지불합니다.
+</Card>
+
+  <Card title="크리에이티브 커먼즈 저작자표시" href="/concepts/programmable-ip-license/pil-flavors#creative-commons-attribution" icon="file">
     출처를 밝히는 무료 리믹스 및 상업적 사용.
   </Card>
 </CardGroup>
@@ -114,7 +131,8 @@ main();
 <Info>
   관련 문서:
 
-  [license.attachLicenseTerms](/sdk-reference/license#attachlicenseterms)
+[license.attachLicenseTerms](/sdk-reference/license#attachlicenseterms)
+
 </Info>
 
 ```typescript main.ts
@@ -152,8 +170,8 @@ main();
 
 그리고 처음에 언급했듯이, 다음 두 가지 함수를 사용하여 **IP 등록 + 조건 생성 + 조건 첨부**를 동일한 함수에서 수행할 수 있습니다:
 
-* [mintAndRegisterIpAssetWithPilTerms](/sdk-reference/ipasset#mintandregisteripassetwithpilterms)
-* [registerIpAndAttachPilTerms](/sdk-reference/ipasset#registeripandattachpilterms)
+- [mintAndRegisterIpAssetWithPilTerms](/sdk-reference/ipasset#mintandregisteripassetwithpilterms)
+- [registerIpAndAttachPilTerms](/sdk-reference/ipasset#registeripandattachpilterms)
 
 ## 4. 라이선스 발행
 

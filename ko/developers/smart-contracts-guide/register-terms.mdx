@@ -3,7 +3,11 @@ title: 라이선스 약관 등록하기
 description: Solidity에서 새로운 라이선스 약관을 생성하는 방법을 배웁니다.
 ---
 
-<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/1_LicenseTerms.t.sol" icon="thumbs-up">
+<Card
+  title="완성된 코드"
+  href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/1_LicenseTerms.t.sol"
+  icon="thumbs-up"
+>
   완성된 코드를 끝까지 따라가보세요.
 </Card>
 
@@ -28,7 +32,8 @@ description: Solidity에서 새로운 라이선스 약관을 생성하는 방법
 <Note>
   **컨트랙트 주소**
 
-  Story 컨트랙트의 주소를 여러분을 위해 미리 채워 넣었습니다. 하지만 여기에서도 해당 주소들을 찾을 수 있습니다: [Deployed Smart Contracts](/developers/deployed-smart-contracts)
+Story 컨트랙트의 주소를 여러분을 위해 미리 채워 넣었습니다. 하지만 여기에서도 해당 주소들을 찾을 수 있습니다: [Deployed Smart Contracts](/developers/deployed-smart-contracts)
+
 </Note>
 
 ```solidity test/1_LicenseTerms.t.sol
@@ -90,19 +95,33 @@ contract LicenseTermsTest is Test {
 새로운 약관을 등록하는 데 도움이 되는 편의 함수들이 있습니다. 우리는 [PIL Flavors](/concepts/programmable-ip-license/pil-flavors)를 만들었습니다. 이는 어떤 약관을 사용할지 결정하는 데 도움이 되는 인기 있는 라이선스 약관 조합을 미리 구성한 것입니다. 이러한 PIL Flavors를 확인한 다음 다음과 같은 편의 함수를 사용하여 약관을 등록할 수 있습니다:
 
 <CardGroup cols={2}>
-  <Card title="비상업적 소셜 리믹싱" href="/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing" icon="file">
+  <Card title="비상업적 소셜 리믹싱" href="/concepts/programmable-ip-license/pil-flavors#non-commercial-social-remixing" icon="file">
     무료로 재사용 가능하며 출처를 밝혀야 합니다. 상업적 이용은 불가능합니다.
   </Card>
 
-  <Card title="상업적 사용" href="/concepts/programmable-ip-license/pil-flavors#flavor-%232%3A-commercial-use" icon="file">
-    라이선스 사용료를 지불하고 출처를 밝혀야 하지만, 수익을 공유할 필요는 없습니다.
-  </Card>
+{" "}
 
-  <Card title="상업적 재사용" href="/concepts/programmable-ip-license/pil-flavors#flavor-%233%3A-commercial-remix" icon="file">
-    라이선스 사용료를 지불하고 출처를 밝혀야 하며, 발생한 수익의 일정 비율을 지불해야 합니다.
-  </Card>
+<Card
+  title="상업적 사용"
+  href="/concepts/programmable-ip-license/pil-flavors#commercial-use"
+  icon="file"
+>
+  라이선스 사용료를 지불하고 출처를 밝혀야 하지만, 수익을 공유할 필요는
+  없습니다.
+</Card>
 
-  <Card title="크리에이티브 커먼즈 저작자표시" href="/concepts/programmable-ip-license/pil-flavors#flavor-%234%3A-creative-commons-attribution" icon="file">
+{" "}
+
+<Card
+  title="상업적 재사용"
+  href="/concepts/programmable-ip-license/pil-flavors#commercial-remix"
+  icon="file"
+>
+  라이선스 사용료를 지불하고 출처를 밝혀야 하며, 발생한 수익의 일정 비율을
+  지불해야 합니다.
+</Card>
+
+  <Card title="크리에이티브 커먼즈 저작자표시" href="/concepts/programmable-ip-license/pil-flavors#creative-commons-attribution" icon="file">
     출처를 밝히면 무료로 재사용 및 상업적 사용이 가능합니다.
   </Card>
 </CardGroup>
@@ -134,7 +153,11 @@ forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/1_LicenseTer
 
 축하합니다, 새로운 라이선스 약관을 만들었습니다!
 
-<Card title="완성된 코드" href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/1_LicenseTerms.t.sol" icon="thumbs-up">
+<Card
+  title="완성된 코드"
+  href="https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/1_LicenseTerms.t.sol"
+  icon="thumbs-up"
+>
   완성된 코드를 끝까지 따라가보세요.
 </Card>
 
