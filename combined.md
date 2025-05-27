@@ -1547,7 +1547,7 @@ The [💊 Programmable IP License (PIL)](/concepts/programmable-ip-license/overv
   />
 </Frame>
 
-## Flavor #1: Non-Commercial Social Remixing
+## Non-Commercial Social Remixing
 
 <Note>
 
@@ -1635,7 +1635,7 @@ const nonCommercialSocialRemix: LicenseTerms = {
 | Alternative Dispute Resolution    | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
 | Additional License Parameters     | None                                                                        |
 
-## Flavor #2: Commercial Use
+## Commercial Use
 
 Retain control over reuse of your work, while allowing anyone to appropriately use the work in exchange for the economic terms you set. This is similar to Shutterstock with creator-set rules.
 
@@ -1718,7 +1718,7 @@ const commercialUse: LicenseTerms = {
 | Alternative Dispute Resolution    | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
 | Additional License Parameters     | None                                                                        |
 
-## Flavor #3: Commercial Remix
+## Commercial Remix
 
 Let the world build on and play with your creation... and earn money together from it! This license allows for endless free remixing while tracking all uses of your work while giving you full credit, with each derivative paying a percentage of revenue to its "parent" IP.
 
@@ -1806,7 +1806,7 @@ const commercialRemix: LicenseTerms = {
 | Alternative Dispute Resolution    | Tag: Alternative-Dispute-Resolution Ledger-Authoritative-Dispute-Resolution |
 | Additional License Parameters     | None                                                                        |
 
-## Flavor #4: Creative Commons Attribution
+## Creative Commons Attribution
 
 Let the world build on and play with your creation - including making money.
 
@@ -6600,7 +6600,7 @@ You can see the explorer recognizes the metadata format, and you can play the so
 
 # "Case Study: Registering a Derivative of Ippy"
 
-[PiPi](https://pfp3.io/pipi/mint) is a free generative pfp project on Story that lets you mint derivative artworks of [Ippy](https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42), Story's official mascot. Ippy has [Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing) terms attached, which means anyone can use it or create derivative works as long as it's not used commercially and proper attribution is shown.
+[PiPi](https://pfp3.io/pipi/mint) is a free generative pfp project on Story that lets you mint derivative artworks of [Ippy](https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42), Story's official mascot. Ippy has [Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#non-commercial-social-remixing) terms attached, which means anyone can use it or create derivative works as long as it's not used commercially and proper attribution is shown.
 
 <CardGroup cols={3}>
   <Card
@@ -6892,7 +6892,7 @@ This function calls `registerDerivative` in the [Licensing Module](/concepts/lic
 
 - `ipId`: the new `ipId` we got in step 3
 - `parentIpIds`: an array that contains Ippy's `ipId`, which is `0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42`
-- `licenseTermsIds`: an array containing `1`, which is the license term ID of [Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing). This means the derivative can use Ippy for free but not commercialize it
+- `licenseTermsIds`: an array containing `1`, which is the license term ID of [Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#non-commercial-social-remixing). This means the derivative can use Ippy for free but not commercialize it
 - `licenseTemplate`: the address of `PILicenseTemplate`, found in [Deployed Smart Contracts](/developers/deployed-smart-contracts)
 - `royaltyContext`: just set to zero address
 - `maxMintingFee`, `maxRts`, and `maxRevenueShare` can be set to 0. They don't do anything because the license terms are non-commercial.
@@ -7644,7 +7644,7 @@ We have convenience functions to help you register new terms. We have created [P
 <CardGroup cols={4}>
   <Card
     title="Non-Commercial Social Remixing"
-    href="/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing"
+    href="/concepts/programmable-ip-license/pil-flavors#non-commercial-social-remixing"
     icon="file"
     
     
@@ -7656,7 +7656,7 @@ We have convenience functions to help you register new terms. We have created [P
 
 <Card
   title="Commercial Use"
-  href="/concepts/programmable-ip-license/pil-flavors#flavor-%232%3A-commercial-use"
+  href="/concepts/programmable-ip-license/pil-flavors#commercial-use"
   icon="file"
 >
   Pay to use the license with attribution, but don't have to share revenue.
@@ -7666,7 +7666,7 @@ We have convenience functions to help you register new terms. We have created [P
 
 <Card
   title="Commercial Remix"
-  href="/concepts/programmable-ip-license/pil-flavors#flavor-%233%3A-commercial-remix"
+  href="/concepts/programmable-ip-license/pil-flavors#commercial-remix"
   icon="file"
 >
   Pay to use the license with attribution and pay % of revenue earned.
@@ -7674,7 +7674,7 @@ We have convenience functions to help you register new terms. We have created [P
 
   <Card
     title="Creative Commons Attribution"
-    href="/concepts/programmable-ip-license/pil-flavors#flavor-%234%3A-creative-commons-attribution"
+    href="/concepts/programmable-ip-license/pil-flavors#creative-commons-attribution"
     icon="file"
     
     
@@ -9325,7 +9325,7 @@ We have convenience functions to help you register new terms. We have created [P
 
 <Card
   title="Non-Commercial Social Remixing"
-  href="/concepts/programmable-ip-license/pil-flavors#flavor-%231%3A-non-commercial-social-remixing"
+  href="/concepts/programmable-ip-license/pil-flavors#non-commercial-social-remixing"
   icon="file"
 >
   Free remixing with attribution. No commercialization.
@@ -9333,7 +9333,7 @@ We have convenience functions to help you register new terms. We have created [P
 
 <Card
   title="Commercial Use"
-  href="/concepts/programmable-ip-license/pil-flavors#flavor-%232%3A-commercial-use"
+  href="/concepts/programmable-ip-license/pil-flavors#commercial-use"
   icon="file"
 >
   Pay to use the license with attribution, but don't have to share revenue.
@@ -9341,7 +9341,7 @@ We have convenience functions to help you register new terms. We have created [P
 
 <Card
   title="Commercial Remix"
-  href="/concepts/programmable-ip-license/pil-flavors#flavor-%233%3A-commercial-remix"
+  href="/concepts/programmable-ip-license/pil-flavors#commercial-remix"
   icon="file"
 >
   Pay to use the license with attribution and pay % of revenue earned.
@@ -9349,7 +9349,7 @@ We have convenience functions to help you register new terms. We have created [P
 
 <Card
   title="Creative Commons Attribution"
-  href="/concepts/programmable-ip-license/pil-flavors#flavor-%234%3A-creative-commons-attribution"
+  href="/concepts/programmable-ip-license/pil-flavors#creative-commons-attribution"
   icon="file"
 >
   Free remixing and commercial use with attribution.
