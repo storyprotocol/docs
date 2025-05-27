@@ -24639,15 +24639,18 @@ The `story` and `geth` binaries, which make up the clients required for running 
 
 | Network | story-geth | story  |
 | ------- | ---------- | ------ |
-| Mainnet | v1.0.2     | v1.1.0 |
-| Aeneid  | v1.0.2     | v1.2.0 |
+| Mainnet | v1.0.2     | v1.2.0 |
+| Aeneid  | v1.1.0     | v1.2.0 |
 
 - **`story-geth`execution client:**
   - Release Link: [**Click here**](https://github.com/piplabs/story-geth/releases)
-  - Latest Stable Binary (v1.0.2): [**Click here**](https://github.com/piplabs/story-geth/releases/tag/v1.0.2)
+  - Latest Stable Binary (v1.0.2): [**Click here**](https://github.com/piplabs/story-geth/releases/tag/v1.2.0)
+- **`story-geth`execution client:** (For Aeneid testnet)
+  - Release Link: [**Click here**](https://github.com/piplabs/story-geth/releases)
+  - Latest Stable Binary (v1.1.0): [**Click here**](https://github.com/piplabs/story-geth/releases/tag/v1.1.0)
 - **`story`consensus client:**
   - Releases link: [**Click here**](https://github.com/piplabs/story/releases)
-  - Latest Stable Binary (v1.1.1): [**Click here**](https://github.com/piplabs/story/releases/tag/v1.1.1)
+  - Latest Stable Binary (v1.2.0): [**Click here**](https://github.com/piplabs/story/releases/tag/v1.2.0)
 
 # Story Node Installation Guide
 
