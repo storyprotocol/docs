@@ -330,7 +330,10 @@
                   },
                   {
                     "group": "Royalty",
-                    "pages": ["developers/tutorials/how-to-tip-an-ip"]
+                    "pages": [
+                      "developers/tutorials/how-to-tip-an-ip",
+                      "developers/tutorials/cross-chain-royalty-payments"
+                    ]
                   },
                   {
                     "group": "AI-Themed",
