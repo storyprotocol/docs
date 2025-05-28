@@ -5,14 +5,14 @@ description: A guide on how to set up cross-chain royalty payments for your IP u
 
 In this tutorial, we will explore how to use [deBridge](https://docs.debridge.finance/) to perform cross-chain royalty payments. From a high level, it involves:
 
-1. Constructing a deBridge API call that will return tx data to swap tokens across chains
+1. Constructing a deBridge API call that will return tx data to swap tokens across chains and pay an IP Asset on Story
 2. Executing the API call to receive a response
-3. Verifying the API response to see that there is a tx gas estimate and data to pay royalties
+3. Verifying the API response to see that it contains tx data to swap and pay royalties
 4. Executing the transaction (using the returned tx data) on the source chain
 
 ## Prerequisites
 
-Before starting, ensure you have completed the [Setup Your Own Project](/developers/smart-contracts-guide/setup).
+For easy setup, you can actually clone the [Story Protocol Boilerplate](https://github.com/storyprotocol/story-protocol-boilerplate) and view the test in the `test/6_DebridgeHook.t.sol` file. This already covers steps 1-3 below.
 
 ## Step 1: Constructing the deBridge API Call
 
