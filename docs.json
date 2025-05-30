@@ -251,7 +251,8 @@
                 "pages": [
                   "developers/overview",
                   "developers/deployed-smart-contracts",
-                  "developers/releases"
+                  "developers/releases",
+                  "developers/infra-partners"
                 ]
               },
               {
@@ -344,6 +345,17 @@
                     "group": "Miscellaneous",
                     "pages": ["developers/tutorials/encode-func-data"]
                   }
+                ]
+              },
+              {
+                "group": "Infrastructure Partners",
+                "pages": [
+                  "developers/infra-partners/indexers",
+                  "developers/infra-partners/account-system",
+                  "developers/infra-partners/oracles",
+                  "developers/infra-partners/payment-solutions",
+                  "developers/infra-partners/rpc-provider",
+                  "developers/infra-partners/randomness"
                 ]
               }
             ]
