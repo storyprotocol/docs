@@ -8742,11 +8742,11 @@ npm install --save @story-protocol/core-sdk @tomo-inc/tomo-evm-kit wagmi viem @t
 ```
 
 ```bash pnpm
-pnpm install @story-protocol/core-sdk viem
+pnpm install @story-protocol/core-sdk viem @tomo-inc/tomo-evm-kit wagmi  @tanstack/react-query
 ```
 
 ```bash yarn
-yarn add @story-protocol/core-sdk viem
+yarn add @story-protocol/core-sdk viem @tomo-inc/tomo-evm-kit wagmi  @tanstack/react-query
 ```
 
 </CodeGroup>
