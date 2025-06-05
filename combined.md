@@ -1264,8 +1264,8 @@ This arbitration policy is a dispute resolution mechanism that uses UMA’s opti
 The first step to initiate a dispute against an IP Asset is to call the `raiseDispute` function on [DisputeModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/dispute/DisputeModule.sol). This function will in turn call `assertTruth` on UMA's `OptimisticOracleV3.sol`. To initiate a dispute the dispute initiator will need to post a bond of at least the minimum bond defined by UMA for the selected currency. Note that this bond will be lost if the dispute is deemed not verifiably correct by the oracle.
 
 <Note>
-  UMA will be adjusting the $IP bond size as the IP price fluctuates. The
-  correct way to obtain the current bond size is via `getMinimumBond()` on
+  UMA will be adjusting the minimum $IP bond size as the IP price fluctuates. The
+  correct way to obtain the current minimum bond size is via `getMinimumBond()` on
   `OptimisticOracleV3.sol` (OOV3), found on our [aeneid
   testnet](https://aeneid.storyscan.io/address/0xABac6a158431edED06EE6cba37eDE8779F599eE4?tab=read_write_contract#0x4360af3d)
   and
@@ -16891,6 +16891,16 @@ Parameters:
 - `request.cid`: Content Identifier (CID) for the dispute evidence. This should be obtained by uploading your dispute evidence (documents, images, etc.) to IPFS. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
 - `request.liveness`: The liveness is the time window (in seconds) in which a counter dispute can be presented (30days).
 - `request.bond`: [Optional] **If not specified, it defaults to the minimum bond value**. The amount of wrapper IP that the dispute initiator pays upfront into a pool. To counter that dispute the opposite party of the dispute has to place a bond of the same amount. The winner of the dispute gets the original bond back + 50% of the other party bond. The remaining 50% of the loser party bond goes to the reviewer.
+
+<Note>
+  UMA will be adjusting the minimum $IP bond size as the IP price fluctuates. The
+  correct way to obtain the current minimum bond size is via `getMinimumBond()` on
+  `OptimisticOracleV3.sol` (OOV3), found on our [aeneid
+  testnet](https://aeneid.storyscan.io/address/0xABac6a158431edED06EE6cba37eDE8779F599eE4?tab=read_write_contract#0x4360af3d)
+  and
+  [mainnet](https://www.storyscan.io/address/0x8EF424F90C6BC1b98153A09c0Cac5072545793e8?tab=read_write_contract#0x4360af3d).
+</Note>
+
 - `request.wipOptions`: \[Optional]
   - `request.wipOptions.enableAutoWrapIp`: \[Optional]By default IP is converted to WIP if the current WIP balance does not cover the fees. Set this to `false` to disable this behavior. **Default: true**
   - `request.wipOptions.enableAutoApprove`: \[Optional]Automatically approve WIP usage when WIP is needed but current allowance is not sufficient. Set this to `false` to disable this behavior. **Default: true**
