@@ -4018,8 +4018,7 @@ This uses the `mintAndRegisterIpAssetWithPilTerms` method found [here](/sdk-refe
             ipMetadataHash: toHex('test-metadata-hash', { size: 32 }),
             nftMetadataHash: toHex('test-nft-metadata-hash', { size: 32 }),
             nftMetadataURI: 'test-nft-uri',
-        },
-        txOptions: { waitForTransaction: true },
+        }
     })
     ```
 
@@ -4402,7 +4401,6 @@ async function main() {
     payerIpId: zeroAddress,
     token: WIP_TOKEN_ADDRESS,
     amount: parseEther("2"), // 2 $WIP
-    txOptions: { waitForTransaction: true },
   });
   console.log(`Paid royalty at transaction hash ${response.txHash}`);
 }
@@ -5139,7 +5137,6 @@ This function needs an SPG NFT Contract to mint from. For simplicity, you can us
        mintOpen: true,
        mintFeeRecipient: zeroAddress,
        contractURI: "",
-       txOptions: { waitForTransaction: true },
      });
 
      console.log(
@@ -5180,7 +5177,6 @@ export async function registerIp(inference) {
       nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsHash}`,
       nftMetadataHash: `0x${nftHash}`,
     },
-    txOptions: { waitForTransaction: true },
   });
 
   console.log(
@@ -6215,7 +6211,6 @@ async function createSpgNftCollection() {
     mintOpen: true,
     mintFeeRecipient: zeroAddress,
     contractURI: "",
-    txOptions: { waitForTransaction: true },
   });
 
   console.log(
@@ -6260,7 +6255,6 @@ async function main() {
       nftMetadataURI: process.env.PINATA_GATEWAY + "/files/" + nftIpfsHash,
       nftMetadataHash: `0x${nftHash}`,
     },
-    txOptions: { waitForTransaction: true },
   });
 
   console.log(
@@ -6716,8 +6710,7 @@ export default function Home() {
     const storyClient = await setupStoryClient();
 
     const response = await storyClient.ipAsset.mintAndRegisterIp({
-      spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc", // public spg contract for testing
-      txOptions: { encodedTxDataOnly: true },
+      spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc" // public spg contract for testing
     });
 
     const uiOptions = {
@@ -7588,6 +7581,7 @@ Create a `main.ts` file and add the code below:
 ```typescript main.ts
 import { client } from "./utils";
 import { parseEther } from "viem";
+import { DisputeTargetTag } from "@story-protocol/core-sdk";
 
 async function main() {
   const disputeResponse = await client.dispute.raiseDispute({
@@ -7596,10 +7590,9 @@ async function main() {
     // the protocol does not allow you to use it again
     cid: "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR",
     // you must pick from one of the whitelisted tags here: https://docs.story.foundation/concepts/dispute-module#dispute-tags
-    targetTag: "IMPROPER_REGISTRATION",
+    targetTag: DisputeTargetTag.IMPROPER_REGISTRATION,
     bond: parseEther("0.1"), // minimum of 0.1
     liveness: 2592000,
-    txOptions: { waitForTransaction: true },
   });
   console.log(
     `Dispute raised at transaction hash ${disputeResponse.txHash}, Dispute ID: ${disputeResponse.disputeId}`
@@ -7687,7 +7680,6 @@ async function main() {
     payerIpId: zeroAddress,
     token: WIP_TOKEN_ADDRESS,
     amount: parseEther("2"), // 2 $WIP
-    txOptions: { waitForTransaction: true },
   });
 
   console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
@@ -7719,7 +7711,6 @@ async function main() {
     payerIpId: "0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1", // childIpId
     token: WIP_TOKEN_ADDRESS,
     amount: parseEther("1"), // 1 $WIP
-    txOptions: { waitForTransaction: true },
   });
 
   console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
@@ -7800,7 +7791,6 @@ async function main() {
     amount: 2,
     maxMintingFee: BigInt(0), // disabled
     maxRevenueShare: 100, // default
-    txOptions: { waitForTransaction: true },
   });
 
   console.log(
@@ -7903,7 +7893,6 @@ async function main() {
 
   const response = await client.license.registerPILTerms({
     ...licenseTerms,
-    txOptions: { waitForTransaction: true },
   });
 
   console.log(
@@ -7985,7 +7974,6 @@ async function main() {
     licenseTermsId: LICENSE_TERMS_ID,
     // insert the ipId you want to attach terms to here
     ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
-    txOptions: { waitForTransaction: true },
   });
 
   if (response.success) {
@@ -8181,7 +8169,6 @@ async function createSpgNftCollection() {
     mintOpen: true,
     mintFeeRecipient: zeroAddress,
     contractURI: "",
-    txOptions: { waitForTransaction: true },
   });
 
   console.log("New collection created:", {
@@ -8222,7 +8209,6 @@ async function main() {
       nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsHash}`,
       nftMetadataHash: `0x${nftHash}`,
     },
-    txOptions: { waitForTransaction: true },
   });
 
   console.log(
@@ -8396,7 +8382,6 @@ async function main() {
       nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsHash}`,
       nftMetadataHash: `0x${nftHash}`,
     },
-    txOptions: { waitForTransaction: true },
   });
 
   console.log(
@@ -8551,8 +8536,7 @@ export default function TestComponent() {
         ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
         nftMetadataURI: "test-nft-metadata-uri",
         nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
-      },
-      txOptions: { waitForTransaction: true },
+      }
     });
     console.log(
       `Root IPA created at tx hash ${response.txHash}, IPA ID: ${response.ipId}`
@@ -8707,8 +8691,7 @@ export default function TestComponent() {
         ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
         nftMetadataURI: "test-nft-metadata-uri",
         nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
-      },
-      txOptions: { waitForTransaction: true },
+      }
     });
     console.log(
       `Root IPA created at tx hash ${response.txHash}, IPA ID: ${response.ipId}`
@@ -8855,8 +8838,7 @@ export default function TestComponent() {
         ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
         nftMetadataURI: "test-nft-metadata-uri",
         nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
-      },
-      txOptions: { waitForTransaction: true },
+      }
     });
     console.log(
       `Root IPA created at tx hash ${response.txHash}, IPA ID: ${response.ipId}`
@@ -9054,8 +9036,7 @@ export default function TestComponent() {
         ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
         nftMetadataURI: "test-nft-metadata-uri",
         nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
-      },
-      txOptions: { waitForTransaction: true },
+      }
     });
     console.log(
       `Root IPA created at tx hash ${response.txHash}, IPA ID: ${response.ipId}`
@@ -9146,8 +9127,7 @@ export default function TestComponent() {
         ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
         nftMetadataURI: "test-nft-metadata-uri",
         nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
-      },
-      txOptions: { waitForTransaction: true }
+      }
     });
     console.log(
       `Root IPA created at tx hash ${response.txHash}, IPA ID: ${response.ipId}`
@@ -16269,7 +16249,7 @@ Parameters:
 
 ```typescript Response Type
 export type RegisterGroupResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   groupId?: Address;
 };
@@ -16300,7 +16280,7 @@ Parameters:
 
 ```typescript Response Type
 export type MintAndRegisterIpAndAttachLicenseAndAddToGroupResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   ipId?: Address;
   tokenId?: bigint;
@@ -16332,7 +16312,7 @@ Parameters:
 
 ```typescript Response Type
 export type RegisterIpAndAttachLicenseAndAddToGroupResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   ipId?: Address;
   tokenId?: bigint;
@@ -16356,7 +16336,7 @@ Parameters:
 
 ```typescript Response Type
 export type RegisterGroupAndAttachLicenseResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   groupId?: Address;
 };
@@ -16392,7 +16372,6 @@ const response =
     licenseData: {
       licenseTermsId: "5",
     },
-    txOptions: { waitForTransaction: true },
   });
 ```
 
@@ -16408,7 +16387,7 @@ export type RegisterGroupAndAttachLicenseAndAddIpsRequest = {
 
 ```typescript Response Type
 export type RegisterGroupAndAttachLicenseAndAddIpsResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   groupId?: Address;
 };
@@ -16440,7 +16419,6 @@ const response = await client.groupClient.collectAndDistributeGroupRoyalties({
   groupIpId: "0x01",
   currencyTokens: [WIP_TOKEN_ADDRESS],
   memberIpIds: ["0x02"],
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -16496,7 +16474,6 @@ Parameters:
 const response = await client.groupClient.addIpsToGroup({
   groupIpId: "0x01",
   ipIds: ["0x02", "0x03"],
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -16579,7 +16556,6 @@ Parameters:
 const response = await client.groupClient.removeIpsFromGroup({
   groupIpId: "0x01",
   ipIds: ["0x02", "0x03"],
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -16624,7 +16600,6 @@ const response = await client.groupClient.claimReward({
   groupIpId: "0x01",
   currencyToken: WIP_TOKEN_ADDRESS,
   memberIpIds: ["0x02", "0x03"],
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -16668,7 +16643,6 @@ import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
 const response = await client.groupClient.collectRoyalties({
   groupIpId: "0x01",
   currencyToken: WIP_TOKEN_ADDRESS,
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -16893,9 +16867,9 @@ Parameters:
 - `request.bond`: [Optional] **If not specified, it defaults to the minimum bond value**. The amount of wrapper IP that the dispute initiator pays upfront into a pool. To counter that dispute the opposite party of the dispute has to place a bond of the same amount. The winner of the dispute gets the original bond back + 50% of the other party bond. The remaining 50% of the loser party bond goes to the reviewer.
 
 <Note>
-  UMA will be adjusting the minimum $IP bond size as the IP price fluctuates. The
-  correct way to obtain the current minimum bond size is via `getMinimumBond()` on
-  `OptimisticOracleV3.sol` (OOV3), found on our [aeneid
+  UMA will be adjusting the minimum $IP bond size as the IP price fluctuates.
+  The correct way to obtain the current minimum bond size is via
+  `getMinimumBond()` on `OptimisticOracleV3.sol` (OOV3), found on our [aeneid
   testnet](https://aeneid.storyscan.io/address/0xABac6a158431edED06EE6cba37eDE8779F599eE4?tab=read_write_contract#0x4360af3d)
   and
   [mainnet](https://www.storyscan.io/address/0x8EF424F90C6BC1b98153A09c0Cac5072545793e8?tab=read_write_contract#0x4360af3d).
@@ -16910,6 +16884,7 @@ Parameters:
 
 ```typescript TypeScript
 import { parseEther } from "viem";
+import { DisputeTargetTag } from "@story-protocol/core-sdk";
 
 const response = await client.dispute.raiseDispute({
   targetIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
@@ -16918,10 +16893,9 @@ const response = await client.dispute.raiseDispute({
   cid: "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR",
   // you must pick from one of the whitelisted tags here:
   // https://docs.story.foundation/docs/dispute-module#dispute-tags
-  targetTag: "IMPROPER_REGISTRATION",
+  targetTag: DisputeTargetTag.IMPROPER_REGISTRATION,
   bond: parseEther("0.1"), // minimum of 0.1
   liveness: 2592000,
-  txOptions: { waitForTransaction: true },
 });
 console.log(
   `Dispute raised at transaction hash ${disputeResponse.txHash}, Dispute ID: ${disputeResponse.disputeId}`
@@ -16932,7 +16906,7 @@ console.log(
 export type RaiseDisputeRequest = WithTxOptions & {
   targetIpId: Address;
   cid: string;
-  targetTag: string;
+  targetTag: DisputeTargetTag;
   liveness: bigint | number | string;
   bond?: bigint | number | string;
   wipOptions?: {
@@ -16940,11 +16914,33 @@ export type RaiseDisputeRequest = WithTxOptions & {
     enableAutoApprove?: boolean;
   };
 };
+
+export enum DisputeTargetTag {
+  /** Refers to registration of IP that already exists. */
+  IMPROPER_REGISTRATION = "IMPROPER_REGISTRATION",
+  /**
+   * Refers to improper use of an IP Asset across multiple items.
+   * For more details, @see {@link https://docs.story.foundation/concepts/programmable-ip-license/overview | Programmable IP License (PIL)} documentation.
+   */
+  IMPROPER_USAGE = "IMPROPER_USAGE",
+  /** Refers to missing payments associated with an IP. */
+  IMPROPER_PAYMENT = "IMPROPER_PAYMENT",
+  /**
+   * Refers to “No-Hate”, “Suitable-for-All-Ages”, “No-Drugs-or-Weapons” and “No-Pornography”.
+   * These items can be found in more detail in the {@link https://docs.story.foundation/concepts/programmable-ip-license/overview  | 💊 Programmable IP License (PIL) } legal document.
+   */
+  CONTENT_STANDARDS_VIOLATION = "CONTENT_STANDARDS_VIOLATION",
+  /**
+   * Different from the other 4, this is a temporary tag that goes away
+   * at the end of a dispute and is replaced by “0x” in case of no infringement or is replaced by one of the other tags.
+   */
+  IN_DISPUTE = "IN_DISPUTE",
+}
 ```
 
 ```typescript Response Type
 export type RaiseDisputeResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   disputeId?: bigint;
 };
@@ -16971,7 +16967,6 @@ Parameters:
 ```typescript
 const response = await client.dispute.cancelDispute({
   disputeId: 1,
-  txOptions: { waitForTransactions: true },
 });
 ```
 
@@ -16985,7 +16980,7 @@ export type CancelDisputeRequest = {
 
 ```typescript Response Type
 export type CancelDisputeResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -17012,7 +17007,6 @@ Parameters:
 const response = await client.dispute.resolveDispute({
   disputeId: 1,
   data: "0x",
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -17026,7 +17020,7 @@ export type ResolveDisputeRequest = {
 
 ```typescript Response Type
 export type ResolveDisputeResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -17060,7 +17054,6 @@ const response = await client.dispute.tagIfRelatedIpInfringed({
       disputeId: 1,
     },
   ],
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -17118,7 +17111,6 @@ const result = await client.dispute.disputeAssertion({
   ipId: "0xa1BaAA464716eC76A285Ef873d27f97645fE0366",
   assertionId: assertionId,
   counterEvidenceCID: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk",
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -17245,7 +17237,6 @@ const response = await client.ipAsset.register({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -17263,7 +17254,7 @@ export type RegisterRequest = {
 
 ```typescript Response Type
 export type RegisterIpResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   ipId?: Address;
 };
@@ -17311,7 +17302,6 @@ const response = await client.ipAsset.registerDerivative({
   childIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   parentIpIds: ["0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba"],
   licenseTermsIds: ["5"],
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -17372,7 +17362,6 @@ Parameters:
 const response = await client.ipAsset.registerDerivativeWithLicenseTokens({
   childIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   licenseTokenIds: ["5"], // array of license ids relevant to the creation of the derivative, minted from the parent IPA
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -17391,7 +17380,7 @@ export type RegisterDerivativeWithLicenseTokensRequest = {
 
 ```typescript Response Type
 export type RegisterDerivativeWithLicenseTokensResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -17462,7 +17451,6 @@ const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(`
@@ -17571,7 +17559,6 @@ const response = await client.ipAsset.registerIpAndAttachPilTerms({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 console.log(
   `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
@@ -17653,7 +17640,6 @@ const response = await client.ipAsset.registerDerivativeIp({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -17763,7 +17749,6 @@ const response = await client.ipAsset.mintAndRegisterIpAndMakeDerivative({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -17865,7 +17850,6 @@ const response = await client.ipAsset.mintAndRegisterIp({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -17943,7 +17927,6 @@ const commercialRemixTerms: LicenseTerms = {
 const response = await client.ipAsset.registerPilTermsAndAttach({
   ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
   licenseTermsData: [{ terms: commercialRemixTerms }],
-  txOptions: { waitForTransaction: true },
 });
 console.log(`License Terms ${response.licenseTermsId} attached to IP Asset.`);
 ```
@@ -18014,7 +17997,6 @@ const response =
       nftMetadataURI: "test-nft-uri",
     },
     maxRts: 100_000_000, // default
-    txOptions: { waitForTransaction: true },
   });
 
 console.log(
@@ -18092,7 +18074,6 @@ const response =
       nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
       nftMetadataURI: "test-nft-uri",
     },
-    txOptions: { waitForTransaction: true },
   });
 
 console.log(
@@ -18188,7 +18169,6 @@ const response =
         },
       },
     ],
-    txOptions: { waitForTransaction: true },
   });
 
 console.log("Batch registration results:", response.registrationResults);
@@ -18269,7 +18249,6 @@ const newCollection = await client.nftClient.createNFTCollection({
   mintOpen: true,
   mintFeeRecipient: zeroAddress,
   contractURI: "",
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -18297,7 +18276,7 @@ export type CreateNFTCollectionRequest = {
 
 ```typescript Response Type
 export type CreateNFTCollectionResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   spgNftContract?: Address; // the address of the newly created contract
 };
@@ -18368,7 +18347,6 @@ const response = await client.nftClient.setTokenURI({
   tokenId: 1,
   tokenURI:
     "https://ipfs.io/ipfs/QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk",
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -18460,7 +18438,7 @@ Parameters:
 
 ```typescript Response Type
 export type SetPermissionsResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   success?: boolean;
 };
@@ -18486,7 +18464,7 @@ Parameters:
 
 ```typescript Response Type
 export type SetPermissionsResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   success?: boolean;
 };
@@ -18509,7 +18487,7 @@ Parameters:
 
 ```typescript Response Type
 export type SetPermissionsResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   success?: boolean;
 };
@@ -18536,7 +18514,7 @@ Parameters:
 
 ```typescript Response Type
 export type SetPermissionsResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   success?: boolean;
 };
@@ -18563,7 +18541,7 @@ Parameters:
 
 ```typescript Response Type
 export type SetPermissionsResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   success?: boolean;
 };
@@ -18603,7 +18581,6 @@ import { parseEther } from "viem";
 
 const response = await client.wipClient.deposit({
   amount: parseEther("10"), // 10 IP tokens
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -18635,7 +18612,6 @@ import { parseEther } from "viem";
 
 const response = await client.wipClient.withdraw({
   amount: parseEther("5"), // 5 WIP tokens
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -18669,7 +18645,6 @@ import { parseEther } from "viem";
 const response = await client.wipClient.approve({
   spender: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   amount: parseEther("20"), // 20 WIP tokens
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -18716,7 +18691,6 @@ import { parseEther } from "viem";
 const response = await client.wipClient.transfer({
   to: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   amount: parseEther("3"), // 3 WIP tokens
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -18753,7 +18727,6 @@ const response = await client.wipClient.transferFrom({
   to: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   amount: parseEther("2"), // 2 WIP tokens
   from: "0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68",
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -18780,6 +18753,7 @@ export type TransferFromRequest = WithTxOptions & {
 - registerNonComSocialRemixingPIL
 - registerCommercialUsePIL
 - registerCommercialRemixPIL
+- registerCreativeCommonsAttributionPIL
 - getLicenseTerms
 - predictMintingLicenseFee
 - setLicensingConfig
@@ -18806,7 +18780,6 @@ Parameters:
 const response = await client.license.attachLicenseTerms({
   licenseTermsId: "1",
   ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
-  txOptions: { waitForTransaction: true },
 });
 
 if (response.success) {
@@ -18829,7 +18802,7 @@ export type AttachLicenseTermsRequest = {
 
 ```typescript Response Type
 export type AttachLicenseTermsResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   success?: boolean;
 };
@@ -18881,7 +18854,6 @@ const response = await client.license.mintLicenseTokens({
   amount: 1,
   maxMintingFee: BigInt(0), // disabled
   maxRevenueShare: 100, // default
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -18906,7 +18878,7 @@ export type MintLicenseTokensRequest = {
 export type MintLicenseTokensResponse = {
   licenseTokenIds?: bigint[];
   receipt?: TransactionReceipt;
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -18954,7 +18926,6 @@ const licenseTerms: LicenseTerms = {
 
 const response = await client.license.registerPILTerms({
   ...licenseTerms,
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -19018,7 +18989,7 @@ export type LicenseTerms = {
 ```typescript Response Type
 export type RegisterPILResponse = {
   licenseTermsId?: bigint;
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -19046,9 +19017,7 @@ Parameters:
 <CodeGroup>
 
 ```typescript TypeScript
-const response = await client.license.registerNonComSocialRemixingPIL({
-  txOptions: { waitForTransaction: true },
-});
+const response = await client.license.registerNonComSocialRemixingPIL({});
 
 console.log(
   `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
@@ -19064,7 +19033,7 @@ export type RegisterNonComSocialRemixingPILRequest = {
 ```typescript Response Type
 export type RegisterPILResponse = {
   licenseTermsId?: bigint;
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -19099,7 +19068,6 @@ const commercialUseParams = {
 
 const response = await client.license.registerCommercialUsePIL({
   ...commercialUseParams,
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -19119,7 +19087,7 @@ export type RegisterCommercialUsePILRequest = {
 ```typescript Response Type
 export type RegisterPILResponse = {
   licenseTermsId?: bigint;
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -19156,7 +19124,6 @@ const commercialRemixParams = {
 
 const response = await client.license.registerCommercialRemixPIL({
   ...commercialRemixParams,
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -19177,7 +19144,51 @@ export type RegisterCommercialRemixPILRequest = {
 ```typescript Response Type
 export type RegisterPILResponse = {
   licenseTermsId?: bigint;
-  txHash?: string;
+  txHash?: Hex;
+  encodedTxData?: EncodedTxData;
+};
+```
+
+</CodeGroup>
+
+### registerCreativeCommonsAttributionPIL
+
+Convenient function to register a PIL creative commons attribution license to the registry.
+
+| Method                                  | Type                                                                                      |
+| --------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `registerCreativeCommonsAttributionPIL` | `(request: RegisterCreativeCommonsAttributionPILRequest) => Promise<RegisterPILResponse>` |
+
+Parameters:
+
+- `request.currency`: The ERC20 token to be used to pay the minting fee and the token must be registered on Story's protocol.
+- `request.royaltyPolicyAddress`: \[Optional] The address of the royalty policy contract, default value is LAP.
+- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
+<CodeGroup>
+
+```typescript TypeScript
+const response = await client.license.registerCreativeCommonsAttributionPIL({
+  currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  royaltyPolicyAddress: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+});
+
+console.log(
+  `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
+);
+```
+
+```typescript Request Type
+export type RegisterCreativeCommonsAttributionPILRequest = {
+  currency: Address;
+  royaltyPolicyAddress?: Address;
+};
+```
+
+```typescript Response Type
+export type RegisterPILResponse = {
+  licenseTermsId?: bigint;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -19266,7 +19277,7 @@ Parameters:
 
 ```typescript Response Type
 export type SetLicensingConfigResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   success?: boolean;
 };
@@ -19293,7 +19304,6 @@ Parameters:
 const licensingConfig = await client.license.getLicensingConfig({
   ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
   licenseTermsId: 1,
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -19333,7 +19343,7 @@ export type LicensingConfig = {
   commercialRevShare: number;
   /** Whether the licensing is disabled or not. If this is true, then no licenses can be minted and no more derivatives can be attached at all. */
   disabled: boolean;
-  /** The minimum percentage of the group’s reward share (from 0 to 100%, represented as 100_000_000) that can be allocated to the IP when it is added to the group. */
+  /** The minimum percentage of the group's reward share (from 0 to 100%, represented as 100_000_000) that can be allocated to the IP when it is added to the group. */
   expectMinimumGroupRewardShare: number;
   /** The address of the expected group reward pool. The IP can only be added to a group with this specified reward pool address, or zero address if the IP does not want to be added to any group. */
   expectGroupRewardPool: Address;
@@ -19397,7 +19407,6 @@ const payRoyalty = await client.royalty.payRoyaltyOnBehalf({
   payerIpId: zeroAddress,
   token: WIP_TOKEN_ADDRESS,
   amount: parseEther("2"), // 2 $WIP
-  txOptions: { waitForTransaction: true },
 });
 console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
 
@@ -19409,7 +19418,6 @@ const payRoyalty = await client.royalty.payRoyaltyOnBehalf({
   payerIpId: "0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1", // B's ipId
   token: WIP_TOKEN_ADDRESS,
   amount: parseEther("2"), // 2 $WIP
-  txOptions: { waitForTransaction: true },
 });
 console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
 ```
@@ -19427,7 +19435,7 @@ export type PayRoyaltyOnBehalfRequest = {
 
 ```typescript Response Type
 export type PayRoyaltyOnBehalfResponse = {
-  txHash?: string;
+  txHash?: Hex;
   receipt?: TransactionReceipt;
   encodedTxData?: EncodedTxData;
 };
@@ -19445,7 +19453,7 @@ Get total amount of revenue token claimable by a royalty token holder.
 
 Parameters:
 
-- `request.royaltyVaultIpId`: The id of the royalty vault.
+- `request.ipId`: The id of the royalty vault.
 - `request.claimer`: The address of the royalty token holder.
 - `request.token`: The revenue token to claim.
 - `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
@@ -19454,7 +19462,7 @@ Parameters:
 
 ```typescript Request Type
 export type ClaimableRevenueRequest = {
-  royaltyVaultIpId: Address;
+  ipId: Address;
   claimer: Address;
   token: Address;
 };
@@ -19614,15 +19622,15 @@ export type BatchClaimAllRevenueResponse = {
 
 ### getRoyaltyVaultAddress
 
-Get the royalty vault proxy address of given royaltyVaultIpId.
+Get the royalty vault proxy address of given ipId.
 
-| Method                   | Type                                          |
-| ------------------------ | --------------------------------------------- |
-| `getRoyaltyVaultAddress` | `(royaltyVaultIpId: Hex) => Promise<Address>` |
+| Method                   | Type                              |
+| ------------------------ | --------------------------------- |
+| `getRoyaltyVaultAddress` | `(ipId: Hex) => Promise<Address>` |
 
 Parameters:
 
-- `royaltyVaultIpId`: the `ipId` associated with the royalty vault.
+- `ipId`: the `ipId` associated with the royalty vault.
 
 ### transferToVault
 
