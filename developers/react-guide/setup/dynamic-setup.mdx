@@ -140,8 +140,7 @@ export default function TestComponent() {
         ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
         nftMetadataURI: "test-nft-metadata-uri",
         nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
-      },
-      txOptions: { waitForTransaction: true },
+      }
     });
     console.log(
       `Root IPA created at tx hash ${response.txHash}, IPA ID: ${response.ipId}`

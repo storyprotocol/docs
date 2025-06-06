@@ -55,7 +55,6 @@ async function main() {
     targetTag: "IMPROPER_REGISTRATION",
     bond: parseEther("0.1"), // minimum of 0.1
     liveness: 2592000,
-    txOptions: { waitForTransaction: true },
   });
   console.log(
     `Dispute raised at transaction hash ${disputeResponse.txHash}, Dispute ID: ${disputeResponse.disputeId}`

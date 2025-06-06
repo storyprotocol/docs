@@ -34,7 +34,6 @@ import { parseEther } from "viem";
 
 const response = await client.wipClient.deposit({
   amount: parseEther("10"), // 10 IP tokens
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -66,7 +65,6 @@ import { parseEther } from "viem";
 
 const response = await client.wipClient.withdraw({
   amount: parseEther("5"), // 5 WIP tokens
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -100,7 +98,6 @@ import { parseEther } from "viem";
 const response = await client.wipClient.approve({
   spender: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   amount: parseEther("20"), // 20 WIP tokens
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -147,7 +144,6 @@ import { parseEther } from "viem";
 const response = await client.wipClient.transfer({
   to: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   amount: parseEther("3"), // 3 WIP tokens
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -184,7 +180,6 @@ const response = await client.wipClient.transferFrom({
   to: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   amount: parseEther("2"), // 2 WIP tokens
   from: "0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68",
-  txOptions: { waitForTransaction: true },
 });
 ```
 

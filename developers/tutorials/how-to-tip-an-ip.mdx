@@ -106,7 +106,6 @@ async function main() {
     payerIpId: zeroAddress,
     token: WIP_TOKEN_ADDRESS,
     amount: parseEther("2"), // 2 $WIP
-    txOptions: { waitForTransaction: true },
   });
   console.log(`Paid royalty at transaction hash ${response.txHash}`);
 }

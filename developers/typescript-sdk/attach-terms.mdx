@@ -69,7 +69,6 @@ async function main() {
 
   const response = await client.license.registerPILTerms({
     ...licenseTerms,
-    txOptions: { waitForTransaction: true },
   });
 
   console.log(
@@ -151,7 +150,6 @@ async function main() {
     licenseTermsId: LICENSE_TERMS_ID,
     // insert the ipId you want to attach terms to here
     ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
-    txOptions: { waitForTransaction: true },
   });
 
   if (response.success) {

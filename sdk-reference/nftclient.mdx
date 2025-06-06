@@ -58,7 +58,6 @@ const newCollection = await client.nftClient.createNFTCollection({
   mintOpen: true,
   mintFeeRecipient: zeroAddress,
   contractURI: "",
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -86,7 +85,7 @@ export type CreateNFTCollectionRequest = {
 
 ```typescript Response Type
 export type CreateNFTCollectionResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   spgNftContract?: Address; // the address of the newly created contract
 };
@@ -157,7 +156,6 @@ const response = await client.nftClient.setTokenURI({
   tokenId: 1,
   tokenURI:
     "https://ipfs.io/ipfs/QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk",
-  txOptions: { waitForTransaction: true },
 });
 ```
 

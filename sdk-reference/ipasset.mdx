@@ -84,7 +84,6 @@ const response = await client.ipAsset.register({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -102,7 +101,7 @@ export type RegisterRequest = {
 
 ```typescript Response Type
 export type RegisterIpResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   ipId?: Address;
 };
@@ -150,7 +149,6 @@ const response = await client.ipAsset.registerDerivative({
   childIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   parentIpIds: ["0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba"],
   licenseTermsIds: ["5"],
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -211,7 +209,6 @@ Parameters:
 const response = await client.ipAsset.registerDerivativeWithLicenseTokens({
   childIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   licenseTokenIds: ["5"], // array of license ids relevant to the creation of the derivative, minted from the parent IPA
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -230,7 +227,7 @@ export type RegisterDerivativeWithLicenseTokensRequest = {
 
 ```typescript Response Type
 export type RegisterDerivativeWithLicenseTokensResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -301,7 +298,6 @@ const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(`
@@ -410,7 +406,6 @@ const response = await client.ipAsset.registerIpAndAttachPilTerms({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 console.log(
   `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
@@ -492,7 +487,6 @@ const response = await client.ipAsset.registerDerivativeIp({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -602,7 +596,6 @@ const response = await client.ipAsset.mintAndRegisterIpAndMakeDerivative({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -704,7 +697,6 @@ const response = await client.ipAsset.mintAndRegisterIp({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -782,7 +774,6 @@ const commercialRemixTerms: LicenseTerms = {
 const response = await client.ipAsset.registerPilTermsAndAttach({
   ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
   licenseTermsData: [{ terms: commercialRemixTerms }],
-  txOptions: { waitForTransaction: true },
 });
 console.log(`License Terms ${response.licenseTermsId} attached to IP Asset.`);
 ```
@@ -853,7 +844,6 @@ const response =
       nftMetadataURI: "test-nft-uri",
     },
     maxRts: 100_000_000, // default
-    txOptions: { waitForTransaction: true },
   });
 
 console.log(
@@ -931,7 +921,6 @@ const response =
       nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
       nftMetadataURI: "test-nft-uri",
     },
-    txOptions: { waitForTransaction: true },
   });
 
 console.log(
@@ -1027,7 +1016,6 @@ const response =
         },
       },
     ],
-    txOptions: { waitForTransaction: true },
   });
 
 console.log("Batch registration results:", response.registrationResults);
