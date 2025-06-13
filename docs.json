@@ -350,12 +350,12 @@
               {
                 "group": "Infrastructure Partners",
                 "pages": [
-                  "developers/infra-partners/indexers",
-                  "developers/infra-partners/account-system",
-                  "developers/infra-partners/oracles",
-                  "developers/infra-partners/payment-solutions",
                   "developers/infra-partners/rpc-provider",
-                  "developers/infra-partners/randomness"
+                  "developers/infra-partners/account-system",
+                  "developers/infra-partners/indexers",
+                  "developers/infra-partners/oracles",
+                  "developers/infra-partners/randomness",
+                  "developers/infra-partners/payment-solutions"
                 ]
               }
             ]
