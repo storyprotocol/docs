@@ -1781,11 +1781,13 @@ visualization for the blockchain network. Tools include **Prometheus**,
 
 ## RPCs
 
-| RPC Name           | RPC URL                                  | Official |
-| :----------------- | :--------------------------------------- | :------: |
-| Story              | `https://mainnet.storyrpc.io`            |    ✅    |
-| Story by Ankr      | `https://rpc.ankr.com/story_mainnet`     |          |
-| Story by QuickNode | `https://www.quicknode.com/chains/story` |          |
+| RPC Name           | RPC URL                                                     | Official |
+| :----------------- | :---------------------------------------------------------- | :------: |
+| Story              | `https://mainnet.storyrpc.io`                               |    ✅    |
+| Story by Ankr      | `https://rpc.ankr.com/story_mainnet`                        |          |
+| Story by QuickNode | `https://www.quicknode.com/chains/story`                    |          |
+| Story by Alchemy   | `https://story-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}` |          |
+| Story by Tenderly  | `https://tenderly.co/`                                      |          |
 
 ## Block Explorers
 
@@ -1828,10 +1830,13 @@ visualization for the blockchain network. Tools include **Prometheus**,
 
 ## RPCs
 
-| RPC Name           | RPC URL                                  | Official |
-| :----------------- | :--------------------------------------- | :------: |
-| Story              | `https://aeneid.storyrpc.io`             |    ✅    |
-| Story by QuickNode | `https://www.quicknode.com/chains/story` |          |
+| RPC Name           | RPC URL                                                    | Official |
+| :----------------- | :--------------------------------------------------------- | :------: |
+| Story              | `https://aeneid.storyrpc.io`                               |    ✅    |
+| Story by Ankr      | `https://rpc.ankr.com/story_aeneid_testnet`                |          |
+| Story by QuickNode | `https://www.quicknode.com/chains/story`                   |          |
+| Story by Alchemy   | `https://story-aeneid.g.alchemy.com/v2/${ALCHEMY_API_KEY}` |          |
+| Story by Tenderly  | `https://tenderly.co/`                                     |          |
 
 ## Explorers
 
@@ -3123,7 +3128,7 @@ The `story` and `geth` binaries, which make up the clients required for running 
 
 - **`story-geth`execution client:**
   - Release Link: [**Click here**](https://github.com/piplabs/story-geth/releases)
-  - Latest Stable Binary (v1.0.2): [**Click here**](https://github.com/piplabs/story-geth/releases/tag/v1.2.0)
+  - Latest Stable Binary (v1.0.2): [**Click here**](https://github.com/piplabs/story-geth/releases/tag/v1.0.2)
 - **`story-geth`execution client:** (For Aeneid testnet)
   - Release Link: [**Click here**](https://github.com/piplabs/story-geth/releases)
   - Latest Stable Binary (v1.1.0): [**Click here**](https://github.com/piplabs/story-geth/releases/tag/v1.1.0)
@@ -20135,6 +20140,215 @@ Now that we have attached License Terms to our IP, the next step is minting a Li
 </CardGroup>
 
 
+# Oracles
+
+<CardGroup cols={2}>
+<Card title="Pyth" href="https://pyth.network" img="/images/logos/pyth.jpg">
+Pyth network is a decentralized oracle network that provides real-time price feeds for blockchain assets.
+</Card>
+
+<Card title="Redstone" href="https://redstone.finance" img="/images/logos/redstone.png">
+Redstone is a decentralized oracle network that provides real-time price feeds for blockchain assets.
+</Card>
+</CardGroup>
+
+
+# Overview
+
+Welcome to Story's infra partners page. Here you'll find a comprehensive list of partners and solutions building on Sophon, categorized by their primary focus areas:
+
+<CardGroup cols={3}>
+
+<Card
+  title="RPC Providers"
+  icon="server"
+  href="/developers/infra-partners/rpc-providers"
+>
+  Access points that enable direct interaction with the Story blockchain,
+  providing reliable infrastructure for reading chain data and submitting
+  transactions.
+</Card>
+
+<Card
+  title="Account Systems"
+  icon="user"
+  href="/developers/infra-partners/account-systems"
+>
+  Solutions for managing user identities, wallets, and authentication, making it
+  easier for users to interact with Story applications.
+</Card>
+
+<Card
+  title="Indexers"
+  icon="database"
+  href="/developers/infra-partners/indexers"
+>
+  Services that process and organize blockchain data into easily queryable
+  formats, enabling efficient data retrieval and analysis.
+</Card>
+
+<Card title="Oracles" icon="bridge" href="/developers/infra-partners/oracles">
+  Trusted data feeds that connect Story to off-chain information, enabling smart
+  contracts to interact with real-world data.
+</Card>
+
+<Card
+  title="Randomness"
+  icon="dice"
+  href="/developers/infra-partners/randomness"
+>
+  Verifiable random number generation services that provide secure and
+  unpredictable values for gaming, NFTs, and other applications.
+</Card>
+
+<Card
+  title="Payment Solutions"
+  icon="credit-card"
+  href="/developers/infra-partners/payment-solutions"
+>
+  Infrastructure for handling transactions, fiat on/off ramps, and payment
+  processing to enable seamless financial interactions.
+</Card>
+
+</CardGroup>
+
+
+# Randomness
+
+<CardGroup cols={2}>
+<Card title="Gelato" href="https://www.gelato.cloud/" img="/images/logos/gelato.jpg">
+ Gelato is a decentralized infrastructure provider, for this collaboration, user can use gelato for VRF on-chain randomness.
+</Card>
+
+<Card title="Pyth" href="https://pyth.network" img="/images/logos/pyth.jpg">
+Pyth entropy is a decentralized randomness oracle that provides random numbers for blockchain applications.
+</Card>
+</CardGroup>
+
+
+# Account Systems
+
+Choose from our trusted partner integrations for embedded wallets and account
+abstraction to simplify user onboarding and transaction management in your
+Story Protocol application.
+
+<Tabs>
+<Tab title="Embedded Wallets">
+Simplify user onboarding with embedded wallet solutions that abstract away private key management.
+
+<CardGroup cols={2}>
+<Card title="Privy" href="https://privy.io" img="/images/logos/privy.jpg">
+Easy-to-use embedded wallets with social login support
+</Card>
+<Card title="Dynamic" href="https://dynamic.xyz" img="/images/logos/dynamic.png">
+Multi-chain wallet infrastructure with customizable UI
+</Card>
+<Card title="Tomo" href="https://tomo.inc" img="/images/logos/tomo.jpg">
+Secure embedded wallets with biometric authentication
+</Card>
+<Card title="Thirdweb" href="https://thirdweb.com" img="/images/logos/thirdweb.jpg">
+Web3 development platform with built-in wallet solutions
+</Card>
+</CardGroup>
+</Tab>
+
+<Tab title="Account Abstraction">
+Enable gasless transactions and improved UX with account abstraction providers.
+
+<CardGroup cols={2}>
+<Card title="Pimlico" href="https://pimlico.io" img="/images/logos/pimlico.jpg">
+ERC-4337 account abstraction infrastructure
+</Card>
+<Card title="ZeroDev" href="https://zerodev.app" img="/images/logos/zerodev.jpg">
+Smart contract wallets with account abstraction
+</Card>
+<Card title="Alchemy" href="https://alchemy.com" img="/images/logos/alchemy.jpg">
+Alchemy account abstraction infrastructure
+</Card>
+</CardGroup>
+</Tab>
+</Tabs>
+
+
+# Indexers
+
+<CardGroup cols={2}>
+<Card title="Goldsky" href="https://goldsky.com" img="/images/logos/goldsky.jpg">
+Goldsky is the go-to data indexer for web3 builders, providing high-performance subgraph hosting and real-time data replication pipelines. 
+</Card>
+
+<Card title="Alchemy" href="https://alchemy.com" img="/images/logos/alchemy.jpg">
+Alchemy is a blockchain indexing platform that provides a comprehensive suite of tools for indexing and querying blockchain data.
+</Card>
+</CardGroup>
+
+
+# Payment Solutions
+
+<CardGroup cols={2}>
+<Card title="Halliday" href="https://halliday.xyz" img="/images/logos/halliday.jpg">
+Halliday is the first workflow protocol. Automate any workflow and manage reliability, cross-chain execution, business logic and more. Create breakthrough applications in hours not years.
+</Card>
+
+<Card
+  title="Transak"
+  href="https://transak.com/"
+  img="/images/logos/transak.jpg"
+>
+  Transak enables users to buy or sell crypto from your app. Available across
+  170 cryptocurrencies on 80+ blockchains via cards, bank transfers and other
+  payment methods in 64 countries.
+</Card>
+
+<Card
+  title="Alchemy Pay"
+  href="https://alchemypay.org/"
+  img="/images/logos/alchemy-pay.jpg"
+>
+  Alchemy Pay enables your users to buy and sell digital assets with fiat
+  currencies on your platform. Empower your project for global adoption.
+</Card>
+
+</CardGroup>
+
+
+# RPC Provider
+
+<CardGroup cols={2}>
+<Card title="Ankr" href="https://ankr.com" img="/images/logos/ankr.jpg">
+    Ankr is a blockchain infrastructure provider that provides a comprehensive suite of tools for indexing and querying blockchain data.
+</Card>
+
+<Card
+  title="QuickNode"
+  href="https://quicknode.com"
+  img="/images/logos/quicknode.jpg"
+>
+  QuickNode is a high-performance Web3 infrastructure with fast, reliable RPC
+  across major chains.
+</Card>
+
+<Card
+  title="Alchemy"
+  href="https://alchemy.com"
+  img="/images/logos/alchemy.jpg"
+>
+  Alchemy is a developer platform offering advanced APIs and analytics for
+  building on blockchain.
+</Card>
+
+<Card
+  title="Tenderly"
+  href="https://tenderly.co"
+  img="/images/logos/tenderly.png"
+>
+  Tenderly is a blockchain infrastructure provider that provides a comprehensive
+  suite of tools for indexing and querying blockchain data.
+</Card>
+
+</CardGroup>
+
+
 # "Case Study: Registering a Derivative of Ippy"
 
 [PiPi](https://pfp3.io/pipi/mint) is a free generative pfp project on Story that lets you mint derivative artworks of [Ippy](https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42), Story's official mascot. Ippy has [Non-Commercial Social Remixing (NCSR)](/concepts/programmable-ip-license/pil-flavors#non-commercial-social-remixing) terms attached, which means anyone can use it or create derivative works as long as it's not used commercially and proper attribution is shown.
@@ -20144,8 +20358,6 @@ Now that we have attached License Terms to our IP, the next step is minting a Li
     title="Original Ippy"
     href="https://explorer.story.foundation/ipa/0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42"
     icon="house"
-    
-    
   >
     View the original Ippy mascot on our explorer.
   </Card>
