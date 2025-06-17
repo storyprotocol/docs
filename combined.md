@@ -20162,7 +20162,7 @@ Welcome to Story's infra partners page. Here you'll find a comprehensive list of
 <Card
   title="RPC Providers"
   icon="server"
-  href="/developers/infra-partners/rpc-providers"
+  href="/developers/infra-partners/rpc-provider"
 >
   Access points that enable direct interaction with the Story blockchain,
   providing reliable infrastructure for reading chain data and submitting
@@ -20172,7 +20172,7 @@ Welcome to Story's infra partners page. Here you'll find a comprehensive list of
 <Card
   title="Account Systems"
   icon="user"
-  href="/developers/infra-partners/account-systems"
+  href="/developers/infra-partners/account-system"
 >
   Solutions for managing user identities, wallets, and authentication, making it
   easier for users to interact with Story applications.
