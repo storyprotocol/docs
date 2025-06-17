@@ -251,8 +251,7 @@
                 "pages": [
                   "developers/overview",
                   "developers/deployed-smart-contracts",
-                  "developers/releases",
-                  "developers/infra-partners"
+                  "developers/releases"
                 ]
               },
               {
@@ -350,6 +349,7 @@
               {
                 "group": "Infrastructure Partners",
                 "pages": [
+                  "developers/infra-partners/overview",
                   "developers/infra-partners/rpc-provider",
                   "developers/infra-partners/account-system",
                   "developers/infra-partners/indexers",
