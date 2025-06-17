@@ -318,6 +318,7 @@
                   "developers/tutorials/overview",
                   {
                     "group": "Registration",
+                    "icon": "file-certificate",
                     "pages": [
                       "developers/tutorials/how-to-register-ip-on-story",
                       "developers/tutorials/how-to-register-music-on-story",
@@ -326,10 +327,12 @@
                   },
                   {
                     "group": "Royalty",
+                    "icon": "money-bill-transfer",
                     "pages": ["developers/tutorials/how-to-tip-an-ip"]
                   },
                   {
                     "group": "AI-Themed",
+                    "icon": "robot",
                     "pages": [
                       "developers/tutorials/protect-dalle-ai-generated-images",
                       "developers/tutorials/register-stability-images",
@@ -338,10 +341,12 @@
                   },
                   {
                     "group": "Wallet-less / Onboarding",
+                    "icon": "wallet",
                     "pages": ["developers/tutorials/privy-tutorial"]
                   },
                   {
                     "group": "Miscellaneous",
+                    "icon": "puzzle-piece",
                     "pages": ["developers/tutorials/encode-func-data"]
                   }
                 ]
