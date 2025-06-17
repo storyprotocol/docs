@@ -240,6 +240,10 @@
                   "concepts/programmable-ip-license/pil-flavors",
                   "concepts/programmable-ip-license/how-does-story-protect-ip"
                 ]
+              },
+              {
+                "group": "Notices",
+                "pages": ["notices"]
               }
             ]
           },
@@ -328,7 +332,10 @@
                   {
                     "group": "Royalty",
                     "icon": "money-bill-transfer",
-                    "pages": ["developers/tutorials/how-to-tip-an-ip"]
+                    "pages": [
+                      "developers/tutorials/how-to-tip-an-ip",
+                      "developers/tutorials/cross-chain-royalty-payments"
+                    ]
                   },
                   {
                     "group": "AI-Themed",
@@ -606,11 +613,11 @@
             ]
           },
           {
-            "tab": "Governance",
+            "tab": "Foundation",
             "groups": [
               {
-                "group": "Get Started",
-                "pages": ["governance"]
+                "group": "Overview",
+                "pages": ["foundation/governance", "foundation/disclaimer"]
               }
             ]
           }

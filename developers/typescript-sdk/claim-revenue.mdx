@@ -43,11 +43,11 @@ The IP Account (the smart contract that represents the [IP Asset](/concepts/ip-a
 
 In this scenario, I own IP Asset 3. Someone pays my IP Asset 3 directly, and I claim that revenue. Let's view this in steps:
 
-1. As we can see in the below diagram, when IP Asset 4 (it doesn't have to be an IP Asset, it can be any address) pays IP Asset 3 1M \$WIP, 850k \$WIP automatically gets deposited into IP Royalty Vault 3.
+1. As we can see in the below diagram, when someone pays IP Asset 3 100 \$WIP, 85 \$WIP automatically gets deposited into IP Royalty Vault 3 (based on the license terms, which specifiies a LAP royalty policy and the resulting royalty stack).
 
    <Frame>
      <img
-       src="/images/concepts/lap-1.png"
+       src="/images/concepts/royalty-module/royalty-module-split-lap.png"
        alt="Payment flow to IP Royalty Vault"
      />
    </Frame>
@@ -56,7 +56,7 @@ In this scenario, I own IP Asset 3. Someone pays my IP Asset 3 directly, and I c
 
    <Frame>
      <img
-       src="/images/concepts/lap-3.png"
+       src="/images/concepts/royalty-module/ipa3-claims.png"
        alt="Claiming revenue from IP Royalty Vault"
      />
    </Frame>
@@ -105,11 +105,11 @@ main();
 
 In this scenario, I own IP Asset 1. Someone pays a derivative IP Asset 3, and I have the right to a % of their revenue based on the `commercialRevShare` in the license terms. This is exactly the same as Scenario #1, except one extra step is added. Let's view this in steps:
 
-1. As we can see in the below diagram, when IP Asset 4 (it doesn't have to be an IP Asset, it can be any address) pays IP Asset 3 1M \$WIP, 150k \$WIP automatically gets deposited to the LAP royalty policy contract to be distributed to ancestors.
+1. As we can see in the below diagram, when someone pays IP Asset 3 100 \$WIP, 15 \$WIP automatically gets deposited to the LAP royalty policy contract to be distributed to ancestors.
 
    <Frame>
      <img
-       src="/images/concepts/lap-1.png"
+       src="/images/concepts/royalty-module/royalty-module-split-lap.png"
        alt="Revenue distribution to royalty policy contract"
      />
    </Frame>
@@ -118,7 +118,7 @@ In this scenario, I own IP Asset 1. Someone pays a derivative IP Asset 3, and I 
 
    <Frame>
      <img
-       src="/images/concepts/lap-2.png"
+       src="/images/concepts/royalty-module/royalty-policy-distribution.png"
        alt="Revenue distribution to ancestors"
      />
    </Frame>
@@ -127,7 +127,7 @@ In this scenario, I own IP Asset 1. Someone pays a derivative IP Asset 3, and I 
 
    <Frame>
      <img
-       src="/images/concepts/lap-3.png"
+       src="/images/concepts/royalty-module/ipa1n2-claims.png"
        alt="Claiming revenue from ancestor IP Royalty Vaults"
      />
    </Frame>

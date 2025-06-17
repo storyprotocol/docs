@@ -29,6 +29,16 @@ Parameters:
 - `request.cid`: Content Identifier (CID) for the dispute evidence. This should be obtained by uploading your dispute evidence (documents, images, etc.) to IPFS. **Example: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk"**
 - `request.liveness`: The liveness is the time window (in seconds) in which a counter dispute can be presented (30days).
 - `request.bond`: [Optional] **If not specified, it defaults to the minimum bond value**. The amount of wrapper IP that the dispute initiator pays upfront into a pool. To counter that dispute the opposite party of the dispute has to place a bond of the same amount. The winner of the dispute gets the original bond back + 50% of the other party bond. The remaining 50% of the loser party bond goes to the reviewer.
+
+<Note>
+  UMA will be adjusting the minimum $IP bond size as the IP price fluctuates.
+  The correct way to obtain the current minimum bond size is via
+  `getMinimumBond()` on `OptimisticOracleV3.sol` (OOV3), found on our [aeneid
+  testnet](https://aeneid.storyscan.io/address/0xABac6a158431edED06EE6cba37eDE8779F599eE4?tab=read_write_contract#0x4360af3d)
+  and
+  [mainnet](https://www.storyscan.io/address/0x8EF424F90C6BC1b98153A09c0Cac5072545793e8?tab=read_write_contract#0x4360af3d).
+</Note>
+
 - `request.wipOptions`: \[Optional]
   - `request.wipOptions.enableAutoWrapIp`: \[Optional]By default IP is converted to WIP if the current WIP balance does not cover the fees. Set this to `false` to disable this behavior. **Default: true**
   - `request.wipOptions.enableAutoApprove`: \[Optional]Automatically approve WIP usage when WIP is needed but current allowance is not sufficient. Set this to `false` to disable this behavior. **Default: true**
@@ -38,6 +48,7 @@ Parameters:
 
 ```typescript TypeScript
 import { parseEther } from "viem";
+import { DisputeTargetTag } from "@story-protocol/core-sdk";
 
 const response = await client.dispute.raiseDispute({
   targetIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
@@ -46,10 +57,9 @@ const response = await client.dispute.raiseDispute({
   cid: "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR",
   // you must pick from one of the whitelisted tags here:
   // https://docs.story.foundation/docs/dispute-module#dispute-tags
-  targetTag: "IMPROPER_REGISTRATION",
+  targetTag: DisputeTargetTag.IMPROPER_REGISTRATION,
   bond: parseEther("0.1"), // minimum of 0.1
   liveness: 2592000,
-  txOptions: { waitForTransaction: true },
 });
 console.log(
   `Dispute raised at transaction hash ${disputeResponse.txHash}, Dispute ID: ${disputeResponse.disputeId}`
@@ -60,7 +70,7 @@ console.log(
 export type RaiseDisputeRequest = WithTxOptions & {
   targetIpId: Address;
   cid: string;
-  targetTag: string;
+  targetTag: DisputeTargetTag;
   liveness: bigint | number | string;
   bond?: bigint | number | string;
   wipOptions?: {
@@ -68,11 +78,33 @@ export type RaiseDisputeRequest = WithTxOptions & {
     enableAutoApprove?: boolean;
   };
 };
+
+export enum DisputeTargetTag {
+  /** Refers to registration of IP that already exists. */
+  IMPROPER_REGISTRATION = "IMPROPER_REGISTRATION",
+  /**
+   * Refers to improper use of an IP Asset across multiple items.
+   * For more details, @see {@link https://docs.story.foundation/concepts/programmable-ip-license/overview | Programmable IP License (PIL)} documentation.
+   */
+  IMPROPER_USAGE = "IMPROPER_USAGE",
+  /** Refers to missing payments associated with an IP. */
+  IMPROPER_PAYMENT = "IMPROPER_PAYMENT",
+  /**
+   * Refers to “No-Hate”, “Suitable-for-All-Ages”, “No-Drugs-or-Weapons” and “No-Pornography”.
+   * These items can be found in more detail in the {@link https://docs.story.foundation/concepts/programmable-ip-license/overview  | 💊 Programmable IP License (PIL) } legal document.
+   */
+  CONTENT_STANDARDS_VIOLATION = "CONTENT_STANDARDS_VIOLATION",
+  /**
+   * Different from the other 4, this is a temporary tag that goes away
+   * at the end of a dispute and is replaced by “0x” in case of no infringement or is replaced by one of the other tags.
+   */
+  IN_DISPUTE = "IN_DISPUTE",
+}
 ```
 
 ```typescript Response Type
 export type RaiseDisputeResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   disputeId?: bigint;
 };
@@ -99,7 +131,6 @@ Parameters:
 ```typescript
 const response = await client.dispute.cancelDispute({
   disputeId: 1,
-  txOptions: { waitForTransactions: true },
 });
 ```
 
@@ -113,7 +144,7 @@ export type CancelDisputeRequest = {
 
 ```typescript Response Type
 export type CancelDisputeResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -140,7 +171,6 @@ Parameters:
 const response = await client.dispute.resolveDispute({
   disputeId: 1,
   data: "0x",
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -154,7 +184,7 @@ export type ResolveDisputeRequest = {
 
 ```typescript Response Type
 export type ResolveDisputeResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -188,7 +218,6 @@ const response = await client.dispute.tagIfRelatedIpInfringed({
       disputeId: 1,
     },
   ],
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -246,7 +275,6 @@ const result = await client.dispute.disputeAssertion({
   ipId: "0xa1BaAA464716eC76A285Ef873d27f97645fE0366",
   assertionId: assertionId,
   counterEvidenceCID: "QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk",
-  txOptions: { waitForTransaction: true },
 });
 ```
 

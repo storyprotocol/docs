@@ -616,7 +616,6 @@ This function needs an SPG NFT Contract to mint from. For simplicity, you can us
        mintOpen: true,
        mintFeeRecipient: zeroAddress,
        contractURI: "",
-       txOptions: { waitForTransaction: true },
      });
 
      console.log(
@@ -657,7 +656,6 @@ export async function registerIp(inference) {
       nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsHash}`,
       nftMetadataHash: `0x${nftHash}`,
     },
-    txOptions: { waitForTransaction: true },
   });
 
   console.log(

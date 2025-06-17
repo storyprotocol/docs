@@ -34,7 +34,7 @@ Parameters:
 
 ```typescript Response Type
 export type RegisterGroupResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   groupId?: Address;
 };
@@ -65,7 +65,7 @@ Parameters:
 
 ```typescript Response Type
 export type MintAndRegisterIpAndAttachLicenseAndAddToGroupResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   ipId?: Address;
   tokenId?: bigint;
@@ -97,7 +97,7 @@ Parameters:
 
 ```typescript Response Type
 export type RegisterIpAndAttachLicenseAndAddToGroupResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   ipId?: Address;
   tokenId?: bigint;
@@ -121,7 +121,7 @@ Parameters:
 
 ```typescript Response Type
 export type RegisterGroupAndAttachLicenseResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   groupId?: Address;
 };
@@ -157,7 +157,6 @@ const response =
     licenseData: {
       licenseTermsId: "5",
     },
-    txOptions: { waitForTransaction: true },
   });
 ```
 
@@ -173,7 +172,7 @@ export type RegisterGroupAndAttachLicenseAndAddIpsRequest = {
 
 ```typescript Response Type
 export type RegisterGroupAndAttachLicenseAndAddIpsResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   groupId?: Address;
 };
@@ -205,7 +204,6 @@ const response = await client.groupClient.collectAndDistributeGroupRoyalties({
   groupIpId: "0x01",
   currencyTokens: [WIP_TOKEN_ADDRESS],
   memberIpIds: ["0x02"],
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -261,7 +259,6 @@ Parameters:
 const response = await client.groupClient.addIpsToGroup({
   groupIpId: "0x01",
   ipIds: ["0x02", "0x03"],
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -344,7 +341,6 @@ Parameters:
 const response = await client.groupClient.removeIpsFromGroup({
   groupIpId: "0x01",
   ipIds: ["0x02", "0x03"],
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -389,7 +385,6 @@ const response = await client.groupClient.claimReward({
   groupIpId: "0x01",
   currencyToken: WIP_TOKEN_ADDRESS,
   memberIpIds: ["0x02", "0x03"],
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -433,7 +428,6 @@ import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
 const response = await client.groupClient.collectRoyalties({
   groupIpId: "0x01",
   currencyToken: WIP_TOKEN_ADDRESS,
-  txOptions: { waitForTransaction: true },
 });
 ```
 

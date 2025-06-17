@@ -19,11 +19,11 @@ npm install --save @story-protocol/core-sdk @tomo-inc/tomo-evm-kit wagmi viem @t
 ```
 
 ```bash pnpm
-pnpm install @story-protocol/core-sdk viem
+pnpm install @story-protocol/core-sdk viem @tomo-inc/tomo-evm-kit wagmi  @tanstack/react-query
 ```
 
 ```bash yarn
-yarn add @story-protocol/core-sdk viem
+yarn add @story-protocol/core-sdk viem @tomo-inc/tomo-evm-kit wagmi  @tanstack/react-query
 ```
 
 </CodeGroup>
@@ -132,8 +132,7 @@ export default function TestComponent() {
         ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
         nftMetadataURI: "test-nft-metadata-uri",
         nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
-      },
-      txOptions: { waitForTransaction: true },
+      }
     });
     console.log(
       `Root IPA created at tx hash ${response.txHash}, IPA ID: ${response.ipId}`
