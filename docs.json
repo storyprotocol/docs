@@ -322,7 +322,6 @@
                   "developers/tutorials/overview",
                   {
                     "group": "Registration",
-                    "icon": "file-certificate",
                     "pages": [
                       "developers/tutorials/how-to-register-ip-on-story",
                       "developers/tutorials/how-to-register-music-on-story",
@@ -331,7 +330,6 @@
                   },
                   {
                     "group": "Royalty",
-                    "icon": "money-bill-transfer",
                     "pages": [
                       "developers/tutorials/how-to-tip-an-ip",
                       "developers/tutorials/cross-chain-royalty-payments"
@@ -339,7 +337,6 @@
                   },
                   {
                     "group": "AI-Themed",
-                    "icon": "robot",
                     "pages": [
                       "developers/tutorials/protect-dalle-ai-generated-images",
                       "developers/tutorials/register-stability-images",
@@ -348,26 +345,12 @@
                   },
                   {
                     "group": "Wallet-less / Onboarding",
-                    "icon": "wallet",
                     "pages": ["developers/tutorials/privy-tutorial"]
                   },
                   {
                     "group": "Miscellaneous",
-                    "icon": "puzzle-piece",
                     "pages": ["developers/tutorials/encode-func-data"]
                   }
-                ]
-              },
-              {
-                "group": "Infrastructure Partners",
-                "pages": [
-                  "developers/infra-partners/overview",
-                  "developers/infra-partners/rpc-provider",
-                  "developers/infra-partners/account-system",
-                  "developers/infra-partners/indexers",
-                  "developers/infra-partners/oracles",
-                  "developers/infra-partners/randomness",
-                  "developers/infra-partners/payment-solutions"
                 ]
               }
             ]
