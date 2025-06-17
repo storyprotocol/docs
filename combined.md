@@ -15278,7 +15278,7 @@ This is the official Ippy mascot that is registered on mainnet. You can view it 
 </Tab>
 
 <Tab title="Music">
-This is an example song generated on [Suno](https://suno.com/) and registered on our testnet. View the below example [on our protocol explorer](https://aeneid.explorer.story.foundation/ipa/0x3E5b9e540a531da38760CC32E2f52b174EC5Fce8).
+This is an example song generated on [Suno](https://suno.com/) and registered on our testnet. View the below example [on our protocol explorer](https://aeneid.explorer.story.foundation/ipa/0x7d126DB8bdD3bF88d757FC2e99BFE3d77a55509b).
 
 ```json
 {
