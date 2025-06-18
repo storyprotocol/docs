@@ -22345,7 +22345,7 @@ In this tutorial, you will learn how to send money ("tip") an IP Asset using the
 
 ## The Explanation
 
-In this scenario, let's say there is a parent IP Asset that represents Mickey Mouse. Someone else draws a hat on that Mickey Mouse and registers it as a derivative (or "child") IP Asset. The License Terms specify that the child must share 50% of all commercial revenue (`commercialRevShare = 50`) with the parent. Someone else (a 3rd party user) comes along and wants to send the derivative 2 $WIP for being really cool.
+In this scenario, let's say there is a parent IP Asset that represents Mickey Mouse. Someone else draws a hat on that Mickey Mouse and registers it as a derivative (or "child") IP Asset. The License Terms specify that the child must share 50% of all commercial revenue (`commercialRevShare = 50`) with the parent. Someone else (a 3rd party user) comes along and wants to send the derivative 2 \$WIP for being really cool.
 
 For the purposes of this example, we will assume the child is already registered as a derivative IP Asset. If you want help learning this, check out [Register a Derivative](/developers/typescript-sdk/register-derivative).
 
@@ -22401,12 +22401,12 @@ export const client = StoryClient.newClient(config);
 
 Now create a `main.ts` file. We will use the `payRoyaltyOnBehalf` function to pay the derivative asset.
 
-You will be paying the IP Asset with [$WIP](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000). **Note that if you don't have enough $WIP, the function will auto wrap an equivalent amount of $IP into $WIP for you.** If you don't have enough of either, it will fail.
+You will be paying the IP Asset with [\$WIP](https://aeneid.storyscan.io/address/0x1514000000000000000000000000000000000000). **Note that if you don't have enough \$WIP, the function will auto wrap an equivalent amount of \$IP into \$WIP for you.** If you don't have enough of either, it will fail.
 
 <Note>
 **Whitelisted Revenue Tokens**
 
-Only tokens that are whitelisted by our protocol can be used as payment ("revenue") tokens. $WIP is one of those tokens. To see that list, go [here](/developers/deployed-smart-contracts).
+Only tokens that are whitelisted by our protocol can be used as payment ("revenue") tokens. \$WIP is one of those tokens. To see that list, go [here](/developers/deployed-smart-contracts).
 
 </Note>
 
@@ -22414,8 +22414,8 @@ Now we can call the `payRoyaltyOnBehalf` function. In this case:
 
 1. `receiverIpId` is the `ipId` of the derivative (child) asset
 2. `payerIpId` is `zeroAddress` because the payer is a 3rd party (someone that thinks Mickey Mouse with a hat on him is cool), and not necessarily another IP Asset
-3. `token` is the address of $WIP, which can be found [here](/concepts/royalty-module/ip-royalty-vault#whitelisted-revenue-tokens)
-4. `amount` is 2, since the person tipping wants to send 2 $WIP
+3. `token` is the address of \$WIP, which can be found [here](/concepts/royalty-module/ip-royalty-vault#whitelisted-revenue-tokens)
+4. `amount` is 2, since the person tipping wants to send 2 \$WIP
 
 ```typescript main.ts
 import { client } from "./utils";
@@ -22439,13 +22439,13 @@ main();
 
 At this point we have already finished the tutorial: we learned how to tip an IP Asset. But what if the child and parent want to claim their due revenue?
 
-The child has been paid 2 $WIP. But remember, it shares 50% of its revenue with the parent IP because of the `commercialRevenue = 50` in the license terms.
+The child has been paid 2 \$WIP. But remember, it shares 50% of its revenue with the parent IP because of the `commercialRevenue = 50` in the license terms.
 
-The child IP can claim its 1 $WIP by calling the `claimAllRevenue` function:
+The child IP can claim its 1 \$WIP by calling the `claimAllRevenue` function:
 
-- `ancestorIpId` is the `ipId` of the IP Asset thats associated with the royalty vault that has the funds in it (more simply, this is just the child's `ipId`)
-- `currencyTokens` is an array that contains the address of $WIP, which can be found [here](/concepts/royalty-module/ip-royalty-vault#whitelisted-revenue-tokens)
-- `claimer` is the address that holds the royalty tokens associated with the child's [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault). By default, they are in the IP Account, which is just the `ipId` of the child asset
+- `ancestorIpId` is the `ipId` we're claiming revenue for
+- `currencyTokens` is an array that contains the address of \$WIP, which can be found [here](/concepts/royalty-module/ip-royalty-vault#whitelisted-revenue-tokens)
+- `claimer` is the address that holds the [royalty tokens](/concepts/royalty-module/ip-royalty-vault#royalty-tokens) associated with the child's [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault). By default, they are in the IP Account, which is just the `ipId` of the child asset. However another common case is the owner previously transferred the royalty tokens to the IP owner's wallet, so that funds would flow directly there. In that case, you would put the IP owner's wallet address.
 
 ```typescript main.ts
 import { client } from "./utils";
@@ -22468,9 +22468,30 @@ async function main() {
 main();
 ```
 
+<Note>
+
+The above code will transfer the revenue to the IP Account, **not the IP owner's wallet**. This is because by default, the IP Account contains the royalty tokens, which is where revenue gets claimed to.
+
+</Note>
+
+If you want to then transfer the revenue from the IP Account to the IP owner's wallet, you can use the [transferErc20](/sdk-reference/ipaccount#transfererc20) function like so:
+
+```typescript main.ts
+const response = await client.ipAccount.transferErc20({
+  ipId: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
+  tokens: [
+    {
+      address: WIP_TOKEN_ADDRESS,
+      amount: parseEther("1"),
+      target: "0x02", // the external wallet
+    },
+  ],
+});
+```
+
 ## 4. Parent Claiming Due Revenue
 
-Continuing, the parent should be able to claim its revenue as well. In this example, the parent should be able to claim 1 $WIP since the child earned 2 $WIP and the `commercialRevShare = 50` in the license terms.
+Continuing, the parent should be able to claim its revenue as well. In this example, the parent should be able to claim 1 \$WIP since the child earned 2 \$WIP and the `commercialRevShare = 50` in the license terms.
 
 We will use the `claimAllRevenue` function to claim the due revenue tokens.
 
@@ -22478,7 +22499,7 @@ We will use the `claimAllRevenue` function to claim the due revenue tokens.
 2. `claimer` is the address that holds the royalty tokens associated with the parent's [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault). By default, they are in the IP Account, which is just the `ipId` of the parent asset
 3. `childIpIds` will have the `ipId` of the child asset
 4. `royaltyPolicies` will contain the address of the royalty policy. As explained in [Royalty Module](/concepts/royalty-module), this is either `RoyaltyPolicyLAP` or `RoyaltyPolicyLRP`, depending on the license terms. In this case, let's assume the license terms specify a `RoyaltyPolicyLAP`. Simply go to [Deployed Smart Contracts](/developers/deployed-smart-contracts) and find the correct address.
-5. `currencyTokens` is an array that contains the address of $WIP, which can be found [here](/concepts/royalty-module/ip-royalty-vault#whitelisted-revenue-tokens)
+5. `currencyTokens` is an array that contains the address of \$WIP, which can be found [here](/concepts/royalty-module/ip-royalty-vault#whitelisted-revenue-tokens)
 
 ```typescript main.ts
 import { client } from "./utils";
@@ -22500,6 +22521,27 @@ async function main() {
 }
 
 main();
+```
+
+<Note>
+
+Similar to the section above, this will transfer the revenue to the IP Account, **not the IP owner's wallet**.
+
+</Note>
+
+Once again, if you want to then transfer the revenue from the IP Account to the IP owner's wallet, you can use the [transferErc20](/sdk-reference/ipaccount#transfererc20) function like so:
+
+```typescript main.ts
+const response = await client.ipAccount.transferErc20({
+  ipId: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+  tokens: [
+    {
+      address: WIP_TOKEN_ADDRESS,
+      amount: parseEther("1"),
+      target: "0x03", // the external wallet
+    },
+  ],
+});
 ```
 
 ## 5. Done!
