@@ -9296,7 +9296,6 @@ Registers a Group IPA.
 Parameters:
 
 - `request.groupPool`: The address specifying how royalty will be split amongst the pool of IPs in the group.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type RegisterGroupResponse = {
@@ -9327,7 +9326,6 @@ Parameters:
   - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type MintAndRegisterIpAndAttachLicenseAndAddToGroupResponse = {
@@ -9359,7 +9357,6 @@ Parameters:
   - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type RegisterIpAndAttachLicenseAndAddToGroupResponse = {
@@ -9383,7 +9380,6 @@ Parameters:
 - `request.groupPool`: The address specifying how royalty will be split amongst the pool of IPs in the group.
 - `request.licenseTermsId`: The ID of the registered license terms that will be attached to the new group IP.
 - `request.licenseTemplate`: \[Optional] The address of the license template to be attached to the new group IP, default value is Programmable IP License.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type RegisterGroupAndAttachLicenseResponse = {
@@ -9410,7 +9406,6 @@ Parameters:
   - `request.licenseData.licenseTermsId`: The ID of the registered license terms that will be attached to the new group IP.
   - `request.licenseData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
   - `request.licenseData.licenseTemplate`: \[Optional] The address of the license template to be attached to the new group IP, default value is Programmable IP License.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -9432,7 +9427,6 @@ export type RegisterGroupAndAttachLicenseAndAddIpsRequest = {
   ipIds: Address[];
   licenseData: LicenseData;
   maxAllowedRewardShare: number | string;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -9459,7 +9453,6 @@ Parameters:
 - `request.groupIpId`: The IP ID of the group.
 - `request.currencyTokens`: The addresses of the currency (revenue) tokens to claim.
 - `request.memberIpIds`: The IDs of the member IPs to distribute the rewards to.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -9478,7 +9471,6 @@ export type CollectAndDistributeGroupRoyaltiesRequest = {
   groupIpId: Address;
   currencyTokens: Address[];
   memberIpIds: Address[];
-  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
 };
 ```
 
@@ -9517,7 +9509,6 @@ Parameters:
 - `request.groupIpId`: The ID of the group IP to add the IPs to.
 - `request.ipIds`: The addresses of the IPs to add to the Group IP. IP IDs must be attached to the group IP license terms.
 - `request.maxAllowedRewardSharePercentage`: [Optional] The maximum reward share percentage that can be allocated to each member IP. Must be between 0 and 100 (where 100% represents 100_000_000). Default is 100.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -9533,7 +9524,6 @@ export type AddIpRequest = {
   groupIpId: Address;
   ipIds: Address[];
   maxAllowedRewardSharePercentage?: number;
-  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
 };
 ```
 
@@ -9599,7 +9589,6 @@ Parameters:
 
 - `request.groupIpId`: The ID of the group IP to remove the IPs from.
 - `request.ipIds`: The addresses of the IPs to remove from the Group IP.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -9614,7 +9603,6 @@ const response = await client.groupClient.removeIpsFromGroup({
 export type RemoveIpsFromGroupRequest = {
   groupIpId: Address;
   ipIds: Address[];
-  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
 };
 ```
 
@@ -9640,7 +9628,6 @@ Parameters:
 - `request.groupIpId`: The ID of the group IP.
 - `request.currencyToken`: The address of the currency (revenue) token to claim.
 - `request.memberIpIds`: The IDs of the member IPs to distribute the rewards to.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -9659,7 +9646,6 @@ export type ClaimRewardRequest = {
   groupIpId: Address;
   currencyToken: Address;
   memberIpIds: Address[];
-  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
 };
 ```
 
@@ -9684,7 +9670,6 @@ Parameters:
 
 - `request.groupIpId`: The ID of the group IP.
 - `request.currencyToken`: The address of the currency (revenue) token to collect.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -9701,7 +9686,6 @@ const response = await client.groupClient.collectRoyalties({
 export type CollectRoyaltiesRequest = {
   groupIpId: Address;
   currencyToken: Address;
-  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
 };
 ```
 
@@ -12151,7 +12135,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -12223,7 +12206,6 @@ Parameters:
 - `request.maxMintingFee`: \[Optional] The maximum minting fee that the caller is willing to pay. If set to 0, then there is no no limit. **Default: 0**
 - `request.maxRevenueShare`: \[Optional] The maximum revenue share percentage agreed upon between a child and parent when a child is registering as derivative. Must be between 0 and 100. **Default: 100**
 - `request.maxRts`: \[Optional] The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Default: 100_000_000**
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -12241,7 +12223,6 @@ console.log(
 
 ```typescript Request Type
 export type RegisterDerivativeRequest = {
-  txOptions?: TxOptions;
   childIpId: Address;
 } & DerivativeData &
   WithWipOptions;
@@ -12284,7 +12265,6 @@ Parameters:
 - `request.childIpId`: The derivative IP ID.
 - `request.licenseTokenIds`: The IDs of the license tokens.
 - `request.maxRts`: The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Recommended for simplicity: 100_000_000**
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -12304,7 +12284,6 @@ export type RegisterDerivativeWithLicenseTokensRequest = {
   childIpId: Address;
   licenseTokenIds: string[] | bigint[] | number[];
   maxRts: number | string;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -12343,7 +12322,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI`: \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash`: \[Optional] The hash of the metadata for the IP NFT.
 - `request.recipient`: \[Optional] The address of the recipient of the minted NFT.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -12451,7 +12429,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI`: \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash`: \[Optional] The hash of the metadata for the IP NFT.
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -12549,7 +12526,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -12658,7 +12634,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.recipient`: \[Optional] The address of the recipient of the minted NFT, default value is your wallet address.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -12763,7 +12738,6 @@ Parameters:
   - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -12826,7 +12800,6 @@ Parameters:
   - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
   - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -12869,7 +12842,6 @@ export type RegisterPilTermsAndAttachRequest = {
     LicensingConfig
   >[];
   deadline?: string | number | bigint;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -12908,7 +12880,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.recipient`: \[Optional] The address to receive the minted NFT, default value is your wallet address.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -12985,7 +12956,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Default is 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -13068,7 +13038,6 @@ Parameters:
 
 - `request.requests`: Array of registration requests. Each request can be any of the supported registration method types.
 - `request.wipOptions`: [Optional] Configuration options for WIP token handling.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -13146,7 +13115,6 @@ Wraps the selected amount of IP to WIP. The WIP will be deposited to the wallet 
 Parameters:
 
 - `request.amount`: The amount to deposit.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -13159,7 +13127,7 @@ const response = await client.wipClient.deposit({
 ```
 
 ```typescript Request Type
-export type DepositRequest = WithTxOptions & {
+export type DepositRequest = {
   amount: TokenAmountInput;
 };
 ```
@@ -13177,7 +13145,6 @@ Unwraps the selected amount of WIP to IP.
 Parameters:
 
 - `request.amount`: The amount to withdraw.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -13190,7 +13157,7 @@ const response = await client.wipClient.withdraw({
 ```
 
 ```typescript Request Type
-export type WithdrawRequest = WithTxOptions & {
+export type WithdrawRequest = {
   amount: TokenAmountInput;
 };
 ```
@@ -13209,7 +13176,6 @@ Parameters:
 
 - `request.amount`: The amount of WIP tokens to approve.
 - `request.spender`: The address that will use the WIP tokens
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -13223,7 +13189,7 @@ const response = await client.wipClient.approve({
 ```
 
 ```typescript Request Type
-export type ApproveRequest = WithTxOptions & {
+export type ApproveRequest = {
   spender: Address;
   amount: TokenAmountInput;
 };
@@ -13255,7 +13221,6 @@ Parameters:
 
 - `request.to`: Who you're transferring to.
 - `request.amount`: The amount to transfer.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -13269,7 +13234,7 @@ const response = await client.wipClient.transfer({
 ```
 
 ```typescript Request Type
-export type TransferRequest = WithTxOptions & {
+export type TransferRequest = {
   to: Address;
   amount: TokenAmountInput;
 };
@@ -13290,7 +13255,6 @@ Parameters:
 - `request.to`: Who you're transferring to.
 - `request.amount`: The amount to transfer.
 - `request.from`: The address to transfer from.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -13305,7 +13269,7 @@ const response = await client.wipClient.transferFrom({
 ```
 
 ```typescript Request Type
-export type TransferFromRequest = WithTxOptions & {
+export type TransferFromRequest = {
   to: Address;
   amount: TokenAmountInput;
   from: Address;
@@ -13339,7 +13303,6 @@ Parameters:
 - `request.ipId`: The IP to set the metadata for.
 - `request.metadataURI`: The metadataURI to set for the IP asset. Should be a URL pointing to metadata that fits the [IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard).
 - `request.metadataHash`: The hash of metadata at metadataURI.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -13359,7 +13322,6 @@ export type SetIpMetadataRequest = {
   ipId: Address;
   metadataURI: string;
   metadataHash: Hex;
-  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
 };
 ```
 
@@ -13379,7 +13341,6 @@ Parameters:
 - `request.to`: The recipient of the transaction.
 - `request.value`: The amount of Ether to send.
 - `request.data`: The data to send along with the transaction.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -13389,7 +13350,6 @@ export type IPAccountExecuteRequest = {
   to: Address;
   value: number;
   data: Hex;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -13419,7 +13379,6 @@ Parameters:
 - `request.deadline`: The deadline of the transaction signature.
 - `request.signature`: The signature of the transaction, EIP-712 encoded.
 - `request.value`: \[Optional] The amount of Ether to send.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -13432,7 +13391,6 @@ export type IPAccountExecuteWithSigRequest = {
   deadline: number | bigint | string;
   signature: Address;
   value?: number | bigint | string;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -13460,7 +13418,6 @@ Parameters:
   - `request.tokens.address`: The address of the ERC20 token including WIP and standard ERC20.
   - `request.tokens.amount`: The amount of tokens to transfer
   - `request.tokens.target`: The address of the recipient.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -13472,7 +13429,6 @@ export type TransferErc20Request = {
     amount: bigint | number;
     target: Address;
   }[];
-  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
 };
 ```
 
@@ -13516,7 +13472,7 @@ Parameters:
 - `request.payerIpId`: The ID of the IP asset that pays the royalties.
 - `request.token`: The token to use to pay the royalties.
 - `request.amount`: The amount to pay.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
 - `request.wipOptions`: \[Optional]
   - `request.wipOptions.useMulticallWhenPossible`: \[Optional] Use multicall to batch the WIP calls into one transaction when possible. **Default: true**
   - `request.wipOptions.enableAutoWrapIp`: \[Optional] By default IP is converted to WIP if the current WIP balance does not cover the fees. Set this to `false` to disable this behavior. **Default: true**
@@ -13563,8 +13519,7 @@ export type PayRoyaltyOnBehalfRequest = {
   payerIpId: Address;
   token: Address;
   amount: TokenAmountInput;
-} & WithTxOptions &
-  WithERC20Options &
+} & WithERC20Options &
   WithWipOptions;
 ```
 
@@ -13591,7 +13546,6 @@ Parameters:
 - `request.ipId`: The id of the royalty vault.
 - `request.claimer`: The address of the royalty token holder.
 - `request.token`: The revenue token to claim.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -13781,12 +13735,11 @@ Parameters:
 - `request.ipId`: The ID of the IP asset that pays the royalties.
 - `request.ancestorIpId`: The ID of the ancestor IP asset.
 - `request.token`: The token address to transfer.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
 ```typescript Request Type
-export type TransferToVaultRequest = WithTxOptions & {
+export type TransferToVaultRequest = {
   royaltyPolicy: RoyaltyPolicyInput;
   ipId: Address;
   ancestorIpId: Address;
@@ -13837,7 +13790,6 @@ Parameters:
 - `request.ipId`: The address of the IP to which the license terms are attached.
 - `request.licenseTermsId`: The ID of the license terms.
 - `request.licenseTemplate`: \[Optional] The address of the license template.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -13861,7 +13813,6 @@ export type AttachLicenseTermsRequest = {
   ipId: Address;
   licenseTermsId: string | number | bigint;
   licenseTemplate?: Address;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -13907,7 +13858,6 @@ Parameters:
 - `request.amount`: \[Optional] The amount of license tokens to mint.
 - `request.receiver`: \[Optional] The address of the receiver.
 - `request.licenseTemplate`: \[Optional] The address of the license template.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -13935,8 +13885,7 @@ export type MintLicenseTokensRequest = {
   maxRevenueShare: number | string;
   amount?: number | string | bigint;
   receiver?: Address;
-} & WithTxOptions &
-  WithWipOptions;
+} & WithWipOptions;
 ```
 
 ```typescript Response Type
@@ -13961,7 +13910,6 @@ Registers new license terms and return the ID of the newly registered license te
 Parameters:
 
 - Expected Parameters: Instead of listing all of the expected parameters here, please see `LicenseTerms` type in [this](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts) file. They all come from the [PIL Terms](/concepts/programmable-ip-license/pil-terms).
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -14010,7 +13958,6 @@ export type RegisterPILTermsRequest = Omit<
   expiration: bigint | string | number;
   commercialRevCeiling: bigint | string | number;
   derivativeRevCeiling: bigint | string | number;
-  txOptions?: TxOptions;
 };
 
 export type LicenseTerms = {
@@ -14077,8 +14024,6 @@ No reason to call this function. Non-Commercial Social Remixing terms are alread
 
 Parameters:
 
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
-
 <CodeGroup>
 
 ```typescript TypeScript
@@ -14090,9 +14035,7 @@ console.log(
 ```
 
 ```typescript Request Type
-export type RegisterNonComSocialRemixingPILRequest = {
-  txOptions?: TxOptions;
-};
+export type RegisterNonComSocialRemixingPILRequest = {};
 ```
 
 ```typescript Response Type
@@ -14118,7 +14061,6 @@ Parameters:
 - `request.defaultMintingFee`: The fee to be paid when minting a license.
 - `request.currency`: The ERC20 token to be used to pay the minting fee and the token must be registered on Story's protocol.
 - `request.royaltyPolicyAddress`: \[Optional] The address of the royalty policy contract, default value is LAP.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -14145,7 +14087,6 @@ export type RegisterCommercialUsePILRequest = {
   defaultMintingFee: string | number | bigint;
   currency: Address;
   royaltyPolicyAddress?: Address;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -14173,7 +14114,6 @@ Parameters:
 - `request.commercialRevShare`: Percentage of revenue that must be shared with the licensor.
 - `request.currency`: The ERC20 token to be used to pay the minting fee and the token must be registered on Story's protocol.
 - `request.royaltyPolicyAddress`: \[Optional] The address of the royalty policy contract, default value is LAP.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -14202,7 +14142,6 @@ export type RegisterCommercialRemixPILRequest = {
   commercialRevShare: number;
   currency: Address;
   royaltyPolicyAddress?: Address;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -14228,7 +14167,6 @@ Parameters:
 
 - `request.currency`: The ERC20 token to be used to pay the minting fee and the token must be registered on Story's protocol.
 - `request.royaltyPolicyAddress`: \[Optional] The address of the royalty policy contract, default value is LAP.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -14311,7 +14249,6 @@ Parameters:
 - `request.amount`: The amount of license tokens to mint.
 - `request.licenseTemplate`: \[Optional] The address of the license template, default value is Programmable IP License.
 - `request.receiver`: \[Optional] The address of the receiver, default value is your wallet address.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type LicensingModulePredictMintingLicenseFeeResponse = {
@@ -14332,13 +14269,83 @@ Parameters:
 
 - `request.ipId`: The address of the IP for which the configuration is being set.
 - `request.licenseTermsId`: The ID of the license terms within the license template.
-- `request.licenseTemplate`: The address of the license template used, If not specified, the configuration applies to all licenses.
+- `request.licenseTemplate`: \[Optional] The address of the license template used, If not specified, the configuration applies to all licenses.
 - `request.licensingConfig`: The licensing configuration for the license.
   - `request.licensingConfig.isSet`: Whether the configuration is set or not.
   - `request.licensingConfig.mintingFee`: The minting fee to be paid when minting license tokens.
   - `request.licensingConfig.hookData`: The data to be used by the licensing hook.
   - `request.licensingConfig.licensingHook`: The hook contract address for the licensing module, or address(0) if none.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+  - `request.licensingConfig.commercialRevShare`: The commercial revenue share percentage (from 0 to 100).
+  - `request.licensingConfig.disabled`: Whether the licensing is disabled or not. If this is true, then no licenses can be minted and no more derivatives can be attached at all.
+  - `request.licensingConfig.expectMinimumGroupRewardShare`: The minimum percentage of the group's reward share (from 0 to 100).
+  - `request.licensingConfig.expectGroupRewardPool`: The address of the expected group reward pool. The IP can only be added to a group with this specified reward pool address, or zero address if the IP does not want to be added to any group.
+
+<CodeGroup>
+
+```typescript TypeScript
+import { parseEther, zeroAddress } from "viem";
+
+const response = await client.license.setLicensingConfig({
+  ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+  licenseTermsId: 1,
+  licensingConfig: {
+    isSet: true,
+    mintingFee: parseEther("1"),
+    licensingHook: "0xaBAD364Bfa41230272b08f171E0Ca939bD600478",
+    hookData: "0x",
+    commercialRevShare: 10,
+    disabled: false,
+    expectMinimumGroupRewardShare: 0,
+    expectGroupRewardPool: zeroAddress,
+  },
+});
+```
+
+```typescript Request Type
+export type SetLicensingConfigRequest = GetLicensingConfigRequest & {
+  /** The licensing configuration for the license. */
+  licensingConfig: LicensingConfigInput;
+};
+
+export type GetLicensingConfigRequest = {
+  /** The address of the IP for which the configuration is being set. */
+  ipId: Address;
+  /** The ID of the license terms within the license template. */
+  licenseTermsId: number | bigint;
+  /**
+   * The address of the license template.
+   * Defaults to {@link https://docs.story.foundation/docs/programmable-ip-license | PIL} address if not provided.
+   */
+  licenseTemplate?: Address;
+};
+
+export type LicensingConfigInput = {
+  /** Whether the licensing configuration is active. If false, the configuration is ignored. */
+  isSet: boolean;
+  /** The minting fee to be paid when minting license tokens. */
+  mintingFee: bigint | string | number;
+  /**
+   * The licensingHook is an address to a smart contract that implements the `ILicensingHook` interface.
+   * This contract's `beforeMintLicenseTokens` function is executed before a user mints a License Token,
+   * allowing for custom validation or business logic to be enforced during the minting process.
+   * For detailed documentation on licensing hook, visit {@link https://docs.story.foundation/concepts/hooks#licensing-hooks}
+   */
+  licensingHook: Address;
+  /**
+   * The data to be used by the licensing hook.
+   * Set to a zero hash if no data is provided.
+   */
+  hookData: Hex;
+  /** The commercial revenue share percentage (from 0 to 100%, represented as 100_000_000). */
+  commercialRevShare: number | string;
+  /** Whether the licensing is disabled or not. If this is true, then no licenses can be minted and no more derivatives can be attached at all. */
+  disabled: boolean;
+  /** The minimum percentage of the group’s reward share (from 0 to 100%, represented as 100_000_000) that can be allocated to the IP when it is added to the group. */
+  expectMinimumGroupRewardShare: number | string;
+  /** The address of the expected group reward pool. The IP can only be added to a group with this specified reward pool address, or zero address if the IP does not want to be added to any group. */
+  expectGroupRewardPool: Address;
+};
+```
 
 ```typescript Response Type
 export type SetLicensingConfigResponse = {
@@ -14347,6 +14354,8 @@ export type SetLicensingConfigResponse = {
   success?: boolean;
 };
 ```
+
+</CodeGroup>
 
 ### getLicensingConfig
 
@@ -14361,7 +14370,6 @@ Parameters:
 - `request.ipId`: The address of the IP for which the configuration is being fetched.
 - `request.licenseTermsId`: The ID of the license terms within the license template.
 - `request.licenseTemplate`: \[Optional] The address of the license template used.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -14451,7 +14459,6 @@ Parameters:
 - `request.to`: The address that can be called by the `signer` (currently only modules can be `to`)
 - `request.permission`: The new permission level.
 - `request.func`: [Optional] The function selector string of `to` that can be called by the `signer` on behalf of the `ipAccount`. By default, it allows all functions.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type SetPermissionsResponse = {
@@ -14477,7 +14484,6 @@ Parameters:
 - `request.permission`: The new permission level.
 - `request.func`: [Optional] The function selector string of `to` that can be called by the `signer` on behalf of the `ipAccount`. By default, it allows all functions.
 - `request.deadline`: [Optional] The deadline for the signature in milliseconds, default is 1000ms.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type SetPermissionsResponse = {
@@ -14500,7 +14506,6 @@ Parameters:
 - `request.ipId`: The IP ID that grants the permission for `signer`.
 - `request.signer`: The address of the signer receiving the permissions.
 - `request.permission`: The new permission.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type SetPermissionsResponse = {
@@ -14527,7 +14532,6 @@ Parameters:
   - `request.permissions[].permission`: The new permission level.
   - `request.permissions[].func`: [Optional] The function selector string of `to` that can be called by the `signer` on behalf of the `ipAccount`. By default, it allows all functions.
 - `request.deadline`: [Optional] The deadline for the signature in milliseconds, default is 1000ms.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type SetPermissionsResponse = {
@@ -14554,7 +14558,6 @@ Parameters:
   - `request.permissions[].to`: The address that can be called by the `signer` (currently only modules can be `to`)
   - `request.permissions[].permission`: The new permission level.
   - `request.permissions[].func`: [Optional] The function selector string of `to` that can be called by the `signer` on behalf of the `ipAccount`. By default, it allows all functions.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type SetPermissionsResponse = {
@@ -14606,7 +14609,6 @@ Parameters:
 - `request.wipOptions`: \[Optional]
   - `request.wipOptions.enableAutoWrapIp`: \[Optional]By default IP is converted to WIP if the current WIP balance does not cover the fees. Set this to `false` to disable this behavior. **Default: true**
   - `request.wipOptions.enableAutoApprove`: \[Optional]Automatically approve WIP usage when WIP is needed but current allowance is not sufficient. Set this to `false` to disable this behavior. **Default: true**
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -14631,7 +14633,7 @@ console.log(
 ```
 
 ```typescript Request Type
-export type RaiseDisputeRequest = WithTxOptions & {
+export type RaiseDisputeRequest = {
   targetIpId: Address;
   cid: string;
   targetTag: DisputeTargetTag;
@@ -14688,7 +14690,6 @@ Parameters:
 
 - `request.disputeId`: The ID of the dispute to be cancelled.
 - `request.data`: \[Optional] Additional data used in the cancellation process. **Defaults to "0x"**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -14702,7 +14703,6 @@ const response = await client.dispute.cancelDispute({
 export type CancelDisputeRequest = {
   disputeId: number | string | bigint;
   data?: Hex;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -14727,7 +14727,6 @@ Parameters:
 
 - `request.disputeId`: The ID of the dispute to be resolved.
 - `request.data`: \[Optional] The data to resolve the dispute. **Defaults to "0x"**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -14742,7 +14741,6 @@ const response = await client.dispute.resolveDispute({
 export type ResolveDisputeRequest = {
   disputeId: number | string | bigint;
   data?: Hex;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -14770,7 +14768,6 @@ Parameters:
   - `request.infringementTags[].disputeId`: The dispute id that tagged the related infringing parent IP
 - `request.options`: \[Optional]
   - `request.options.useMulticallWhenPossible`: \[Optional] Use multicall to batch the calls into one transaction when possible. If only 1 infringementTag is provided, multicall will not be used. **Default: true**
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -14794,7 +14791,7 @@ export type TagIfRelatedIpInfringedRequest = {
   options?: {
     useMulticallWhenPossible?: boolean;
   };
-} & WithTxOptions;
+};
 ```
 
 ```typescript Response Type
@@ -14828,7 +14825,6 @@ Parameters:
 - `request.wipOptions`: \[Optional]
   - `request.wipOptions.enableAutoWrapIp`: \[Optional]By default IP is converted to WIP if the current WIP balance does not cover the fees. Set this to `false` to disable this behavior. **Default: true**
   - `request.wipOptions.enableAutoApprove`: \[Optional]Automatically approve WIP usage when WIP is needed but current allowance is not sufficient. Set this to `false` to disable this behavior. **Default: true**
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -14851,7 +14847,7 @@ export type DisputeAssertionRequest = {
     enableAutoWrapIp?: boolean;
     enableAutoApprove?: boolean;
   };
-} & WithTxOptions;
+};
 ```
 
 ```typescript Response Type
@@ -14915,7 +14911,6 @@ Parameters:
 - `request.mintFee`: \[Optional] The cost to mint a token.
 - `request.mintFeeToken`: \[Optional] The token to mint.
 - `request.owner`: \[Optional] The owner of the collection.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -14960,7 +14955,6 @@ export type CreateNFTCollectionRequest = {
   mintFee?: bigint;
   mintFeeToken?: Hex;
   owner?: Hex;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -15027,7 +15021,6 @@ Parameters:
 - `request.spgNftContract`: The address of the NFT contract.
 - `request.tokenId`: The ID of the token.
 - `request.tokenURI`: The URI to set.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -15045,7 +15038,6 @@ export type SetTokenURIRequest = {
   spgNftContract: Address;
   tokenId: bigint | number;
   tokenURI: string;
-  txOptions?: TxOptions;
 };
 ```
 
