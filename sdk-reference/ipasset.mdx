@@ -68,7 +68,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -140,7 +139,6 @@ Parameters:
 - `request.maxMintingFee`: \[Optional] The maximum minting fee that the caller is willing to pay. If set to 0, then there is no no limit. **Default: 0**
 - `request.maxRevenueShare`: \[Optional] The maximum revenue share percentage agreed upon between a child and parent when a child is registering as derivative. Must be between 0 and 100. **Default: 100**
 - `request.maxRts`: \[Optional] The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Default: 100_000_000**
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -158,7 +156,6 @@ console.log(
 
 ```typescript Request Type
 export type RegisterDerivativeRequest = {
-  txOptions?: TxOptions;
   childIpId: Address;
 } & DerivativeData &
   WithWipOptions;
@@ -201,7 +198,6 @@ Parameters:
 - `request.childIpId`: The derivative IP ID.
 - `request.licenseTokenIds`: The IDs of the license tokens.
 - `request.maxRts`: The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Recommended for simplicity: 100_000_000**
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -221,7 +217,6 @@ export type RegisterDerivativeWithLicenseTokensRequest = {
   childIpId: Address;
   licenseTokenIds: string[] | bigint[] | number[];
   maxRts: number | string;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -260,7 +255,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI`: \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash`: \[Optional] The hash of the metadata for the IP NFT.
 - `request.recipient`: \[Optional] The address of the recipient of the minted NFT.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -368,7 +362,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI`: \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash`: \[Optional] The hash of the metadata for the IP NFT.
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -466,7 +459,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -575,7 +567,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.recipient`: \[Optional] The address of the recipient of the minted NFT, default value is your wallet address.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -680,7 +671,6 @@ Parameters:
   - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -743,7 +733,6 @@ Parameters:
   - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
   - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -786,7 +775,6 @@ export type RegisterPilTermsAndAttachRequest = {
     LicensingConfig
   >[];
   deadline?: string | number | bigint;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -825,7 +813,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.recipient`: \[Optional] The address to receive the minted NFT, default value is your wallet address.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -902,7 +889,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Default is 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -985,7 +971,6 @@ Parameters:
 
 - `request.requests`: Array of registration requests. Each request can be any of the supported registration method types.
 - `request.wipOptions`: [Optional] Configuration options for WIP token handling.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 

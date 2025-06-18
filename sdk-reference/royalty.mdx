@@ -29,7 +29,7 @@ Parameters:
 - `request.payerIpId`: The ID of the IP asset that pays the royalties.
 - `request.token`: The token to use to pay the royalties.
 - `request.amount`: The amount to pay.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+
 - `request.wipOptions`: \[Optional]
   - `request.wipOptions.useMulticallWhenPossible`: \[Optional] Use multicall to batch the WIP calls into one transaction when possible. **Default: true**
   - `request.wipOptions.enableAutoWrapIp`: \[Optional] By default IP is converted to WIP if the current WIP balance does not cover the fees. Set this to `false` to disable this behavior. **Default: true**
@@ -76,8 +76,7 @@ export type PayRoyaltyOnBehalfRequest = {
   payerIpId: Address;
   token: Address;
   amount: TokenAmountInput;
-} & WithTxOptions &
-  WithERC20Options &
+} & WithERC20Options &
   WithWipOptions;
 ```
 
@@ -104,7 +103,6 @@ Parameters:
 - `request.ipId`: The id of the royalty vault.
 - `request.claimer`: The address of the royalty token holder.
 - `request.token`: The revenue token to claim.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -294,12 +292,11 @@ Parameters:
 - `request.ipId`: The ID of the IP asset that pays the royalties.
 - `request.ancestorIpId`: The ID of the ancestor IP asset.
 - `request.token`: The token address to transfer.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
 ```typescript Request Type
-export type TransferToVaultRequest = WithTxOptions & {
+export type TransferToVaultRequest = {
   royaltyPolicy: RoyaltyPolicyInput;
   ipId: Address;
   ancestorIpId: Address;

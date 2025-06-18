@@ -42,7 +42,6 @@ Parameters:
 - `request.wipOptions`: \[Optional]
   - `request.wipOptions.enableAutoWrapIp`: \[Optional]By default IP is converted to WIP if the current WIP balance does not cover the fees. Set this to `false` to disable this behavior. **Default: true**
   - `request.wipOptions.enableAutoApprove`: \[Optional]Automatically approve WIP usage when WIP is needed but current allowance is not sufficient. Set this to `false` to disable this behavior. **Default: true**
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -67,7 +66,7 @@ console.log(
 ```
 
 ```typescript Request Type
-export type RaiseDisputeRequest = WithTxOptions & {
+export type RaiseDisputeRequest = {
   targetIpId: Address;
   cid: string;
   targetTag: DisputeTargetTag;
@@ -124,7 +123,6 @@ Parameters:
 
 - `request.disputeId`: The ID of the dispute to be cancelled.
 - `request.data`: \[Optional] Additional data used in the cancellation process. **Defaults to "0x"**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -138,7 +136,6 @@ const response = await client.dispute.cancelDispute({
 export type CancelDisputeRequest = {
   disputeId: number | string | bigint;
   data?: Hex;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -163,7 +160,6 @@ Parameters:
 
 - `request.disputeId`: The ID of the dispute to be resolved.
 - `request.data`: \[Optional] The data to resolve the dispute. **Defaults to "0x"**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -178,7 +174,6 @@ const response = await client.dispute.resolveDispute({
 export type ResolveDisputeRequest = {
   disputeId: number | string | bigint;
   data?: Hex;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -206,7 +201,6 @@ Parameters:
   - `request.infringementTags[].disputeId`: The dispute id that tagged the related infringing parent IP
 - `request.options`: \[Optional]
   - `request.options.useMulticallWhenPossible`: \[Optional] Use multicall to batch the calls into one transaction when possible. If only 1 infringementTag is provided, multicall will not be used. **Default: true**
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -230,7 +224,7 @@ export type TagIfRelatedIpInfringedRequest = {
   options?: {
     useMulticallWhenPossible?: boolean;
   };
-} & WithTxOptions;
+};
 ```
 
 ```typescript Response Type
@@ -264,7 +258,6 @@ Parameters:
 - `request.wipOptions`: \[Optional]
   - `request.wipOptions.enableAutoWrapIp`: \[Optional]By default IP is converted to WIP if the current WIP balance does not cover the fees. Set this to `false` to disable this behavior. **Default: true**
   - `request.wipOptions.enableAutoApprove`: \[Optional]Automatically approve WIP usage when WIP is needed but current allowance is not sufficient. Set this to `false` to disable this behavior. **Default: true**
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -287,7 +280,7 @@ export type DisputeAssertionRequest = {
     enableAutoWrapIp?: boolean;
     enableAutoApprove?: boolean;
   };
-} & WithTxOptions;
+};
 ```
 
 ```typescript Response Type

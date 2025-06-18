@@ -34,7 +34,6 @@ Parameters:
 - `request.mintFee`: \[Optional] The cost to mint a token.
 - `request.mintFeeToken`: \[Optional] The token to mint.
 - `request.owner`: \[Optional] The owner of the collection.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -79,7 +78,6 @@ export type CreateNFTCollectionRequest = {
   mintFee?: bigint;
   mintFeeToken?: Hex;
   owner?: Hex;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -146,7 +144,6 @@ Parameters:
 - `request.spgNftContract`: The address of the NFT contract.
 - `request.tokenId`: The ID of the token.
 - `request.tokenURI`: The URI to set.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -164,7 +161,6 @@ export type SetTokenURIRequest = {
   spgNftContract: Address;
   tokenId: bigint | number;
   tokenURI: string;
-  txOptions?: TxOptions;
 };
 ```
 

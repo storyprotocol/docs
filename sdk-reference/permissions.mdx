@@ -34,7 +34,6 @@ Parameters:
 - `request.to`: The address that can be called by the `signer` (currently only modules can be `to`)
 - `request.permission`: The new permission level.
 - `request.func`: [Optional] The function selector string of `to` that can be called by the `signer` on behalf of the `ipAccount`. By default, it allows all functions.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type SetPermissionsResponse = {
@@ -60,7 +59,6 @@ Parameters:
 - `request.permission`: The new permission level.
 - `request.func`: [Optional] The function selector string of `to` that can be called by the `signer` on behalf of the `ipAccount`. By default, it allows all functions.
 - `request.deadline`: [Optional] The deadline for the signature in milliseconds, default is 1000ms.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type SetPermissionsResponse = {
@@ -83,7 +81,6 @@ Parameters:
 - `request.ipId`: The IP ID that grants the permission for `signer`.
 - `request.signer`: The address of the signer receiving the permissions.
 - `request.permission`: The new permission.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type SetPermissionsResponse = {
@@ -110,7 +107,6 @@ Parameters:
   - `request.permissions[].permission`: The new permission level.
   - `request.permissions[].func`: [Optional] The function selector string of `to` that can be called by the `signer` on behalf of the `ipAccount`. By default, it allows all functions.
 - `request.deadline`: [Optional] The deadline for the signature in milliseconds, default is 1000ms.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type SetPermissionsResponse = {
@@ -137,7 +133,6 @@ Parameters:
   - `request.permissions[].to`: The address that can be called by the `signer` (currently only modules can be `to`)
   - `request.permissions[].permission`: The new permission level.
   - `request.permissions[].func`: [Optional] The function selector string of `to` that can be called by the `signer` on behalf of the `ipAccount`. By default, it allows all functions.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type SetPermissionsResponse = {

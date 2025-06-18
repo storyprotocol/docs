@@ -32,7 +32,6 @@ Parameters:
 - `request.ipId`: The address of the IP to which the license terms are attached.
 - `request.licenseTermsId`: The ID of the license terms.
 - `request.licenseTemplate`: \[Optional] The address of the license template.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -56,7 +55,6 @@ export type AttachLicenseTermsRequest = {
   ipId: Address;
   licenseTermsId: string | number | bigint;
   licenseTemplate?: Address;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -102,7 +100,6 @@ Parameters:
 - `request.amount`: \[Optional] The amount of license tokens to mint.
 - `request.receiver`: \[Optional] The address of the receiver.
 - `request.licenseTemplate`: \[Optional] The address of the license template.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -130,8 +127,7 @@ export type MintLicenseTokensRequest = {
   maxRevenueShare: number | string;
   amount?: number | string | bigint;
   receiver?: Address;
-} & WithTxOptions &
-  WithWipOptions;
+} & WithWipOptions;
 ```
 
 ```typescript Response Type
@@ -156,7 +152,6 @@ Registers new license terms and return the ID of the newly registered license te
 Parameters:
 
 - Expected Parameters: Instead of listing all of the expected parameters here, please see `LicenseTerms` type in [this](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts) file. They all come from the [PIL Terms](/concepts/programmable-ip-license/pil-terms).
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -205,7 +200,6 @@ export type RegisterPILTermsRequest = Omit<
   expiration: bigint | string | number;
   commercialRevCeiling: bigint | string | number;
   derivativeRevCeiling: bigint | string | number;
-  txOptions?: TxOptions;
 };
 
 export type LicenseTerms = {
@@ -272,8 +266,6 @@ No reason to call this function. Non-Commercial Social Remixing terms are alread
 
 Parameters:
 
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
-
 <CodeGroup>
 
 ```typescript TypeScript
@@ -285,9 +277,7 @@ console.log(
 ```
 
 ```typescript Request Type
-export type RegisterNonComSocialRemixingPILRequest = {
-  txOptions?: TxOptions;
-};
+export type RegisterNonComSocialRemixingPILRequest = {};
 ```
 
 ```typescript Response Type
@@ -313,7 +303,6 @@ Parameters:
 - `request.defaultMintingFee`: The fee to be paid when minting a license.
 - `request.currency`: The ERC20 token to be used to pay the minting fee and the token must be registered on Story's protocol.
 - `request.royaltyPolicyAddress`: \[Optional] The address of the royalty policy contract, default value is LAP.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -340,7 +329,6 @@ export type RegisterCommercialUsePILRequest = {
   defaultMintingFee: string | number | bigint;
   currency: Address;
   royaltyPolicyAddress?: Address;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -368,7 +356,6 @@ Parameters:
 - `request.commercialRevShare`: Percentage of revenue that must be shared with the licensor.
 - `request.currency`: The ERC20 token to be used to pay the minting fee and the token must be registered on Story's protocol.
 - `request.royaltyPolicyAddress`: \[Optional] The address of the royalty policy contract, default value is LAP.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -397,7 +384,6 @@ export type RegisterCommercialRemixPILRequest = {
   commercialRevShare: number;
   currency: Address;
   royaltyPolicyAddress?: Address;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -423,7 +409,6 @@ Parameters:
 
 - `request.currency`: The ERC20 token to be used to pay the minting fee and the token must be registered on Story's protocol.
 - `request.royaltyPolicyAddress`: \[Optional] The address of the royalty policy contract, default value is LAP.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -506,7 +491,6 @@ Parameters:
 - `request.amount`: The amount of license tokens to mint.
 - `request.licenseTemplate`: \[Optional] The address of the license template, default value is Programmable IP License.
 - `request.receiver`: \[Optional] The address of the receiver, default value is your wallet address.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type LicensingModulePredictMintingLicenseFeeResponse = {
@@ -527,13 +511,83 @@ Parameters:
 
 - `request.ipId`: The address of the IP for which the configuration is being set.
 - `request.licenseTermsId`: The ID of the license terms within the license template.
-- `request.licenseTemplate`: The address of the license template used, If not specified, the configuration applies to all licenses.
+- `request.licenseTemplate`: \[Optional] The address of the license template used, If not specified, the configuration applies to all licenses.
 - `request.licensingConfig`: The licensing configuration for the license.
   - `request.licensingConfig.isSet`: Whether the configuration is set or not.
   - `request.licensingConfig.mintingFee`: The minting fee to be paid when minting license tokens.
   - `request.licensingConfig.hookData`: The data to be used by the licensing hook.
   - `request.licensingConfig.licensingHook`: The hook contract address for the licensing module, or address(0) if none.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+  - `request.licensingConfig.commercialRevShare`: The commercial revenue share percentage (from 0 to 100).
+  - `request.licensingConfig.disabled`: Whether the licensing is disabled or not. If this is true, then no licenses can be minted and no more derivatives can be attached at all.
+  - `request.licensingConfig.expectMinimumGroupRewardShare`: The minimum percentage of the group's reward share (from 0 to 100).
+  - `request.licensingConfig.expectGroupRewardPool`: The address of the expected group reward pool. The IP can only be added to a group with this specified reward pool address, or zero address if the IP does not want to be added to any group.
+
+<CodeGroup>
+
+```typescript TypeScript
+import { parseEther, zeroAddress } from "viem";
+
+const response = await client.license.setLicensingConfig({
+  ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+  licenseTermsId: 1,
+  licensingConfig: {
+    isSet: true,
+    mintingFee: parseEther("1"),
+    licensingHook: "0xaBAD364Bfa41230272b08f171E0Ca939bD600478",
+    hookData: "0x",
+    commercialRevShare: 10,
+    disabled: false,
+    expectMinimumGroupRewardShare: 0,
+    expectGroupRewardPool: zeroAddress,
+  },
+});
+```
+
+```typescript Request Type
+export type SetLicensingConfigRequest = GetLicensingConfigRequest & {
+  /** The licensing configuration for the license. */
+  licensingConfig: LicensingConfigInput;
+};
+
+export type GetLicensingConfigRequest = {
+  /** The address of the IP for which the configuration is being set. */
+  ipId: Address;
+  /** The ID of the license terms within the license template. */
+  licenseTermsId: number | bigint;
+  /**
+   * The address of the license template.
+   * Defaults to {@link https://docs.story.foundation/docs/programmable-ip-license | PIL} address if not provided.
+   */
+  licenseTemplate?: Address;
+};
+
+export type LicensingConfigInput = {
+  /** Whether the licensing configuration is active. If false, the configuration is ignored. */
+  isSet: boolean;
+  /** The minting fee to be paid when minting license tokens. */
+  mintingFee: bigint | string | number;
+  /**
+   * The licensingHook is an address to a smart contract that implements the `ILicensingHook` interface.
+   * This contract's `beforeMintLicenseTokens` function is executed before a user mints a License Token,
+   * allowing for custom validation or business logic to be enforced during the minting process.
+   * For detailed documentation on licensing hook, visit {@link https://docs.story.foundation/concepts/hooks#licensing-hooks}
+   */
+  licensingHook: Address;
+  /**
+   * The data to be used by the licensing hook.
+   * Set to a zero hash if no data is provided.
+   */
+  hookData: Hex;
+  /** The commercial revenue share percentage (from 0 to 100%, represented as 100_000_000). */
+  commercialRevShare: number | string;
+  /** Whether the licensing is disabled or not. If this is true, then no licenses can be minted and no more derivatives can be attached at all. */
+  disabled: boolean;
+  /** The minimum percentage of the group’s reward share (from 0 to 100%, represented as 100_000_000) that can be allocated to the IP when it is added to the group. */
+  expectMinimumGroupRewardShare: number | string;
+  /** The address of the expected group reward pool. The IP can only be added to a group with this specified reward pool address, or zero address if the IP does not want to be added to any group. */
+  expectGroupRewardPool: Address;
+};
+```
 
 ```typescript Response Type
 export type SetLicensingConfigResponse = {
@@ -542,6 +596,8 @@ export type SetLicensingConfigResponse = {
   success?: boolean;
 };
 ```
+
+</CodeGroup>
 
 ### getLicensingConfig
 
@@ -556,7 +612,6 @@ Parameters:
 - `request.ipId`: The address of the IP for which the configuration is being fetched.
 - `request.licenseTermsId`: The ID of the license terms within the license template.
 - `request.licenseTemplate`: \[Optional] The address of the license template used.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
