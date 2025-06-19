@@ -19302,6 +19302,12 @@ Below is how IP Asset 3 would claim their revenue, as shown in the image above, 
   [royalty.claimAllRevenue](/sdk-reference/royalty#claimallrevenue)
 </Info>
 
+<Note>
+
+Claiming revenue is permissionless. Any wallet can run the claim revenue transaction for an IP.
+
+</Note>
+
 ```typescript main.ts
 import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
 // you should already have a client set up (prerequisite)
@@ -19372,6 +19378,12 @@ Below is how IP Asset 1 (or 2) would claim their revenue, as shown in the image 
   Associated Docs:
   [royalty.claimAllRevenue](/sdk-reference/royalty#claimallrevenue)
 </Info>
+
+<Note>
+
+Claiming revenue is permissionless. Any wallet can run the claim revenue transaction for an IP.
+
+</Note>
 
 ```typescript main.ts
 import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
@@ -22447,6 +22459,12 @@ The child IP can claim its 1 \$WIP by calling the `claimAllRevenue` function:
 - `currencyTokens` is an array that contains the address of \$WIP, which can be found [here](/concepts/royalty-module/ip-royalty-vault#whitelisted-revenue-tokens)
 - `claimer` is the address that holds the [royalty tokens](/concepts/royalty-module/ip-royalty-vault#royalty-tokens) associated with the child's [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault). By default, they are in the IP Account, which is just the `ipId` of the child asset.
 
+<Note>
+
+Claiming revenue is permissionless. Any wallet can run the claim revenue transaction for an IP.
+
+</Note>
+
 ```typescript main.ts
 import { client } from "./utils";
 import { zeroAddress, parseEther } from "viem";
@@ -22537,6 +22555,12 @@ We will use the `claimAllRevenue` function to claim the due revenue tokens.
 3. `childIpIds` will have the `ipId` of the child asset
 4. `royaltyPolicies` will contain the address of the royalty policy. As explained in [Royalty Module](/concepts/royalty-module), this is either `RoyaltyPolicyLAP` or `RoyaltyPolicyLRP`, depending on the license terms. In this case, let's assume the license terms specify a `RoyaltyPolicyLAP`. Simply go to [Deployed Smart Contracts](/developers/deployed-smart-contracts) and find the correct address.
 5. `currencyTokens` is an array that contains the address of \$WIP, which can be found [here](/concepts/royalty-module/ip-royalty-vault#whitelisted-revenue-tokens)
+
+<Note>
+
+Claiming revenue is permissionless. Any wallet can run the claim revenue transaction for an IP.
+
+</Note>
 
 ```typescript main.ts
 import { client } from "./utils";
