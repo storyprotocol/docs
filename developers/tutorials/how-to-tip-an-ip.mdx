@@ -152,64 +152,6 @@ async function main() {
 main();
 ```
 
-<Accordion title="Where does revenue get claimed to? Why is it in the IP Account?" icon="face-thinking">
-
-A couple of things to note here:
-
-1. By default, revenue is claimed to the IP Account, not the IP owner's
-   wallet. This is because when an IP is created, the royalty tokens for that IP
-   (where revenue gets claimed to) are minted to the IP Account.
-
-2. To transfer revenue from IP Account -> IP Owner's wallet, the owners of the
-   parent and child IP can run the `transferErc20` function (it will not work
-   if you run it for someone else's IP obviously).
-
-   ```typescript main.ts
-   // Docs: https://docs.story.foundation/sdk-reference/ipaccount#transfererc20
-   const transferFromIpAccount = await client.ipAccount.transferErc20({
-     ipId: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
-     tokens: [
-       {
-         address: WIP_TOKEN_ADDRESS,
-         amount: parseEther("1"),
-         target: "0x02", // the external wallet
-       },
-     ],
-   });
-   ```
-
-3. If the **IP owner** (the wallet that owns the underlying IP ownership NFT) had
-   called `claimAllRevenue` before, our SDK would automatically transfer the revenue
-   to the IP owner's wallet for convenience.
-
-4. If the IP owner wants revenue to always be claimed to their wallet and
-   avoid the middle step, they should transfer the royalty tokens from the IP
-   account to their wallet.
-
-   ```typescript main.ts
-   // Get the IP Royalty Vault Address
-   // Note: This is equivalent to the currency address of the ERC-20
-   // Royalty Tokens for this IP.
-   const royaltyVaultAddress = await client.royalty.getRoyaltyVaultAddress(
-     "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2" as Address
-   );
-
-   // Transfer the Royalty Tokens from the IP Account to the address
-   // executing this transaction (you could use any other address as well)
-   const transferRoyaltyTokens = await client.ipAccount.transferErc20({
-     ipId: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2" as Address,
-     tokens: [
-       {
-         address: royaltyVaultAddress,
-         amount: 1 * 1_000_000, // 1% of the royalty tokens
-         target: "0x02", // the external wallet
-       },
-     ],
-   });
-   ```
-
-</Accordion>
-
 ## 4. Parent Claiming Due Revenue
 
 Continuing, the parent should be able to claim its revenue as well. In this example, the parent should be able to claim 1 \$WIP since the child earned 2 \$WIP and the `commercialRevShare = 50` in the license terms.
@@ -250,22 +192,22 @@ async function main() {
 main();
 ```
 
-<Accordion title="Where does revenue get claimed to? Why is it in the IP Account?" icon="face-thinking">
+## 5. Where does revenue get claimed to? Why do I not see it in my wallet? Why is it in the IP Account?
 
-Exactly the same as the child, there are a few things to note here:
+A couple of things to note here:
 
 1. By default, revenue is claimed to the IP Account, not the IP owner's
    wallet. This is because when an IP is created, the royalty tokens for that IP
    (where revenue gets claimed to) are minted to the IP Account.
 
-2. To transfer revenue from IP Account -> IP Owner's wallet, the owners of the
-   parent and child IP can run the `transferErc20` function (it will not work
+2. To transfer revenue from IP Account -> IP Owner's wallet, an IP owner can
+   run the `transferErc20` function (it will not work
    if you run it for someone else's IP obviously).
 
    ```typescript main.ts
    // Docs: https://docs.story.foundation/sdk-reference/ipaccount#transfererc20
    const transferFromIpAccount = await client.ipAccount.transferErc20({
-     ipId: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+     ipId: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
      tokens: [
        {
          address: WIP_TOKEN_ADDRESS,
@@ -289,26 +231,24 @@ Exactly the same as the child, there are a few things to note here:
    // Note: This is equivalent to the currency address of the ERC-20
    // Royalty Tokens for this IP.
    const royaltyVaultAddress = await client.royalty.getRoyaltyVaultAddress(
-     "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384" as Address
+     "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2" as Address
    );
 
    // Transfer the Royalty Tokens from the IP Account to the address
    // executing this transaction (you could use any other address as well)
    const transferRoyaltyTokens = await client.ipAccount.transferErc20({
-     ipId: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384" as Address,
+     ipId: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2" as Address,
      tokens: [
        {
          address: royaltyVaultAddress,
-         amount: 1 * 1_000_000, // 1% of the royalty tokens
-         target: "0x03", // the external wallet
+         amount: 100 * 1_000_000, // 100% of the royalty tokens
+         target: "0x02", // the external wallet
        },
      ],
    });
    ```
 
-</Accordion>
-
-## 5. Done!
+## 6. Done!
 
 <CardGroup cols={1}>
   <Card
