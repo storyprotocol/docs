@@ -18435,9 +18435,9 @@ Documentation coming soon. If you have questions in the meantime, ask in the [Bu
 # Story Attestation Service
 
 <Accordion title="Skip the Read - 1 Minute Summary" icon="circle-info">
-  You can think of the Story Attestation Service (SAS) as a bunch of independent service providers (infringement, identity, etc) each proving the validity of an IP in their own way. So that each IP has a set of "badges" on it displaying the results.
+  You can think of the Story Attestation Service (SAS) as a bunch of independent service providers each proving the validity of an IP in their own way. So that each IP has a set of "badges" on it displaying the results.
 
-It's then up to the ecosystem/market to determine which providers they trust or want to believe. This becomes a decentralized "validator"-like approach to IP validity, where if an IP Asset has lots of providers saying it is valid, then it probably valid.
+It's then up to the ecosystem/market to determine which providers they trust or want to believe. This becomes a decentralized "validator"-like approach to IP validity, where if an IP Asset has lots of providers saying it is valid, then it's probably valid.
 
 </Accordion>
 
