@@ -617,7 +617,11 @@
             "groups": [
               {
                 "group": "Overview",
-                "pages": ["foundation/governance", "foundation/disclaimer"]
+                "pages": [
+                  "foundation/governance",
+                  "foundation/disclaimer",
+                  "foundation/mica"
+                ]
               }
             ]
           }
