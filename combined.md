@@ -19463,6 +19463,12 @@ export type PayRoyaltyOnBehalfResponse = {
 
 Get total amount of revenue token claimable by a royalty token holder.
 
+<Note>
+
+This function will only return the claimable revenue that is sitting in the IP Royalty Vault. If a parent is claiming revenue from a child and the revenue is in the Royalty Module, it won't be returned by this function.
+
+</Note>
+
 | Method             | Type                                                                      |
 | ------------------ | ------------------------------------------------------------------------- |
 | `claimableRevenue` | `(request: ClaimableRevenueRequest) => Promise<ClaimableRevenueResponse>` |
@@ -19470,10 +19476,20 @@ Get total amount of revenue token claimable by a royalty token holder.
 Parameters:
 
 - `request.ipId`: The id of the royalty vault.
-- `request.claimer`: The address of the royalty token holder.
+- `request.claimer`: The address of the royalty token holder. This is most commonly the IP Account, since by default the IP Account is the owner of the royalty tokens.
 - `request.token`: The revenue token to claim.
 
 <CodeGroup>
+
+```typescript TypeScript
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+
+const claimableRevenue = await client.royalty.claimableRevenue({
+  ipId: "0x01",
+  claimer: "0x01",
+  token: WIP_TOKEN_ADDRESS,
+});
+```
 
 ```typescript Request Type
 export type ClaimableRevenueRequest = {
