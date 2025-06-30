@@ -6712,10 +6712,10 @@ import { client } from "./client";
 async function main() {
   const claimRevenue = await client.royalty.claimAllRevenue({
     // IP Asset 3's ipId
-    ancestorIpId: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
-    // whoever owns the royalty tokens associated with IP Royalty Vault 3
-    // (most likely the associated ipId, which is IP Asset 3's ipId)
-    claimer: "0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2",
+    ancestorIpId: "0x03",
+    // the address that owns the royalty tokens,
+    // which is the IP Account in this case
+    claimer: "0x03",
     currencyTokens: [WIP_TOKEN_ADDRESS],
     childIpIds: [],
     royaltyPolicies: [],
@@ -6754,16 +6754,16 @@ In this scenario, I own IP Asset 1. Someone pays a derivative IP Asset 3, and I 
 
    <Frame>
      <img
-       src="/images/concepts/royalty-module/royalty-policy-distribution.png"
+       src="/images/concepts/royalty-module/claim-to-ip1.png"
        alt="Revenue distribution to ancestors"
      />
    </Frame>
 
-3. Lastly, IP Asset 1 & 2 want to claim their revenue sitting in their associated IP Royalty Vaults. It will look like this:
+3. Lastly, IP Asset 1 wants to claim their revenue sitting in its associated IP Royalty Vault. It will look like this:
 
    <Frame>
      <img
-       src="/images/concepts/royalty-module/ipa1n2-claims.png"
+       src="/images/concepts/royalty-module/claim-to-ip1-account.png"
        alt="Claiming revenue from ancestor IP Royalty Vaults"
      />
    </Frame>
@@ -6789,13 +6789,110 @@ import { client } from "./client";
 async function main() {
   const claimRevenue = await client.royalty.claimAllRevenue({
     // IP Asset 1's ipId
-    ancestorIpId: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
-    // whoever owns the royalty tokens associated with IP Royalty Vault 1
-    // (most likely the associated ipId, which is IP Asset 1's ipId)
-    claimer: "0x089d75C9b7E441dA3115AF93FF9A855BDdbfe384",
+    ancestorIpId: "0x01",
+    // the address that owns the royalty tokens,
+    // which is the IP Account in this case
+    claimer: "0x01",
     currencyTokens: [WIP_TOKEN_ADDRESS],
     // IP Asset 3's ipId
-    childIpIds: ["0xDa03c4B278AD44f5a669e9b73580F91AeDE0E3B2"],
+    childIpIds: ["0x03"],
+    // Aeneid testnet address of RoyaltyPolicyLAP
+    royaltyPolicies: ["0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E"],
+    claimOptions: {
+      // If the wallet claiming the revenue is the owner of the
+      // IP Account/IP Asset (in other words, the owner of the
+      // IP's underlying NFT), `claimAllRevenue` will transfer all
+      // earnings to the user's external wallet holding the NFT
+      // instead of the IP Account, for convenience. You can disable it here.
+      autoTransferAllClaimedTokensFromIp: true,
+      // Unwraps the claimed $WIP to $IP for you
+      autoUnwrapIpTokens: true,
+    },
+  });
+
+  console.log(`Claimed revenue: ${claimRevenue.claimedTokens}`);
+}
+
+main();
+```
+
+## Scenario #3
+
+In this scenario, I own IP Asset 1. Someone pays a derivative IP Asset 3, and I have the right to a % of their revenue based on the `commercialRevShare` in the license terms. The difference here is that I have previously transferred the royalty tokens in the IP Account to an external wallet, most commonly the wallet that owns the IP. This is exactly the same as Scenario #2, except royalty is being claimed to an external wallet instead of the IP Account. Let's view this in steps:
+
+1. As we can see in the below diagram, when someone pays IP Asset 3 100 \$WIP, 15 \$WIP automatically gets deposited to the LAP royalty policy contract to be distributed to ancestors.
+
+   <Frame>
+     <img
+       src="/images/concepts/royalty-module/royalty-module-split-lap.png"
+       alt="Revenue distribution to royalty policy contract"
+     />
+   </Frame>
+
+2. Then, in a second step, the tokens are transferred to the ancestors' [IP Royalty Vault](/concepts/royalty-module/ip-royalty-vault) based on the negotiated `commercialRevShare` in the license terms.
+
+   <Frame>
+     <img
+       src="/images/concepts/royalty-module/claim-to-ip1.png"
+       alt="Revenue distribution to ancestors"
+     />
+   </Frame>
+
+3. Lastly, IP Asset 1 wants to claim their revenue sitting in its associated IP Royalty Vault. It will look like this:
+
+   <Frame>
+     <img
+       src="/images/concepts/royalty-module/claim-to-ip1-owner.png"
+       alt="Claiming revenue from ancestor IP Royalty Vaults"
+     />
+   </Frame>
+
+Below is how IP Asset 1 (or 2) would claim their revenue, as shown in the image above, with the SDK:
+
+<Info>
+  Associated Docs:
+  [royalty.claimAllRevenue](/sdk-reference/royalty#claimallrevenue)
+</Info>
+
+<Note>
+
+Claiming revenue is permissionless. Any wallet can run the claim revenue transaction for an IP.
+
+</Note>
+
+```typescript main.ts
+import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+// you should already have a client set up (prerequisite)
+import { client } from "./client";
+
+async function main() {
+  // transfer the royalty tokens from the
+  // ip account to the external wallet
+  // NOTE: this can only be called by the IP owner
+  // and only needs to be called once. Any future
+  // claims will be to this external wallet
+  const royaltyVaultAddress = await client.royalty.getRoyaltyVaultAddress("0x01");
+  const transferRoyaltyTokens = await client.ipAccount.transferErc20({
+    ipId: "0x01",
+    tokens: [
+      {
+        address: royaltyVaultAddress,
+        amount: 100_000_000, // 100% of the royalty tokens
+        target: "0x04", // the external wallet
+      },
+    ],
+  });
+
+  // claim the revenue to the external wallet
+  const claimRevenue = await client.royalty.claimAllRevenue({
+    // IP Asset 1's ipId
+    ancestorIpId: "0x01",
+    // the address that owns the royalty tokens,
+    // which is the external wallet in this case
+    claimer: "0x04",
+    currencyTokens: [WIP_TOKEN_ADDRESS],
+    // IP Asset 3's ipId
+    childIpIds: ["0x03"],
     // Aeneid testnet address of RoyaltyPolicyLAP
     royaltyPolicies: ["0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E"],
     claimOptions: {
