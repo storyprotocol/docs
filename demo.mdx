@@ -3,8 +3,18 @@ mode: "custom"
 icon: circle-play
 ---
 
+{/* light theme */}
+
 <iframe
-  src="https://story-demo-mu.vercel.app/iframe"
+  src="http://localhost:3000/iframe?theme=light"
   title="Embedded content"
-  className="w-full h-screen"
+  className="w-full h-screen block dark:hidden"
+></iframe>
+
+{/* dark theme */}
+
+<iframe
+  src="http://localhost:3000/iframe?theme=dark"
+  title="Embedded content"
+  className="w-full h-screen hidden dark:block"
 ></iframe>

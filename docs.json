@@ -29,8 +29,8 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Quick Demo",
-      "href": "https://story-demo-mu.vercel.app"
+      "label": "Quickstart",
+      "href": "https://docs.story.foundation/quickstart"
     }
   },
   "navigation": {
