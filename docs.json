@@ -29,8 +29,8 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Quickstart",
-      "href": "https://docs.story.foundation/quickstart"
+      "label": "Quick Demo",
+      "href": "https://story-demo-mu.vercel.app"
     }
   },
   "navigation": {
@@ -64,6 +64,7 @@
                 "group": "Get Started",
                 "pages": [
                   "introduction",
+                  "demo",
                   "explain-like-im-five",
                   "quickstart",
                   {
