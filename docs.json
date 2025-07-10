@@ -621,7 +621,8 @@
                 "pages": [
                   "foundation/governance",
                   "foundation/disclaimer",
-                  "foundation/mica"
+                  "foundation/mica",
+                  "foundation/security-council"
                 ]
               }
             ]
