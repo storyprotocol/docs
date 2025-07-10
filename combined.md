@@ -22302,6 +22302,129 @@ As the steward of the Story ecosystem, the Story Foundation works in close align
 </Accordion>
 
 
+# Security Council
+
+A Security Council is an independent, semi-centralized group of trusted individuals or entities empowered to act swiftly to protect a decentralized protocol during emergencies. While decentralization is the ultimate goal of Story, the council provides a pragmatic layer of operational security that can mitigate risks that decentralized governance cannot quickly address.
+
+### 🛡️ Purpose and Core Responsibilities
+
+The Security Council’s primary role is to safeguard the integrity of the Story Network and Story Protocol through technical oversight, by
+
+- Proposing parameter adjustments to the protocol and network.
+- Veto network upgrade or parameter changes
+- Monitoring and alerting for:
+  - Critical vulnerabilities in smart contracts.
+  - Monitor and alert for ongoing exploits draining user funds.
+  - Monitor and alert for compromised admin keys or governance mechanisms.
+  - Malicious governance or upgrade proposals.
+- Reviewing improvement proposals and alerting of harmful security or economic side effects.
+
+## 🪄 Council powers
+
+### **Emergency Actions**
+
+The Council has authority to take critical actions immediately, without delay, in the case of security emergencies (e.g., exploits or vulnerabilities that threaten network integrity).
+
+- Pause or freeze contracts using privileged functions.
+- Revoke or change access to admin keys or contracts.
+- Schedule upgrades, patches and parameter changes before full DAO approval.
+- Restore funds in coordination with governance, if feasible.
+
+> Transparency requirement: After any Emergency Action, a full transparency report must be issued as soon as it is safe to disclose what was done and why.
+
+### ☑️ **Non-Emergency Actions**
+
+In non-emergency scenarios, the Council can:
+
+- Integration with Story Improvement Process (SIP)
+  - Reviewing proposals (e.g., SIPs, forks, smart contract upgrades).
+  - Writing SIPs
+  - Issuing technical recommendations
+- Review SIPs for technical feasibility
+- Verify that \*\*\*\*DAO vote’s result in executed onchain outcomes
+- Propose adjusting protocol parameters like:
+  - Protocol fees.
+  - Validator staking amounts and commission rates.
+  - Reserve rates for the $IP token pool.
+- Propose cancellation or roll back scheduled upgrades.
+
+Beyond emergency responses, the council may:
+
+- **Participate in code reviews** and smart contract audits.
+- **Maintain a risk register** to track known threats.
+- **Respond to bug bounty reports** alongside core developers and audit firms.
+- **Coordinate with white-hat hackers** during disclosures.
+
+Their goal here is **preventative security**, not just reactive defense.
+
+## 🤝Meetings
+
+Regular meetings
+
+- Will be held bi-weekly with the focus of reviewing and establishing the governance process and upgrade execution setup. Frequency might be adjusted later on.
+- Example of topics
+  - Review of SIPs
+  - Review of previous changes and scheduled upgrades
+  - Evaluation of security reports or incidents
+  - Synching with Foundation or other stakeholders
+- Meetings will be minuted for transparency, with a report being published after.
+
+Emergency meetings
+
+- Security council members will be on-call for ad-hoc, immediate meetings convened when any critical issue arises (e.g. security breach, discovered vulnerability, exploit in progress).
+- They will be confidential until public disclosure is safe
+
+## 🏛️ Structure and Membership
+
+### **Self-Governance**
+
+The Council can:
+
+- Elect a **Security Council Chair**.
+- Establish **internal procedures** to enhance its functioning.
+- Implement **staggered terms** for its members to ensure continuity.
+
+### Composition
+
+- The Security Council can have **up to 11 members**.
+  - Current members:
+    - Michael Lewellen: https://x.com/LewellenMichael
+      - Public Key: `0xc1583ef962954b123b5d043788f30ef2450956b5`
+    - Vera the Ape: https://x.com/veratheape
+      - Public Key: `0xea18ff3a559746468bb3f65ab5984e591ec9cb5b`
+    - Anton Astafiev [Onboarding] : [https://www.linkedin.com/in/astafiev](https://www.linkedin.com/in/astafiev/)
+      - Public Key:
+    - Raúl Martínez: https://x.com/ethicraul
+      - Public Key:
+- Members are empowered to carry out Emergency and Non-Emergency Actions, and ensure SIPs comply with the Constitution.
+
+### Phased Membership Model
+
+**First Phase:**
+
+- Until the later of 1 year post-Constitution or a vote to transition to Phase 2:
+  - Up to **7 members** are appointed by Foundation Directors.
+  - Up to **4 members** are elected by a **majority vote of incumbent members**.
+  - At least **3 members** must be appointed directly by Foundation Directors.
+
+**Second Phase:**
+
+- Tokenholders gain the right to **elect a majority of Council Members** via a **Constitutional SIP**.
+- Incumbents finish their terms.
+
+### Term Length and Renewal
+
+- Each Security Council Member serves a **12-month term**, automatically renewable unless:
+  - A new member is elected.
+  - They resign.
+  - They are otherwise removed.
+
+### Removal of Members
+
+- Tokenholders can remove Council Members via a **Constitutional SIP**.
+- Removed individuals cannot rejoin the Council for at least **12 months** after removal.
+
+
 # Story Protocol Disclaimer
 
 The Foundation may directly or indirectly purchase and sell Story tokens ($IP) at any time and
