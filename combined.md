@@ -22341,7 +22341,7 @@ In non-emergency scenarios, the Council can:
   - Writing SIPs
   - Issuing technical recommendations
 - Review SIPs for technical feasibility
-- Verify that \*\*\*\*DAO vote’s result in executed onchain outcomes
+- Verify that DAO vote’s result in executed onchain outcomes
 - Propose adjusting protocol parameters like:
   - Protocol fees.
   - Validator staking amounts and commission rates.
