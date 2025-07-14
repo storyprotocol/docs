@@ -305,14 +305,24 @@ console.log(`
 export type MintAndRegisterIpAssetWithPilTermsRequest = {
   spgNftContract: Address;
   allowDuplicates: boolean;
-  licenseTermsData: LicenseTermsData<
-    RegisterPILTermsRequest,
-    LicensingConfig
-  >[];
+  licenseTermsData: LicenseTermsDataInput[];
   recipient?: Address;
-  royaltyPolicyAddress?: Address;
 } & IpMetadataAndTxOptions &
   WithWipOptions;
+
+export type LicenseTermsDataInput = {
+  /** Programmable IP License */
+  terms: LicenseTerms;
+  licensingConfig?: LicensingConfig;
+  /**
+   * The max number of license tokens that can be minted from this license term.
+   *
+   * - When not specified, there is no limit on license token minting
+   * - When specified, minting is capped at this value and the {@link https://github.com/storyprotocol/protocol-periphery-v1/blob/release/1.3/contracts/hooks/TotalLicenseTokenLimitHook.sol | TotalLicenseTokenLimitHook}
+   *   is automatically configured as the {@link LicensingConfigInput.licensingHook}
+   */
+  maxLicenseTokens?: number | bigint;
+};
 ```
 
 ```typescript Response Type
@@ -409,12 +419,23 @@ console.log(
 export type RegisterIpAndAttachPilTermsRequest = {
   nftContract: Address;
   tokenId: bigint | string | number;
-  licenseTermsData: LicenseTermsData<
-    RegisterPILTermsRequest,
-    LicensingConfig
-  >[];
+  licenseTermsData: LicenseTermsDataInput[];
   deadline?: bigint | number | string;
 } & IpMetadataAndTxOptions;
+
+export type LicenseTermsDataInput = {
+  /** Programmable IP License */
+  terms: LicenseTerms;
+  licensingConfig?: LicensingConfig;
+  /**
+   * The max number of license tokens that can be minted from this license term.
+   *
+   * - When not specified, there is no limit on license token minting
+   * - When specified, minting is capped at this value and the {@link https://github.com/storyprotocol/protocol-periphery-v1/blob/release/1.3/contracts/hooks/TotalLicenseTokenLimitHook.sol | TotalLicenseTokenLimitHook}
+   *   is automatically configured as the {@link LicensingConfigInput.licensingHook}
+   */
+  maxLicenseTokens?: number | bigint;
+};
 ```
 
 ```typescript Response Type
