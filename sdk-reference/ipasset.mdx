@@ -249,6 +249,7 @@ Parameters:
 - `request.licenseTermsData[]`: The array of license terms to be attached. ⚠️ **This function will fail if you pass in an empty array.**
   - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
   - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+  - `request.licenseTermsData.maxLicenseTokens`: \[Optional] The max number of license tokens that can be minted from this license term. If not provided, there is no limit on license token minting.
 - `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
   - `request.ipMetadata.ipMetadataURI`: \[Optional] The URI of the metadata for the IP.
   - `request.ipMetadata.ipMetadataHash`: \[Optional] The hash of the metadata for the IP.
@@ -366,6 +367,7 @@ Parameters:
 - `request.licenseTermsData[]`: The array of license terms to be attached. ⚠️ **This function will fail if you pass in an empty array.**
   - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
   - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+  - `request.licenseTermsData.maxLicenseTokens`: \[Optional] The max number of license tokens that can be minted from this license term. If not provided, there is no limit on license token minting.
 - `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
   - `request.ipMetadata.ipMetadataURI`: \[Optional] The URI of the metadata for the IP.
   - `request.ipMetadata.ipMetadataHash`: \[Optional] The hash of the metadata for the IP.
