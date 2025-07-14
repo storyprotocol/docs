@@ -16917,14 +16917,24 @@ console.log(`
 export type MintAndRegisterIpAssetWithPilTermsRequest = {
   spgNftContract: Address;
   allowDuplicates: boolean;
-  licenseTermsData: LicenseTermsData<
-    RegisterPILTermsRequest,
-    LicensingConfig
-  >[];
+  licenseTermsData: LicenseTermsDataInput[];
   recipient?: Address;
-  royaltyPolicyAddress?: Address;
 } & IpMetadataAndTxOptions &
   WithWipOptions;
+
+export type LicenseTermsDataInput = {
+  /** Programmable IP License */
+  terms: LicenseTerms;
+  licensingConfig?: LicensingConfig;
+  /**
+   * The max number of license tokens that can be minted from this license term.
+   *
+   * - When not specified, there is no limit on license token minting
+   * - When specified, minting is capped at this value and the {@link https://github.com/storyprotocol/protocol-periphery-v1/blob/release/1.3/contracts/hooks/TotalLicenseTokenLimitHook.sol | TotalLicenseTokenLimitHook}
+   *   is automatically configured as the {@link LicensingConfigInput.licensingHook}
+   */
+  maxLicenseTokens?: number | bigint;
+};
 ```
 
 ```typescript Response Type
@@ -17021,12 +17031,23 @@ console.log(
 export type RegisterIpAndAttachPilTermsRequest = {
   nftContract: Address;
   tokenId: bigint | string | number;
-  licenseTermsData: LicenseTermsData<
-    RegisterPILTermsRequest,
-    LicensingConfig
-  >[];
+  licenseTermsData: LicenseTermsDataInput[];
   deadline?: bigint | number | string;
 } & IpMetadataAndTxOptions;
+
+export type LicenseTermsDataInput = {
+  /** Programmable IP License */
+  terms: LicenseTerms;
+  licensingConfig?: LicensingConfig;
+  /**
+   * The max number of license tokens that can be minted from this license term.
+   *
+   * - When not specified, there is no limit on license token minting
+   * - When specified, minting is capped at this value and the {@link https://github.com/storyprotocol/protocol-periphery-v1/blob/release/1.3/contracts/hooks/TotalLicenseTokenLimitHook.sol | TotalLicenseTokenLimitHook}
+   *   is automatically configured as the {@link LicensingConfigInput.licensingHook}
+   */
+  maxLicenseTokens?: number | bigint;
+};
 ```
 
 ```typescript Response Type
@@ -20390,6 +20411,7 @@ const result = await client.dispute.disputeIdToAssertionId(1);
 - predictMintingLicenseFee
 - setLicensingConfig
 - getLicensingConfig
+- setMaxLicenseTokens
 
 ### attachLicenseTerms
 
@@ -21034,6 +21056,64 @@ export type LicensingConfig = {
   expectMinimumGroupRewardShare: number;
   /** The address of the expected group reward pool. The IP can only be added to a group with this specified reward pool address, or zero address if the IP does not want to be added to any group. */
   expectGroupRewardPool: Address;
+};
+```
+
+</CodeGroup>
+
+### setMaxLicenseTokens
+
+Set the max license token limit for a specific license.
+
+This method automatically configures the licensing hook to use the [TotalLicenseTokenLimitHook](https://github.com/storyprotocol/protocol-periphery-v1/blob/release/1.3/contracts/hooks/TotalLicenseTokenLimitHook.sol) contract if the current licensing hook is not set to `TotalLicenseTokenLimitHook`, and sets the max license tokens to the specified limit.
+
+| Method                | Type                                                                    |
+| --------------------- | ----------------------------------------------------------------------- |
+| `setMaxLicenseTokens` | `(request: SetMaxLicenseTokensRequest) => Promise<TransactionResponse>` |
+
+Parameters:
+
+- `request.ipId`: The address of the IP for which the configuration is being set.
+- `request.licenseTermsId`: The ID of the license terms within the license template.
+- `request.maxLicenseTokens`: The total license token limit, 0 means no limit.
+- `request.licenseTemplate`: \[Optional] The address of the license template used.
+
+<CodeGroup>
+
+```typescript TypeScript
+const response = await client.license.setMaxLicenseTokens({
+  ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+  licenseTermsId: 1,
+  maxLicenseTokens: 1000,
+});
+
+console.log(`Max license tokens set at transaction hash ${response.txHash}`);
+```
+
+```typescript Request Type
+export type SetMaxLicenseTokensRequest = GetLicensingConfigRequest & {
+  /** The total license token limit, 0 means no limit */
+  maxLicenseTokens: bigint | number;
+};
+
+export type GetLicensingConfigRequest = {
+  /** The address of the IP for which the configuration is being set. */
+  ipId: Address;
+  /** The ID of the license terms within the license template. */
+  licenseTermsId: number | bigint;
+  /**
+   * The address of the license template.
+   * Defaults to {@link https://docs.story.foundation/docs/programmable-ip-license | PIL} address if not provided.
+   */
+  licenseTemplate?: Address;
+};
+```
+
+```typescript Response Type
+export type TransactionResponse = {
+  txHash?: Hex;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
 };
 ```
 
