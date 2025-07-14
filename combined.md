@@ -23497,8 +23497,8 @@ The `story` and `geth` binaries, which make up the clients required for running 
 
 | Network | story-geth      | story             |
 | ------- | --------------- | ----------------- |
-| Mainnet | v1.1.1 (Cosmos) | v1.2.1 (Ovid)     |
-| Aeneid  | v1.1.0 (Cosmos) | v1.3.0 (Polybius) |
+| Mainnet | v1.1.1 (Cosmas) | v1.2.1 (Ovid)     |
+| Aeneid  | v1.1.1 (Cosmas) | v1.3.0 (Polybius) |
 
 - **`story-geth`execution client:**
   - Release Link: [**Click here**](https://github.com/piplabs/story-geth/releases)
