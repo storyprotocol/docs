@@ -83,6 +83,15 @@
                 "pages": [
                   "network/overview",
                   {
+                      "group": "Connect",
+                      "icon": "network-wired",
+                      "pages": [
+                          "network/connect/overview",
+                          "network/connect/mainnet",
+                          "network/connect/aeneid"
+                      ]
+                  },
+                  {
                     "group": "Node Architecture",
                     "icon": "excavator",
                     "pages": [
@@ -99,16 +108,6 @@
                         ]
                       },
                       "network/node-architecture/precompile"
-                    ]
-                  },
-                  {
-                    "group": "Network Information",
-                    "icon": "globe",
-                    "pages": [
-                      "network/network-info/overview",
-                      "network/network-info/mainnet",
-                      "network/network-info/aeneid",
-                      "network/network-info/localnet"
                     ]
                   },
                   {
@@ -635,6 +634,15 @@
                 "pages": [
                   "ko/network/overview",
                   {
+                      "group": "Connect",
+                      "icon": "share",
+                      "pages": [
+                          "ko/network/connect/overview",
+                          "ko/network/connect/mainnet",
+                          "ko/network/connect/aeneid"
+                      ]
+                  },
+                  {
                     "group": "Node Architecture",
                     "icon": "excavator",
                     "pages": [
@@ -651,16 +659,6 @@
                         ]
                       },
                       "ko/network/node-architecture/precompile"
-                    ]
-                  },
-                  {
-                    "group": "Network Information",
-                    "icon": "globe",
-                    "pages": [
-                      "ko/network/network-info/overview",
-                      "ko/network/network-info/mainnet",
-                      "ko/network/network-info/aeneid",
-                      "ko/network/network-info/localnet"
                     ]
                   },
                   {
@@ -1196,19 +1194,19 @@
     },
     {
       "source": "/network",
-      "destination": "/network/network-info"
+      "destination": "/network/connect"
     },
     {
       "source": "/mainnet",
-      "destination": "/network/network-info/mainnet"
+      "destination": "/network/connect/mainnet"
     },
     {
       "source": "/aeneid",
-      "destination": "/network/network-info/aeneid"
+      "destination": "/network/connect/aeneid"
     },
     {
       "source": "/localnet",
-      "destination": "/network/network-info/localnet"
+      "destination": "/network/learn/node-software/localnet"
     },
     {
       "source": "/node-setup-mainnet",
