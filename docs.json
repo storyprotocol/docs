@@ -92,22 +92,34 @@
                       ]
                   },
                   {
-                    "group": "Node Architecture",
-                    "icon": "excavator",
+                    "group": "Learn",
+                    "icon": "books",
                     "pages": [
-                      "network/node-architecture/overview",
-                      "network/node-architecture/engine-api",
-                      {
-                        "group": "Cosmos Modules",
-                        "pages": [
-                          "network/node-architecture/cosmos-modules/cosmos-module-overview",
-                          "network/node-architecture/cosmos-modules/evmengine-module",
-                          "network/node-architecture/cosmos-modules/evmstaking-module",
-                          "network/node-architecture/cosmos-modules/mint-module",
-                          "network/node-architecture/cosmos-modules/staking-module"
-                        ]
-                      },
-                      "network/node-architecture/precompile"
+                        "network/learn/overview",
+                        "network/learn/whitepaper",
+                        {
+                            "group": "Node Software",
+                            "icon": "code",
+                            "pages": [
+                                "network/learn/node-software/overview",
+                                "network/learn/node-software/execution_layer",
+                                "network/learn/node-software/consensus_layer",
+                                "network/learn/node-software/engine_api",
+                                {
+                                    "group": "Cosmos Modules",
+                                    "icon": "puzzle-piece-simple",
+                                    "pages": [
+                                        "network/learn/node-software/cosmos-modules/cosmos-module-overview",
+                                        "network/learn/node-software/cosmos-modules/evmengine-module",
+                                        "network/learn/node-software/cosmos-modules/evmstaking-module",
+                                        "network/learn/node-software/cosmos-modules/mint-module",
+                                        "network/learn/node-software/cosmos-modules/staking-module"
+                                    ]
+                                },
+                                "network/learn/node-software/localnet"
+                            ]
+                        },
+                        "network/learn/token-economy"
                     ]
                   },
                   {
@@ -643,22 +655,33 @@
                       ]
                   },
                   {
-                    "group": "Node Architecture",
-                    "icon": "excavator",
+                    "group": "Learn",
+                    "icon": "book",
                     "pages": [
-                      "ko/network/node-architecture/overview",
-                      "ko/network/node-architecture/engine-api",
-                      {
-                        "group": "Cosmos Modules",
-                        "pages": [
-                          "ko/network/node-architecture/cosmos-modules/cosmos-module-overview",
-                          "ko/network/node-architecture/cosmos-modules/evmengine-module",
-                          "ko/network/node-architecture/cosmos-modules/evmstaking-module",
-                          "ko/network/node-architecture/cosmos-modules/mint-module",
-                          "ko/network/node-architecture/cosmos-modules/staking-module"
-                        ]
-                      },
-                      "ko/network/node-architecture/precompile"
+                        "ko/network/learn/overview",
+                        "ko/network/learn/whitepaper",
+                        {
+                            "group": "Node Software",
+                            "icon": "code",
+                            "pages": [
+                                "ko/network/learn/node-software/overview",
+                                "ko/network/learn/node-software/execution_layer",
+                                "ko/network/learn/node-software/consensus_layer",
+                                "ko/network/learn/node-software/engine_api",
+                                {
+                                    "group": "Cosmos Modules",
+                                    "pages": [
+                                        "ko/network/learn/node-software/cosmos-modules/cosmos-module-overview",
+                                        "ko/network/learn/node-software/cosmos-modules/evmengine-module",
+                                        "ko/network/learn/node-software/cosmos-modules/evmstaking-module",
+                                        "ko/network/learn/node-software/cosmos-modules/mint-module",
+                                        "ko/network/learn/node-software/cosmos-modules/staking-module"
+                                    ]
+                                },
+                                "ko/network/learn/node-software/localnet"
+                            ]
+                        },
+                        "ko/network/learn/token-economy"
                     ]
                   },
                   {
@@ -1158,39 +1181,39 @@
     },
     {
       "source": "/story-architect-overview",
-      "destination": "/network"
+      "destination": "/network/learn"
     },
     {
       "source": "/story-node-structure",
-      "destination": "/network/node-architecture"
+      "destination": "/network/learn/node-architecture"
     },
     {
       "source": "/engine-api",
-      "destination": "/network/node-architecture/engine-api"
+      "destination": "/network/learn/node-architecture/engine-api"
     },
     {
       "source": "/cosmos-module-overview",
-      "destination": "/network/node-architecture/cosmos-modules"
+      "destination": "/network/learn/node-architecture/cosmos-modules"
     },
     {
       "source": "/evmengine-module",
-      "destination": "/network/node-architecture/cosmos-modules/evmengine-module"
+      "destination": "/network/learn/node-architecture/cosmos-modules/evmengine-module"
     },
     {
       "source": "/evmstaking-module",
-      "destination": "/network/node-architecture/cosmos-modules/evmstaking-module"
+      "destination": "/network/learn/node-architecture/cosmos-modules/evmstaking-module"
     },
     {
       "source": "/mint-module",
-      "destination": "/network/node-architecture/cosmos-modules/mint-module"
+      "destination": "/network/learn/node-architecture/cosmos-modules/mint-module"
     },
     {
       "source": "/staking-module",
-      "destination": "/network/node-architecture/cosmos-modules/staking-module"
+      "destination": "/network/learn/node-architecture/cosmos-modules/staking-module"
     },
     {
       "source": "/precompile",
-      "destination": "/network/node-architecture/precompile"
+      "destination": "/network/learn/node-architecture/precompile"
     },
     {
       "source": "/network",
@@ -1230,7 +1253,7 @@
     },
     {
       "source": "/tokenomics-staking",
-      "destination": "/network/tokenomics-staking"
+      "destination": "/network/learn/tokenomics-economy"
     },
     {
       "source": "/infrastructure-partners",
