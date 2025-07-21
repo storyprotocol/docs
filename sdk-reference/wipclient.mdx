@@ -25,7 +25,6 @@ Wraps the selected amount of IP to WIP. The WIP will be deposited to the wallet 
 Parameters:
 
 - `request.amount`: The amount to deposit.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -34,12 +33,11 @@ import { parseEther } from "viem";
 
 const response = await client.wipClient.deposit({
   amount: parseEther("10"), // 10 IP tokens
-  txOptions: { waitForTransaction: true },
 });
 ```
 
 ```typescript Request Type
-export type DepositRequest = WithTxOptions & {
+export type DepositRequest = {
   amount: TokenAmountInput;
 };
 ```
@@ -57,7 +55,6 @@ Unwraps the selected amount of WIP to IP.
 Parameters:
 
 - `request.amount`: The amount to withdraw.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -66,12 +63,11 @@ import { parseEther } from "viem";
 
 const response = await client.wipClient.withdraw({
   amount: parseEther("5"), // 5 WIP tokens
-  txOptions: { waitForTransaction: true },
 });
 ```
 
 ```typescript Request Type
-export type WithdrawRequest = WithTxOptions & {
+export type WithdrawRequest = {
   amount: TokenAmountInput;
 };
 ```
@@ -90,7 +86,6 @@ Parameters:
 
 - `request.amount`: The amount of WIP tokens to approve.
 - `request.spender`: The address that will use the WIP tokens
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -100,12 +95,11 @@ import { parseEther } from "viem";
 const response = await client.wipClient.approve({
   spender: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   amount: parseEther("20"), // 20 WIP tokens
-  txOptions: { waitForTransaction: true },
 });
 ```
 
 ```typescript Request Type
-export type ApproveRequest = WithTxOptions & {
+export type ApproveRequest = {
   spender: Address;
   amount: TokenAmountInput;
 };
@@ -137,7 +131,6 @@ Parameters:
 
 - `request.to`: Who you're transferring to.
 - `request.amount`: The amount to transfer.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -147,12 +140,11 @@ import { parseEther } from "viem";
 const response = await client.wipClient.transfer({
   to: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   amount: parseEther("3"), // 3 WIP tokens
-  txOptions: { waitForTransaction: true },
 });
 ```
 
 ```typescript Request Type
-export type TransferRequest = WithTxOptions & {
+export type TransferRequest = {
   to: Address;
   amount: TokenAmountInput;
 };
@@ -173,7 +165,6 @@ Parameters:
 - `request.to`: Who you're transferring to.
 - `request.amount`: The amount to transfer.
 - `request.from`: The address to transfer from.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -184,12 +175,11 @@ const response = await client.wipClient.transferFrom({
   to: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   amount: parseEther("2"), // 2 WIP tokens
   from: "0x6B86B39F03558A8a4E9252d73F2bDeBfBedf5b68",
-  txOptions: { waitForTransaction: true },
 });
 ```
 
 ```typescript Request Type
-export type TransferFromRequest = WithTxOptions & {
+export type TransferFromRequest = {
   to: Address;
   amount: TokenAmountInput;
   from: Address;

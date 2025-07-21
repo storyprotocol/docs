@@ -66,7 +66,6 @@ async function main() {
     payerIpId: zeroAddress,
     token: WIP_TOKEN_ADDRESS,
     amount: parseEther("2"), // 2 $WIP
-    txOptions: { waitForTransaction: true },
   });
 
   console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);
@@ -98,7 +97,6 @@ async function main() {
     payerIpId: "0x0b825D9E5FA196e6B563C0a446e8D9885057f9B1", // childIpId
     token: WIP_TOKEN_ADDRESS,
     amount: parseEther("1"), // 1 $WIP
-    txOptions: { waitForTransaction: true },
   });
 
   console.log(`Paid royalty at transaction hash ${payRoyalty.txHash}`);

@@ -330,7 +330,6 @@ Note that you will need at least 1 IP in the wallet submitting the transaction f
 
 ```bash
 ./story validator unjail \
-  --validator-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
   --rpc \
   --chain-id
 ```
@@ -358,7 +357,61 @@ If you are an authorized operator, you may unjail a validator on their behalf us
 
 ```bash
 ./story validator unjail-on-behalf \
-  --validator-pubkey 03e42b4d778cda2f3612c85161ba7c0aad1550a872f3279d99e028a1dfa7854930 \
+  --rpc \
+  --chain-id
+```
+
+## Validator rollback
+
+<Warning>
+  The snapshot must be taken from a node that has already been upgraded. That
+  means the snapshot node has to do the rewind.
+</Warning>
+
+Recovery Options for Nodes Stuck in Long Rewind After Upgrade：
+
+Wait for resync: Let the node catch up naturally. This may take time depending on the rewind depth and network bandwidth.
+Apply a snapshot: Use a snapshot from a node that has already been upgraded to Pectra. You can generate your own or obtain one from trusted community providers.
+
+```bash
+./story validator rollback \
+  --rpc \
+  --chain-id
+```
+
+** Avaliable Flages:**
+
+- `--api-address`: (string) The API server address to listen on (default "\***\*\*\*\***:1317")
+- `--api-enable`: (bool) Define if the API server should be enabled
+- `--api-enable-unsafe-cors`: (bool) Enable unsafe CORS for API server
+- `--api-idle-timeout`: (uint) Define the API server idle timeout (in seconds) (default 10)
+- `--api-max-header-bytes`: (uint) Define the API server max header (in bytes) (default 8192)
+- `--api-read-header-timeout`: (uint) Define the API server read header timeout (in seconds) (default 10)
+- `--api-read-timeout`: (uint) Define the API server read timeout (in seconds) (default 10)
+- `--api-write-timeout`: (uint) Define the API server write timeout (in seconds) (default 10)
+- `--app-db-backend`: (string) The type of database for application and snapshots databases (default "goleveldb")
+- `--engine-endpoint`: (string) An EVM execution client Engine API http endpoint (default "http://localhost:8551")
+- `--engine-jwt-file`: (string) The path to the Engine API JWT file
+- `--evm-build-delay`: (duration) Minimum delay between triggering and fetching a EVM payload build (default 600ms)
+- `--evm-build-optimistic`: (bool) Enables optimistic building of EVM payloads on previous block finalize (default true)
+- `--help`: (bool) help for rollback
+- `--home`: (string) The application home directory containing config and data (default "/home/timothyshen/.story/story")
+- `--log-color`: (string) Log color (only applicable to console format); auto, force, disable (default "auto")
+- `--log-format`: (string) Log format; console, json (default "console")
+- `--log-level`: (string) Log level; debug, info, warn, error (default "info")
+- `--min-retain-blocks`: (uint) Minimum block height offset during ABCI commit to prune CometBFT blocks
+- `--network`: (string) Story network to participate in: story, odyssey, aeneid or local
+- `--number`: (uint) number of blocks to rollback (default 1)
+- `--pruning`: (string) Pruning strategy (default|nothing|everything) (default "nothing")
+- `--snapshot-interval`: (uint) State sync snapshot interval (default 1000)
+- `--snapshot-keep-recent`: (uint) State sync snapshot to keep (default 2)
+- `--tracing-endpoint`: (string) Tracing OTLP endpoint
+- `--tracing-headers`: (string) Tracing OTLP headers
+
+### Example rollback command use
+
+```bash
+./story validator rollback \
   --rpc \
   --chain-id
 ```
@@ -388,7 +441,7 @@ To redelegate from one validator to another, run the following command:
 - `--validator-src-pubkey`: (string) Src validator's hex-encoded compressed 33-byte secp256k1 public key
 - `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
 
-### Example redelegate command use
+≈
 
 ```bash
 ./story validator redelegate \

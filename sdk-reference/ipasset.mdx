@@ -68,7 +68,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -84,7 +83,6 @@ const response = await client.ipAsset.register({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -102,7 +100,7 @@ export type RegisterRequest = {
 
 ```typescript Response Type
 export type RegisterIpResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   ipId?: Address;
 };
@@ -141,7 +139,6 @@ Parameters:
 - `request.maxMintingFee`: \[Optional] The maximum minting fee that the caller is willing to pay. If set to 0, then there is no no limit. **Default: 0**
 - `request.maxRevenueShare`: \[Optional] The maximum revenue share percentage agreed upon between a child and parent when a child is registering as derivative. Must be between 0 and 100. **Default: 100**
 - `request.maxRts`: \[Optional] The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Default: 100_000_000**
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -150,7 +147,6 @@ const response = await client.ipAsset.registerDerivative({
   childIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   parentIpIds: ["0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba"],
   licenseTermsIds: ["5"],
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -160,7 +156,6 @@ console.log(
 
 ```typescript Request Type
 export type RegisterDerivativeRequest = {
-  txOptions?: TxOptions;
   childIpId: Address;
 } & DerivativeData &
   WithWipOptions;
@@ -203,7 +198,6 @@ Parameters:
 - `request.childIpId`: The derivative IP ID.
 - `request.licenseTokenIds`: The IDs of the license tokens.
 - `request.maxRts`: The maximum number of royalty tokens that can be distributed to the external royalty policies. Must be between 0 and 100,000,000. **Recommended for simplicity: 100_000_000**
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -211,7 +205,6 @@ Parameters:
 const response = await client.ipAsset.registerDerivativeWithLicenseTokens({
   childIpId: "0xC92EC2f4c86458AFee7DD9EB5d8c57920BfCD0Ba",
   licenseTokenIds: ["5"], // array of license ids relevant to the creation of the derivative, minted from the parent IPA
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -224,13 +217,12 @@ export type RegisterDerivativeWithLicenseTokensRequest = {
   childIpId: Address;
   licenseTokenIds: string[] | bigint[] | number[];
   maxRts: number | string;
-  txOptions?: TxOptions;
 };
 ```
 
 ```typescript Response Type
 export type RegisterDerivativeWithLicenseTokensResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -257,13 +249,13 @@ Parameters:
 - `request.licenseTermsData[]`: The array of license terms to be attached. ⚠️ **This function will fail if you pass in an empty array.**
   - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
   - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+  - `request.licenseTermsData.maxLicenseTokens`: \[Optional] The max number of license tokens that can be minted from this license term. If not provided, there is no limit on license token minting.
 - `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
   - `request.ipMetadata.ipMetadataURI`: \[Optional] The URI of the metadata for the IP.
   - `request.ipMetadata.ipMetadataHash`: \[Optional] The hash of the metadata for the IP.
   - `request.ipMetadata.nftMetadataURI`: \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash`: \[Optional] The hash of the metadata for the IP NFT.
 - `request.recipient`: \[Optional] The address of the recipient of the minted NFT.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -301,13 +293,12 @@ const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(`
   Token ID: ${response.tokenId}, 
   IPA ID: ${response.ipId}, 
-  License Terms ID: ${response.licenseTermsId}
+  License Terms ID: ${response.licenseTermsIds}
 `);
 ```
 
@@ -315,14 +306,24 @@ console.log(`
 export type MintAndRegisterIpAssetWithPilTermsRequest = {
   spgNftContract: Address;
   allowDuplicates: boolean;
-  licenseTermsData: LicenseTermsData<
-    RegisterPILTermsRequest,
-    LicensingConfig
-  >[];
+  licenseTermsData: LicenseTermsDataInput[];
   recipient?: Address;
-  royaltyPolicyAddress?: Address;
 } & IpMetadataAndTxOptions &
   WithWipOptions;
+
+export type LicenseTermsDataInput = {
+  /** Programmable IP License */
+  terms: LicenseTerms;
+  licensingConfig?: LicensingConfig;
+  /**
+   * The max number of license tokens that can be minted from this license term.
+   *
+   * - When not specified, there is no limit on license token minting
+   * - When specified, minting is capped at this value and the {@link https://github.com/storyprotocol/protocol-periphery-v1/blob/release/1.3/contracts/hooks/TotalLicenseTokenLimitHook.sol | TotalLicenseTokenLimitHook}
+   *   is automatically configured as the {@link LicensingConfigInput.licensingHook}
+   */
+  maxLicenseTokens?: number | bigint;
+};
 ```
 
 ```typescript Response Type
@@ -366,13 +367,13 @@ Parameters:
 - `request.licenseTermsData[]`: The array of license terms to be attached. ⚠️ **This function will fail if you pass in an empty array.**
   - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
   - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+  - `request.licenseTermsData.maxLicenseTokens`: \[Optional] The max number of license tokens that can be minted from this license term. If not provided, there is no limit on license token minting.
 - `request.ipMetadata`: \[Optional] The desired metadata for the newly minted NFT and newly registered IP.
   - `request.ipMetadata.ipMetadataURI`: \[Optional] The URI of the metadata for the IP.
   - `request.ipMetadata.ipMetadataHash`: \[Optional] The hash of the metadata for the IP.
   - `request.ipMetadata.nftMetadataURI`: \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash`: \[Optional] The hash of the metadata for the IP NFT.
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -410,7 +411,6 @@ const response = await client.ipAsset.registerIpAndAttachPilTerms({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 console.log(
   `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
@@ -421,12 +421,23 @@ console.log(
 export type RegisterIpAndAttachPilTermsRequest = {
   nftContract: Address;
   tokenId: bigint | string | number;
-  licenseTermsData: LicenseTermsData<
-    RegisterPILTermsRequest,
-    LicensingConfig
-  >[];
+  licenseTermsData: LicenseTermsDataInput[];
   deadline?: bigint | number | string;
 } & IpMetadataAndTxOptions;
+
+export type LicenseTermsDataInput = {
+  /** Programmable IP License */
+  terms: LicenseTerms;
+  licensingConfig?: LicensingConfig;
+  /**
+   * The max number of license tokens that can be minted from this license term.
+   *
+   * - When not specified, there is no limit on license token minting
+   * - When specified, minting is capped at this value and the {@link https://github.com/storyprotocol/protocol-periphery-v1/blob/release/1.3/contracts/hooks/TotalLicenseTokenLimitHook.sol | TotalLicenseTokenLimitHook}
+   *   is automatically configured as the {@link LicensingConfigInput.licensingHook}
+   */
+  maxLicenseTokens?: number | bigint;
+};
 ```
 
 ```typescript Response Type
@@ -471,7 +482,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -492,7 +502,6 @@ const response = await client.ipAsset.registerDerivativeIp({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -581,7 +590,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.recipient`: \[Optional] The address of the recipient of the minted NFT, default value is your wallet address.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -602,7 +610,6 @@ const response = await client.ipAsset.mintAndRegisterIpAndMakeDerivative({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -687,7 +694,6 @@ Parameters:
   - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -704,7 +710,6 @@ const response = await client.ipAsset.mintAndRegisterIp({
     nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
     nftMetadataURI: "test-nft-uri",
   },
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -751,7 +756,6 @@ Parameters:
   - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
   - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -782,7 +786,6 @@ const commercialRemixTerms: LicenseTerms = {
 const response = await client.ipAsset.registerPilTermsAndAttach({
   ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
   licenseTermsData: [{ terms: commercialRemixTerms }],
-  txOptions: { waitForTransaction: true },
 });
 console.log(`License Terms ${response.licenseTermsId} attached to IP Asset.`);
 ```
@@ -795,7 +798,6 @@ export type RegisterPilTermsAndAttachRequest = {
     LicensingConfig
   >[];
   deadline?: string | number | bigint;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -834,7 +836,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.recipient`: \[Optional] The address to receive the minted NFT, default value is your wallet address.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -853,7 +854,6 @@ const response =
       nftMetadataURI: "test-nft-uri",
     },
     maxRts: 100_000_000, // default
-    txOptions: { waitForTransaction: true },
   });
 
 console.log(
@@ -912,7 +912,6 @@ Parameters:
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
 - `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Default is 1000**.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -931,7 +930,6 @@ const response =
       nftMetadataHash: toHex("test-nft-metadata-hash", { size: 32 }),
       nftMetadataURI: "test-nft-uri",
     },
-    txOptions: { waitForTransaction: true },
   });
 
 console.log(
@@ -996,7 +994,6 @@ Parameters:
 
 - `request.requests`: Array of registration requests. Each request can be any of the supported registration method types.
 - `request.wipOptions`: [Optional] Configuration options for WIP token handling.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -1027,7 +1024,6 @@ const response =
         },
       },
     ],
-    txOptions: { waitForTransaction: true },
   });
 
 console.log("Batch registration results:", response.registrationResults);
