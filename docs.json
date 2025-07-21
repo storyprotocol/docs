@@ -1208,35 +1208,35 @@
     },
     {
       "source": "/story-node-structure",
-      "destination": "/network/learn/node-architecture"
+      "destination": "/network/learn/node-software"
     },
     {
       "source": "/engine-api",
-      "destination": "/network/learn/node-architecture/engine-api"
+      "destination": "/network/learn/node-software/engine-api"
     },
     {
       "source": "/cosmos-module-overview",
-      "destination": "/network/learn/node-architecture/cosmos-modules"
+      "destination": "/network/learn/node-software/cosmos-modules"
     },
     {
       "source": "/evmengine-module",
-      "destination": "/network/learn/node-architecture/cosmos-modules/evmengine-module"
+      "destination": "/network/learn/nnode-software/cosmos-modules/evmengine-module"
     },
     {
       "source": "/evmstaking-module",
-      "destination": "/network/learn/node-architecture/cosmos-modules/evmstaking-module"
+      "destination": "/network/learn/node-software/cosmos-modules/evmstaking-module"
     },
     {
       "source": "/mint-module",
-      "destination": "/network/learn/node-architecture/cosmos-modules/mint-module"
+      "destination": "/network/learn/node-software/cosmos-modules/mint-module"
     },
     {
       "source": "/staking-module",
-      "destination": "/network/learn/node-architecture/cosmos-modules/staking-module"
+      "destination": "/network/learn/node-software/cosmos-modules/staking-module"
     },
     {
       "source": "/precompile",
-      "destination": "/network/learn/node-architecture/precompile"
+      "destination": "/network/learn/node-software/precompile"
     },
     {
       "source": "/network",
