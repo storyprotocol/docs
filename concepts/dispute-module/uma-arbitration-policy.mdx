@@ -20,8 +20,8 @@ This arbitration policy is a dispute resolution mechanism that uses UMA’s opti
 The first step to initiate a dispute against an IP Asset is to call the `raiseDispute` function on [DisputeModule.sol](https://github.com/storyprotocol/protocol-core-v1/blob/main/contracts/modules/dispute/DisputeModule.sol). This function will in turn call `assertTruth` on UMA's `OptimisticOracleV3.sol`. To initiate a dispute the dispute initiator will need to post a bond of at least the minimum bond defined by UMA for the selected currency. Note that this bond will be lost if the dispute is deemed not verifiably correct by the oracle.
 
 <Note>
-  UMA will be adjusting the $IP bond size as the IP price fluctuates. The
-  correct way to obtain the current bond size is via `getMinimumBond()` on
+  UMA will be adjusting the minimum $IP bond size as the IP price fluctuates. The
+  correct way to obtain the current minimum bond size is via `getMinimumBond()` on
   `OptimisticOracleV3.sol` (OOV3), found on our [aeneid
   testnet](https://aeneid.storyscan.io/address/0xABac6a158431edED06EE6cba37eDE8779F599eE4?tab=read_write_contract#0x4360af3d)
   and

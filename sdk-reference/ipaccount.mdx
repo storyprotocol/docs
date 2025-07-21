@@ -25,7 +25,6 @@ Parameters:
 - `request.ipId`: The IP to set the metadata for.
 - `request.metadataURI`: The metadataURI to set for the IP asset. Should be a URL pointing to metadata that fits the [IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard).
 - `request.metadataHash`: The hash of metadata at metadataURI.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -45,7 +44,6 @@ export type SetIpMetadataRequest = {
   ipId: Address;
   metadataURI: string;
   metadataHash: Hex;
-  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
 };
 ```
 
@@ -65,7 +63,6 @@ Parameters:
 - `request.to`: The recipient of the transaction.
 - `request.value`: The amount of Ether to send.
 - `request.data`: The data to send along with the transaction.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -75,7 +72,6 @@ export type IPAccountExecuteRequest = {
   to: Address;
   value: number;
   data: Hex;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -105,7 +101,6 @@ Parameters:
 - `request.deadline`: The deadline of the transaction signature.
 - `request.signature`: The signature of the transaction, EIP-712 encoded.
 - `request.value`: \[Optional] The amount of Ether to send.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -118,7 +113,6 @@ export type IPAccountExecuteWithSigRequest = {
   deadline: number | bigint | string;
   signature: Address;
   value?: number | bigint | string;
-  txOptions?: TxOptions;
 };
 ```
 
@@ -146,7 +140,6 @@ Parameters:
   - `request.tokens.address`: The address of the ERC20 token including WIP and standard ERC20.
   - `request.tokens.amount`: The amount of tokens to transfer
   - `request.tokens.target`: The address of the recipient.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -158,7 +151,6 @@ export type TransferErc20Request = {
     amount: bigint | number;
     target: Address;
   }[];
-  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
 };
 ```
 

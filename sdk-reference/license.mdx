@@ -13,10 +13,12 @@ description: LicenseClient allows you to manage license terms and tokens within 
 - registerNonComSocialRemixingPIL
 - registerCommercialUsePIL
 - registerCommercialRemixPIL
+- registerCreativeCommonsAttributionPIL
 - getLicenseTerms
 - predictMintingLicenseFee
 - setLicensingConfig
 - getLicensingConfig
+- setMaxLicenseTokens
 
 ### attachLicenseTerms
 
@@ -31,7 +33,6 @@ Parameters:
 - `request.ipId`: The address of the IP to which the license terms are attached.
 - `request.licenseTermsId`: The ID of the license terms.
 - `request.licenseTemplate`: \[Optional] The address of the license template.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -39,7 +40,6 @@ Parameters:
 const response = await client.license.attachLicenseTerms({
   licenseTermsId: "1",
   ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
-  txOptions: { waitForTransaction: true },
 });
 
 if (response.success) {
@@ -56,13 +56,12 @@ export type AttachLicenseTermsRequest = {
   ipId: Address;
   licenseTermsId: string | number | bigint;
   licenseTemplate?: Address;
-  txOptions?: TxOptions;
 };
 ```
 
 ```typescript Response Type
 export type AttachLicenseTermsResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   success?: boolean;
 };
@@ -102,7 +101,6 @@ Parameters:
 - `request.amount`: \[Optional] The amount of license tokens to mint.
 - `request.receiver`: \[Optional] The address of the receiver.
 - `request.licenseTemplate`: \[Optional] The address of the license template.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -114,7 +112,6 @@ const response = await client.license.mintLicenseTokens({
   amount: 1,
   maxMintingFee: BigInt(0), // disabled
   maxRevenueShare: 100, // default
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -131,15 +128,14 @@ export type MintLicenseTokensRequest = {
   maxRevenueShare: number | string;
   amount?: number | string | bigint;
   receiver?: Address;
-} & WithTxOptions &
-  WithWipOptions;
+} & WithWipOptions;
 ```
 
 ```typescript Response Type
 export type MintLicenseTokensResponse = {
   licenseTokenIds?: bigint[];
   receipt?: TransactionReceipt;
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -157,7 +153,6 @@ Registers new license terms and return the ID of the newly registered license te
 Parameters:
 
 - Expected Parameters: Instead of listing all of the expected parameters here, please see `LicenseTerms` type in [this](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts) file. They all come from the [PIL Terms](/concepts/programmable-ip-license/pil-terms).
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -187,7 +182,6 @@ const licenseTerms: LicenseTerms = {
 
 const response = await client.license.registerPILTerms({
   ...licenseTerms,
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -207,7 +201,6 @@ export type RegisterPILTermsRequest = Omit<
   expiration: bigint | string | number;
   commercialRevCeiling: bigint | string | number;
   derivativeRevCeiling: bigint | string | number;
-  txOptions?: TxOptions;
 };
 
 export type LicenseTerms = {
@@ -251,7 +244,7 @@ export type LicenseTerms = {
 ```typescript Response Type
 export type RegisterPILResponse = {
   licenseTermsId?: bigint;
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -274,14 +267,10 @@ No reason to call this function. Non-Commercial Social Remixing terms are alread
 
 Parameters:
 
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
-
 <CodeGroup>
 
 ```typescript TypeScript
-const response = await client.license.registerNonComSocialRemixingPIL({
-  txOptions: { waitForTransaction: true },
-});
+const response = await client.license.registerNonComSocialRemixingPIL({});
 
 console.log(
   `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
@@ -289,15 +278,13 @@ console.log(
 ```
 
 ```typescript Request Type
-export type RegisterNonComSocialRemixingPILRequest = {
-  txOptions?: TxOptions;
-};
+export type RegisterNonComSocialRemixingPILRequest = {};
 ```
 
 ```typescript Response Type
 export type RegisterPILResponse = {
   licenseTermsId?: bigint;
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -317,7 +304,6 @@ Parameters:
 - `request.defaultMintingFee`: The fee to be paid when minting a license.
 - `request.currency`: The ERC20 token to be used to pay the minting fee and the token must be registered on Story's protocol.
 - `request.royaltyPolicyAddress`: \[Optional] The address of the royalty policy contract, default value is LAP.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -332,7 +318,6 @@ const commercialUseParams = {
 
 const response = await client.license.registerCommercialUsePIL({
   ...commercialUseParams,
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -345,14 +330,13 @@ export type RegisterCommercialUsePILRequest = {
   defaultMintingFee: string | number | bigint;
   currency: Address;
   royaltyPolicyAddress?: Address;
-  txOptions?: TxOptions;
 };
 ```
 
 ```typescript Response Type
 export type RegisterPILResponse = {
   licenseTermsId?: bigint;
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -373,7 +357,6 @@ Parameters:
 - `request.commercialRevShare`: Percentage of revenue that must be shared with the licensor.
 - `request.currency`: The ERC20 token to be used to pay the minting fee and the token must be registered on Story's protocol.
 - `request.royaltyPolicyAddress`: \[Optional] The address of the royalty policy contract, default value is LAP.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -389,7 +372,6 @@ const commercialRemixParams = {
 
 const response = await client.license.registerCommercialRemixPIL({
   ...commercialRemixParams,
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -403,14 +385,56 @@ export type RegisterCommercialRemixPILRequest = {
   commercialRevShare: number;
   currency: Address;
   royaltyPolicyAddress?: Address;
-  txOptions?: TxOptions;
 };
 ```
 
 ```typescript Response Type
 export type RegisterPILResponse = {
   licenseTermsId?: bigint;
-  txHash?: string;
+  txHash?: Hex;
+  encodedTxData?: EncodedTxData;
+};
+```
+
+</CodeGroup>
+
+### registerCreativeCommonsAttributionPIL
+
+Convenient function to register a PIL creative commons attribution license to the registry.
+
+| Method                                  | Type                                                                                      |
+| --------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `registerCreativeCommonsAttributionPIL` | `(request: RegisterCreativeCommonsAttributionPILRequest) => Promise<RegisterPILResponse>` |
+
+Parameters:
+
+- `request.currency`: The ERC20 token to be used to pay the minting fee and the token must be registered on Story's protocol.
+- `request.royaltyPolicyAddress`: \[Optional] The address of the royalty policy contract, default value is LAP.
+
+<CodeGroup>
+
+```typescript TypeScript
+const response = await client.license.registerCreativeCommonsAttributionPIL({
+  currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
+  royaltyPolicyAddress: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
+});
+
+console.log(
+  `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
+);
+```
+
+```typescript Request Type
+export type RegisterCreativeCommonsAttributionPILRequest = {
+  currency: Address;
+  royaltyPolicyAddress?: Address;
+};
+```
+
+```typescript Response Type
+export type RegisterPILResponse = {
+  licenseTermsId?: bigint;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
 };
 ```
@@ -468,7 +492,6 @@ Parameters:
 - `request.amount`: The amount of license tokens to mint.
 - `request.licenseTemplate`: \[Optional] The address of the license template, default value is Programmable IP License.
 - `request.receiver`: \[Optional] The address of the receiver, default value is your wallet address.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type LicensingModulePredictMintingLicenseFeeResponse = {
@@ -489,21 +512,93 @@ Parameters:
 
 - `request.ipId`: The address of the IP for which the configuration is being set.
 - `request.licenseTermsId`: The ID of the license terms within the license template.
-- `request.licenseTemplate`: The address of the license template used, If not specified, the configuration applies to all licenses.
+- `request.licenseTemplate`: \[Optional] The address of the license template used, If not specified, the configuration applies to all licenses.
 - `request.licensingConfig`: The licensing configuration for the license.
   - `request.licensingConfig.isSet`: Whether the configuration is set or not.
   - `request.licensingConfig.mintingFee`: The minting fee to be paid when minting license tokens.
   - `request.licensingConfig.hookData`: The data to be used by the licensing hook.
   - `request.licensingConfig.licensingHook`: The hook contract address for the licensing module, or address(0) if none.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
+  - `request.licensingConfig.commercialRevShare`: The commercial revenue share percentage (from 0 to 100).
+  - `request.licensingConfig.disabled`: Whether the licensing is disabled or not. If this is true, then no licenses can be minted and no more derivatives can be attached at all.
+  - `request.licensingConfig.expectMinimumGroupRewardShare`: The minimum percentage of the group's reward share (from 0 to 100).
+  - `request.licensingConfig.expectGroupRewardPool`: The address of the expected group reward pool. The IP can only be added to a group with this specified reward pool address, or zero address if the IP does not want to be added to any group.
+
+<CodeGroup>
+
+```typescript TypeScript
+import { parseEther, zeroAddress } from "viem";
+
+const response = await client.license.setLicensingConfig({
+  ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+  licenseTermsId: 1,
+  licensingConfig: {
+    isSet: true,
+    mintingFee: parseEther("1"),
+    licensingHook: "0xaBAD364Bfa41230272b08f171E0Ca939bD600478",
+    hookData: "0x",
+    commercialRevShare: 10,
+    disabled: false,
+    expectMinimumGroupRewardShare: 0,
+    expectGroupRewardPool: zeroAddress,
+  },
+});
+```
+
+```typescript Request Type
+export type SetLicensingConfigRequest = GetLicensingConfigRequest & {
+  /** The licensing configuration for the license. */
+  licensingConfig: LicensingConfigInput;
+};
+
+export type GetLicensingConfigRequest = {
+  /** The address of the IP for which the configuration is being set. */
+  ipId: Address;
+  /** The ID of the license terms within the license template. */
+  licenseTermsId: number | bigint;
+  /**
+   * The address of the license template.
+   * Defaults to {@link https://docs.story.foundation/docs/programmable-ip-license | PIL} address if not provided.
+   */
+  licenseTemplate?: Address;
+};
+
+export type LicensingConfigInput = {
+  /** Whether the licensing configuration is active. If false, the configuration is ignored. */
+  isSet: boolean;
+  /** The minting fee to be paid when minting license tokens. */
+  mintingFee: bigint | string | number;
+  /**
+   * The licensingHook is an address to a smart contract that implements the `ILicensingHook` interface.
+   * This contract's `beforeMintLicenseTokens` function is executed before a user mints a License Token,
+   * allowing for custom validation or business logic to be enforced during the minting process.
+   * For detailed documentation on licensing hook, visit {@link https://docs.story.foundation/concepts/hooks#licensing-hooks}
+   */
+  licensingHook: Address;
+  /**
+   * The data to be used by the licensing hook.
+   * Set to a zero hash if no data is provided.
+   */
+  hookData: Hex;
+  /** The commercial revenue share percentage (from 0 to 100%, represented as 100_000_000). */
+  commercialRevShare: number | string;
+  /** Whether the licensing is disabled or not. If this is true, then no licenses can be minted and no more derivatives can be attached at all. */
+  disabled: boolean;
+  /** The minimum percentage of the group’s reward share (from 0 to 100%, represented as 100_000_000) that can be allocated to the IP when it is added to the group. */
+  expectMinimumGroupRewardShare: number | string;
+  /** The address of the expected group reward pool. The IP can only be added to a group with this specified reward pool address, or zero address if the IP does not want to be added to any group. */
+  expectGroupRewardPool: Address;
+};
+```
 
 ```typescript Response Type
 export type SetLicensingConfigResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   success?: boolean;
 };
 ```
+
+</CodeGroup>
 
 ### getLicensingConfig
 
@@ -518,7 +613,6 @@ Parameters:
 - `request.ipId`: The address of the IP for which the configuration is being fetched.
 - `request.licenseTermsId`: The ID of the license terms within the license template.
 - `request.licenseTemplate`: \[Optional] The address of the license template used.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -526,7 +620,6 @@ Parameters:
 const licensingConfig = await client.license.getLicensingConfig({
   ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
   licenseTermsId: 1,
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -566,10 +659,68 @@ export type LicensingConfig = {
   commercialRevShare: number;
   /** Whether the licensing is disabled or not. If this is true, then no licenses can be minted and no more derivatives can be attached at all. */
   disabled: boolean;
-  /** The minimum percentage of the group’s reward share (from 0 to 100%, represented as 100_000_000) that can be allocated to the IP when it is added to the group. */
+  /** The minimum percentage of the group's reward share (from 0 to 100%, represented as 100_000_000) that can be allocated to the IP when it is added to the group. */
   expectMinimumGroupRewardShare: number;
   /** The address of the expected group reward pool. The IP can only be added to a group with this specified reward pool address, or zero address if the IP does not want to be added to any group. */
   expectGroupRewardPool: Address;
+};
+```
+
+</CodeGroup>
+
+### setMaxLicenseTokens
+
+Set the max license token limit for a specific license.
+
+This method automatically configures the licensing hook to use the [TotalLicenseTokenLimitHook](https://github.com/storyprotocol/protocol-periphery-v1/blob/release/1.3/contracts/hooks/TotalLicenseTokenLimitHook.sol) contract if the current licensing hook is not set to `TotalLicenseTokenLimitHook`, and sets the max license tokens to the specified limit.
+
+| Method                | Type                                                                    |
+| --------------------- | ----------------------------------------------------------------------- |
+| `setMaxLicenseTokens` | `(request: SetMaxLicenseTokensRequest) => Promise<TransactionResponse>` |
+
+Parameters:
+
+- `request.ipId`: The address of the IP for which the configuration is being set.
+- `request.licenseTermsId`: The ID of the license terms within the license template.
+- `request.maxLicenseTokens`: The total license token limit, 0 means no limit.
+- `request.licenseTemplate`: \[Optional] The address of the license template used.
+
+<CodeGroup>
+
+```typescript TypeScript
+const response = await client.license.setMaxLicenseTokens({
+  ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+  licenseTermsId: 1,
+  maxLicenseTokens: 1000,
+});
+
+console.log(`Max license tokens set at transaction hash ${response.txHash}`);
+```
+
+```typescript Request Type
+export type SetMaxLicenseTokensRequest = GetLicensingConfigRequest & {
+  /** The total license token limit, 0 means no limit */
+  maxLicenseTokens: bigint | number;
+};
+
+export type GetLicensingConfigRequest = {
+  /** The address of the IP for which the configuration is being set. */
+  ipId: Address;
+  /** The ID of the license terms within the license template. */
+  licenseTermsId: number | bigint;
+  /**
+   * The address of the license template.
+   * Defaults to {@link https://docs.story.foundation/docs/programmable-ip-license | PIL} address if not provided.
+   */
+  licenseTemplate?: Address;
+};
+```
+
+```typescript Response Type
+export type TransactionResponse = {
+  txHash?: Hex;
+  encodedTxData?: EncodedTxData;
+  success?: boolean;
 };
 ```
 

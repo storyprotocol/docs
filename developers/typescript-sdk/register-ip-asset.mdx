@@ -168,7 +168,6 @@ async function createSpgNftCollection() {
     mintOpen: true,
     mintFeeRecipient: zeroAddress,
     contractURI: "",
-    txOptions: { waitForTransaction: true },
   });
 
   console.log("New collection created:", {
@@ -209,7 +208,6 @@ async function main() {
       nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsHash}`,
       nftMetadataHash: `0x${nftHash}`,
     },
-    txOptions: { waitForTransaction: true },
   });
 
   console.log(

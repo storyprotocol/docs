@@ -30,11 +30,10 @@ Registers a Group IPA.
 Parameters:
 
 - `request.groupPool`: The address specifying how royalty will be split amongst the pool of IPs in the group.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type RegisterGroupResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   groupId?: Address;
 };
@@ -61,11 +60,10 @@ Parameters:
   - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type MintAndRegisterIpAndAttachLicenseAndAddToGroupResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   ipId?: Address;
   tokenId?: bigint;
@@ -93,11 +91,10 @@ Parameters:
   - `request.ipMetadata.ipMetadataHash` \[Optional] The hash of the metadata for the IP.
   - `request.ipMetadata.nftMetadataURI` \[Optional] The URI of the metadata for the NFT.
   - `request.ipMetadata.nftMetadataHash` \[Optional] The hash of the metadata for the IP NFT.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type RegisterIpAndAttachLicenseAndAddToGroupResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   ipId?: Address;
   tokenId?: bigint;
@@ -117,11 +114,10 @@ Parameters:
 - `request.groupPool`: The address specifying how royalty will be split amongst the pool of IPs in the group.
 - `request.licenseTermsId`: The ID of the registered license terms that will be attached to the new group IP.
 - `request.licenseTemplate`: \[Optional] The address of the license template to be attached to the new group IP, default value is Programmable IP License.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 ```typescript Response Type
 export type RegisterGroupAndAttachLicenseResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   groupId?: Address;
 };
@@ -144,7 +140,6 @@ Parameters:
   - `request.licenseData.licenseTermsId`: The ID of the registered license terms that will be attached to the new group IP.
   - `request.licenseData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
   - `request.licenseData.licenseTemplate`: \[Optional] The address of the license template to be attached to the new group IP, default value is Programmable IP License.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -157,7 +152,6 @@ const response =
     licenseData: {
       licenseTermsId: "5",
     },
-    txOptions: { waitForTransaction: true },
   });
 ```
 
@@ -167,13 +161,12 @@ export type RegisterGroupAndAttachLicenseAndAddIpsRequest = {
   ipIds: Address[];
   licenseData: LicenseData;
   maxAllowedRewardShare: number | string;
-  txOptions?: TxOptions;
 };
 ```
 
 ```typescript Response Type
 export type RegisterGroupAndAttachLicenseAndAddIpsResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   groupId?: Address;
 };
@@ -194,7 +187,6 @@ Parameters:
 - `request.groupIpId`: The IP ID of the group.
 - `request.currencyTokens`: The addresses of the currency (revenue) tokens to claim.
 - `request.memberIpIds`: The IDs of the member IPs to distribute the rewards to.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -205,7 +197,6 @@ const response = await client.groupClient.collectAndDistributeGroupRoyalties({
   groupIpId: "0x01",
   currencyTokens: [WIP_TOKEN_ADDRESS],
   memberIpIds: ["0x02"],
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -214,7 +205,6 @@ export type CollectAndDistributeGroupRoyaltiesRequest = {
   groupIpId: Address;
   currencyTokens: Address[];
   memberIpIds: Address[];
-  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
 };
 ```
 
@@ -253,7 +243,6 @@ Parameters:
 - `request.groupIpId`: The ID of the group IP to add the IPs to.
 - `request.ipIds`: The addresses of the IPs to add to the Group IP. IP IDs must be attached to the group IP license terms.
 - `request.maxAllowedRewardSharePercentage`: [Optional] The maximum reward share percentage that can be allocated to each member IP. Must be between 0 and 100 (where 100% represents 100_000_000). Default is 100.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -261,7 +250,6 @@ Parameters:
 const response = await client.groupClient.addIpsToGroup({
   groupIpId: "0x01",
   ipIds: ["0x02", "0x03"],
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -270,7 +258,6 @@ export type AddIpRequest = {
   groupIpId: Address;
   ipIds: Address[];
   maxAllowedRewardSharePercentage?: number;
-  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
 };
 ```
 
@@ -336,7 +323,6 @@ Parameters:
 
 - `request.groupIpId`: The ID of the group IP to remove the IPs from.
 - `request.ipIds`: The addresses of the IPs to remove from the Group IP.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -344,7 +330,6 @@ Parameters:
 const response = await client.groupClient.removeIpsFromGroup({
   groupIpId: "0x01",
   ipIds: ["0x02", "0x03"],
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -352,7 +337,6 @@ const response = await client.groupClient.removeIpsFromGroup({
 export type RemoveIpsFromGroupRequest = {
   groupIpId: Address;
   ipIds: Address[];
-  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
 };
 ```
 
@@ -378,7 +362,6 @@ Parameters:
 - `request.groupIpId`: The ID of the group IP.
 - `request.currencyToken`: The address of the currency (revenue) token to claim.
 - `request.memberIpIds`: The IDs of the member IPs to distribute the rewards to.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -389,7 +372,6 @@ const response = await client.groupClient.claimReward({
   groupIpId: "0x01",
   currencyToken: WIP_TOKEN_ADDRESS,
   memberIpIds: ["0x02", "0x03"],
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -398,7 +380,6 @@ export type ClaimRewardRequest = {
   groupIpId: Address;
   currencyToken: Address;
   memberIpIds: Address[];
-  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
 };
 ```
 
@@ -423,7 +404,6 @@ Parameters:
 
 - `request.groupIpId`: The ID of the group IP.
 - `request.currencyToken`: The address of the currency (revenue) token to collect.
-- `request.txOptions`: [Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -433,7 +413,6 @@ import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
 const response = await client.groupClient.collectRoyalties({
   groupIpId: "0x01",
   currencyToken: WIP_TOKEN_ADDRESS,
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -441,7 +420,6 @@ const response = await client.groupClient.collectRoyalties({
 export type CollectRoyaltiesRequest = {
   groupIpId: Address;
   currencyToken: Address;
-  txOptions?: Omit<TxOptions, "encodedTxDataOnly">;
 };
 ```
 

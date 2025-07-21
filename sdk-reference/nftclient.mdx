@@ -34,7 +34,6 @@ Parameters:
 - `request.mintFee`: \[Optional] The cost to mint a token.
 - `request.mintFeeToken`: \[Optional] The token to mint.
 - `request.owner`: \[Optional] The owner of the collection.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -58,7 +57,6 @@ const newCollection = await client.nftClient.createNFTCollection({
   mintOpen: true,
   mintFeeRecipient: zeroAddress,
   contractURI: "",
-  txOptions: { waitForTransaction: true },
 });
 
 console.log(
@@ -80,13 +78,12 @@ export type CreateNFTCollectionRequest = {
   mintFee?: bigint;
   mintFeeToken?: Hex;
   owner?: Hex;
-  txOptions?: TxOptions;
 };
 ```
 
 ```typescript Response Type
 export type CreateNFTCollectionResponse = {
-  txHash?: string;
+  txHash?: Hex;
   encodedTxData?: EncodedTxData;
   spgNftContract?: Address; // the address of the newly created contract
 };
@@ -147,7 +144,6 @@ Parameters:
 - `request.spgNftContract`: The address of the NFT contract.
 - `request.tokenId`: The ID of the token.
 - `request.tokenURI`: The URI to set.
-- `request.txOptions`: \[Optional] The transaction [options](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/options.ts).
 
 <CodeGroup>
 
@@ -157,7 +153,6 @@ const response = await client.nftClient.setTokenURI({
   tokenId: 1,
   tokenURI:
     "https://ipfs.io/ipfs/QmX4zdp8VpzqvtKuEqMo6gfZPdoUx9TeHXCgzKLcFfSUbk",
-  txOptions: { waitForTransaction: true },
 });
 ```
 
@@ -166,7 +161,6 @@ export type SetTokenURIRequest = {
   spgNftContract: Address;
   tokenId: bigint | number;
   tokenURI: string;
-  txOptions?: TxOptions;
 };
 ```
 
