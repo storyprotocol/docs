@@ -24098,25 +24098,6 @@ Refer to the [Royalty Module](/concepts/royalty-module) for detailed information
 - [Proof of Creativity](/developers/deployed-smart-contracts)
 
 
-# Network Information
-
-<CardGroup cols={2}>
-<Card 
-  title="Mainnet" 
-  href="/network/connect/mainnet" 
-  icon="house"> 
-  Connect and use Story's Mainnet.
-</Card>
-
-<Card
-  title="Testnet (Aeneid)"
-  href="/network/connect/aeneid"
-  icon="wrench">
-  Connect and use Story's Testnet (Aeneid).
-</Card>
-</CardGroup>
-
-
 # Welcome to Story Network
 
 **Story** is a purpose-built Layer 1 blockchain transforming how intellectual property (IP) is registered, managed, and monetized in the digital era. Through its full EVM compatibility and optimized execution layer, Story handles complex IP data structures efficiently—delivering high speed at low cost.
@@ -26289,19 +26270,40 @@ Refer to the following release matrix to run nodes for Mainnet and Aeneid Testne
 
 # Participate
 
-There are many ways to participate, you could become a validator or participate into governance 
+There are many ways to participate in the Story Protocol ecosystem. Choose from the options below to get started.
 
-Become a Validator
+<CardGroup cols={2}>
 
-Governance and SIP process
+<Card
+  title="Become a Validator"
+  icon="computer"
+  href="/network/participate/validators"
+>
+  Join the network as a validator and help secure the Story Protocol blockchain
+</Card>
 
-## SIP Repository
+<Card title="Governance" icon="briefcase" href="/foundation/governance">
+  Participate in protocol governance and help shape the future of Story Protocol
+</Card>
 
-- [SIP Repository](https://github.com/storyprotocol/SIPs)
+<Card
+  title="SIP Repository"
+  icon="plus"
+  href="https://github.com/storyprotocol/SIPs"
+>
+  Contribute to Story Improvement Proposals and protocol development
+</Card>
 
-## Community Forum
+<Card
+  title="Community Forum"
+  icon="comments"
+  href="https://forum.story.foundation/"
+>
+  Join discussions and connect with the Story Protocol community
+</Card>
 
-- [Story Forum](https://forum.story.foundation/)
+</CardGroup>
+
 
 # Governance
 
