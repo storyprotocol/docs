@@ -117,7 +117,8 @@
                                         "network/learn/node-software/cosmos-modules/staking-module"
                                     ]
                                 },
-                                "network/learn/node-software/localnet"
+                                "network/learn/node-software/localnet",
+                                "network/learn/node-software/precompiled-contracts"
                             ]
                         },
                         "network/learn/token-economy"
@@ -383,13 +384,23 @@
               {
                 "group": "Infrastructure Partners",
                 "pages": [
-                  "developers/infra-partners/overview",
-                  "developers/infra-partners/rpc-provider",
-                  "developers/infra-partners/account-system",
-                  "developers/infra-partners/indexers",
-                  "developers/infra-partners/oracles",
-                  "developers/infra-partners/randomness",
-                  "developers/infra-partners/payment-solutions"
+                    "developers/infra-partners/overview",
+                    "developers/infra-partners/rpc-provider",
+                    "developers/infra-partners/account-system",
+                    "developers/infra-partners/indexers",
+                    {
+                        "group": "Oracles",
+                        "icon": "stars",
+                        "pages": [
+                            "developers/infra-partners/oracles/overview",
+                            "developers/infra-partners/oracles/gelato",
+                            "developers/infra-partners/oracles/pyth",
+                            "developers/infra-partners/oracles/redstone"
+                        ]
+                    },
+                    "developers/infra-partners/randomness",
+                    "developers/infra-partners/payment-solutions",
+                    "developers/infra-partners/multisig"
                 ]
               }
             ]
@@ -711,7 +722,8 @@
                                         "ko/network/learn/node-software/cosmos-modules/staking-module"
                                     ]
                                 },
-                                "ko/network/learn/node-software/localnet"
+                                "ko/network/learn/node-software/localnet",
+                                "ko/network/learn/node-software/precompiled-contracts"
                             ]
                         },
                         "ko/network/learn/token-economy"
@@ -931,6 +943,28 @@
                   "ko/developers/tutorials/how-to-tip-an-ip",
                   "ko/developers/tutorials/case-study-register-derivative-ippy",
                   "ko/developers/tutorials/privy-tutorial"
+                ]
+              },
+              {
+                "group": "Infrastructure Partners",
+                "pages": [
+                    "ko/developers/infra-partners/overview",
+                    "ko/developers/infra-partners/rpc-provider",
+                    "ko/developers/infra-partners/account-system",
+                    "ko/developers/infra-partners/indexers",
+                    {
+                        "group": "Oracles",
+                        "icon": "stars",
+                        "pages": [
+                            "ko/developers/infra-partners/oracles/overview",
+                            "ko/developers/infra-partners/oracles/gelato",
+                            "ko/developers/infra-partners/oracles/pyth",
+                            "ko/developers/infra-partners/oracles/redstone"
+                        ]
+                    },
+                    "ko/developers/infra-partners/randomness",
+                    "ko/developers/infra-partners/payment-solutions",
+                    "ko/developers/infra-partners/multisig"
                 ]
               }
             ]
@@ -1252,7 +1286,7 @@
     },
     {
       "source": "/precompile",
-      "destination": "/network/learn/node-software/precompile"
+      "destination": "/network/learn/node-software/precompiled-contracts"
     },
     {
       "source": "/network",
