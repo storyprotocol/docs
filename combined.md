@@ -16023,6 +16023,33 @@ Alchemy account abstraction infrastructure
 </Tabs>
 
 
+# Multisig
+
+## Story Safe
+
+Users can access Safe via a user-friendly web UI or directly through smart contracts, giving both regular users and developers flexible options for managing multisig wallets.
+
+### Using Safe's Web App
+
+Use Safe’s intuitive web app to easily propose, review, and execute multisig transactions — no coding required!
+
+<Card title="Story Safe" href="https://safe.story.foundation/welcome" horizontal icon="vault">
+
+Go to the web app and try it out.
+
+</Card>
+
+### Smart Contract Integration
+
+For direct interaction with Safe's smart contracts, see the official documentation for technical guidance and examples to build or automate Safe workflows.
+
+<Card title="Safe Docs" href="https://docs.safe.global/home/what-is-safe" horizontal icon="book">
+
+Check out Safe's documentation to learn more.
+
+</Card>
+
+
 # Indexers
 
 <CardGroup cols={2}>
@@ -16074,19 +16101,6 @@ Halliday is the first workflow protocol. Automate any workflow and manage reliab
 
 <Card title="Pyth" href="https://pyth.network" img="/images/logos/pyth.jpg">
 Pyth entropy is a decentralized randomness oracle that provides random numbers for blockchain applications.
-</Card>
-</CardGroup>
-
-
-# Oracles
-
-<CardGroup cols={2}>
-<Card title="Pyth" href="https://pyth.network" img="/images/logos/pyth.jpg">
-Pyth network is a decentralized oracle network that provides real-time price feeds for blockchain assets.
-</Card>
-
-<Card title="Redstone" href="https://redstone.finance" img="/images/logos/redstone.png">
-Redstone is a decentralized oracle network that provides real-time price feeds for blockchain assets.
 </Card>
 </CardGroup>
 
@@ -16186,6 +16200,223 @@ Welcome to Story's infra partners page. Here you'll find a comprehensive list of
 </Card>
 
 </CardGroup>
+
+
+# Gelato
+
+# VRF
+
+Gelato VRF provides verifiable randomness for blockchain applications by utilizing Drand, a decentralized and trusted source of random numbers. It ensures that developers receive truly random values that are both provable and tamper-resistant.
+
+See Gelato's [Documentation](https://docs.gelato.network/web3-services/vrf) guide to integrate your application with their price feeds.
+
+## Smart Contracts
+
+### Functions and VRF
+
+#### Mainnet
+
+##### [EIP173Proxy.sol](https://www.storyscan.io/address/0xafd37d0558255aA687167560cd3AaeEa75c2841E)
+
+```
+0xafd37d0558255aA687167560cd3AaeEa75c2841E
+```
+
+##### [Automate.sol](https://www.storyscan.io/address/0xab2c44495F5F954149b94C750ca20B64ea60B51c)
+
+```
+0xab2c44495F5F954149b94C750ca20B64ea60B51c
+```
+
+### Relays
+
+#### Mainnet
+
+##### GelatoRelay
+
+Relay method: `callWithSyncFee`
+
+###### EIP173Proxy.sol
+
+```
+0xcd565435e0d2109feFde337a66491541Df0D1420
+```
+
+#####
+
+###### GelatoRelay.sol
+
+```
+0xA75983F686999843804a2ECC0E93C35d39a4F750
+```
+
+##### GelatoRelayERC2771.sol
+
+Relay method: `callWithSyncFeeERC2771`
+
+```
+0x8aCE64CEA52b409F930f60B516F65197faD4B056
+```
+
+##### GelatoRelayConcurrentERC2771.sol
+
+Relay method: `callWithSyncFeeERC2771` with `isConcurrent: true`
+
+```
+0xc7739c195618D314C08E8626C98f8573E4E43634
+```
+
+##### GelatoRelay1BalanceERC2771.sol
+
+Relay method: `sponsoredCallERC2771`
+
+```
+0x61F2976610970AFeDc1d83229e1E21bdc3D5cbE4
+```
+
+
+# Pyth
+
+# Price Feeds
+
+Pyth Network provides real-time financial market data to smart contracts across 100+ blockchains, sourcing prices from over 100 exchanges and market makers. With 850+ price feeds covering equities, commodities, and cryptocurrencies, Pyth aggregates and updates prices multiple times per second.
+
+See Pyth's [Documentation](https://docs.pyth.network/price-feeds/price-feeds) guide to integrate your application with their price feeds.
+
+## Smart Contracts
+
+### Mainnet
+
+#### [ERC1967Proxy.sol](https://www.storyscan.io/address/0xD458261E832415CFd3BAE5E416FdF3230ce6F134)
+
+```
+0xD458261E832415CFd3BAE5E416FdF3230ce6F134
+```
+
+#### [PythUpgradable.sol](https://www.storyscan.io/address/0x5f3c61944CEb01B3eAef861251Fb1E0f14b848fb)
+
+```
+0x5f3c61944CEb01B3eAef861251Fb1E0f14b848fb
+```
+
+### Testnet (Aeneid)
+
+#### [ERC1967Proxy.sol](https://aeneid.storyscan.io/address/0x36825bf3Fbdf5a29E2d5148bfe7Dcf7B5639e320)
+
+```
+0x36825bf3Fbdf5a29E2d5148bfe7Dcf7B5639e320
+```
+
+#### [PythUpgradeable.sol](https://aeneid.storyscan.io/address/0x98046Bd286715D3B0BC227Dd7a956b83D8978603)
+
+```
+0x98046Bd286715D3B0BC227Dd7a956b83D8978603
+```
+
+<br />
+
+# VRF
+
+Pyth Entropy(VRF) service enables on-chain generation of provably fair random numbers. To integrate Pyth Entropy, you need to invoke an on-chain function to request a random number from Entropy. This function accepts a randomly generated number, which can be created off-chain and sent to the Entropy contract. In return, the contract provides a sequence number. Once the request is processed, Pyth Entropy will send a callback to your contract, delivering the generated random number.
+
+See Pyth's [How to Generate Random numbers in EVM dApps](https://docs.pyth.network/entropy/generate-random-numbers/evm) guide to integrate your application with Pyth Entropy.
+
+## Smart Contracts
+
+### Mainnet
+
+#### [ERC1967Proxy.sol](https://www.storyscan.io/address/0xdF21D137Aadc95588205586636710ca2890538d5)
+
+```
+0xdF21D137Aadc95588205586636710ca2890538d5
+```
+
+#### [EntropyUpgradeable.sol](https://www.storyscan.io/address/0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF)
+
+```
+0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF
+```
+
+### Testnet (Aeneid)
+
+#### [ERC1967Proxy.sol](https://aeneid.storyscan.io/address/0x5744Cbf430D99456a0A8771208b674F27f8EF0Fb)
+
+```
+0x5744Cbf430D99456a0A8771208b674F27f8EF0Fb
+```
+
+#### [EntropyUpgradeable.sol](https://aeneid.storyscan.io/address/0x74f09cb3c7e2A01865f424FD14F6dc9A14E3e94E)
+
+```
+0x74f09cb3c7e2A01865f424FD14F6dc9A14E3e94E
+```
+
+
+# Redstone
+
+# Price Feeds
+
+Redstone delivers real-time financial data to smart contracts on 70+ blockchains, covering crypto, RWAs, LRTs, BTCFi, and other emerging assets. Combining institutional and crypto-native data, Redstone ensures reliability through multi-layered validation, including anomaly detection, market depth analysis, and cross-source variance checks.
+
+See Redstone's [Documentation](https://docs.redstone.finance/docs/introduction) guide to integrate your application with their price feeds.
+
+## Smart Contracts
+
+### ETH
+
+#### TransparentUpgradeableProxy
+
+```
+0x22d47686b3AEC9068768f84EFD8Ce2637a347B0A
+```
+
+#### StoryPriceFeedEthWithoutRoundsV1
+
+```
+0xb9D0073aCb296719C26a8BF156e4b599174fe1d5
+```
+
+### BTC
+
+#### TransparentUpgradeableProxy
+
+```
+0xc44be6D00307c3565FDf753e852Fc003036cBc13
+```
+
+#### StoryPriceFeedBtcWithoutRoundsV1
+
+```
+0xE23eCA12D7D2ED3829499556F6dCE06642AFd990
+```
+
+### USDC
+
+#### TransparentUpgradeableProxy
+
+```
+0xED2B1ca5D7E246f615c2291De309643D41FeC97e
+```
+
+#### StoryPriceFeedUsdcWithoutRoundsV1
+
+```
+0x31a36CdF4465ba61ce78F5CDbA26FDF8ec361803
+```
+
+### USDT
+
+#### TransparentUpgradeableProxy
+
+```
+0x7A9b672fc20b5C89D6774514052b3e0899E5E263
+```
+
+#### StoryPriceFeedUsdtWithoutRoundsV1
+
+```
+0xe8D9FbC10e00ecc9f0694617075fDAF657a76FB2
+```
 
 
 # Dev Overview
@@ -22671,68 +22902,465 @@ With Story, you can share your work freely, knowing that wherever it goes, it’
 </Accordion>
 
 
-# Precompiles
+# Staking Design
 
-## Introduction
+# Purpose
 
-Precompiled contracts are specialized smart contracts implemented directly in the execution layer of a blockchain. Unlike user-deployed smart contracts that execute EVM bytecode, precompiled contracts offer optimized native implementations for complex cryptographic and computational operations. This significantly improves efficiency and reduces gas costs. Precompiled contracts exist at fixed addresses within the execution client and each precompile has a predefined gas cost based on its computational complexity, ensuring predictable execution fees.
+This document walks through the staking specification for Story. The goal is to provide clarity to network participants and technical partners on how Story's staking mechanics work and how users can interface with our chain.
 
-Story Protocol introduces two precompiled contracts:
+# Tokenomics
 
-- `p256Verify` precompile to support signature verifications in the secp256r1 elliptic curve.
-- `ipgraph` precompile to enhance on-chain intellectual property management.
+## Genesis
 
-In addition, Story Protocol’s execution layer supports all standard EVM precompiled contracts, ensuring full compatibility with Ethereum-based tooling and applications.
+The story genesis allocation will consist of 1 billion tokens, distributed among ecosystem participants, the foundation, investors, and the core team. Please refer this document for the detailed [Token Distribution](https://www.story.foundation/blog/introducing-ip).
 
-## Precompiled Contracts
+## Locked vs Unlocked tokens
 
-| Address | Functionality                                                 |
-| ------- | ------------------------------------------------------------- |
-| byte1   | `ecrecover`- ECDSA signature recovery                         |
-| byte2   | `sha256` - SHA-256 hash computation                           |
-| byte3   | `ripemd160` - RIPEMD-160 hash computation                     |
-| byte4   | `identity` - Identity function                                |
-| byte5   | `modexp` - Modular exponentiation                             |
-| byte6   | `bn256Add` - BN256 elliptic curve addition                    |
-| byte7   | `bn256ScalarMul` - BN256 elliptic curve scalar multiplication |
-| byte8   | `bn256Pairing` - BN256 elliptic curve pairing check           |
-| byte9   | `blake2f` - Blake2 hash function                              |
-| byte10  | `kzgPointEvaluation` - KZG polynomial commitment evaluation   |
-| byte0   | `p256Verify` - Secp256r1 signature verification               |
-| byte1   | `ipgraph` - Intellectual property management                  |
+Unlocked tokens have no restrictions imposed on them and can be used for gas consumption, transfers, and staking.
 
-## p256Verify precompile
+Unlike unlocked tokens, locked tokens cannot be transferred or traded and are unlocked based on an unlock schedule. However, locked tokens may be staked to earn staking rewards, with the locked staking reward rate being half of that of unlocked tokens.
 
-Refer to [RIP-7212](https://github.com/ethereum/RIPs/blob/master/RIPS/rip-7212.md) for more information.
+Staked locked and unlocked tokens have the same voting power. That means that a validator with 100 staked locked tokens has the same network voting power as a validator with 100 staked unlocked tokens.
 
-## IPgraph precompile
+Both types of tokens can be slashed if their validators get slashed.
 
-The `ipgraph` precompile enables efficient querying and modification of IP relationships and royalty structures while minimizing gas costs.
+## Token emissions
 
-This precompile provides multiple functions based on the function selector—the first 4 bytes of the input.
+A fixed number of tokens will be allocated for emissions in the first year, with the quantity determined by the foundation at Genesis. For subsequent years, the number of emitted tokens will be controlled by an emissions algorithm whose parameters may be updated via governance or subject to change via hard forks. The emissions per block are controlled by the following two parameters:
 
-| Function Selector        | Description                                                     | Gas computation formula                               | Gas Cost                           |
-| :----------------------- | :-------------------------------------------------------------- | :---------------------------------------------------- | :--------------------------------- |
-| `addParentIp`            | Adds a parent IP record                                         | `intrinsicGas + (ipGraphWriteGas * parentCount)`      | Larger than 1100                   |
-| `hasParentIp`            | Checks if an IP is parent of another IP                         | `ipGraphReadGas * averageParentIpCount`               | 40                                 |
-| `getParentIps`           | Retrieves parent IPs                                            | `ipGraphReadGas * averageParentIpCount`               | 40                                 |
-| `getParentIpsCount`      | Gets the number of parent IPs                                   | `ipGraphReadGas`                                      | 10                                 |
-| `getAncestorIps`         | Retrieves ancestor IPs                                          | `ipGraphReadGas * averageAncestorIpCount * 2`         | 600                                |
-| `getAncestorIpsCount`    | Gets the number of ancestor IPs                                 | `ipGraphReadGas * averageParentIpCount * 2`           | 80                                 |
-| `hasAncestorIp`          | Checks if an IP is ancestor of another IP                       | `ipGraphReadGas * averageAncestorIpCount * 2`         | 600                                |
-| `setRoyalty`             | Sets royalty details of an IP                                   | `ipGraphWriteGas`                                     | 1000                               |
-| `getRoyalty`             | Retrieves royalty details of an IP                              | `varies by royalty policy`                            | LAP:900, LRP:620, other:1000       |
-| `getRoyaltyStack`        | Retrieves royalty stack of an IP                                | `varies by royalty policy`                            | LAP:50, LRP: 600, other:1000       |
-| `hasParentIpExt`         | Checks if an IP is parent of another IP through external call   | `ipGraphExternalReadGas * averageParentIpCount`       | 8400                               |
-| `getParentIpsExt`        | Retrieves parent IPs through external call                      | `ipGraphExternalReadGas * averageParentIpCount`       | 8400                               |
-| `getParentIpsCountExt`   | Gets the number of parent IPs through external call             | `ipGraphExternalReadGas`                              | 2100                               |
-| `getAncestorIpsExt`      | Retrieve ancestor IPs through external call                     | `ipGraphExternalReadGas * averageAncestorIpCount * 2` | 126000                             |
-| `getAncestorIpsCountExt` | Gets the number of ancestor IPs through external call           | `ipGraphExternalReadGas * averageParentIpCount * 2`   | 16800                              |
-| `hasAncestorIpExt`       | Checks if an IP is ancestor of another IP through external call | `ipGraphExternalReadGas * averageAncestorIpCount * 2` | 126000                             |
-| `getRoyaltyExt`          | Retrieves royalty details of an IP through external call        | `varies by royalty policy`                            | LAP:189000, LRP:130200, other:1000 |
-| `getRoyaltyStackExt`     | Retrieves royalty stack of an IP through external call          | `varies by royalty policy`                            | LAP:10500, LRP:126000, other:1000  |
+- blocks_per_year: 10368000 blocks
+  - The number of blocks expected to be produced in a year
+- inflations_per_year: 20,000,000 tokens
+  - The total number of inflationary tokens to be emitted in a year
 
-Refer to the [Royalty Module](/concepts/royalty-module) for detailed information on royalty policies.
+New emissions will flow to two places:
+
+1. Block Rewards
+2. Community Pool
+
+## Token burn
+
+Since Story uses a fork of geth as the execution client, the burning mechanism follows Ethereum's EIP-1559.
+
+# Staking
+
+> 🔗 [Stake with the Staking Dashboard ↗️](https://staking.story.foundation/)
+
+Story supports the below staking-related operations
+
+- Create validator
+- Update validator commission
+- Stake
+- Stake on behalf
+- Unstake
+- Unstake on behalf
+- Redelegate
+- Redelegate on behalf
+- Set withdraw address
+- Set reward address
+- Unjail
+- Unjail on behalf
+
+Before explaining the behavior of each of these operations, some high-level concepts like **Token Staking Types**, **Validator Set Status**, **Unbonding**, and **Staking Period** will be explained first:
+
+## Token Staking Types
+
+As staking is enabled for both locked and unlocked tokens, validators must choose which type of token staking they want to support. Once a token staking type is selected, validators cannot switch to a different type.
+
+## Validator Set Status
+
+In Story, validators are grouped into one of two sets, (1) the active (bonded) validator set, which participates in consensus and receives block rewards, or (2) the non-active (unbonded) validator set, which does not contribute to the consensus process. To be selected as part of the active validator set, a validator must be one of the top 64 validators ranked by staked tokens.
+
+## Unbonding
+
+Unstaking for delegators is subject to an unbonding process. Users must wait for an unbonding time before any tokens return to their accounts.
+
+This is the same for validators who self-delegate to themselves. They also need to go through the unbonding process when they want to unstake.
+
+The unbonding time is 14 days. During the unbonding period, the delegator/validator will not earn block rewards. But they may still be slashed.
+
+For each validator/delegator pair, the maximum ongoing unbonding transactions is 14. More unbonding requests beyond this limit will fail.
+
+## Staking period
+
+Delegators can decide how flexible and how long they want to stake their tokens. By default, for both locked and unlocked tokens, delegators can stake and then unstake immediately and get their token back after the unbonding time. We call this **flexible staking** in this document.
+
+For unlocked tokens, a few more fixed staking periods are supported: 90 days, 360 days, and 540 days. In this case, users can only call unstake after the staking period is mature. Any call earlier than the mature day will be discarded. Unstaking from a mature staking period is still subject to the unbonding process, meaning users will get their staked tokens back after 14 days of unbonding time.
+
+Staking in these fixed staking periods earns more rewards. The longer the period, the bigger the reward weight multiplier. Reward multiplier for different periods:
+
+- Locked flexible period - **0.5**
+- Flexible period - **1.0**
+- 90 days - **1.1**
+- 360 days - **1.5**
+- 540 days - **2**
+
+For locked tokens, only flexible staking is allowed and the reward multiplier is **0.5**. If a user delegates their locked tokens to a staking period, we will convert that to a flexible staking delegation.
+
+After the staking period ends, users can choose not to unstake. In this case, they will continue earning the same reward rate based on the reward rate of the corresponding staking period until they unstake manually. They can unstake at any time after the staking period ends. For example, if the 1-year staking period's reward rate is 0.02% per block, after staking for 1 year, users can still earn 0.02% per block of the reward until they unstake.
+
+## Decimal for stake amounts
+
+The decimal for stake operations (stake, unstake, redelegate, etc.) is 9. If a user specifies a smaller value, the dust will be refunded back to the users. Or if there is no token transfer involved, the specified value will be rounded down to 9 decimals.
+
+# Staking Operations
+
+## Create validator
+
+To become a validator, the validator must first run a validator node based on the latest released story binaries, then call the CreateValidator function with an initial staking amount, moniker, and commission rate. It also needs to set the max commission rate and max commission rate change to make sure it doesn't change the commission rate later dramatically. The minimum commission rate that a validator can set is 5%.
+
+The initial staking amount needs to be larger than a threshold, which is 1024 IP. The amount will be deducted from the caller's wallet. It can only be staked to a flexible period.
+
+If a validator tries to call create validator function the second time, it will be ignored.
+
+## Update validator commission
+
+This operation allows validators to edit their validator commission rate. If the updated commission rate is larger than max commission rate or the commission rate change delta is larger than max commission rate change, the operation will fail.
+
+A fee of 1 IP will be charged for updating a validator to prevent spamming. The fee will be burnt by the contract.
+
+The commission rate can only be updated once per day. It will not throw an error from the contract. But it won't take effect in the consensus layer.
+
+## Stake
+
+Both the validator and delegator can stake tokens to a validator. A validator can stake to itself, which is called self-delegation. Users can decide if they want to stake with a fixed staking period or stake without a period (flexible staking).
+
+If a fixed period is chosen, a delegation id will be returned to the users. Users must use this delegation id to unstake tokens from this stake operation. If flexible staking is chosen, the returned delegation id will be 0.
+
+The staking amount needs to be larger than a threshold, which is 1024 IP.
+
+If a delegator delegates to a non-existent validator, the tokens will NOT be refunded.
+
+If users specify the token amount that has more than 9 decimal units, the actual staking amount will be rounded down to 9 decimal and refund the remaining back to the users.
+
+## Unstake
+
+When staking without a staking period, users can unstake anytime. The tokens will be distributed to the user's account after the unbonding time.
+
+A fee of 1 IP will be charged for unstaking to prevent spamming. The fee will be burnt by the contract.
+
+When staking with a staking period, users can only unstake after the staking period is mature. The tokens will be distributed to the user's account after the unbonding time. Unstaking requests before the staking period matures will be ignored.
+
+The minimum unstaking amount is 1024 IP. After the unstaking request is processed, if the remaining staked amount is less than 1024 IP, the remaining part will also be unstaked together.
+
+The unstaking request will first go through the unbonding process, which is 14 days. After that, the unbonded requests are sent to a withdrawal queue, distributing a maximum of 32 withdrawals per block. If there are more than 32 withdrawal requests in the withdrawal queue, the next 32 withdrawal requests will be processed in the next block.
+
+Partial unstake of a delegation is supported. For example, if a 1-year long delegation has 1 million tokens, after 1 year, users can unstake 500k from this delegation and keep the remaining staked to continue earning rewards.
+
+Unstake can fail if the validator, delegator and delegation id passed in is incorrect.
+
+Unstake can also fail if the maximum concurrent unbonding request (currently 14) has been reached for the validator/delegator pair.
+
+If the unstake amount passed in is larger than the total unstakable tokens, the current total unstakable amounts will be unstaked. For example, if users unstake 1024 IP and only have 1023 IP stake, 1023 IP will be withdrawn.
+
+If a validator exits, by either being offline and getting jailed, or not having enough stakes to be in the top 64 validator set, the delegators can unstake their tokens if the tokens are not in a staking period or their staking period is mature. Otherwise, delegators must wait until the staking period matures to unstake.
+
+If users specify the token amount that has more than 9 decimal units, the actual unstaking amount will be rounded down to 9 decimal.
+
+## Redelegate
+
+Redelegate operation allows a delegator to move its staked tokens from one validator to another. The tokens can be redelegated to the new validator immediately and start earning rewards. However, the redelegated tokens are still subject to the unbonding process, IF the source validator is in the active validator set or unbonding from the active validator set. During this 14 days unbounding time, it will be slashed if the original validator gets slashed.
+
+A fee of 1 IP will be charged for redelegation to prevent spamming. The fee will be burnt by the contract.
+
+The minimum redelegation amount is 1024 IP. If a delegator's initial stake is 1024 IP but later gets slashed, it can still redelegate its tokens to another validator even if the token amount is less than 1024 IP.
+
+Similarly to unstaking, if the redelegation amount passed in is larger than the total redelegatable tokens, the total redelegatable amounts will be redelegated. If the remaining balance after redelegation is less than 1024 IP, all remaining tokens will be redelegated together.
+
+The delegation id will stay the same after the redelegation.
+
+Redelegation has its own maximum ongoing unbonding transaction limit per delegator/source validator/destination validator pair, which is also 14.
+
+Delegators can choose to redelegate their tokens to another active validator even if their tokens are still in an immature staking period. Their staking period maturation date and reward rate will stay the same.
+
+Redelegation can only be triggered when the source and destination validators support the same token type.
+
+If users specify the token amount that has more than 9 decimal units, the actual reledegated amount will be rounded down to 9 decimal.
+
+## Set withdrawal/reward address
+
+Delegators can call the staking contract to set a withdrawal address. The unstaked tokens will be sent to this withdrawal address. Similarly, delegators can set a separate reward address. All reward distributions will be sent to this address.
+
+A fee of 1 IP will be charged for updating either the withdrawal address or the reward address to prevent spamming. The fee will be burnt by the contract.
+
+The address change will take effect in the next block.
+
+## Slash/Unjail
+
+Slashing penalizes bad behaviors on the validators by slashing out a fraction of their staked tokens. Two types of behaviors can get slashed in Story: **double sign** and **downtime**.
+
+- **double sign**: If a validator double signs for a block, they will get slashed 5% of their tokens and get permanently jailed (called tombstoned).
+- **downtime**: If a validator is offline for too long and misses 95% of the past 28,800 blocks, they will get slashed 0.02% of their tokens and get jailed.
+
+A validator will also get jailed after self-undelegation if the validator's remaining self-delegation amount is smaller than the minimum self-delegation (1024 IP).
+
+A jailed validator cannot participate in the consensus and earn any reward. But they can unjail themselves after a cooldown time, which is currently set to 10 minutes. After 10 minutes, it can call story's staking contract to unjail itself IF their stake is more than minimum stake amount (1024 IP), after which it can participate in the consensus again if it's still within the top 64 validators.
+
+A jailed validator can still withdraw all their stakes.
+
+Delegators can still stake and unstake from a jailed validator as long as there are remaining stakes on this jailed validator. The jailed validator will only be removed from the chain (hence not able to be staked/unstaked) when there is no remaining stake on it.
+
+A fee of 1 IP will be charged for unjailing a validator to prevent spamming. The fee will be burnt by the contract.
+
+## On behalf functions
+
+Most of the staking-related operations can be done from another wallet on behalf of the validators or delegators. Most of these on-behalf functions are permissionless since they spend tokens from the wallet that calls the on-behalf operations, not from the actual validators or delegators.
+
+## Add operator
+
+If a delegator wants to allow another wallet to unstake or redelegate on their behalf, they must call the staking contract to add that wallet as the operator for their delegator. After that, the operator can unstake and redelegate the delegator's tokens on behalf of the delegator.
+
+The same applies to a validator who wants to allow another wallet to unjail on its behalf.
+
+A fee of 1 IP will be charged for adding an operator.
+
+## An additional data field
+
+Each function will include an additional unformatted `data` input field to accommodate potential future changes. It can avoid changing user interfaces in the future.
+
+## Validator key format
+
+Validator public keys are secp256k1 keys. The keys have a 33 bytes compressed version and 65 bytes uncompressed version. When interacting with the story's smart contracts, a 33 bytes compressed key is used to identify validators.
+
+# Rewards
+
+## Rewards Pool Allocation
+
+For every block, a fixed proportion of token inflation will go to the rewards distribution pool, which will be shared among all 64 active validators according to each of their share weights. _These allocated tokens will then be shared among the validator and its delegators in a fashion described by the next section._ The validator share weight is calculated based on the total token staking amount, and whether or not the token staking type is locked or unlocked.
+
+As an example, assume that we have 100 tokens allocated for the validator rewards distribution pool, and assume that we only have 3 active validators:
+
+- validatorA with 10 locked tokens staked
+- validatorB with 10 locked tokens staked
+- validatorC with 10 unlocked tokens staked
+
+To calculate how many tokens each validator receives, we first calculate each of their weighted shares, which is defined as the number of staked tokens multiplied by their rewards multiplier (0.5 if staking locked tokens, 1 if staking unlocked tokens). This gives us:
+
+- validatorA with 10 \* 0.5 = 5 shares
+- validatorB with 10 \* 0.5 = 5 shares
+- validatorC with 10 \* 1 = 10 shares
+
+With the weighted and total shares calculated, we can then get the total number of inflationary tokens allocated for each validator:
+
+- validatorA with 100 \* (5 / 20) = 25 tokens
+- validatorB with 100 \* (5 / 20) = 25 tokens
+- validatorC with 100 \* (10 / 20) = 50 tokens
+
+The formula for calculating the total number of tokens allocated for a validator is as follows:
+
+<Image
+  align="center"
+  src="https://files.readme.io/833d419fc139ba363c56aef263dcca571fe449ab824a2349a69d7419ee658bd0-Screenshot_2024-10-30_at_8.13.27_PM.png"
+/>
+
+where
+
+- R_i is the total inflationary token rewards for validator i
+- S_i is the staked tokens for validator i
+- M_i is the rewards multiplier (0.5 for locked tokens, 1 for unlocked tokens)
+- R_total is the total inflationary tokens allocated for the rewards pool
+
+## Validator And Delegator Rewards
+
+Total rewards allocations (_whose calculations are shown in the prior section_) for each validator are shared between the validator itself and all of its delegators:
+
+- The validator takes a fixed percentage commission, set by the validator itself
+- Remaining rewards are distributed among delegators according to their share weights
+
+Calculation of delegator rewards is similar to that of validator rewards, where the proportion of tokens received for each delegator out of the remaining validator rewards is calculated based on each delegator's staking multiplier (described in the staking section).
+
+As an example, assume a validator has 100 total rewards allocated to it, with a validator commission of 20%, and 3 delegators delegating to it:
+
+- delegatorA with 10 tokens staked and a staking multiplier of 1
+- delegatorB with 10 tokens staked and a staking multiplier of 1
+- delegatorC with 10 tokens staked and a staking multiplier of 2
+
+To calculate how many tokens each delegator receives, we first calculate each of their weighted shares, which is defined as the number of staked tokens multiplied by their staking rewards multiplier. This gives us:
+
+- delegatorA with 10 \* 1 = 10 shares
+- delegatorB with 10 \* 1 = 10 shares
+- delegatorC with 10 \* 2 = 20 shares
+
+With the weighted and total shares calculated, we can then get the total number of inflationary tokens allocated for each delegator, noting that the total number of tokens to be distributed among delegators is give by 100 - (100 \* 0.20) = 80:
+
+- delegatorA with 80 \* (10 / 40) = 20 tokens
+- delegatorB with 80 \* (10 / 40) = 20 tokens
+- delegatorC with 80 \* (20 / 40) = 40 tokens
+
+The formula for calculating the delegator token reward can be found below:
+
+<Image
+  align="center"
+  src="https://files.readme.io/429c0eff2f0acddcabfa3e6259e427b47156aed244020bfb7f11a5b63387fec9-Screenshot_2024-10-30_at_8.15.51_PM.png"
+/>
+
+where
+
+- D_i is the total inflationary token rewards for delegator i
+- S_i is the staked tokens for delegator i
+- M_i is the staked rewards multiplier for delegator i
+- R_total is the total inflationary tokens allocated for the validator
+- C is the commission rate for the validator
+
+The validator commission is also treated as a reward and will follow the same auto-reward distribution rule described below. The minimal validator commission is set to 5% to avoid a cut-throat competition of lower commission rates among validators.
+
+The reward calculation results will be rounded down to gwei. Anything smaller than 1 gwei will be truncated.
+
+## Auto reward distribution
+
+The reward is accumulated per block and can be distributed per block. However, it will only be automatically distributed to the delegator's account when it is larger than a threshold. The default and also minimal threshold is 8 IP, which means that only if the delegator's reward is more than 8 IP, it will be sent to the delegator's account.
+
+The reward distribution will go to a reward distribution queue, which only processes a fixed amount of reward distribution requests per block. The reward distribution per block is 32.
+
+The staking reward cannot be manually withdrawn by design.
+
+# Community Pool
+
+A percentage of the newly minted tokens in every block will go to a community pool contract. The foundation will determine how to use the tokens sent to the pool. The maximum community pool percentage that can be set is 20%.
+
+The community pool contract address: **0xcccccc0000000000000000000000000000000002**
+
+# Singularity
+
+The first 1,580,851 blocks after the genesis is called Singularity, during which everyone can create a validator and stake tokens but the active validator set will only have the genesis validators. There is also no new token emission, hence no reward. Unstake and redelegate are also not supported.
+
+The Genesis validator set consists of 8 validators, setup by the foundation and trusted staking institutions. 4 of them support locked tokens and the other 4 support unlocked tokens. Each of them has an initial stake of 0.001 IP. Each of them will set a commission rate. During the Singularity, the genesis valdiators will need to self delegate at least 1024 IP to perform validator operations like editing validator commission rate.
+
+After Singularity, the top 64 validator nodes with the highest stakes will be selected to participate in consensus and receive rewards.
+
+Slashing/Jail won't happen during Singularity.
+
+# Staking contract
+
+Story's staking contract will handle all validators/delegators related operations. It's deployed to address: **0xcccccc0000000000000000000000000000000001**
+
+The contract interfaces are defined here: [https://github.com/piplabs/story/blob/main/contracts/src/protocol/IPTokenStaking.sol](https://github.com/piplabs/story/blob/main/contracts/src/protocol/IPTokenStaking.sol)
+
+
+# Whitepaper
+
+
+# Learn about Story
+
+**Story** is a purpose-built decentralized blockchain supercharged by a *multi-core* execution environment. 
+Its architecture comprises a main execution core alongside multiple highly customized cores. The main core provides EVM equivalence, enabling rapid adoption of existing applications from the ecosystem. 
+The Intellectual Property (IP) core, one of the specialized cores, efficiently handles intellectual property registration as a native asset class while optimizing operations across complex IP relationship graphs. This core transforms intelligence into programmable IP assets. Although Story focuses primarily on intellectual property, its flexible architecture enables the adoption of future cores that can expand far beyond IP-related applications. 
+
+
+Learn more about the architecture in the [whitepaper](https://www.story.foundation/whitepaper.pdf)  and understand the token economy design in Story's [Staking Desgin](/network/learn/token-economy) documentation. For details on implementation, see the [Node Software](/network/learn/node-software) chapter.
+
+
+# Execution Layer (EL)
+
+The **Execution Layer (EL)** is a fork of the Geth client, with the addition of the [IPGraph Precompile](/network/node-architecture/precompile) and [RIP-7212](https://github.com/ethereum/RIPs/blob/master/RIPS/rip-7212.md) precompile. It handles transaction execution, broadcasting and state storage while maintaining full compatibility with the Ethereum Virtual Machine (EVM) and supporting all Ethereum JSON-RPC methods. Currently we support all features introduced by the Pectra upgrade. Checkout [story-geth](https://github.com/piplabs/story-geth) repo to review the codes.
+
+# Run a localnet
+
+# Overview
+
+You can easily set up your own local Story network using docker compose, consisting of one boot node and four validator nodes. With this local network, you can test the consensus layer of the Story network or deploy your application using the precompiled primitive, the IP graph, to conduct various tests. Additionally, you can reset the network at any time as needed.
+
+# Run a Local Story Network
+
+<Note>
+
+For more detailed information for running Story local network, please refer the repository: [https://github.com/piplabs/story-localnet](https://github.com/piplabs/story-localnet)
+
+</Note>
+
+## Prerequisite
+
+To set up a local network, [Docker](https://docs.docker.com/get-started/get-docker/) is required.
+
+## Step 1 - Start Docker
+
+Please run Docker.
+
+## Step 2 - Clone Repository
+
+You need to clone three repositories: `story`, `story-geth`, and `story-localnet`.\
+Make sure all three repositories are located within the same subfolder.
+
+```bash
+# clone repositories
+git clone https://github.com/piplabs/story.git
+git clone https://github.com/piplabs/story-geth.git
+git clone https://github.com/piplabs/story-localnet.git
+```
+
+## Step 3 - Start Nodes
+
+Navigate to story-localnet project and start the local network.
+
+```bash
+# move to story-localnet
+cd story-localnet
+
+# start story local network
+./start.sh
+```
+
+## Step 4 - Terminate Nodes
+
+If you want to stop the Story local network, you can do so by executing the script below.
+
+```bash
+# terminate story local network
+./terminate.sh
+```
+
+---
+
+## How to Allocate Token to Your Account from Genesis
+
+You may need to allocate IP tokens to your account for testing in the local network.\
+To allocate tokens to your account in the genesis block, follow these steps:
+
+1. Add your account information to the alloc section in `config/story/genesis-geth.json`:
+
+```json
+"<hex-encoded-account-address>": {
+  "nonce": "0x0",
+  "balance": "<hex-encoded-balance>",
+  "code": "0x",
+  "storage": {}
+}
+```
+
+2. Run the `update-genesis-hash.sh` script to update the genesis block hash:
+
+```bash
+./update-genesis-hash.sh
+```
+
+---
+
+## How to interact with Story Local Network
+
+By default, the Story local network has the following ports open for interaction.
+
+| Port  | Service    | Role                                                                   |
+| :---- | :--------- | :--------------------------------------------------------------------- |
+| 8545  | story-geth | Endpoint of RPC server for Story execution client                      |
+| 1317  | story-node | Endpoint of API server for interacting with the Story consensus client |
+| 26657 | story-node | Endpoint of cosmos-sdk RPC server for Story consensus client           |
+
+---
+
+## Monitoring Systems
+
+This setup includes a monitoring stack to provide centralized metrics and logs\
+visualization for the blockchain network. Tools include **Prometheus**,
+**Loki**, **Promtail**, and **Grafana**, all integrated through Docker Compose.
+
+### **Components and Access Information**
+
+| Service    | Role                                                              | Default Port                   | Access URL              |
+| :--------- | :---------------------------------------------------------------- | :----------------------------- | :---------------------- |
+| Prometheus | Collects metrics from nodes and itself for performance monitoring | `9090`                         | `http://localhost:9090` |
+| Loki       | Aggregates and stores logs from the network nodes via Promtail    | `3100`                         | `http://localhost:3100` |
+| Promtail   | Scrapes logs from Docker containers and sends them to Loki        | `9080` (API), `9095` (Metrics) | `http://localhost:9080` |
+| Grafana    | Provides a dashboard interface for metrics and logs visualization | `3000`                         | `http://localhost:3000` |
 
 
 # Engine API
@@ -22785,24 +23413,18 @@ ABCI++ comprises of a set of methods that interact with the Engine API, as outli
 
 This interaction ensures smooth coordination between the EL and the CL, maintaining the integrity and efficiency of Story's blockchain network.
 
-# Node Architecture
+# Learn about Story's node software
 
-Story is a purpose-built modular blockchain fully EVM compatible using Cosmos SDK and CometBFT to achieve fast block time and one-shot finality. A Story node consists of two clients: `story-geth` as the execution client (EL) and a `story` as the consensus client (CL). These clients communicate via the [Engine API interface](/network/node-architecture/engine-api) defined by [Ethereum](https://hackmd.io/@danielrachi/engine_api).
+Story's node client software has been implemented to support full EVM equivalency and fast block time and one-shot finality.
 
-`story-geth` is a fork of the Geth client, with the addition of the [IPGraph Precompile](/network/node-architecture/precompile) and [RIP-7212](https://github.com/ethereum/RIPs/blob/master/RIPS/rip-7212.md) precompile. It handles transaction execution, broadcasting and state storage while maintaining full compatibility with the Ethereum Virtual Machine (EVM) and supporting all Ethereum JSON-RPC methods.
+Story's node software consists of two components: an [Execution Layer (EL)](/network/learn/node-software/execution_layer) responsible for the execution environment and a [ Consensus Layer (CL)](/network/learn/node-software/consensus_layer) responsible for the consensus and block formation. 
 
-`story` is built on the Cosmos SDK and CometBFT. The Cosmos SDK provides a modular framework for building blockchain applications, enabling seamless integration of new modules and features while allowing the network to be easily extended and customized. `story` client introduces upgrades and additional Cosmos SDK modules to support Engine API integration and novel staking mechanisms. CometBFT, a high-performance, scalable, and secure consensus engine, has been extensively tested within the Cosmos ecosystem. CometBFT and Cosmos SDK communicate through ABCI++ interface(link to ABCI++ spec).
+These two layers communicate via the [Engine API](/network/learn/node-software/engine-api) presented [Here](https://hackmd.io/@danielrachi/engine_api).
 
 <img src="/images/network/node-architecture.png" />
 
-<Warning>
-  Do not use `RANDAO` for pseudo-randomness, instead use onchain VRF (Pyth or
-  Gelato). Currently, `RANDAO` value is set as the parent block hash and thus is
-  not random for X-1 block.
-</Warning>
 
-
-# evmstaking
+# EVM staking module
 
 ## Abstract
 
@@ -22970,7 +23592,7 @@ Delegations that have unbonded after 14 days of unbonding period (ie. unbonded e
 Inflation rewards allocated to delegations are auto-swept at the end of each block. If a delegation's accrued reward is greater than the parameterized threshold, the reward is added to the reward withdrawal queue to be credited to the delegator's EVM reward address.
 
 
-# List of Modules
+# Overview
 
 # List of Modules
 
@@ -22999,7 +23621,7 @@ Story network uses the following Cosmos SDK modules without non-trivial modifica
 - [upgrade](https://docs.cosmos.network/main/build/modules/upgrade)
 
 
-# evmengine
+# EVM engine module
 
 ## Abstract
 
@@ -23182,7 +23804,7 @@ The `UpgradeEntrypoint` contract emits the software upgrade event, which is pars
 Similar to the software upgrade, the module processes the cancel upgrade event from EVM logs of the previous block, and clears an existing upgrade plan.
 
 
-# staking
+# Staking Module
 
 ## Abstract
 
@@ -23234,7 +23856,7 @@ where
 - _Long_ (540 days): 2.0
 
 
-# mint
+# Token Minting Module
 ## Contents
 
 1. [Contents](#contents)
@@ -23305,6 +23927,220 @@ The minting module emits the following events:
 | Type | Attribute Key | Attribute Value |
 | :--- | :------------ | :-------------- |
 | mint | amount        | "1000"          |
+
+# Consensus Layer (CL)
+
+The **Consensus Layer (CL)** is built on the Cosmos SDK and CometBFT. The Cosmos SDK provides a modular framework for building blockchain applications, enabling seamless integration of new modules and features while allowing the network to be easily extended and customized. `story` client introduces upgrades and additional Cosmos SDK modules to support Engine API integration and novel staking mechanisms. CometBFT, a high-performance, scalable, and secure consensus engine, has been extensively tested within the Cosmos ecosystem. CometBFT and Cosmos SDK communicate through ABCI++ interface(link to ABCI++ spec). Checkout [story](https://github.com/piplabs/story) repo to review the codes.
+
+# Precompiles
+
+## Introduction
+
+Precompiled contracts are specialized smart contracts implemented directly in the execution layer of a blockchain. Unlike user-deployed smart contracts that execute EVM bytecode, precompiled contracts offer optimized native implementations for complex cryptographic and computational operations. This significantly improves efficiency and reduces gas costs. Precompiled contracts exist at fixed addresses within the execution client and each precompile has a predefined gas cost based on its computational complexity, ensuring predictable execution fees.
+
+Story Protocol introduces two precompiled contracts:
+
+- `p256Verify` precompile to support signature verifications in the secp256r1 elliptic curve.
+- `ipgraph` precompile to enhance on-chain intellectual property management.
+
+In addition, Story Protocol’s execution layer supports all standard EVM precompiled contracts, ensuring full compatibility with Ethereum-based tooling and applications.
+
+## Precompiled Contracts
+
+| Address | Functionality                                                 |
+| ------- | ------------------------------------------------------------- |
+| byte1   | `ecrecover`- ECDSA signature recovery                         |
+| byte2   | `sha256` - SHA-256 hash computation                           |
+| byte3   | `ripemd160` - RIPEMD-160 hash computation                     |
+| byte4   | `identity` - Identity function                                |
+| byte5   | `modexp` - Modular exponentiation                             |
+| byte6   | `bn256Add` - BN256 elliptic curve addition                    |
+| byte7   | `bn256ScalarMul` - BN256 elliptic curve scalar multiplication |
+| byte8   | `bn256Pairing` - BN256 elliptic curve pairing check           |
+| byte9   | `blake2f` - Blake2 hash function                              |
+| byte10  | `kzgPointEvaluation` - KZG polynomial commitment evaluation   |
+| byte0   | `p256Verify` - Secp256r1 signature verification               |
+| byte1   | `ipgraph` - Intellectual property management                  |
+
+## p256Verify precompile
+
+Refer to [RIP-7212](https://github.com/ethereum/RIPs/blob/master/RIPS/rip-7212.md) for more information.
+
+## IPgraph precompile
+
+The `ipgraph` precompile enables efficient querying and modification of IP relationships and royalty structures while minimizing gas costs.
+
+This precompile provides multiple functions based on the function selector—the first 4 bytes of the input.
+
+| Function Selector        | Description                                                     | Gas computation formula                               | Gas Cost                           |
+| :----------------------- | :-------------------------------------------------------------- | :---------------------------------------------------- | :--------------------------------- |
+| `addParentIp`            | Adds a parent IP record                                         | `intrinsicGas + (ipGraphWriteGas * parentCount)`      | Larger than 1100                   |
+| `hasParentIp`            | Checks if an IP is parent of another IP                         | `ipGraphReadGas * averageParentIpCount`               | 40                                 |
+| `getParentIps`           | Retrieves parent IPs                                            | `ipGraphReadGas * averageParentIpCount`               | 40                                 |
+| `getParentIpsCount`      | Gets the number of parent IPs                                   | `ipGraphReadGas`                                      | 10                                 |
+| `getAncestorIps`         | Retrieves ancestor IPs                                          | `ipGraphReadGas * averageAncestorIpCount * 2`         | 600                                |
+| `getAncestorIpsCount`    | Gets the number of ancestor IPs                                 | `ipGraphReadGas * averageParentIpCount * 2`           | 80                                 |
+| `hasAncestorIp`          | Checks if an IP is ancestor of another IP                       | `ipGraphReadGas * averageAncestorIpCount * 2`         | 600                                |
+| `setRoyalty`             | Sets royalty details of an IP                                   | `ipGraphWriteGas`                                     | 1000                               |
+| `getRoyalty`             | Retrieves royalty details of an IP                              | `varies by royalty policy`                            | LAP:900, LRP:620, other:1000       |
+| `getRoyaltyStack`        | Retrieves royalty stack of an IP                                | `varies by royalty policy`                            | LAP:50, LRP: 600, other:1000       |
+| `hasParentIpExt`         | Checks if an IP is parent of another IP through external call   | `ipGraphExternalReadGas * averageParentIpCount`       | 8400                               |
+| `getParentIpsExt`        | Retrieves parent IPs through external call                      | `ipGraphExternalReadGas * averageParentIpCount`       | 8400                               |
+| `getParentIpsCountExt`   | Gets the number of parent IPs through external call             | `ipGraphExternalReadGas`                              | 2100                               |
+| `getAncestorIpsExt`      | Retrieve ancestor IPs through external call                     | `ipGraphExternalReadGas * averageAncestorIpCount * 2` | 126000                             |
+| `getAncestorIpsCountExt` | Gets the number of ancestor IPs through external call           | `ipGraphExternalReadGas * averageParentIpCount * 2`   | 16800                              |
+| `hasAncestorIpExt`       | Checks if an IP is ancestor of another IP through external call | `ipGraphExternalReadGas * averageAncestorIpCount * 2` | 126000                             |
+| `getRoyaltyExt`          | Retrieves royalty details of an IP through external call        | `varies by royalty policy`                            | LAP:189000, LRP:130200, other:1000 |
+| `getRoyaltyStackExt`     | Retrieves royalty stack of an IP through external call          | `varies by royalty policy`                            | LAP:10500, LRP:126000, other:1000  |
+
+Refer to the [Royalty Module](/concepts/royalty-module) for detailed information on royalty policies.
+
+
+# Mainnet
+
+<CardGroup cols={1}>
+  <Card title="Connet to Mainnet" href="https://chainid.network/chain/1514/" icon="house">
+    Connect your wallet to Story's Mainnet.
+  </Card>
+</CardGroup>
+
+# Resources
+
+**Network Name**: Story Mainnet
+
+**Chain ID**: 1514
+
+**Chainlist Link**: [https://chainlist.org/chain/1514](https://chainlist.org/chain/1514)
+
+## RPCs
+
+| RPC Name           | RPC URL                                                     | Official |
+| :----------------- | :---------------------------------------------------------- | :------: |
+| Story              | `https://mainnet.storyrpc.io`                               |    ✅    |
+| Story by Ankr      | `https://rpc.ankr.com/story_mainnet`                        |          |
+| Story by QuickNode | `https://www.quicknode.com/chains/story`                    |          |
+| Story by Alchemy   | `https://story-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}` |          |
+| Story by Tenderly  | `https://tenderly.co/`                                      |          |
+
+## Block Explorers
+
+| Explorer                                                                                                                | URL                                       | Official |
+| :---------------------------------------------------------------------------------------------------------------------- | :---------------------------------------- | :------: |
+| [BlockScout Explorer ↗️](https://www.storyscan.io/)                                                                     | `https://www.storyscan.io/`               |    ✅    |
+| [IP Explorer ↗️](https://explorer.story.foundation) (only for IP-related actions like licensing, minting licenses, etc) | `https://explorer.story.foundation`       |    ✅    |
+| [OKX Explorer ↗️](https://www.okx.com/web3/explorer/story)                                                              | `https://www.okx.com/web3/explorer/story` |          |
+| [Stakeme Explorer ↗️](https://storyscan.app/)                                                                           | `https://storyscan.app/`                  |          |
+
+## Staking Dashboard
+
+| Dashboard URL                                        | Official |
+| :--------------------------------------------------- | :------: |
+| [Story Dashboard](https://staking.story.foundation/) |    ✅    |
+| [Origin Stake](https://ipworld.io/)                  |          |
+| [Node.Guru](https://story.explorers.guru/)           |          |
+
+## Contract deployment addresses
+
+- [Proof of Creativity](/developers/deployed-smart-contracts)
+
+
+
+# Testnet - Aeneid 
+
+<CardGroup cols={1}>
+  <Card title="Connect to 'Aeneid' Testnet" href="https://chainid.network/chain/1315/" icon="house">
+    Connect your wallet to Story's 'Aeneid' testnet.
+  </Card>
+</CardGroup>
+
+
+# Resources
+
+**Network Name**: Story Aeneid Testnet
+
+**Chain ID**: 1315
+
+**Chainlist Link**: [https://chainlist.org/chain/1315](https://chainlist.org/chain/1315)
+
+## RPCs
+
+| RPC Name           | RPC URL                                                    | Official |
+| :----------------- | :--------------------------------------------------------- | :------: |
+| Story              | `https://aeneid.storyrpc.io`                               |    ✅    |
+| Story by Ankr      | `https://rpc.ankr.com/story_aeneid_testnet`                |          |
+| Story by QuickNode | `https://www.quicknode.com/chains/story`                   |          |
+| Story by Alchemy   | `https://story-aeneid.g.alchemy.com/v2/${ALCHEMY_API_KEY}` |          |
+| Story by Tenderly  | `https://tenderly.co/`                                     |          |
+
+## Explorers
+
+| Explorer                                                                                                                       | URL                                        | Official |
+| :----------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------- | :------: |
+| [Blockscout Explorer ↗️](https://aeneid.storyscan.io)                                                                          | `https://aeneid.storyscan.io`              |    ✅    |
+| [IP Explorer ↗️](https://aeneid.explorer.story.foundation) (only for IP-related actions like licensing, minting licenses, etc) | `https://aeneid.explorer.story.foundation` |    ✅    |
+| [Stakeme Explorer ↗️](https://aeneid.storyscan.app/)                                                                           | `https://aeneid.storyscan.app/`            |          |
+
+## Faucet
+
+| Faucet                                                                                  | Amount |
+| :-------------------------------------------------------------------------------------- | :----- |
+| [Google Cloud Faucet ↗️](https://cloud.google.com/application/web3/faucet/story/aeneid) | 10 IP  |
+| [Official Faucet ↗️](https://aeneid.faucet.story.foundation/)                           | 10 IP  |
+
+## Staking Dashboard
+
+| Dashboard URL                                               | Official |
+| :---------------------------------------------------------- | :------: |
+| [Story Dashboard](https://aeneid.staking.story.foundation/) |    ✅    |
+
+## Contract deployment addresses
+
+- [Proof of Creativity](/developers/deployed-smart-contracts)
+
+
+# Network Information
+
+<CardGroup cols={2}>
+<Card 
+  title="Mainnet" 
+  href="/network/connect/mainnet" 
+  icon="house"> 
+  Connect and use Story's Mainnet.
+</Card>
+
+<Card
+  title="Testnet (Aeneid)"
+  href="/network/connect/aeneid"
+  icon="wrench">
+  Connect and use Story's Testnet (Aeneid).
+</Card>
+</CardGroup>
+
+
+# Welcome to Story Network
+
+**Story** is a purpose-built Layer 1 blockchain transforming how intellectual property (IP) is registered, managed, and monetized in the digital era. Through its full EVM compatibility and optimized execution layer, Story handles complex IP data structures efficiently—delivering high speed at low cost.
+
+## Getting Started
+
+<CardGroup cols={4}>
+  <Card title="Connect" 
+    href="/network/connect" icon="network-wired">
+    Connect and use the network.
+  </Card>
+  <Card title="Learn" 
+    href="/network/learn" icon="book">
+    Learn more about the architecture.
+  </Card>
+  <Card title="Participate" 
+    href="/network/participate" icon="handshake">
+    Become a validator.
+  </Card>
+  <Card title="Build" 
+    href="/developers" icon="wrench">
+    Build applications on Story. 
+  </Card>
+</CardGroup>
 
 # Operating Your Node
 ## **1. Setting Up a Geth Archive Node**
@@ -24070,1220 +24906,6 @@ If you ever run into issues and would like to try joining the network from a cle
 </Tabs>
 
 
-# Release Notes
-
-This page provides information on the story execution and consensus client software release information. You may find execution client releases in [story-geth](https://github.com/piplabs/story-geth/releases) repo, and consensus client releases in [story](https://github.com/piplabs/story/releases) repo.
-
-### Production releases
-
-There are generally four types of releases:
-
-- Major: It requires hardfork upgrade with a predefined upgrade height. Node operators need to upgrade before or on the height. The release will increase minor version number.
-- Minor: It doesn't require hardfork upgrade. Node operators are required to upgrade binaries as soon as possible. The release will increase patch version number.
-- Fix: It is an urgent fix. Node operators are required to upgrade binaries as soon as possible. The release will increase minor version or patch version number.
-- Optional: It is an optional fix. Node operators can upgrade binaries based on needs. The release will increase patch version number.
-
-Each release comes with a release note describing a list of new features or fixes. Released software binaries are also attached in the release note. We currently provide binaries supporting four types of systems: darwin-amd64, darwin-arm64, linux-amd64, and linux-arm64. You may also build your binaries using the commit hash in the release note.
-
-### Release entries
-
-Refer to the following release matrix to run nodes for Mainnet and Aeneid Testnet.
-
-| Network | story-geth      | story             |
-| ------- | --------------- | ----------------- |
-| Mainnet | v1.1.1 (Cosmos) | v1.2.1 (Ovid)     |
-| Aeneid  | v1.1.0 (Cosmos) | v1.3.0 (Polybius) |
-
-<Update label="2025-06-19" description="Cosmas (Geth v1.1.1)">
-    ### Cosmas
-    [Full release note](https://github.com/piplabs/story-geth/releases)
-
-        <Accordion title="Included EIPs">
-           Enables Pectra Upgrade for Mainnet
-        </Accordion>
-
-</Update>
-
-<Update label="2025-05-20" description="Cosmas (Geth v1.1.0)">
-    ### Cosmas (Testnet Only)
-    [Full release note](https://github.com/piplabs/story-geth/releases)
-
-        <Accordion title="Included EIPs">
-            - EIP-7702 – Set EOA account code
-            - EIP-2537 – BLS12-381 curve operations
-            - EIP-7623 – Increase calldata cost
-            - EIP-7685 – Execution layer requests (EIP-7685)
-        </Accordion>
-
-</Update>
-
-<Update label="2025-05-02" description="Ovid (Story v1.2.0)">
-    ### Ovid
-    [Full release note](https://github.com/piplabs/story/releases/tag/v1.2.0)
-
-    <AccordionGroup>
-        <Accordion title="Features">
-            - (app) change MaxBytes of block in consensus params (#529)
-            - (x/evmengine) support snap sync for execution engine (#506)
-            - (cli) add encryption for validator private key (#494)
-            - (cli) add with-comet flag (#518)
-            - (api) add withdrawal queue query (#496)
-        </Accordion>
-
-        <Accordion title="Fixes">
-
-            - (app) disallow unexported fields in cosmos tx (#529)
-            - (x/evmengine) add validation for max size of tx (#529)
-            - (cli) fix validator not found error during validator creation (#515)
-            - (cli) add validation for max commission change rate (#489)
-            - (cli) add self-delegation validation to unjail command (#510)
-            - (api) fix incorrect type conversion between integer types (#492)
-        </Accordion>
-    </AccordionGroup>
-
-</Update>
-
-<Update label="2025-02-26" description="Homer (Geth v1.0.2)">
-    ### Ovid
-    [Full release note](https://github.com/piplabs/story-geth/releases/tag/v1.0.2)
-
-        <Accordion title="Fixes">
-
-            - [ipgraph] prevent overflow in calculating gas of add parent (#102)
-            - [ipgraph] apply acl to function hasAncestorIp (#106)
-        </Accordion>
-
-</Update>
-
-
-# Run a Localnet
-
-# Overview
-
-You can easily set up your own local Story network using docker compose, consisting of one boot node and four validator nodes. With this local network, you can test the consensus layer of the Story network or deploy your application using the precompiled primitive, the IP graph, to conduct various tests. Additionally, you can reset the network at any time as needed.
-
-# Run a Local Story Network
-
-<Note>
-
-For more detailed information for running Story local network, please refer the repository: [https://github.com/piplabs/story-localnet](https://github.com/piplabs/story-localnet)
-
-</Note>
-
-## Prerequisite
-
-To set up a local network, [Docker](https://docs.docker.com/get-started/get-docker/) is required.
-
-## Step 1 - Start Docker
-
-Please run Docker.
-
-## Step 2 - Clone Repository
-
-You need to clone three repositories: `story`, `story-geth`, and `story-localnet`.\
-Make sure all three repositories are located within the same subfolder.
-
-```bash
-# clone repositories
-git clone https://github.com/piplabs/story.git
-git clone https://github.com/piplabs/story-geth.git
-git clone https://github.com/piplabs/story-localnet.git
-```
-
-## Step 3 - Start Nodes
-
-Navigate to story-localnet project and start the local network.
-
-```bash
-# move to story-localnet
-cd story-localnet
-
-# start story local network
-./start.sh
-```
-
-## Step 4 - Terminate Nodes
-
-If you want to stop the Story local network, you can do so by executing the script below.
-
-```bash
-# terminate story local network
-./terminate.sh
-```
-
----
-
-## How to Allocate Token to Your Account from Genesis
-
-You may need to allocate IP tokens to your account for testing in the local network.\
-To allocate tokens to your account in the genesis block, follow these steps:
-
-1. Add your account information to the alloc section in `config/story/genesis-geth.json`:
-
-```json
-"<hex-encoded-account-address>": {
-  "nonce": "0x0",
-  "balance": "<hex-encoded-balance>",
-  "code": "0x",
-  "storage": {}
-}
-```
-
-2. Run the `update-genesis-hash.sh` script to update the genesis block hash:
-
-```bash
-./update-genesis-hash.sh
-```
-
----
-
-## How to interact with Story Local Network
-
-By default, the Story local network has the following ports open for interaction.
-
-| Port  | Service    | Role                                                                   |
-| :---- | :--------- | :--------------------------------------------------------------------- |
-| 8545  | story-geth | Endpoint of RPC server for Story execution client                      |
-| 1317  | story-node | Endpoint of API server for interacting with the Story consensus client |
-| 26657 | story-node | Endpoint of cosmos-sdk RPC server for Story consensus client           |
-
----
-
-## Monitoring Systems
-
-This setup includes a monitoring stack to provide centralized metrics and logs\
-visualization for the blockchain network. Tools include **Prometheus**,
-**Loki**, **Promtail**, and **Grafana**, all integrated through Docker Compose.
-
-### **Components and Access Information**
-
-| Service    | Role                                                              | Default Port                   | Access URL              |
-| :--------- | :---------------------------------------------------------------- | :----------------------------- | :---------------------- |
-| Prometheus | Collects metrics from nodes and itself for performance monitoring | `9090`                         | `http://localhost:9090` |
-| Loki       | Aggregates and stores logs from the network nodes via Promtail    | `3100`                         | `http://localhost:3100` |
-| Promtail   | Scrapes logs from Docker containers and sends them to Loki        | `9080` (API), `9095` (Metrics) | `http://localhost:9080` |
-| Grafana    | Provides a dashboard interface for metrics and logs visualization | `3000`                         | `http://localhost:3000` |
-
-
-# Mainnet
-
-# Resources
-
-**Network Name**: Story Mainnet
-
-**Chain ID**: 1514
-
-**Chainlist Link**: [https://chainlist.org/chain/1514](https://chainlist.org/chain/1514)
-
-## RPCs
-
-| RPC Name           | RPC URL                                                     | Official |
-| :----------------- | :---------------------------------------------------------- | :------: |
-| Story              | `https://mainnet.storyrpc.io`                               |    ✅    |
-| Story by Ankr      | `https://rpc.ankr.com/story_mainnet`                        |          |
-| Story by QuickNode | `https://www.quicknode.com/chains/story`                    |          |
-| Story by Alchemy   | `https://story-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}` |          |
-| Story by Tenderly  | `https://tenderly.co/`                                      |          |
-
-## Block Explorers
-
-| Explorer                                                                                                                | URL                                       | Official |
-| :---------------------------------------------------------------------------------------------------------------------- | :---------------------------------------- | :------: |
-| [BlockScout Explorer ↗️](https://www.storyscan.io/)                                                                     | `https://www.storyscan.io/`               |    ✅    |
-| [IP Explorer ↗️](https://explorer.story.foundation) (only for IP-related actions like licensing, minting licenses, etc) | `https://explorer.story.foundation`       |    ✅    |
-| [OKX Explorer ↗️](https://www.okx.com/web3/explorer/story)                                                              | `https://www.okx.com/web3/explorer/story` |          |
-| [Stakeme Explorer ↗️](https://storyscan.app/)                                                                           | `https://storyscan.app/`                  |          |
-
-## Staking Dashboard
-
-| Dashboard URL                                        | Official |
-| :--------------------------------------------------- | :------: |
-| [Story Dashboard](https://staking.story.foundation/) |    ✅    |
-| [Origin Stake](https://ipworld.io/)                  |          |
-| [Node.Guru](https://story.explorers.guru/)           |          |
-
-## Contract deployment addresses
-
-- [Proof of Creativity](/developers/deployed-smart-contracts)
-
-# Further Sections
-
-- [Mainnet Status Page](https://status.story.foundation/)
-- [Node Setup](/network/operating-a-node/node-setup-mainnet)
-- [Validator Operations](/network/become-a-validator)
-- [Staking Design](/network/tokenomics-staking)
-
-
-# Aeneid - Testnet
-
-# Resources
-
-**Network Name**: Story Aeneid Testnet
-
-**Chain ID**: 1315
-
-**Chainlist Link**: [https://chainlist.org/chain/1315](https://chainlist.org/chain/1315)
-
-## RPCs
-
-| RPC Name           | RPC URL                                                    | Official |
-| :----------------- | :--------------------------------------------------------- | :------: |
-| Story              | `https://aeneid.storyrpc.io`                               |    ✅    |
-| Story by Ankr      | `https://rpc.ankr.com/story_aeneid_testnet`                |          |
-| Story by QuickNode | `https://www.quicknode.com/chains/story`                   |          |
-| Story by Alchemy   | `https://story-aeneid.g.alchemy.com/v2/${ALCHEMY_API_KEY}` |          |
-| Story by Tenderly  | `https://tenderly.co/`                                     |          |
-
-## Explorers
-
-| Explorer                                                                                                                       | URL                                        | Official |
-| :----------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------- | :------: |
-| [Blockscout Explorer ↗️](https://aeneid.storyscan.io)                                                                          | `https://aeneid.storyscan.io`              |    ✅    |
-| [IP Explorer ↗️](https://aeneid.explorer.story.foundation) (only for IP-related actions like licensing, minting licenses, etc) | `https://aeneid.explorer.story.foundation` |    ✅    |
-| [Stakeme Explorer ↗️](https://aeneid.storyscan.app/)                                                                           | `https://aeneid.storyscan.app/`            |          |
-
-## Faucet
-
-| Faucet                                                                                  | Amount |
-| :-------------------------------------------------------------------------------------- | :----- |
-| [Google Cloud Faucet ↗️](https://cloud.google.com/application/web3/faucet/story/aeneid) | 10 IP  |
-| [Official Faucet ↗️](https://aeneid.faucet.story.foundation/)                           | 10 IP  |
-
-## Staking Dashboard
-
-| Dashboard URL                                               | Official |
-| :---------------------------------------------------------- | :------: |
-| [Story Dashboard](https://aeneid.staking.story.foundation/) |    ✅    |
-
-## Contract deployment addresses
-
-- [Proof of Creativity](/developers/deployed-smart-contracts)
-
-
-# Network Info
-
-# Overview
-
-Story Network is a purpose-built layer 1 blockchain achieving the best of EVM and Cosmos SDK. It is 100% EVM-compatible alongside deep execution layer optimizations to support graph data structures, purpose-built for handling complex data structures like IP quickly and cost-efficiently. It does this by:
-
-- using precompiled primitives to traverse complex data structures like IP graphs within seconds at marginal costs
-- a consensus layer based on the mature CometBFT stack to ensure fast finality and cheap transactions
-- a modular architecture that decouples consensus from execution via Ethereum’s Engine-API
-
-# Available Network
-
-<CardGroup cols={3}>
-
-<Card title="Mainnet" href="/network/network-info/mainnet" icon="house" />
-<Card
-  title="Aeneid Testnet"
-  href="/network/network-info/aeneid"
-  icon="wrench"
-/>
-<Card
-  title="Run a localnet"
-  href="/network/network-info/localnet"
-  icon="gear"
-/>
-
-</CardGroup>
-
-
-# Become a Validator
-
-## Quick Links
-
-<CardGroup cols={2}>
-  <Card
-    title="Story Geth Releases"
-    icon="github"
-    href="https://github.com/piplabs/story-geth/releases"
-  >
-    Download the latest Story Geth client releases
-  </Card>
-  <Card
-    title="Story Releases"
-    icon="github"
-    href="https://github.com/piplabs/story/releases/"
-  >
-    Download the latest Story consensus client releases
-  </Card>
-</CardGroup>
-
-# Overview
-
-This section will guide you through how you can run your own validator. Validator operations may be done via the `story` consensus client.
-
-<Note>
-  The below operations do not require running a node! However, if you would like
-  to participate in staking rewards, you must run a validator node.
-</Note>
-
-Before proceeding, it is important to familiarize yourself with the difference between a delegator and a validator:
-
-- A **validator** is a full node that participates in consensus whose signed key resides in the `priv_validator_key.json` file under your `story` data directory. To print out your validator key details you may refer to the [validator key export section](/network/become-a-validator#validator-key-export)
-- A **delegator** refers to an account operator that holds `IP` and wishes to participate in consensus rewards but without needing to run a validator themselves.
-
-In the same folder as where your `story` binary resides, add a `.env` file with a `PRIVATE_KEY` whose account has `IP` funded. **We recommend using your delegator account for all below operations.**
-
-<Note>
-  You may also issue transactions as the validator itself. To get the EVM
-  private key corresponding to your validator, please refer to the [Validator
-  Key Export](#validator-key-export) section. From **Story v1.2.0**, user must
-  use `.env` for all operations.
-</Note>
-
-The `.env` file should look like the following _(make sure not to add a 0x prefix):_
-
-```bash
-# ~/.env
-PRIVATE_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-```
-
-With this, you are all set to perform different validator operations! Below, we will guide you through all of those supported via the CLI:
-
-## Validator Key Export
-
-By default, when you run `./story init` a validator key is created for you. To view your validator key, run the following command:
-
-```bash
-./story validator export [flags]
-```
-
-This will print out your validator public key file in compressed and uncompressed formats. By default, we use the hex-encoded compressed key for public identification.
-
-```text
-Compressed Public Key (hex): 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984
-Compressed Public Key (base64): A73HuJQLq+kibVLX+imaH689ZKgvgJiJJWyPFGlYpjmE
-Uncompressed Public Key (hex): 04bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a6398496b9e2af0a3a1d199c3cc1d09ee899336a530c185df6b46a9735b25e79a493af
-EVM Address: 0x9EacBe2C3B1eb0a9FC14106d97bd3A1F89efdDCc
-Validator Address: storyvaloper1p470h0jtph4n5hztallp8vznq8ehylsw9vpddx
-Delegator Address: story1p470h0jtph4n5hztallp8vznq8ehylswtr4vxd
-```
-
-**Available Flags:**
-
-- `--export-evm-key`: (bool) Exports the derived EVM private key of your validator into the default data config directory
-- `--export-evm-key-path`: (string) Specifies a different download location for the derived EVM private key of your validator
-- `--keyfile`: (string) Path to the Tendermint key file (default "/home/ubuntu/.story/story/config/priv_validator_key.json")
-
-<Tip>
-  If you would like to issue transactions as your validator, and not as a
-  delegator, you may export the key to your `.env` file and ensure it has IP
-  sent to it, e.g. via `./story validator export --export-evm-key --evm-key-path
-  .env`
-</Tip>
-
-## Validator Creation
-
-To create a new validator, run the following command:
-
-```bash Locked token node
-./story validator create
-			 --stake ${AMOUNT_TO_STAKE_IN_WEI} \
-			 --moniker ${VALIDATOR_NAME} \
-       --rpc ${rpc} \
-		   --chain-id ${chain_id} \
-			 --commission-rate ${rate} \
- 			 --unlocked=false
-```
-
-```Text Unlocked token node
-./story validator create
-			 --stake ${AMOUNT_TO_STAKE_IN_WEI} \
-			 --moniker ${VALIDATOR_NAME} \
-       --rpc ${rpc} \
-		   --chain-id ${chain_id} \
-			 --commission-rate ${rate} \
-```
-
-This will create the validator corresponding to your validator key saved in `priv_validator_key.json`, providing the validator with `{$AMOUNT_TO_STAKE_IN_WEI}` IP to self-stake.
-
-<Note>
-  To participate in consensus, at least 1024 IP must be staked (equivalent to
-  `1024000000000000000000 wei`)!
-</Note>
-
-Below is a list of optional flags to further customize your validator setup:
-
-**Available Flags:**
-
-- `--stake`: Sets the amount the validator will self-delegate in wei (default is `1024000000000000000000` wei).
-- `--moniker`: Defines a custom name for the validator, visible to users on the network.
-- `--chain-id`: Specifies the Chain ID for the transaction. By default, this is set to `1516`.
-- `--commission-rate`: Sets the validator's commission rate in bips (1% = 100 bips). For instance, `1000` represents a 10% commission (default is `1000`).
-- `--explorer`: Specifies the URL of the blockchain explorer (default: [https://www.storyscan.io](https://www.storyscan.io)).
-- `--keyfile`: Points to the path of the Tendermint key file (default: `$HOME/.story/story/config/priv_validator_key.json`).
-- `--max-commission-change-rate`: Sets the maximum rate at which the validator's commission can change, in bips. For example, `100` represents a maximum change of 1% (default is `1000`).
-- `--max-commission-rate`: Defines the maximum commission rate the validator can charge, in bips. For instance, `5000` allows a 50% maximum rate (default is `5000`).
-- `--rpc`: Sets the RPC URL to connect to the network (default: [https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)).
-- `--unlocked`: Determines if unlocked token staking is supported (`true` for unlocked staking, `false` for locked staking). By default, this is set to `true`.
-- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
-
-### Example creation command use
-
-```bash
-story validator create
-	--stake 1024000000000000000000
-  --moniker "timtimtim"
-  --commission-rate 700
-  --validator-pubkey "<validator_pubkey>" # if you dont have a .env
-  --rpc "https://mainnet.storyrpc.io"
-	--chain-id 1514
-```
-
-### Verifying your validator
-
-Once created, please use the `Explorer URL` to confirm the transaction. If successful, you should see your validator pub key (_found in your`priv_validator_key.json` file)_ listed as part of the following endpoint:
-
-```bash
-curl https://testnet.storyrpc.io/validators | jq .
-```
-
-Congratulations, you are now one of Story’s very first IP validators!
-
-## Validator Staking
-
-To stake to an existing validator, run the following command:
-
-```bash
-./story validator stake \
-   --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
-   --stake ${AMOUNT_TO_STAKE_IN_WEI}
-   --staking-period ${STAKING_PERIOD}
-```
-
-- Note that your own `${VALIDATOR_PUB_KEY_IN_HEX}`may be found by running the `./story validator export` command as the `Compressed Public Key (hex)`.
-- You must stake at least 1024 IP worth (`*1024000000000000000000 wei`) for the transaction to be valid
-
-Once staked, you may use the `Explorer URL` to confirm the transaction. As mentioned earlier, you may use our [validator endpoint](https://mainnet.storyrpc.io/validators) to confirm the new voting power of the validator.
-
-**Available Flags:**
-
-- `--validator-pubkey`: (string) The public key of the validator to stake to
-- `--stake`: (string) The amount of IP to stake in wei
-- `--chain-id`: (int) Chain ID to use for the transaction (default: 1514)
-- `--explorer`: (string) URL of the blockchain explorer
-- `--help`, `-h`: Display help information for stake command
-- `--rpc`: (string) RPC URL to connect to the network
-- `--staking-period`: (stakingPeriod) Staking period (options: "flexible", "short", "medium", "long") (default: flexible)
-- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
-
-### Example staking command use
-
-```bash
-./story validator stake \
-  --validator-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
-  --stake 1024000000000000000000
-  --staking-period "short"
-```
-
-## Validator Unstaking
-
-To unstake from a validator, run the following command:
-
-```bash
-./story validator unstake \
-  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
-  --unstake ${AMOUNT_TO_UNSTAKE_IN_WEI} \
-	--delegation-id ${ID_STAKING_PERIOD}
-```
-
-This will unstake `${AMOUNT_TO_UNSTAKE_IN_WEI}` IP from the selected validator. You must unstake at least 1024 IP worth (`*1024000000000000000000 wei`) for the transaction to be valid.
-
-Like in the staking operation, please use the `Explorer URL` to confirm the transaction and our [validator endpoint](https://mainnet.storyrpc.io/validators) to double-check the newly reduced voting power of the validator.
-
-**Available Flags:**
-
-- `--chain-id`: (int) Chain ID to use for the transaction (default: 1514)
-- `--delegation-id`: (uint32) The delegation ID (0 for flexible staking)
-- `--explorer`: (string) URL of the blockchain explorer (default: "[https://www.storyscan.io](https://www.storyscan.io)")
-- `--help`, `-h`: Help for unstake command
-- `--rpc`: (string) RPC URL to connect to the network (default: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
-- `--unstake`: (string) Amount to unstake in wei
-- `--validator-pubkey`: (string) Validator's hex-encoded compressed 33-byte secp256k1 public key
-- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
-
-### Example unstaking command use
-
-```bash
-./story validator unstake \
-   --validator-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
-   --unstake 1024000000000000000000 \
-   --delegation-id 1
-```
-
-## Validator Stake-on-behalf
-
-To stake on behalf of another delegator, run the following command:
-
-```bash
-./story validator stake-on-behalf \
-  --delegator-address ${DELEGATOR_EVM} \
-  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
-  --stake ${AMOUNT_TO_STAKE_IN_WEI} \
-  --staking-period ${STAKING_PERIOD} \
-  --rpc
-  --chain-id
-```
-
-This will stake `${AMOUNT_TO_STAKE_IN_WEI}` IP to the validator on behalf of the provided delegator. You must stake at least 1024 IP worth (`*1024000000000000000000 wei`) for the transaction to be valid.
-
-Like in the other staking operations, please use the `Explorer URL` to confirm the transaction and our [validator endpoint](https://mainnet.storyrpc.io/validators) to double-check the increased voting power of the validator.
-
-**Available Flags:**
-
-- `--chain-id`: (int) Chain ID to use for the transaction (default: 1514)
-- `--delegator-address`: (string) Delegator's EVM address
-- `--explorer`: (string) URL of the blockchain explorer (default: "[https://www.storyscan.io](https://www.storyscan.io)")
-- `--help`, `-h`: Help for stake-on-behalf command
-- `--rpc`: (string) RPC URL to connect to the network (default: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
-- `--stake`: (string) Amount for the validator to self-delegate in wei
-- `--staking-period`: (stakingPeriod) Staking period (options: "flexible", "short", "medium", "long") (default: flexible)
-- `--validator-pubkey`: (string) Validator's hex-encoded compressed 33-byte secp256k1 public key
-- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
-
-### Example Stake-on-behalf command use
-
-```bash
-./story validator stake-on-behalf \
-   --delegator-address 0xF84ce113FCEe12d78Eb41590c273498157c91520 \
-   --validator-pubkey 03e42b4d778cda2f3612c85161ba7c0aad1550a872f3279d99e028a1dfa7854930 \
-   --stake 1024000000000000000000 \
-   --staking-period "short" \
-	 --rpc \
-   --chain-id
-```
-
-## Validator Unstake-on-behalf
-
-You may also unstake on behalf of delegators. However, to do so, you must be registered as an authorized operator for that delegator. To unstake on behalf of another delegator as an operator, run the following command:
-
-```bash
-./story validator unstake-on-behalf \
-  --delegator-address ${DELEGATOR_PUB_KEY_IN_HEX} \
-  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
-  --unstake ${AMOUNT_TO_STAKE_IN_WEI} \
-  --rpc \
-  --chain-id
-```
-
-This will unstake `${AMOUNT_TO_STAKE_IN_WEI}` IP from the validator on behalf of the delegator, assuming you are a registered operator for that delegator. You must unstake at least 1024 IP worth (`*1024000000000000000000 wei`) for the transaction to be valid.
-
-Like in the other staking operations, please use the `Explorer URL` to confirm the transaction and our [validator endpoint](https://mainnet.storyrpc.io/validators) to double-check the decreased voting power of the validator.
-
-**Available Flags:**
-
-- `--chain-id`: (int) Chain ID to use for the transaction (default: 1514)
-- `--delegator-address`: (string) Delegator's EVM address
-- `--explorer`: (string) URL of the blockchain explorer (default: "[https://www.storyscan.io](https://www.storyscan.io)")
-- `--help`, `-h`: Help for unstake-on-behalf command
-- `--rpc`: (string) RPC URL to connect to the network (default: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
-- `--unstake`: (string) Amount to unstake in wei
-- `--validator-pubkey`: (string) Validator's hex-encoded compressed 33-byte secp256k1 public key
-- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
-
-### Example Unstake-on-behalf command use
-
-```bash
-./story validator unstake-on-behalf \
-   --delegator-address 0xF84ce113FCEe12d78Eb41590c273498157c91520 \
-   --validator-pubkey 03e42b4d778cda2f3612c85161ba7c0aad1550a872f3279d99e028a1dfa7854930 \
-   --unstake 1024000000000000000000 \
-   --rpc \
-   --chain-id
-```
-
-## Validator Unjail
-
-In case a validator becomes jailed, for example if it experiences substantial downtime, you may use the following command to unjail the targeted validator:
-
-```Text Bash
-./story validator unjail \
-  --rpc
-  --chain-id
-```
-
-Note that you will need at least 1 IP in the wallet submitting the transaction for the transaction to be valid.
-
-**Available Flags:**
-
-- `--chain-id`: (int) Chain ID to use for the transaction
-- `--explorer`: (string) URL of the blockchain explorer
-- `--rpc`: (string) RPC URL to connect to the network
-- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
-
-### Example unjail command use
-
-```bash
-./story validator unjail \
-  --rpc \
-  --chain-id
-```
-
-## Validator Unjail-on-behalf
-
-If you are an authorized operator, you may unjail a validator on their behalf using the following command:
-
-```bash
-./story validator unjail-on-behalf \
-  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
-  --rpc \
-  --chain-id
-```
-
-**Available Flags:**
-
-- `--chain-id`: (int) Chain ID to use for the transaction
-- `--explorer`: (string) URL of the blockchain explorer
-- `--rpc`: (string) RPC URL to connect to the network
-- `--validator-pubkey`: (string) Validator's hex-encoded compressed 33-byte secp256k1 public key
-- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
-
-### Example unjail-on-behalf command use
-
-```bash
-./story validator unjail-on-behalf \
-  --rpc \
-  --chain-id
-```
-
-## Validator rollback
-
-<Warning>
-  The snapshot must be taken from a node that has already been upgraded. That
-  means the snapshot node has to do the rewind.
-</Warning>
-
-Recovery Options for Nodes Stuck in Long Rewind After Upgrade：
-
-Wait for resync: Let the node catch up naturally. This may take time depending on the rewind depth and network bandwidth.
-Apply a snapshot: Use a snapshot from a node that has already been upgraded to Pectra. You can generate your own or obtain one from trusted community providers.
-
-```bash
-./story validator rollback \
-  --rpc \
-  --chain-id
-```
-
-** Avaliable Flages:**
-
-- `--api-address`: (string) The API server address to listen on (default "\***\*\*\*\***:1317")
-- `--api-enable`: (bool) Define if the API server should be enabled
-- `--api-enable-unsafe-cors`: (bool) Enable unsafe CORS for API server
-- `--api-idle-timeout`: (uint) Define the API server idle timeout (in seconds) (default 10)
-- `--api-max-header-bytes`: (uint) Define the API server max header (in bytes) (default 8192)
-- `--api-read-header-timeout`: (uint) Define the API server read header timeout (in seconds) (default 10)
-- `--api-read-timeout`: (uint) Define the API server read timeout (in seconds) (default 10)
-- `--api-write-timeout`: (uint) Define the API server write timeout (in seconds) (default 10)
-- `--app-db-backend`: (string) The type of database for application and snapshots databases (default "goleveldb")
-- `--engine-endpoint`: (string) An EVM execution client Engine API http endpoint (default "http://localhost:8551")
-- `--engine-jwt-file`: (string) The path to the Engine API JWT file
-- `--evm-build-delay`: (duration) Minimum delay between triggering and fetching a EVM payload build (default 600ms)
-- `--evm-build-optimistic`: (bool) Enables optimistic building of EVM payloads on previous block finalize (default true)
-- `--help`: (bool) help for rollback
-- `--home`: (string) The application home directory containing config and data (default "/home/timothyshen/.story/story")
-- `--log-color`: (string) Log color (only applicable to console format); auto, force, disable (default "auto")
-- `--log-format`: (string) Log format; console, json (default "console")
-- `--log-level`: (string) Log level; debug, info, warn, error (default "info")
-- `--min-retain-blocks`: (uint) Minimum block height offset during ABCI commit to prune CometBFT blocks
-- `--network`: (string) Story network to participate in: story, odyssey, aeneid or local
-- `--number`: (uint) number of blocks to rollback (default 1)
-- `--pruning`: (string) Pruning strategy (default|nothing|everything) (default "nothing")
-- `--snapshot-interval`: (uint) State sync snapshot interval (default 1000)
-- `--snapshot-keep-recent`: (uint) State sync snapshot to keep (default 2)
-- `--tracing-endpoint`: (string) Tracing OTLP endpoint
-- `--tracing-headers`: (string) Tracing OTLP headers
-
-### Example rollback command use
-
-```bash
-./story validator rollback \
-  --rpc \
-  --chain-id
-```
-
-## Validator Redelegate
-
-To redelegate from one validator to another, run the following command:
-
-```bash
-./story validator redelegate \
-  --validator-src-pubkey ${VALIDATOR_SRC_PUB_KEY_IN_HEX} \
-  --validator-dst-pubkey ${VALIDATOR_DST_PUB_KEY_IN_HEX} \
-  --redelegate ${AMOUNT_TO_REDELEGATE_IN_WEI}
-  --rpc \
-  --chain-id
-```
-
-**Available Flags:**
-
-- `--chain-id`: (int) Chain ID to use for the transaction (default 1514)
-- `--delegation-id`: (uint32) The delegation ID (0 for flexible staking)
-- `--explorer`: (string) URL of the blockchain explorer (default "[https://www.storyscan.io](https://www.storyscan.io)")
-- `--help`, `-h`: Help for redelegate command
-- `--redelegate`: (string) Amount to redelegate in wei
-- `--rpc`: (string) RPC URL to connect to the network (default "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
-- `--validator-dst-pubkey`: (string) Dst validator's hex-encoded compressed 33-byte secp256k1 public key
-- `--validator-src-pubkey`: (string) Src validator's hex-encoded compressed 33-byte secp256k1 public key
-- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
-
-≈
-
-```bash
-./story validator redelegate \
-  --validator-src-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
-  --validator-dst-pubkey 02ed58a9319aba87f60fe08e87bc31658dda6bfd7931686790a2ff803846d4e59c \
-  --redelegate 1024000000000000000000 \
-  --rpc \
-  --chain-id
-```
-
-## Validator Redelegate-on-behalf
-
-If you are an authorized operator, you may redelegate from one validator to another on behalf of a delegator using the following command:
-
-```bash
-./story validator redelegate-on-behalf \
-  --delegator-address ${DELEGATOR_EVM_ADDRESS} \
-  --validator-src-pubkey ${VALIDATOR_SRC_PUB_KEY_IN_HEX} \
-  --validator-dst-pubkey ${VALIDATOR_DST_PUB_KEY_IN_HEX} \
-  --redelegate ${AMOUNT_TO_REDELEGATE_IN_WEI} \
-  --rpc \
-  --chain-id
-```
-
-**Available Flags:**
-
-- `--chain-id`: (int) Chain ID to use for the transaction (default 1514)
-- `--delegation-id`: (uint32) The delegation ID (0 for flexible staking)
-- `--delegator-address`: (string) Delegator's EVM address
-- `--explorer`: (string) URL of the blockchain explorer (default "[https://www.storyscan.io](https://www.storyscan.io)")
-- `--help`, `-h`: Help for redelegate-on-behalf command
-- `--redelegate`: (string) Amount to redelegate in wei
-- `--rpc`: (string) RPC URL to connect to the network (default "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
-- `--validator-dst-pubkey`: (string) Dst validator's hex-encoded compressed 33-byte secp256k1 public key
-- `--validator-src-pubkey`: (string) Src validator's hex-encoded compressed 33-byte secp256k1 public key
-- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
-
-### Example redelegate-on-behalf command use
-
-```bash
-./story validator redelegate-on-behalf \
-  --delegator-address 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab \
-  --validator-src-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
-  --validator-dst-pubkey 02ed58a9319aba87f60fe08e87bc31658dda6bfd7931686790a2ff803846d4e59c \
-  --redelegate 1024000000000000000000 \
-  --rpc \
-  --chain-id
-```
-
-## Set Operator
-
-Delegators may add operators to unstake or redelegate on their behalf. To add an operator, run the following command:
-
-- `--chain-id` int Chain ID to use for the transaction (default 1514)
-- `--explorer` string URL of the blockchain explorer (default "[https://www.storyscan.io](https://www.storyscan.io)")
-- `--operator` string Sets an operator to your delegator
-- `--rpc` string RPC URL to connect to the network (default "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
-
-```bash
-./story validator set-operator \
-  --operator ${OPERATOR_EVM_ADDRESS} \
-  --rpc \
-  --chain-id \
-  --story-api ${STORY_API_URL}
-```
-
-Note that you will need at least 1 IP in the wallet submitting the transaction for the transaction to be valid.
-
-### Example add operator command use
-
-```bash
-./story validator set-operator \
-  --operator 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab \
-  --rpc \
-  --chain-id \
-  --story-api http://localhost:1317
-```
-
-## Unset Operator
-
-To remove an operator, run the following command:
-
-```bash
-./story validator unset-operator \
-  --operator ${OPERATOR_EVM_ADDRESS} \
-  --rpc \
-  --chain-id \
-  --story-api ${STORY_API_URL}
-```
-
-### Example Remove Operator command use
-
-```bash
-./story validator remove-operator \
-  --operator 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab \
-  --rpc \
-  --chain-id \
-  --story-api http://localhost:1317
-```
-
-## Set Rewards Address
-
-To change the address that your delegator receives staking and withdrawal rewards from, you can run the following:
-
-```bash
-./story validator set-rewards-address \
-  --rewards-address ${OPERATOR_EVM_ADDRESS} \
-  --story-api ${STORY_API_URL}
-```
-
-Note that you will need at least 1 IP in the wallet submitting the transaction for the transaction to be valid.
-
-### Example Set Withdrawal Address command use
-
-```bash
-./story validator set-rewards-address \
-  --rewards-address 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab
-  --story-api http://localhost:1317
-```
-
-## Set Withdrawal Address
-
-To change the address that your delegator receives staking and withdrawal rewards from, you can run the following:
-
-```bash
-./story validator set-withdrawal-address \
-  --withdrawal-address ${OPERATOR_EVM_ADDRESS} \
-  --story-api ${STORY_API_URL}
-```
-
-Note that you will need at least 1 IP in the wallet submitting the transaction for the transaction to be valid.
-
-### Example Set Withdrawal Address command use
-
-```bash
-./story validator set-withdrawal-address \
-  --withdrawal-address 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab
-  --story-api http://localhost:1317
-```
-
-## Update Validator Commission
-
-To change the commission rate for your validator, you can run the following:
-
-```
-./story validator update-validator-commission \
-		--commission-rate ${NEW_COMMISSION}
-```
-
-### Example Update Validator Commission
-
-```
-./story validator update-validator-commission \
-		--commission-rate 5000
-```
-
-## Enabling Story API
-
-Prerequisites:
-
-1. Ensure your full node is synced and caught up with latest blocks
-
-Steps to enable:
-
-1. Navigate to `${STORY_DATA_ROOT}/config/story.toml`
-2. Set `enable = true` under the `[api]` section
-3. Restart the node
-
-Then you could use `http://localhost:1317` as the `-story-api` value
-
-## Migrating a validator to another machine
-
-<Warning>
-  Before migrating your validator node to a new machine, make sure the current
-  node is fully shut down. Attempting to restore an active validator could
-  result in "double signing," a critical error that may lead to the slashing of
-  your delegated shares.
-</Warning>
-
-1. Begin by configuring a new environment for your validator. Ensure that the new full node is fully synced to the latest block on the network.
-2. To avoid accidental double-signing, it’s essential to fully shut down the original validator node before activating the new instance. We recommend deleting the Story service file to prevent it from automatically restarting after a system reboot. Additionally, back up both `priv_validator_key.json` and `priv_validator_state.json` and remove it from the current server running the active validator. Skipping these steps could result in missed blocks or other penalties.
-
-```bash
-# Step 1: Stop the original validator node
-sudo systemctl stop <your_service_file_name>.service
-
-# Step 2: Disable the Story service to prevent automatic restarts
-sudo systemctl disable <your_service_file_name>.service
-
-# Step 3: Delete the Story service file to prevent it from starting on reboot
-sudo rm /etc/systemd/system/<your_service_file_name>.service
-
-# Step 4: Back up the `priv_validator_key.json` file securely, e.g., using SFTP:
-# Use an SFTP client or a secure method to download the file without displaying it in the terminal
-# If needed for verification purposes only, you may view it with the following command:
-cat ~/.story/story/config/priv_validator_key.json
-
-# Step 5: Remove the `priv_validator_key.json` file from the current server
-rm ~/.story/story/config/priv_validator_key.json
-```
-
-3. Locate `priv_validator_key.json` and `priv_validator_state.json` in the `~/.story/story/config/` directory on your new machine. Replace this file with the backup copy from your old validator.
-
-<Warning>
-  Before proceeding, shut down the old validator on the original server and do
-  not restart it!
-</Warning>
-
-4. After transferring the private key file, restart the validator node on your new setup. This will reintegrate your validator with the network, enabling it to resume its validation role.
-
-
-# Multisig
-
-## Story Safe
-
-Users can access Safe via a user-friendly web UI or directly through smart contracts, giving both regular users and developers flexible options for managing multisig wallets.
-
-### Using Safe's Web App
-
-Use Safe’s intuitive web app to easily propose, review, and execute multisig transactions — no coding required!
-
-<Card title="Story Safe" href="https://safe.story.foundation/welcome" horizontal icon="vault">
-
-Go to the web app and try it out.
-
-</Card>
-
-### Smart Contract Integration
-
-For direct interaction with Safe's smart contracts, see the official documentation for technical guidance and examples to build or automate Safe workflows.
-
-<Card title="Safe Docs" href="https://docs.safe.global/home/what-is-safe" horizontal icon="book">
-
-Check out Safe's documentation to learn more.
-
-</Card>
-
-
-# Gelato
-
-# VRF
-
-Gelato VRF provides verifiable randomness for blockchain applications by utilizing Drand, a decentralized and trusted source of random numbers. It ensures that developers receive truly random values that are both provable and tamper-resistant.
-
-See Gelato's [Documentation](https://docs.gelato.network/web3-services/vrf) guide to integrate your application with their price feeds.
-
-## Smart Contracts
-
-### Functions and VRF
-
-#### Mainnet
-
-##### [EIP173Proxy.sol](https://www.storyscan.io/address/0xafd37d0558255aA687167560cd3AaeEa75c2841E)
-
-```
-0xafd37d0558255aA687167560cd3AaeEa75c2841E
-```
-
-##### [Automate.sol](https://www.storyscan.io/address/0xab2c44495F5F954149b94C750ca20B64ea60B51c)
-
-```
-0xab2c44495F5F954149b94C750ca20B64ea60B51c
-```
-
-### Relays
-
-#### Mainnet
-
-##### GelatoRelay
-
-Relay method: `callWithSyncFee`
-
-###### EIP173Proxy.sol
-
-```
-0xcd565435e0d2109feFde337a66491541Df0D1420
-```
-
-#####
-
-###### GelatoRelay.sol
-
-```
-0xA75983F686999843804a2ECC0E93C35d39a4F750
-```
-
-##### GelatoRelayERC2771.sol
-
-Relay method: `callWithSyncFeeERC2771`
-
-```
-0x8aCE64CEA52b409F930f60B516F65197faD4B056
-```
-
-##### GelatoRelayConcurrentERC2771.sol
-
-Relay method: `callWithSyncFeeERC2771` with `isConcurrent: true`
-
-```
-0xc7739c195618D314C08E8626C98f8573E4E43634
-```
-
-##### GelatoRelay1BalanceERC2771.sol
-
-Relay method: `sponsoredCallERC2771`
-
-```
-0x61F2976610970AFeDc1d83229e1E21bdc3D5cbE4
-```
-
-
-# Pyth
-
-# Price Feeds
-
-Pyth Network provides real-time financial market data to smart contracts across 100+ blockchains, sourcing prices from over 100 exchanges and market makers. With 850+ price feeds covering equities, commodities, and cryptocurrencies, Pyth aggregates and updates prices multiple times per second.
-
-See Pyth's [Documentation](https://docs.pyth.network/price-feeds/price-feeds) guide to integrate your application with their price feeds.
-
-## Smart Contracts
-
-### Mainnet
-
-#### [ERC1967Proxy.sol](https://www.storyscan.io/address/0xD458261E832415CFd3BAE5E416FdF3230ce6F134)
-
-```
-0xD458261E832415CFd3BAE5E416FdF3230ce6F134
-```
-
-#### [PythUpgradable.sol](https://www.storyscan.io/address/0x5f3c61944CEb01B3eAef861251Fb1E0f14b848fb)
-
-```
-0x5f3c61944CEb01B3eAef861251Fb1E0f14b848fb
-```
-
-### Testnet (Aeneid)
-
-#### [ERC1967Proxy.sol](https://aeneid.storyscan.io/address/0x36825bf3Fbdf5a29E2d5148bfe7Dcf7B5639e320)
-
-```
-0x36825bf3Fbdf5a29E2d5148bfe7Dcf7B5639e320
-```
-
-#### [PythUpgradeable.sol](https://aeneid.storyscan.io/address/0x98046Bd286715D3B0BC227Dd7a956b83D8978603)
-
-```
-0x98046Bd286715D3B0BC227Dd7a956b83D8978603
-```
-
-<br />
-
-# VRF
-
-Pyth Entropy(VRF) service enables on-chain generation of provably fair random numbers. To integrate Pyth Entropy, you need to invoke an on-chain function to request a random number from Entropy. This function accepts a randomly generated number, which can be created off-chain and sent to the Entropy contract. In return, the contract provides a sequence number. Once the request is processed, Pyth Entropy will send a callback to your contract, delivering the generated random number.
-
-See Pyth's [How to Generate Random numbers in EVM dApps](https://docs.pyth.network/entropy/generate-random-numbers/evm) guide to integrate your application with Pyth Entropy.
-
-## Smart Contracts
-
-### Mainnet
-
-#### [ERC1967Proxy.sol](https://www.storyscan.io/address/0xdF21D137Aadc95588205586636710ca2890538d5)
-
-```
-0xdF21D137Aadc95588205586636710ca2890538d5
-```
-
-#### [EntropyUpgradeable.sol](https://www.storyscan.io/address/0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF)
-
-```
-0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF
-```
-
-### Testnet (Aeneid)
-
-#### [ERC1967Proxy.sol](https://aeneid.storyscan.io/address/0x5744Cbf430D99456a0A8771208b674F27f8EF0Fb)
-
-```
-0x5744Cbf430D99456a0A8771208b674F27f8EF0Fb
-```
-
-#### [EntropyUpgradeable.sol](https://aeneid.storyscan.io/address/0x74f09cb3c7e2A01865f424FD14F6dc9A14E3e94E)
-
-```
-0x74f09cb3c7e2A01865f424FD14F6dc9A14E3e94E
-```
-
-
-# Redstone
-
-# Price Feeds
-
-Redstone delivers real-time financial data to smart contracts on 70+ blockchains, covering crypto, RWAs, LRTs, BTCFi, and other emerging assets. Combining institutional and crypto-native data, Redstone ensures reliability through multi-layered validation, including anomaly detection, market depth analysis, and cross-source variance checks.
-
-See Redstone's [Documentation](https://docs.redstone.finance/docs/introduction) guide to integrate your application with their price feeds.
-
-## Smart Contracts
-
-### ETH
-
-#### TransparentUpgradeableProxy
-
-```
-0x22d47686b3AEC9068768f84EFD8Ce2637a347B0A
-```
-
-#### StoryPriceFeedEthWithoutRoundsV1
-
-```
-0xb9D0073aCb296719C26a8BF156e4b599174fe1d5
-```
-
-### BTC
-
-#### TransparentUpgradeableProxy
-
-```
-0xc44be6D00307c3565FDf753e852Fc003036cBc13
-```
-
-#### StoryPriceFeedBtcWithoutRoundsV1
-
-```
-0xE23eCA12D7D2ED3829499556F6dCE06642AFd990
-```
-
-### USDC
-
-#### TransparentUpgradeableProxy
-
-```
-0xED2B1ca5D7E246f615c2291De309643D41FeC97e
-```
-
-#### StoryPriceFeedUsdcWithoutRoundsV1
-
-```
-0x31a36CdF4465ba61ce78F5CDbA26FDF8ec361803
-```
-
-### USDT
-
-#### TransparentUpgradeableProxy
-
-```
-0x7A9b672fc20b5C89D6774514052b3e0899E5E263
-```
-
-#### StoryPriceFeedUsdtWithoutRoundsV1
-
-```
-0xe8D9FbC10e00ecc9f0694617075fDAF657a76FB2
-```
-
-
 # Troubleshooting
 
 Welcome to Story node troubleshooting! This section covers common problems and solutions when running Story nodes.
@@ -25926,14 +25548,752 @@ iptables -I INPUT -s localhost -j ACCEPT
 </Accordion>
 
 
-# Additional Resources
+# Overview
 
-# Additional Resources
+## Quick Links
 
-## Github
+<CardGroup cols={2}>
+  <Card
+    title="Story Geth Releases"
+    icon="github"
+    href="https://github.com/piplabs/story-geth/releases"
+  >
+    Download the latest Story Geth client releases
+  </Card>
+  <Card
+    title="Story Releases"
+    icon="github"
+    href="https://github.com/piplabs/story/releases/"
+  >
+    Download the latest Story consensus client releases
+  </Card>
+</CardGroup>
 
-- [Story Github](https://github.com/piplabs/story)
-- [Story-geth Github](https://github.com/piplabs/story-geth)
+# Overview
+
+This section will guide you through how you can run your own validator. Validator operations may be done via the `story` consensus client.
+
+<Note>
+  The below operations do not require running a node! However, if you would like
+  to participate in staking rewards, you must run a validator node.
+</Note>
+
+Before proceeding, it is important to familiarize yourself with the difference between a delegator and a validator:
+
+- A **validator** is a full node that participates in consensus whose signed key resides in the `priv_validator_key.json` file under your `story` data directory. To print out your validator key details you may refer to the [validator key export section](/network/become-a-validator#validator-key-export)
+- A **delegator** refers to an account operator that holds `IP` and wishes to participate in consensus rewards but without needing to run a validator themselves.
+
+In the same folder as where your `story` binary resides, add a `.env` file with a `PRIVATE_KEY` whose account has `IP` funded. **We recommend using your delegator account for all below operations.**
+
+<Note>
+  You may also issue transactions as the validator itself. To get the EVM
+  private key corresponding to your validator, please refer to the [Validator
+  Key Export](#validator-key-export) section. From **Story v1.2.0**, user must
+  use `.env` for all operations.
+</Note>
+
+The `.env` file should look like the following _(make sure not to add a 0x prefix):_
+
+```bash
+# ~/.env
+PRIVATE_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+With this, you are all set to perform different validator operations! Below, we will guide you through all of those supported via the CLI:
+
+## Validator Key Export
+
+By default, when you run `./story init` a validator key is created for you. To view your validator key, run the following command:
+
+```bash
+./story validator export [flags]
+```
+
+This will print out your validator public key file in compressed and uncompressed formats. By default, we use the hex-encoded compressed key for public identification.
+
+```text
+Compressed Public Key (hex): 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984
+Compressed Public Key (base64): A73HuJQLq+kibVLX+imaH689ZKgvgJiJJWyPFGlYpjmE
+Uncompressed Public Key (hex): 04bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a6398496b9e2af0a3a1d199c3cc1d09ee899336a530c185df6b46a9735b25e79a493af
+EVM Address: 0x9EacBe2C3B1eb0a9FC14106d97bd3A1F89efdDCc
+Validator Address: storyvaloper1p470h0jtph4n5hztallp8vznq8ehylsw9vpddx
+Delegator Address: story1p470h0jtph4n5hztallp8vznq8ehylswtr4vxd
+```
+
+**Available Flags:**
+
+- `--export-evm-key`: (bool) Exports the derived EVM private key of your validator into the default data config directory
+- `--export-evm-key-path`: (string) Specifies a different download location for the derived EVM private key of your validator
+- `--keyfile`: (string) Path to the Tendermint key file (default "/home/ubuntu/.story/story/config/priv_validator_key.json")
+
+<Tip>
+  If you would like to issue transactions as your validator, and not as a
+  delegator, you may export the key to your `.env` file and ensure it has IP
+  sent to it, e.g. via `./story validator export --export-evm-key --evm-key-path
+  .env`
+</Tip>
+
+## Validator Creation
+
+To create a new validator, run the following command:
+
+```bash Locked token node
+./story validator create
+       --stake ${AMOUNT_TO_STAKE_IN_WEI} \
+       --moniker ${VALIDATOR_NAME} \
+       --rpc ${rpc} \
+       --chain-id ${chain_id} \
+       --commission-rate ${rate} \
+       --unlocked=false
+```
+
+```Text Unlocked token node
+./story validator create
+       --stake ${AMOUNT_TO_STAKE_IN_WEI} \
+       --moniker ${VALIDATOR_NAME} \
+       --rpc ${rpc} \
+       --chain-id ${chain_id} \
+       --commission-rate ${rate} \
+```
+
+This will create the validator corresponding to your validator key saved in `priv_validator_key.json`, providing the validator with `{$AMOUNT_TO_STAKE_IN_WEI}` IP to self-stake.
+
+<Note>
+  To participate in consensus, at least 1024 IP must be staked (equivalent to
+  `1024000000000000000000 wei`)!
+</Note>
+
+Below is a list of optional flags to further customize your validator setup:
+
+**Available Flags:**
+
+- `--stake`: Sets the amount the validator will self-delegate in wei (default is `1024000000000000000000` wei).
+- `--moniker`: Defines a custom name for the validator, visible to users on the network.
+- `--chain-id`: Specifies the Chain ID for the transaction. By default, this is set to `1516`.
+- `--commission-rate`: Sets the validator's commission rate in bips (1% = 100 bips). For instance, `1000` represents a 10% commission (default is `1000`).
+- `--explorer`: Specifies the URL of the blockchain explorer (default: [https://www.storyscan.io](https://www.storyscan.io)).
+- `--keyfile`: Points to the path of the Tendermint key file (default: `$HOME/.story/story/config/priv_validator_key.json`).
+- `--max-commission-change-rate`: Sets the maximum rate at which the validator's commission can change, in bips. For example, `100` represents a maximum change of 1% (default is `1000`).
+- `--max-commission-rate`: Defines the maximum commission rate the validator can charge, in bips. For instance, `5000` allows a 50% maximum rate (default is `5000`).
+- `--rpc`: Sets the RPC URL to connect to the network (default: [https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)).
+- `--unlocked`: Determines if unlocked token staking is supported (`true` for unlocked staking, `false` for locked staking). By default, this is set to `true`.
+- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
+
+### Example creation command use
+
+```bash
+story validator create
+  --stake 1024000000000000000000
+  --moniker "timtimtim"
+  --commission-rate 700
+  --validator-pubkey "<validator_pubkey>" # if you dont have a .env
+  --rpc "https://mainnet.storyrpc.io"
+  --chain-id 1514
+```
+
+### Verifying your validator
+
+Once created, please use the `Explorer URL` to confirm the transaction. If successful, you should see your validator pub key (_found in your`priv_validator_key.json` file)_ listed as part of the following endpoint:
+
+```bash
+curl https://testnet.storyrpc.io/validators | jq .
+```
+
+Congratulations, you are now one of Story’s very first IP validators!
+
+## Validator Staking
+
+To stake to an existing validator, run the following command:
+
+```bash
+./story validator stake \
+   --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+   --stake ${AMOUNT_TO_STAKE_IN_WEI}
+   --staking-period ${STAKING_PERIOD}
+```
+
+- Note that your own `${VALIDATOR_PUB_KEY_IN_HEX}`may be found by running the `./story validator export` command as the `Compressed Public Key (hex)`.
+- You must stake at least 1024 IP worth (`*1024000000000000000000 wei`) for the transaction to be valid
+
+Once staked, you may use the `Explorer URL` to confirm the transaction. As mentioned earlier, you may use our [validator endpoint](https://mainnet.storyrpc.io/validators) to confirm the new voting power of the validator.
+
+**Available Flags:**
+
+- `--validator-pubkey`: (string) The public key of the validator to stake to
+- `--stake`: (string) The amount of IP to stake in wei
+- `--chain-id`: (int) Chain ID to use for the transaction (default: 1514)
+- `--explorer`: (string) URL of the blockchain explorer
+- `--help`, `-h`: Display help information for stake command
+- `--rpc`: (string) RPC URL to connect to the network
+- `--staking-period`: (stakingPeriod) Staking period (options: "flexible", "short", "medium", "long") (default: flexible)
+- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
+
+### Example staking command use
+
+```bash
+./story validator stake \
+  --validator-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
+  --stake 1024000000000000000000
+  --staking-period "short"
+```
+
+## Validator Unstaking
+
+To unstake from a validator, run the following command:
+
+```bash
+./story validator unstake \
+  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+  --unstake ${AMOUNT_TO_UNSTAKE_IN_WEI} \
+  --delegation-id ${ID_STAKING_PERIOD}
+```
+
+This will unstake `${AMOUNT_TO_UNSTAKE_IN_WEI}` IP from the selected validator. You must unstake at least 1024 IP worth (`*1024000000000000000000 wei`) for the transaction to be valid.
+
+Like in the staking operation, please use the `Explorer URL` to confirm the transaction and our [validator endpoint](https://mainnet.storyrpc.io/validators) to double-check the newly reduced voting power of the validator.
+
+**Available Flags:**
+
+- `--chain-id`: (int) Chain ID to use for the transaction (default: 1514)
+- `--delegation-id`: (uint32) The delegation ID (0 for flexible staking)
+- `--explorer`: (string) URL of the blockchain explorer (default: "[https://www.storyscan.io](https://www.storyscan.io)")
+- `--help`, `-h`: Help for unstake command
+- `--rpc`: (string) RPC URL to connect to the network (default: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+- `--unstake`: (string) Amount to unstake in wei
+- `--validator-pubkey`: (string) Validator's hex-encoded compressed 33-byte secp256k1 public key
+- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
+
+### Example unstaking command use
+
+```bash
+./story validator unstake \
+   --validator-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
+   --unstake 1024000000000000000000 \
+   --delegation-id 1
+```
+
+## Validator Stake-on-behalf
+
+To stake on behalf of another delegator, run the following command:
+
+```bash
+./story validator stake-on-behalf \
+  --delegator-address ${DELEGATOR_EVM} \
+  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+  --stake ${AMOUNT_TO_STAKE_IN_WEI} \
+  --staking-period ${STAKING_PERIOD} \
+  --rpc
+  --chain-id
+```
+
+This will stake `${AMOUNT_TO_STAKE_IN_WEI}` IP to the validator on behalf of the provided delegator. You must stake at least 1024 IP worth (`*1024000000000000000000 wei`) for the transaction to be valid.
+
+Like in the other staking operations, please use the `Explorer URL` to confirm the transaction and our [validator endpoint](https://mainnet.storyrpc.io/validators) to double-check the increased voting power of the validator.
+
+**Available Flags:**
+
+- `--chain-id`: (int) Chain ID to use for the transaction (default: 1514)
+- `--delegator-address`: (string) Delegator's EVM address
+- `--explorer`: (string) URL of the blockchain explorer (default: "[https://www.storyscan.io](https://www.storyscan.io)")
+- `--help`, `-h`: Help for stake-on-behalf command
+- `--rpc`: (string) RPC URL to connect to the network (default: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+- `--stake`: (string) Amount for the validator to self-delegate in wei
+- `--staking-period`: (stakingPeriod) Staking period (options: "flexible", "short", "medium", "long") (default: flexible)
+- `--validator-pubkey`: (string) Validator's hex-encoded compressed 33-byte secp256k1 public key
+- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
+
+### Example Stake-on-behalf command use
+
+```bash
+./story validator stake-on-behalf \
+   --delegator-address 0xF84ce113FCEe12d78Eb41590c273498157c91520 \
+   --validator-pubkey 03e42b4d778cda2f3612c85161ba7c0aad1550a872f3279d99e028a1dfa7854930 \
+   --stake 1024000000000000000000 \
+   --staking-period "short" \
+   --rpc \
+   --chain-id
+```
+
+## Validator Unstake-on-behalf
+
+You may also unstake on behalf of delegators. However, to do so, you must be registered as an authorized operator for that delegator. To unstake on behalf of another delegator as an operator, run the following command:
+
+```bash
+./story validator unstake-on-behalf \
+  --delegator-address ${DELEGATOR_PUB_KEY_IN_HEX} \
+  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+  --unstake ${AMOUNT_TO_STAKE_IN_WEI} \
+  --rpc \
+  --chain-id
+```
+
+This will unstake `${AMOUNT_TO_STAKE_IN_WEI}` IP from the validator on behalf of the delegator, assuming you are a registered operator for that delegator. You must unstake at least 1024 IP worth (`*1024000000000000000000 wei`) for the transaction to be valid.
+
+Like in the other staking operations, please use the `Explorer URL` to confirm the transaction and our [validator endpoint](https://mainnet.storyrpc.io/validators) to double-check the decreased voting power of the validator.
+
+**Available Flags:**
+
+- `--chain-id`: (int) Chain ID to use for the transaction (default: 1514)
+- `--delegator-address`: (string) Delegator's EVM address
+- `--explorer`: (string) URL of the blockchain explorer (default: "[https://www.storyscan.io](https://www.storyscan.io)")
+- `--help`, `-h`: Help for unstake-on-behalf command
+- `--rpc`: (string) RPC URL to connect to the network (default: "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+- `--unstake`: (string) Amount to unstake in wei
+- `--validator-pubkey`: (string) Validator's hex-encoded compressed 33-byte secp256k1 public key
+- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
+
+### Example Unstake-on-behalf command use
+
+```bash
+./story validator unstake-on-behalf \
+   --delegator-address 0xF84ce113FCEe12d78Eb41590c273498157c91520 \
+   --validator-pubkey 03e42b4d778cda2f3612c85161ba7c0aad1550a872f3279d99e028a1dfa7854930 \
+   --unstake 1024000000000000000000 \
+   --rpc \
+   --chain-id
+```
+
+## Validator Unjail
+
+In case a validator becomes jailed, for example if it experiences substantial downtime, you may use the following command to unjail the targeted validator:
+
+```Text Bash
+./story validator unjail \
+  --rpc
+  --chain-id
+```
+
+Note that you will need at least 1 IP in the wallet submitting the transaction for the transaction to be valid.
+
+**Available Flags:**
+
+- `--chain-id`: (int) Chain ID to use for the transaction
+- `--explorer`: (string) URL of the blockchain explorer
+- `--rpc`: (string) RPC URL to connect to the network
+- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
+
+### Example unjail command use
+
+```bash
+./story validator unjail \
+  --rpc \
+  --chain-id
+```
+
+## Validator Unjail-on-behalf
+
+If you are an authorized operator, you may unjail a validator on their behalf using the following command:
+
+```bash
+./story validator unjail-on-behalf \
+  --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
+  --rpc \
+  --chain-id
+```
+
+**Available Flags:**
+
+- `--chain-id`: (int) Chain ID to use for the transaction
+- `--explorer`: (string) URL of the blockchain explorer
+- `--rpc`: (string) RPC URL to connect to the network
+- `--validator-pubkey`: (string) Validator's hex-encoded compressed 33-byte secp256k1 public key
+- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
+
+### Example unjail-on-behalf command use
+
+```bash
+./story validator unjail-on-behalf \
+  --rpc \
+  --chain-id
+```
+
+## Validator rollback
+
+<Warning>
+  The snapshot must be taken from a node that has already been upgraded. That
+  means the snapshot node has to do the rewind.
+</Warning>
+
+Recovery Options for Nodes Stuck in Long Rewind After Upgrade：
+
+Wait for resync: Let the node catch up naturally. This may take time depending on the rewind depth and network bandwidth.
+Apply a snapshot: Use a snapshot from a node that has already been upgraded to Pectra. You can generate your own or obtain one from trusted community providers.
+
+```bash
+./story validator rollback \
+  --rpc \
+  --chain-id
+```
+
+** Avaliable Flages:**
+
+- `--api-address`: (string) The API server address to listen on (default "\***\*\*\*\***:1317")
+- `--api-enable`: (bool) Define if the API server should be enabled
+- `--api-enable-unsafe-cors`: (bool) Enable unsafe CORS for API server
+- `--api-idle-timeout`: (uint) Define the API server idle timeout (in seconds) (default 10)
+- `--api-max-header-bytes`: (uint) Define the API server max header (in bytes) (default 8192)
+- `--api-read-header-timeout`: (uint) Define the API server read header timeout (in seconds) (default 10)
+- `--api-read-timeout`: (uint) Define the API server read timeout (in seconds) (default 10)
+- `--api-write-timeout`: (uint) Define the API server write timeout (in seconds) (default 10)
+- `--app-db-backend`: (string) The type of database for application and snapshots databases (default "goleveldb")
+- `--engine-endpoint`: (string) An EVM execution client Engine API http endpoint (default "http://localhost:8551")
+- `--engine-jwt-file`: (string) The path to the Engine API JWT file
+- `--evm-build-delay`: (duration) Minimum delay between triggering and fetching a EVM payload build (default 600ms)
+- `--evm-build-optimistic`: (bool) Enables optimistic building of EVM payloads on previous block finalize (default true)
+- `--help`: (bool) help for rollback
+- `--home`: (string) The application home directory containing config and data (default "/home/timothyshen/.story/story")
+- `--log-color`: (string) Log color (only applicable to console format); auto, force, disable (default "auto")
+- `--log-format`: (string) Log format; console, json (default "console")
+- `--log-level`: (string) Log level; debug, info, warn, error (default "info")
+- `--min-retain-blocks`: (uint) Minimum block height offset during ABCI commit to prune CometBFT blocks
+- `--network`: (string) Story network to participate in: story, odyssey, aeneid or local
+- `--number`: (uint) number of blocks to rollback (default 1)
+- `--pruning`: (string) Pruning strategy (default|nothing|everything) (default "nothing")
+- `--snapshot-interval`: (uint) State sync snapshot interval (default 1000)
+- `--snapshot-keep-recent`: (uint) State sync snapshot to keep (default 2)
+- `--tracing-endpoint`: (string) Tracing OTLP endpoint
+- `--tracing-headers`: (string) Tracing OTLP headers
+
+### Example rollback command use
+
+```bash
+./story validator rollback \
+  --rpc \
+  --chain-id
+```
+
+## Validator Redelegate
+
+To redelegate from one validator to another, run the following command:
+
+```bash
+./story validator redelegate \
+  --validator-src-pubkey ${VALIDATOR_SRC_PUB_KEY_IN_HEX} \
+  --validator-dst-pubkey ${VALIDATOR_DST_PUB_KEY_IN_HEX} \
+  --redelegate ${AMOUNT_TO_REDELEGATE_IN_WEI}
+  --rpc \
+  --chain-id
+```
+
+**Available Flags:**
+
+- `--chain-id`: (int) Chain ID to use for the transaction (default 1514)
+- `--delegation-id`: (uint32) The delegation ID (0 for flexible staking)
+- `--explorer`: (string) URL of the blockchain explorer (default "[https://www.storyscan.io](https://www.storyscan.io)")
+- `--help`, `-h`: Help for redelegate command
+- `--redelegate`: (string) Amount to redelegate in wei
+- `--rpc`: (string) RPC URL to connect to the network (default "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+- `--validator-dst-pubkey`: (string) Dst validator's hex-encoded compressed 33-byte secp256k1 public key
+- `--validator-src-pubkey`: (string) Src validator's hex-encoded compressed 33-byte secp256k1 public key
+- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
+
+≈
+
+```bash
+./story validator redelegate \
+  --validator-src-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
+  --validator-dst-pubkey 02ed58a9319aba87f60fe08e87bc31658dda6bfd7931686790a2ff803846d4e59c \
+  --redelegate 1024000000000000000000 \
+  --rpc \
+  --chain-id
+```
+
+## Validator Redelegate-on-behalf
+
+If you are an authorized operator, you may redelegate from one validator to another on behalf of a delegator using the following command:
+
+```bash
+./story validator redelegate-on-behalf \
+  --delegator-address ${DELEGATOR_EVM_ADDRESS} \
+  --validator-src-pubkey ${VALIDATOR_SRC_PUB_KEY_IN_HEX} \
+  --validator-dst-pubkey ${VALIDATOR_DST_PUB_KEY_IN_HEX} \
+  --redelegate ${AMOUNT_TO_REDELEGATE_IN_WEI} \
+  --rpc \
+  --chain-id
+```
+
+**Available Flags:**
+
+- `--chain-id`: (int) Chain ID to use for the transaction (default 1514)
+- `--delegation-id`: (uint32) The delegation ID (0 for flexible staking)
+- `--delegator-address`: (string) Delegator's EVM address
+- `--explorer`: (string) URL of the blockchain explorer (default "[https://www.storyscan.io](https://www.storyscan.io)")
+- `--help`, `-h`: Help for redelegate-on-behalf command
+- `--redelegate`: (string) Amount to redelegate in wei
+- `--rpc`: (string) RPC URL to connect to the network (default "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+- `--validator-dst-pubkey`: (string) Dst validator's hex-encoded compressed 33-byte secp256k1 public key
+- `--validator-src-pubkey`: (string) Src validator's hex-encoded compressed 33-byte secp256k1 public key
+- `--story-api`: Prevent potential fund losses. By default, you should set `http://localhost:1317`as the value
+
+### Example redelegate-on-behalf command use
+
+```bash
+./story validator redelegate-on-behalf \
+  --delegator-address 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab \
+  --validator-src-pubkey 03bdc7b8940babe9226d52d7fa299a1faf3d64a82f809889256c8f146958a63984 \
+  --validator-dst-pubkey 02ed58a9319aba87f60fe08e87bc31658dda6bfd7931686790a2ff803846d4e59c \
+  --redelegate 1024000000000000000000 \
+  --rpc \
+  --chain-id
+```
+
+## Set Operator
+
+Delegators may add operators to unstake or redelegate on their behalf. To add an operator, run the following command:
+
+- `--chain-id` int Chain ID to use for the transaction (default 1514)
+- `--explorer` string URL of the blockchain explorer (default "[https://www.storyscan.io](https://www.storyscan.io)")
+- `--operator` string Sets an operator to your delegator
+- `--rpc` string RPC URL to connect to the network (default "[https://mainnet.storyrpc.io](https://mainnet.storyrpc.io)")
+
+```bash
+./story validator set-operator \
+  --operator ${OPERATOR_EVM_ADDRESS} \
+  --rpc \
+  --chain-id \
+  --story-api ${STORY_API_URL}
+```
+
+Note that you will need at least 1 IP in the wallet submitting the transaction for the transaction to be valid.
+
+### Example add operator command use
+
+```bash
+./story validator set-operator \
+  --operator 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab \
+  --rpc \
+  --chain-id \
+  --story-api http://localhost:1317
+```
+
+## Unset Operator
+
+To remove an operator, run the following command:
+
+```bash
+./story validator unset-operator \
+  --operator ${OPERATOR_EVM_ADDRESS} \
+  --rpc \
+  --chain-id \
+  --story-api ${STORY_API_URL}
+```
+
+### Example Remove Operator command use
+
+```bash
+./story validator remove-operator \
+  --operator 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab \
+  --rpc \
+  --chain-id \
+  --story-api http://localhost:1317
+```
+
+## Set Rewards Address
+
+To change the address that your delegator receives staking and withdrawal rewards from, you can run the following:
+
+```bash
+./story validator set-rewards-address \
+  --rewards-address ${OPERATOR_EVM_ADDRESS} \
+  --story-api ${STORY_API_URL}
+```
+
+Note that you will need at least 1 IP in the wallet submitting the transaction for the transaction to be valid.
+
+### Example Set Withdrawal Address command use
+
+```bash
+./story validator set-rewards-address \
+  --rewards-address 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab
+  --story-api http://localhost:1317
+```
+
+## Set Withdrawal Address
+
+To change the address that your delegator receives staking and withdrawal rewards from, you can run the following:
+
+```bash
+./story validator set-withdrawal-address \
+  --withdrawal-address ${OPERATOR_EVM_ADDRESS} \
+  --story-api ${STORY_API_URL}
+```
+
+Note that you will need at least 1 IP in the wallet submitting the transaction for the transaction to be valid.
+
+### Example Set Withdrawal Address command use
+
+```bash
+./story validator set-withdrawal-address \
+  --withdrawal-address 0xf398C12A45Bc409b6C652E25bb0a3e702492A4ab
+  --story-api http://localhost:1317
+```
+
+## Update Validator Commission
+
+To change the commission rate for your validator, you can run the following:
+
+```
+./story validator update-validator-commission \
+    --commission-rate ${NEW_COMMISSION}
+```
+
+### Example Update Validator Commission
+
+```
+./story validator update-validator-commission \
+    --commission-rate 5000
+```
+
+## Enabling Story API
+
+Prerequisites:
+
+1. Ensure your full node is synced and caught up with latest blocks
+
+Steps to enable:
+
+1. Navigate to `${STORY_DATA_ROOT}/config/story.toml`
+2. Set `enable = true` under the `[api]` section
+3. Restart the node
+
+Then you could use `http://localhost:1317` as the `-story-api` value
+
+## Migrating a validator to another machine
+
+<Warning>
+  Before migrating your validator node to a new machine, make sure the current
+  node is fully shut down. Attempting to restore an active validator could
+  result in "double signing," a critical error that may lead to the slashing of
+  your delegated shares.
+</Warning>
+
+1. Begin by configuring a new environment for your validator. Ensure that the new full node is fully synced to the latest block on the network.
+2. To avoid accidental double-signing, it’s essential to fully shut down the original validator node before activating the new instance. We recommend deleting the Story service file to prevent it from automatically restarting after a system reboot. Additionally, back up both `priv_validator_key.json` and `priv_validator_state.json` and remove it from the current server running the active validator. Skipping these steps could result in missed blocks or other penalties.
+
+```bash
+# Step 1: Stop the original validator node
+sudo systemctl stop <your_service_file_name>.service
+
+# Step 2: Disable the Story service to prevent automatic restarts
+sudo systemctl disable <your_service_file_name>.service
+
+# Step 3: Delete the Story service file to prevent it from starting on reboot
+sudo rm /etc/systemd/system/<your_service_file_name>.service
+
+# Step 4: Back up the `priv_validator_key.json` file securely, e.g., using SFTP:
+# Use an SFTP client or a secure method to download the file without displaying it in the terminal
+# If needed for verification purposes only, you may view it with the following command:
+cat ~/.story/story/config/priv_validator_key.json
+
+# Step 5: Remove the `priv_validator_key.json` file from the current server
+rm ~/.story/story/config/priv_validator_key.json
+```
+
+3. Locate `priv_validator_key.json` and `priv_validator_state.json` in the `~/.story/story/config/` directory on your new machine. Replace this file with the backup copy from your old validator.
+
+<Warning>
+  Before proceeding, shut down the old validator on the original server and do
+  not restart it!
+</Warning>
+
+4. After transferring the private key file, restart the validator node on your new setup. This will reintegrate your validator with the network, enabling it to resume its validation role.
+
+# Release Notes
+
+This page provides information on the story execution and consensus client software release information. You may find execution client releases in [story-geth](https://github.com/piplabs/story-geth/releases) repo, and consensus client releases in [story](https://github.com/piplabs/story/releases) repo.
+
+### Production releases
+
+There are generally four types of releases:
+
+- Major: It requires hardfork upgrade with a predefined upgrade height. Node operators need to upgrade before or on the height. The release will increase minor version number.
+- Minor: It doesn't require hardfork upgrade. Node operators are required to upgrade binaries as soon as possible. The release will increase patch version number.
+- Fix: It is an urgent fix. Node operators are required to upgrade binaries as soon as possible. The release will increase minor version or patch version number.
+- Optional: It is an optional fix. Node operators can upgrade binaries based on needs. The release will increase patch version number.
+
+Each release comes with a release note describing a list of new features or fixes. Released software binaries are also attached in the release note. We currently provide binaries supporting four types of systems: darwin-amd64, darwin-arm64, linux-amd64, and linux-arm64. You may also build your binaries using the commit hash in the release note.
+
+### Release entries
+
+Refer to the following release matrix to run nodes for Mainnet and Aeneid Testnet.
+
+| Network | story-geth      | story             |
+| ------- | --------------- | ----------------- |
+| Mainnet | v1.1.1 (Cosmos) | v1.2.1 (Ovid)     |
+| Aeneid  | v1.1.0 (Cosmos) | v1.3.0 (Polybius) |
+
+<Update label="2025-06-19" description="Cosmas (Geth v1.1.1)">
+    ### Cosmas
+    [Full release note](https://github.com/piplabs/story-geth/releases)
+
+        <Accordion title="Included EIPs">
+           Enables Pectra Upgrade for Mainnet
+        </Accordion>
+
+</Update>
+
+<Update label="2025-05-20" description="Cosmas (Geth v1.1.0)">
+    ### Cosmas (Testnet Only)
+    [Full release note](https://github.com/piplabs/story-geth/releases)
+
+        <Accordion title="Included EIPs">
+            - EIP-7702 – Set EOA account code
+            - EIP-2537 – BLS12-381 curve operations
+            - EIP-7623 – Increase calldata cost
+            - EIP-7685 – Execution layer requests (EIP-7685)
+        </Accordion>
+
+</Update>
+
+<Update label="2025-05-02" description="Ovid (Story v1.2.0)">
+    ### Ovid
+    [Full release note](https://github.com/piplabs/story/releases/tag/v1.2.0)
+
+    <AccordionGroup>
+        <Accordion title="Features">
+            - (app) change MaxBytes of block in consensus params (#529)
+            - (x/evmengine) support snap sync for execution engine (#506)
+            - (cli) add encryption for validator private key (#494)
+            - (cli) add with-comet flag (#518)
+            - (api) add withdrawal queue query (#496)
+        </Accordion>
+
+        <Accordion title="Fixes">
+
+            - (app) disallow unexported fields in cosmos tx (#529)
+            - (x/evmengine) add validation for max size of tx (#529)
+            - (cli) fix validator not found error during validator creation (#515)
+            - (cli) add validation for max commission change rate (#489)
+            - (cli) add self-delegation validation to unjail command (#510)
+            - (api) fix incorrect type conversion between integer types (#492)
+        </Accordion>
+    </AccordionGroup>
+
+</Update>
+
+<Update label="2025-02-26" description="Homer (Geth v1.0.2)">
+    ### Ovid
+    [Full release note](https://github.com/piplabs/story-geth/releases/tag/v1.0.2)
+
+        <Accordion title="Fixes">
+
+            - [ipgraph] prevent overflow in calculating gas of add parent (#102)
+            - [ipgraph] apply acl to function hasAncestorIp (#106)
+        </Accordion>
+
+</Update>
+
+
+# Forum
+
+
+# Participate
+
+There are many ways to participate, you could become a validator or participate into governance 
+
+Become a Validator
+
+Governance and SIP process
 
 ## SIP Repository
 
@@ -25943,433 +26303,6 @@ iptables -I INPUT -s localhost -j ACCEPT
 
 - [Story Forum](https://forum.story.foundation/)
 
-# Staking Design
-
-# Purpose
-
-This document walks through the staking specification for Story. The goal is to provide clarity to network participants and technical partners on how Story's staking mechanics work and how users can interface with our chain.
-
-# Tokenomics
-
-## Genesis
-
-The story genesis allocation will consist of 1 billion tokens, distributed among ecosystem participants, the foundation, investors, and the core team. Please refer this document for the detailed [Token Distribution](https://www.story.foundation/blog/introducing-ip).
-
-## Locked vs Unlocked tokens
-
-Unlocked tokens have no restrictions imposed on them and can be used for gas consumption, transfers, and staking.
-
-Unlike unlocked tokens, locked tokens cannot be transferred or traded and are unlocked based on an unlock schedule. However, locked tokens may be staked to earn staking rewards, with the locked staking reward rate being half of that of unlocked tokens.
-
-Staked locked and unlocked tokens have the same voting power. That means that a validator with 100 staked locked tokens has the same network voting power as a validator with 100 staked unlocked tokens.
-
-Both types of tokens can be slashed if their validators get slashed.
-
-## Token emissions
-
-A fixed number of tokens will be allocated for emissions in the first year, with the quantity determined by the foundation at Genesis. For subsequent years, the number of emitted tokens will be controlled by an emissions algorithm whose parameters may be updated via governance or subject to change via hard forks. The emissions per block are controlled by the following two parameters:
-
-- blocks_per_year: 10368000 blocks
-  - The number of blocks expected to be produced in a year
-- inflations_per_year: 20,000,000 tokens
-  - The total number of inflationary tokens to be emitted in a year
-
-New emissions will flow to two places:
-
-1. Block Rewards
-2. Community Pool
-
-## Token burn
-
-Since Story uses a fork of geth as the execution client, the burning mechanism follows Ethereum's EIP-1559.
-
-# Staking
-
-> 🔗 [Stake with the Staking Dashboard ↗️](https://staking.story.foundation/)
-
-Story supports the below staking-related operations
-
-- Create validator
-- Update validator commission
-- Stake
-- Stake on behalf
-- Unstake
-- Unstake on behalf
-- Redelegate
-- Redelegate on behalf
-- Set withdraw address
-- Set reward address
-- Unjail
-- Unjail on behalf
-
-Before explaining the behavior of each of these operations, some high-level concepts like **Token Staking Types**, **Validator Set Status**, **Unbonding**, and **Staking Period** will be explained first:
-
-## Token Staking Types
-
-As staking is enabled for both locked and unlocked tokens, validators must choose which type of token staking they want to support. Once a token staking type is selected, validators cannot switch to a different type.
-
-## Validator Set Status
-
-In Story, validators are grouped into one of two sets, (1) the active (bonded) validator set, which participates in consensus and receives block rewards, or (2) the non-active (unbonded) validator set, which does not contribute to the consensus process. To be selected as part of the active validator set, a validator must be one of the top 64 validators ranked by staked tokens.
-
-## Unbonding
-
-Unstaking for delegators is subject to an unbonding process. Users must wait for an unbonding time before any tokens return to their accounts.
-
-This is the same for validators who self-delegate to themselves. They also need to go through the unbonding process when they want to unstake.
-
-The unbonding time is 14 days. During the unbonding period, the delegator/validator will not earn block rewards. But they may still be slashed.
-
-For each validator/delegator pair, the maximum ongoing unbonding transactions is 14. More unbonding requests beyond this limit will fail.
-
-## Staking period
-
-Delegators can decide how flexible and how long they want to stake their tokens. By default, for both locked and unlocked tokens, delegators can stake and then unstake immediately and get their token back after the unbonding time. We call this **flexible staking** in this document.
-
-For unlocked tokens, a few more fixed staking periods are supported: 90 days, 360 days, and 540 days. In this case, users can only call unstake after the staking period is mature. Any call earlier than the mature day will be discarded. Unstaking from a mature staking period is still subject to the unbonding process, meaning users will get their staked tokens back after 14 days of unbonding time.
-
-Staking in these fixed staking periods earns more rewards. The longer the period, the bigger the reward weight multiplier. Reward multiplier for different periods:
-
-- Locked flexible period - **0.5**
-- Flexible period - **1.0**
-- 90 days - **1.1**
-- 360 days - **1.5**
-- 540 days - **2**
-
-For locked tokens, only flexible staking is allowed and the reward multiplier is **0.5**. If a user delegates their locked tokens to a staking period, we will convert that to a flexible staking delegation.
-
-After the staking period ends, users can choose not to unstake. In this case, they will continue earning the same reward rate based on the reward rate of the corresponding staking period until they unstake manually. They can unstake at any time after the staking period ends. For example, if the 1-year staking period's reward rate is 0.02% per block, after staking for 1 year, users can still earn 0.02% per block of the reward until they unstake.
-
-## Decimal for stake amounts
-
-The decimal for stake operations (stake, unstake, redelegate, etc.) is 9. If a user specifies a smaller value, the dust will be refunded back to the users. Or if there is no token transfer involved, the specified value will be rounded down to 9 decimals.
-
-# Staking Operations
-
-## Create validator
-
-To become a validator, the validator must first run a validator node based on the latest released story binaries, then call the CreateValidator function with an initial staking amount, moniker, and commission rate. It also needs to set the max commission rate and max commission rate change to make sure it doesn't change the commission rate later dramatically. The minimum commission rate that a validator can set is 5%.
-
-The initial staking amount needs to be larger than a threshold, which is 1024 IP. The amount will be deducted from the caller's wallet. It can only be staked to a flexible period.
-
-If a validator tries to call create validator function the second time, it will be ignored.
-
-## Update validator commission
-
-This operation allows validators to edit their validator commission rate. If the updated commission rate is larger than max commission rate or the commission rate change delta is larger than max commission rate change, the operation will fail.
-
-A fee of 1 IP will be charged for updating a validator to prevent spamming. The fee will be burnt by the contract.
-
-The commission rate can only be updated once per day. It will not throw an error from the contract. But it won't take effect in the consensus layer.
-
-## Stake
-
-Both the validator and delegator can stake tokens to a validator. A validator can stake to itself, which is called self-delegation. Users can decide if they want to stake with a fixed staking period or stake without a period (flexible staking).
-
-If a fixed period is chosen, a delegation id will be returned to the users. Users must use this delegation id to unstake tokens from this stake operation. If flexible staking is chosen, the returned delegation id will be 0.
-
-The staking amount needs to be larger than a threshold, which is 1024 IP.
-
-If a delegator delegates to a non-existent validator, the tokens will NOT be refunded.
-
-If users specify the token amount that has more than 9 decimal units, the actual staking amount will be rounded down to 9 decimal and refund the remaining back to the users.
-
-## Unstake
-
-When staking without a staking period, users can unstake anytime. The tokens will be distributed to the user's account after the unbonding time.
-
-A fee of 1 IP will be charged for unstaking to prevent spamming. The fee will be burnt by the contract.
-
-When staking with a staking period, users can only unstake after the staking period is mature. The tokens will be distributed to the user's account after the unbonding time. Unstaking requests before the staking period matures will be ignored.
-
-The minimum unstaking amount is 1024 IP. After the unstaking request is processed, if the remaining staked amount is less than 1024 IP, the remaining part will also be unstaked together.
-
-The unstaking request will first go through the unbonding process, which is 14 days. After that, the unbonded requests are sent to a withdrawal queue, distributing a maximum of 32 withdrawals per block. If there are more than 32 withdrawal requests in the withdrawal queue, the next 32 withdrawal requests will be processed in the next block.
-
-Partial unstake of a delegation is supported. For example, if a 1-year long delegation has 1 million tokens, after 1 year, users can unstake 500k from this delegation and keep the remaining staked to continue earning rewards.
-
-Unstake can fail if the validator, delegator and delegation id passed in is incorrect.
-
-Unstake can also fail if the maximum concurrent unbonding request (currently 14) has been reached for the validator/delegator pair.
-
-If the unstake amount passed in is larger than the total unstakable tokens, the current total unstakable amounts will be unstaked. For example, if users unstake 1024 IP and only have 1023 IP stake, 1023 IP will be withdrawn.
-
-If a validator exits, by either being offline and getting jailed, or not having enough stakes to be in the top 64 validator set, the delegators can unstake their tokens if the tokens are not in a staking period or their staking period is mature. Otherwise, delegators must wait until the staking period matures to unstake.
-
-If users specify the token amount that has more than 9 decimal units, the actual unstaking amount will be rounded down to 9 decimal.
-
-## Redelegate
-
-Redelegate operation allows a delegator to move its staked tokens from one validator to another. The tokens can be redelegated to the new validator immediately and start earning rewards. However, the redelegated tokens are still subject to the unbonding process, IF the source validator is in the active validator set or unbonding from the active validator set. During this 14 days unbounding time, it will be slashed if the original validator gets slashed.
-
-A fee of 1 IP will be charged for redelegation to prevent spamming. The fee will be burnt by the contract.
-
-The minimum redelegation amount is 1024 IP. If a delegator's initial stake is 1024 IP but later gets slashed, it can still redelegate its tokens to another validator even if the token amount is less than 1024 IP.
-
-Similarly to unstaking, if the redelegation amount passed in is larger than the total redelegatable tokens, the total redelegatable amounts will be redelegated. If the remaining balance after redelegation is less than 1024 IP, all remaining tokens will be redelegated together.
-
-The delegation id will stay the same after the redelegation.
-
-Redelegation has its own maximum ongoing unbonding transaction limit per delegator/source validator/destination validator pair, which is also 14.
-
-Delegators can choose to redelegate their tokens to another active validator even if their tokens are still in an immature staking period. Their staking period maturation date and reward rate will stay the same.
-
-Redelegation can only be triggered when the source and destination validators support the same token type.
-
-If users specify the token amount that has more than 9 decimal units, the actual reledegated amount will be rounded down to 9 decimal.
-
-## Set withdrawal/reward address
-
-Delegators can call the staking contract to set a withdrawal address. The unstaked tokens will be sent to this withdrawal address. Similarly, delegators can set a separate reward address. All reward distributions will be sent to this address.
-
-A fee of 1 IP will be charged for updating either the withdrawal address or the reward address to prevent spamming. The fee will be burnt by the contract.
-
-The address change will take effect in the next block.
-
-## Slash/Unjail
-
-Slashing penalizes bad behaviors on the validators by slashing out a fraction of their staked tokens. Two types of behaviors can get slashed in Story: **double sign** and **downtime**.
-
-- **double sign**: If a validator double signs for a block, they will get slashed 5% of their tokens and get permanently jailed (called tombstoned).
-- **downtime**: If a validator is offline for too long and misses 95% of the past 28,800 blocks, they will get slashed 0.02% of their tokens and get jailed.
-
-A validator will also get jailed after self-undelegation if the validator's remaining self-delegation amount is smaller than the minimum self-delegation (1024 IP).
-
-A jailed validator cannot participate in the consensus and earn any reward. But they can unjail themselves after a cooldown time, which is currently set to 10 minutes. After 10 minutes, it can call story's staking contract to unjail itself IF their stake is more than minimum stake amount (1024 IP), after which it can participate in the consensus again if it's still within the top 64 validators.
-
-A jailed validator can still withdraw all their stakes.
-
-Delegators can still stake and unstake from a jailed validator as long as there are remaining stakes on this jailed validator. The jailed validator will only be removed from the chain (hence not able to be staked/unstaked) when there is no remaining stake on it.
-
-A fee of 1 IP will be charged for unjailing a validator to prevent spamming. The fee will be burnt by the contract.
-
-## On behalf functions
-
-Most of the staking-related operations can be done from another wallet on behalf of the validators or delegators. Most of these on-behalf functions are permissionless since they spend tokens from the wallet that calls the on-behalf operations, not from the actual validators or delegators.
-
-## Add operator
-
-If a delegator wants to allow another wallet to unstake or redelegate on their behalf, they must call the staking contract to add that wallet as the operator for their delegator. After that, the operator can unstake and redelegate the delegator's tokens on behalf of the delegator.
-
-The same applies to a validator who wants to allow another wallet to unjail on its behalf.
-
-A fee of 1 IP will be charged for adding an operator.
-
-## An additional data field
-
-Each function will include an additional unformatted `data` input field to accommodate potential future changes. It can avoid changing user interfaces in the future.
-
-## Validator key format
-
-Validator public keys are secp256k1 keys. The keys have a 33 bytes compressed version and 65 bytes uncompressed version. When interacting with the story's smart contracts, a 33 bytes compressed key is used to identify validators.
-
-# Rewards
-
-## Rewards Pool Allocation
-
-For every block, a fixed proportion of token inflation will go to the rewards distribution pool, which will be shared among all 64 active validators according to each of their share weights. _These allocated tokens will then be shared among the validator and its delegators in a fashion described by the next section._ The validator share weight is calculated based on the total token staking amount, and whether or not the token staking type is locked or unlocked.
-
-As an example, assume that we have 100 tokens allocated for the validator rewards distribution pool, and assume that we only have 3 active validators:
-
-- validatorA with 10 locked tokens staked
-- validatorB with 10 locked tokens staked
-- validatorC with 10 unlocked tokens staked
-
-To calculate how many tokens each validator receives, we first calculate each of their weighted shares, which is defined as the number of staked tokens multiplied by their rewards multiplier (0.5 if staking locked tokens, 1 if staking unlocked tokens). This gives us:
-
-- validatorA with 10 \* 0.5 = 5 shares
-- validatorB with 10 \* 0.5 = 5 shares
-- validatorC with 10 \* 1 = 10 shares
-
-With the weighted and total shares calculated, we can then get the total number of inflationary tokens allocated for each validator:
-
-- validatorA with 100 \* (5 / 20) = 25 tokens
-- validatorB with 100 \* (5 / 20) = 25 tokens
-- validatorC with 100 \* (10 / 20) = 50 tokens
-
-The formula for calculating the total number of tokens allocated for a validator is as follows:
-
-<Image
-  align="center"
-  src="https://files.readme.io/833d419fc139ba363c56aef263dcca571fe449ab824a2349a69d7419ee658bd0-Screenshot_2024-10-30_at_8.13.27_PM.png"
-/>
-
-where
-
-- R_i is the total inflationary token rewards for validator i
-- S_i is the staked tokens for validator i
-- M_i is the rewards multiplier (0.5 for locked tokens, 1 for unlocked tokens)
-- R_total is the total inflationary tokens allocated for the rewards pool
-
-## Validator And Delegator Rewards
-
-Total rewards allocations (_whose calculations are shown in the prior section_) for each validator are shared between the validator itself and all of its delegators:
-
-- The validator takes a fixed percentage commission, set by the validator itself
-- Remaining rewards are distributed among delegators according to their share weights
-
-Calculation of delegator rewards is similar to that of validator rewards, where the proportion of tokens received for each delegator out of the remaining validator rewards is calculated based on each delegator's staking multiplier (described in the staking section).
-
-As an example, assume a validator has 100 total rewards allocated to it, with a validator commission of 20%, and 3 delegators delegating to it:
-
-- delegatorA with 10 tokens staked and a staking multiplier of 1
-- delegatorB with 10 tokens staked and a staking multiplier of 1
-- delegatorC with 10 tokens staked and a staking multiplier of 2
-
-To calculate how many tokens each delegator receives, we first calculate each of their weighted shares, which is defined as the number of staked tokens multiplied by their staking rewards multiplier. This gives us:
-
-- delegatorA with 10 \* 1 = 10 shares
-- delegatorB with 10 \* 1 = 10 shares
-- delegatorC with 10 \* 2 = 20 shares
-
-With the weighted and total shares calculated, we can then get the total number of inflationary tokens allocated for each delegator, noting that the total number of tokens to be distributed among delegators is give by 100 - (100 \* 0.20) = 80:
-
-- delegatorA with 80 \* (10 / 40) = 20 tokens
-- delegatorB with 80 \* (10 / 40) = 20 tokens
-- delegatorC with 80 \* (20 / 40) = 40 tokens
-
-The formula for calculating the delegator token reward can be found below:
-
-<Image
-  align="center"
-  src="https://files.readme.io/429c0eff2f0acddcabfa3e6259e427b47156aed244020bfb7f11a5b63387fec9-Screenshot_2024-10-30_at_8.15.51_PM.png"
-/>
-
-where
-
-- D_i is the total inflationary token rewards for delegator i
-- S_i is the staked tokens for delegator i
-- M_i is the staked rewards multiplier for delegator i
-- R_total is the total inflationary tokens allocated for the validator
-- C is the commission rate for the validator
-
-The validator commission is also treated as a reward and will follow the same auto-reward distribution rule described below. The minimal validator commission is set to 5% to avoid a cut-throat competition of lower commission rates among validators.
-
-The reward calculation results will be rounded down to gwei. Anything smaller than 1 gwei will be truncated.
-
-## Auto reward distribution
-
-The reward is accumulated per block and can be distributed per block. However, it will only be automatically distributed to the delegator's account when it is larger than a threshold. The default and also minimal threshold is 8 IP, which means that only if the delegator's reward is more than 8 IP, it will be sent to the delegator's account.
-
-The reward distribution will go to a reward distribution queue, which only processes a fixed amount of reward distribution requests per block. The reward distribution per block is 32.
-
-The staking reward cannot be manually withdrawn by design.
-
-# Community Pool
-
-A percentage of the newly minted tokens in every block will go to a community pool contract. The foundation will determine how to use the tokens sent to the pool. The maximum community pool percentage that can be set is 20%.
-
-The community pool contract address: **0xcccccc0000000000000000000000000000000002**
-
-# Singularity
-
-The first 1,580,851 blocks after the genesis is called Singularity, during which everyone can create a validator and stake tokens but the active validator set will only have the genesis validators. There is also no new token emission, hence no reward. Unstake and redelegate are also not supported.
-
-The Genesis validator set consists of 8 validators, setup by the foundation and trusted staking institutions. 4 of them support locked tokens and the other 4 support unlocked tokens. Each of them has an initial stake of 0.001 IP. Each of them will set a commission rate. During the Singularity, the genesis valdiators will need to self delegate at least 1024 IP to perform validator operations like editing validator commission rate.
-
-After Singularity, the top 64 validator nodes with the highest stakes will be selected to participate in consensus and receive rewards.
-
-Slashing/Jail won't happen during Singularity.
-
-# Staking contract
-
-Story's staking contract will handle all validators/delegators related operations. It's deployed to address: **0xcccccc0000000000000000000000000000000001**
-
-The contract interfaces are defined here: [https://github.com/piplabs/story/blob/main/contracts/src/protocol/IPTokenStaking.sol](https://github.com/piplabs/story/blob/main/contracts/src/protocol/IPTokenStaking.sol)
-
-
-# Welcome to Story Network
-
-<CardGroup cols={2}>
-  <Card title="Add Story Mainnet" href="https://chainid.network/chain/1514/" icon="house">
-    Connect your wallet to Story's mainnet.
-  </Card>
-
-  <Card title="Add Story 'Aeneid' Testnet" href="https://chainid.network/chain/1315/" icon="house">
-    Connect your wallet to Story's 'Aeneid' testnet.
-  </Card>
-</CardGroup>
-
-# Story Network (L1)
-
-Welcome to the Hub for Story Network, the Story Chain.
-
-This section is designed to help you understand the fundamentals of Story Network. We've structured the content into two parts:
-
-1. Understanding the Architecture
-2. Operating a Node
-
-Story Network is a purpose-built Layer 1 blockchain that seamlessly integrates the best of both the Ethereum Virtual Machine (EVM) and Cosmos SDK. It offers full EVM compatibility while incorporating deep execution layer optimizations to efficiently support graph-based data structures. These optimizations make it particularly well-suited for handling complex intellectual property (IP) data structures in a cost-effective and scalable manner.
-
-<Frame>
-  <iframe
-    src="https://www.youtube.com/embed/JWd5TCOHfhU"
-    title="YouTube video player"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen
-    className="w-full aspect-video"
-  ></iframe>
-</Frame>
-
-## Key Features
-
-- **EVM Compatibility**: Full compatibility with Ethereum Virtual Machine
-- **Optimized Data Structures**: Precompiled primitives for efficient IP graph traversal
-- **Fast Finality**: CometBFT-based consensus layer for quick transaction finality
-- **Modular Architecture**: Decoupled consensus from execution using Ethereum's Engine-API
-
-## Documentation Sections
-
-### Getting Started
-
-- [Node Architecture](/network/node-architecture)
-- [Network Info](/network/network-info)
-- [Whitepaper](https://www.story.foundation/whitepaper.pdf)
-
-### Node Operations
-
-- [Operating a node](/network/operating-a-node)
-  - Full Node Setup
-  - Archive Node Setup
-  - Node Upgrade Guide
-  - Release Notes
-
-### Validation
-
-- [Become a validator](/network/become-a-validator)
-  - Validator Setup
-  - Validator Operations
-
-### Network Economics
-
-- [Staking Design](/network/tokenomics-staking)
-  - Token Economics
-  - Staking Mechanisms
-  - Rewards Structure
-
-### Resources
-
-- [Additional Resources](/network/more/additional-resources)
-  - GitHub Repositories
-  - SIP Repository
-  - Community Forum
-- [Troubleshooting](/network/more/troubleshooting)
-  - Common Issues
-  - Troubleshooting
-  - Best Practices
-
-## Network Information
-
-The Story Network is currently available in multiple environments:
-
-- Mainnet (Production)
-- Aeneid (Testnet)
-- Localnet (Development)
-
-For detailed network information and connection details, please refer to the respective network documentation sections.
-
-
-# Infrastructure Partners
+# Governance
 
 
