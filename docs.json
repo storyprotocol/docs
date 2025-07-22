@@ -84,84 +84,66 @@
                 "pages": [
                   "network/overview",
                   {
-                      "group": "Connect",
-                      "icon": "network-wired",
-                      "pages": [
-                          "network/connect/overview",
-                          "network/connect/mainnet",
-                          "network/connect/aeneid"
-                      ]
+                    "group": "Connect",
+                    "icon": "network-wired",
+                    "pages": [
+                      "network/connect/overview",
+                      "network/connect/mainnet",
+                      "network/connect/aeneid"
+                    ]
                   },
                   {
                     "group": "Learn",
                     "icon": "books",
                     "pages": [
-                        "network/learn/overview",
-                        "network/learn/whitepaper",
-                        {
-                            "group": "Node Software",
-                            "icon": "code",
+                      "network/learn/overview",
+                      "network/learn/whitepaper",
+                      {
+                        "group": "Node Software",
+                        "icon": "code",
+                        "pages": [
+                          "network/learn/node-software/overview",
+                          "network/learn/node-software/execution_layer",
+                          "network/learn/node-software/consensus_layer",
+                          "network/learn/node-software/engine_api",
+                          {
+                            "group": "Cosmos Modules",
+                            "icon": "puzzle-piece-simple",
                             "pages": [
-                                "network/learn/node-software/overview",
-                                "network/learn/node-software/execution_layer",
-                                "network/learn/node-software/consensus_layer",
-                                "network/learn/node-software/engine_api",
-                                {
-                                    "group": "Cosmos Modules",
-                                    "icon": "puzzle-piece-simple",
-                                    "pages": [
-                                        "network/learn/node-software/cosmos-modules/cosmos-module-overview",
-                                        "network/learn/node-software/cosmos-modules/evmengine-module",
-                                        "network/learn/node-software/cosmos-modules/evmstaking-module",
-                                        "network/learn/node-software/cosmos-modules/mint-module",
-                                        "network/learn/node-software/cosmos-modules/staking-module"
-                                    ]
-                                },
-                                "network/learn/node-software/localnet",
-                                "network/learn/node-software/precompiled-contracts"
+                              "network/learn/node-software/cosmos-modules/cosmos-module-overview",
+                              "network/learn/node-software/cosmos-modules/evmengine-module",
+                              "network/learn/node-software/cosmos-modules/evmstaking-module",
+                              "network/learn/node-software/cosmos-modules/mint-module",
+                              "network/learn/node-software/cosmos-modules/staking-module"
                             ]
-                        },
-                        "network/learn/token-economy"
+                          },
+                          "network/learn/node-software/localnet",
+                          "network/learn/node-software/precompiled-contracts"
+                        ]
+                      },
+                      "network/learn/token-economy"
                     ]
                   },
                   {
                     "group": "Participate",
                     "icon": "handshake",
                     "pages": [
-                        "network/participate/overview",
-                        {
-                            "group": "Become a validator",
-                            "icon": "computer",
-                            "pages": [
-                                "network/participate/validators/overview",
-                                "network/participate/validators/node-setup-mainnet",
-                                "network/participate/validators/operate-your-node",
-                                "network/participate/validators/node-upgrade",
-                                "network/participate/validators/release-notes",
-                                "network/participate/validators/troubleshooting"
-                            ]
-                        },
-                        "network/participate/governance",
-                        "network/participate/forum",
-                        "network/participate/sip"
-
-                    ]
-                  },
-                  "network/infrastructure-partners",
-                  {
-                    "group": "Additional Resources",
-                    "icon": "book",
-                    "pages": [
-                      "network/more/additional-resources",
+                      "network/participate/overview",
                       {
-                        "group": "Oracles",
+                        "group": "Become a validator",
+                        "icon": "computer",
                         "pages": [
-                          "network/more/oracle/gelato",
-                          "network/more/oracle/pyth",
-                          "network/more/oracle/redstone"
+                          "network/participate/validators/overview",
+                          "network/participate/validators/node-setup-mainnet",
+                          "network/participate/validators/operate-your-node",
+                          "network/participate/validators/node-upgrade",
+                          "network/participate/validators/release-notes",
+                          "network/participate/validators/troubleshooting"
                         ]
                       },
-                      "network/more/multisig"
+                      "network/participate/governance",
+                      "network/participate/forum",
+                      "network/participate/sip"
                     ]
                   }
                 ]
@@ -384,23 +366,22 @@
               {
                 "group": "Infrastructure Partners",
                 "pages": [
-                    "developers/infra-partners/overview",
-                    "developers/infra-partners/rpc-provider",
-                    "developers/infra-partners/account-system",
-                    "developers/infra-partners/indexers",
-                    {
-                        "group": "Oracles",
-                        "icon": "stars",
-                        "pages": [
-                            "developers/infra-partners/oracles/overview",
-                            "developers/infra-partners/oracles/gelato",
-                            "developers/infra-partners/oracles/pyth",
-                            "developers/infra-partners/oracles/redstone"
-                        ]
-                    },
-                    "developers/infra-partners/randomness",
-                    "developers/infra-partners/payment-solutions",
-                    "developers/infra-partners/multisig"
+                  "developers/infra-partners/overview",
+                  "developers/infra-partners/rpc-provider",
+                  "developers/infra-partners/account-system",
+                  "developers/infra-partners/indexers",
+                  {
+                    "group": "Oracles",
+                    "icon": "stars",
+                    "pages": [
+                      "developers/infra-partners/oracles/gelato",
+                      "developers/infra-partners/oracles/pyth",
+                      "developers/infra-partners/oracles/redstone"
+                    ]
+                  },
+                  "developers/infra-partners/randomness",
+                  "developers/infra-partners/payment-solutions",
+                  "developers/infra-partners/multisig"
                 ]
               }
             ]
@@ -690,61 +671,61 @@
                 "pages": [
                   "ko/network/overview",
                   {
-                      "group": "Connect",
-                      "icon": "share",
-                      "pages": [
-                          "ko/network/connect/overview",
-                          "ko/network/connect/mainnet",
-                          "ko/network/connect/aeneid"
-                      ]
+                    "group": "Connect",
+                    "icon": "share",
+                    "pages": [
+                      "ko/network/connect/overview",
+                      "ko/network/connect/mainnet",
+                      "ko/network/connect/aeneid"
+                    ]
                   },
                   {
                     "group": "Learn",
                     "icon": "book",
                     "pages": [
-                        "ko/network/learn/overview",
-                        "ko/network/learn/whitepaper",
-                        {
-                            "group": "Node Software",
-                            "icon": "code",
+                      "ko/network/learn/overview",
+                      "ko/network/learn/whitepaper",
+                      {
+                        "group": "Node Software",
+                        "icon": "code",
+                        "pages": [
+                          "ko/network/learn/node-software/overview",
+                          "ko/network/learn/node-software/execution_layer",
+                          "ko/network/learn/node-software/consensus_layer",
+                          "ko/network/learn/node-software/engine_api",
+                          {
+                            "group": "Cosmos Modules",
                             "pages": [
-                                "ko/network/learn/node-software/overview",
-                                "ko/network/learn/node-software/execution_layer",
-                                "ko/network/learn/node-software/consensus_layer",
-                                "ko/network/learn/node-software/engine_api",
-                                {
-                                    "group": "Cosmos Modules",
-                                    "pages": [
-                                        "ko/network/learn/node-software/cosmos-modules/cosmos-module-overview",
-                                        "ko/network/learn/node-software/cosmos-modules/evmengine-module",
-                                        "ko/network/learn/node-software/cosmos-modules/evmstaking-module",
-                                        "ko/network/learn/node-software/cosmos-modules/mint-module",
-                                        "ko/network/learn/node-software/cosmos-modules/staking-module"
-                                    ]
-                                },
-                                "ko/network/learn/node-software/localnet",
-                                "ko/network/learn/node-software/precompiled-contracts"
+                              "ko/network/learn/node-software/cosmos-modules/cosmos-module-overview",
+                              "ko/network/learn/node-software/cosmos-modules/evmengine-module",
+                              "ko/network/learn/node-software/cosmos-modules/evmstaking-module",
+                              "ko/network/learn/node-software/cosmos-modules/mint-module",
+                              "ko/network/learn/node-software/cosmos-modules/staking-module"
                             ]
-                        },
-                        "ko/network/learn/token-economy"
+                          },
+                          "ko/network/learn/node-software/localnet",
+                          "ko/network/learn/node-software/precompiled-contracts"
+                        ]
+                      },
+                      "ko/network/learn/token-economy"
                     ]
                   },
                   {
                     "group": "Participate",
                     "icon": "handshake",
                     "pages": [
-                        "ko/network/participate/overview",
-                        {
-                            "group": "Become a validator",
-                            "pages": [
-                                "ko/network/participate/validators/overview",
-                                "ko/network/participate/validators/node-setup-mainnet",
-                                "ko/network/participate/validators/operate-your-node",
-                                "ko/network/participate/validators/node-upgrade",
-                                "ko/network/participate/validators/release-notes",
-                                "ko/network/participate/validators/troubleshooting"
-                            ]
-                        }
+                      "ko/network/participate/overview",
+                      {
+                        "group": "Become a validator",
+                        "pages": [
+                          "ko/network/participate/validators/overview",
+                          "ko/network/participate/validators/node-setup-mainnet",
+                          "ko/network/participate/validators/operate-your-node",
+                          "ko/network/participate/validators/node-upgrade",
+                          "ko/network/participate/validators/release-notes",
+                          "ko/network/participate/validators/troubleshooting"
+                        ]
+                      }
                     ]
                   },
                   "ko/network/infrastructure-partners",
@@ -948,23 +929,23 @@
               {
                 "group": "Infrastructure Partners",
                 "pages": [
-                    "ko/developers/infra-partners/overview",
-                    "ko/developers/infra-partners/rpc-provider",
-                    "ko/developers/infra-partners/account-system",
-                    "ko/developers/infra-partners/indexers",
-                    {
-                        "group": "Oracles",
-                        "icon": "stars",
-                        "pages": [
-                            "ko/developers/infra-partners/oracles/overview",
-                            "ko/developers/infra-partners/oracles/gelato",
-                            "ko/developers/infra-partners/oracles/pyth",
-                            "ko/developers/infra-partners/oracles/redstone"
-                        ]
-                    },
-                    "ko/developers/infra-partners/randomness",
-                    "ko/developers/infra-partners/payment-solutions",
-                    "ko/developers/infra-partners/multisig"
+                  "ko/developers/infra-partners/overview",
+                  "ko/developers/infra-partners/rpc-provider",
+                  "ko/developers/infra-partners/account-system",
+                  "ko/developers/infra-partners/indexers",
+                  {
+                    "group": "Oracles",
+                    "icon": "stars",
+                    "pages": [
+                      "ko/developers/infra-partners/oracles/overview",
+                      "ko/developers/infra-partners/oracles/gelato",
+                      "ko/developers/infra-partners/oracles/pyth",
+                      "ko/developers/infra-partners/oracles/redstone"
+                    ]
+                  },
+                  "ko/developers/infra-partners/randomness",
+                  "ko/developers/infra-partners/payment-solutions",
+                  "ko/developers/infra-partners/multisig"
                 ]
               }
             ]
