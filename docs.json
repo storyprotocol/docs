@@ -117,31 +117,42 @@
                                         "network/learn/node-software/cosmos-modules/staking-module"
                                     ]
                                 },
-                                "network/learn/node-software/localnet"
+                                "network/learn/node-software/localnet",
+                                "network/learn/node-software/precompiled-contracts"
                             ]
                         },
                         "network/learn/token-economy"
                     ]
                   },
                   {
-                    "group": "Operating a Node",
-                    "icon": "computer",
+                    "group": "Participate",
+                    "icon": "handshake",
                     "pages": [
-                      "network/operating-a-node/node-setup-mainnet",
-                      "network/operating-a-node/operate-your-node",
-                      "network/operating-a-node/node-upgrade",
-                      "network/operating-a-node/release-notes"
+                        "network/participate/overview",
+                        {
+                            "group": "Become a validator",
+                            "icon": "computer",
+                            "pages": [
+                                "network/participate/validators/overview",
+                                "network/participate/validators/node-setup-mainnet",
+                                "network/participate/validators/operate-your-node",
+                                "network/participate/validators/node-upgrade",
+                                "network/participate/validators/release-notes",
+                                "network/participate/validators/troubleshooting"
+                            ]
+                        },
+                        "network/participate/governance",
+                        "network/participate/forum",
+                        "network/participate/sip"
+
                     ]
                   },
-                  "network/become-a-validator",
-                  "network/tokenomics-staking",
                   "network/infrastructure-partners",
                   {
                     "group": "Additional Resources",
                     "icon": "book",
                     "pages": [
                       "network/more/additional-resources",
-                      "network/more/troubleshooting",
                       {
                         "group": "Oracles",
                         "pages": [
@@ -373,13 +384,23 @@
               {
                 "group": "Infrastructure Partners",
                 "pages": [
-                  "developers/infra-partners/overview",
-                  "developers/infra-partners/rpc-provider",
-                  "developers/infra-partners/account-system",
-                  "developers/infra-partners/indexers",
-                  "developers/infra-partners/oracles",
-                  "developers/infra-partners/randomness",
-                  "developers/infra-partners/payment-solutions"
+                    "developers/infra-partners/overview",
+                    "developers/infra-partners/rpc-provider",
+                    "developers/infra-partners/account-system",
+                    "developers/infra-partners/indexers",
+                    {
+                        "group": "Oracles",
+                        "icon": "stars",
+                        "pages": [
+                            "developers/infra-partners/oracles/overview",
+                            "developers/infra-partners/oracles/gelato",
+                            "developers/infra-partners/oracles/pyth",
+                            "developers/infra-partners/oracles/redstone"
+                        ]
+                    },
+                    "developers/infra-partners/randomness",
+                    "developers/infra-partners/payment-solutions",
+                    "developers/infra-partners/multisig"
                 ]
               }
             ]
@@ -701,24 +722,31 @@
                                         "ko/network/learn/node-software/cosmos-modules/staking-module"
                                     ]
                                 },
-                                "ko/network/learn/node-software/localnet"
+                                "ko/network/learn/node-software/localnet",
+                                "ko/network/learn/node-software/precompiled-contracts"
                             ]
                         },
                         "ko/network/learn/token-economy"
                     ]
                   },
                   {
-                    "group": "Operating a Node",
-                    "icon": "computer",
+                    "group": "Participate",
+                    "icon": "handshake",
                     "pages": [
-                      "ko/network/operating-a-node/node-setup-mainnet",
-                      "ko/network/operating-a-node/operate-your-node",
-                      "ko/network/operating-a-node/node-upgrade",
-                      "ko/network/operating-a-node/release-notes"
+                        "ko/network/participate/overview",
+                        {
+                            "group": "Become a validator",
+                            "pages": [
+                                "ko/network/participate/validators/overview",
+                                "ko/network/participate/validators/node-setup-mainnet",
+                                "ko/network/participate/validators/operate-your-node",
+                                "ko/network/participate/validators/node-upgrade",
+                                "ko/network/participate/validators/release-notes",
+                                "ko/network/participate/validators/troubleshooting"
+                            ]
+                        }
                     ]
                   },
-                  "ko/network/become-a-validator",
-                  "ko/network/tokenomics-staking",
                   "ko/network/infrastructure-partners",
                   {
                     "group": "Additional Resources",
@@ -915,6 +943,28 @@
                   "ko/developers/tutorials/how-to-tip-an-ip",
                   "ko/developers/tutorials/case-study-register-derivative-ippy",
                   "ko/developers/tutorials/privy-tutorial"
+                ]
+              },
+              {
+                "group": "Infrastructure Partners",
+                "pages": [
+                    "ko/developers/infra-partners/overview",
+                    "ko/developers/infra-partners/rpc-provider",
+                    "ko/developers/infra-partners/account-system",
+                    "ko/developers/infra-partners/indexers",
+                    {
+                        "group": "Oracles",
+                        "icon": "stars",
+                        "pages": [
+                            "ko/developers/infra-partners/oracles/overview",
+                            "ko/developers/infra-partners/oracles/gelato",
+                            "ko/developers/infra-partners/oracles/pyth",
+                            "ko/developers/infra-partners/oracles/redstone"
+                        ]
+                    },
+                    "ko/developers/infra-partners/randomness",
+                    "ko/developers/infra-partners/payment-solutions",
+                    "ko/developers/infra-partners/multisig"
                 ]
               }
             ]
@@ -1236,7 +1286,7 @@
     },
     {
       "source": "/precompile",
-      "destination": "/network/learn/node-software/precompile"
+      "destination": "/network/learn/node-software/precompiled-contracts"
     },
     {
       "source": "/network",
@@ -1256,23 +1306,23 @@
     },
     {
       "source": "/node-setup-mainnet",
-      "destination": "/network/operating-a-node/node-setup-mainnet"
+      "destination": "/network/participate/validators/node-setup-mainnet"
     },
     {
       "source": "/operate-your-node",
-      "destination": "/network/operating-a-node/operate-your-node"
+      "destination": "/network/participate/validators/operate-your-node"
     },
     {
       "source": "/node-upgrade",
-      "destination": "/network/operating-a-node/node-upgrade"
+      "destination": "/network/participate/validators/node-upgrade"
     },
     {
       "source": "/release-notes",
-      "destination": "/network/operating-a-node/release-notes"
+      "destination": "/network/participate/validators/release-notes"
     },
     {
       "source": "/become-a-validator",
-      "destination": "/network/become-a-validator"
+      "destination": "/network/participate/validators/"
     },
     {
       "source": "/tokenomics-staking",
@@ -1284,7 +1334,7 @@
     },
     {
       "source": "/network/more/network-faq",
-      "destination": "/network/more/troubleshooting"
+      "destination": "/network/participate/validators/troubleshooting"
     },
     {
       "source": "/overview",

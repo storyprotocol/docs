@@ -1,5 +1,5 @@
 ---
-title: Become a Validator
+title: Overview
 description: Guide to running a validator node on the Story Network
 icon: lock
 ---
@@ -93,21 +93,21 @@ To create a new validator, run the following command:
 
 ```bash Locked token node
 ./story validator create
-			 --stake ${AMOUNT_TO_STAKE_IN_WEI} \
-			 --moniker ${VALIDATOR_NAME} \
+       --stake ${AMOUNT_TO_STAKE_IN_WEI} \
+       --moniker ${VALIDATOR_NAME} \
        --rpc ${rpc} \
-		   --chain-id ${chain_id} \
-			 --commission-rate ${rate} \
- 			 --unlocked=false
+       --chain-id ${chain_id} \
+       --commission-rate ${rate} \
+       --unlocked=false
 ```
 
 ```Text Unlocked token node
 ./story validator create
-			 --stake ${AMOUNT_TO_STAKE_IN_WEI} \
-			 --moniker ${VALIDATOR_NAME} \
+       --stake ${AMOUNT_TO_STAKE_IN_WEI} \
+       --moniker ${VALIDATOR_NAME} \
        --rpc ${rpc} \
-		   --chain-id ${chain_id} \
-			 --commission-rate ${rate} \
+       --chain-id ${chain_id} \
+       --commission-rate ${rate} \
 ```
 
 This will create the validator corresponding to your validator key saved in `priv_validator_key.json`, providing the validator with `{$AMOUNT_TO_STAKE_IN_WEI}` IP to self-stake.
@@ -137,12 +137,12 @@ Below is a list of optional flags to further customize your validator setup:
 
 ```bash
 story validator create
-	--stake 1024000000000000000000
+  --stake 1024000000000000000000
   --moniker "timtimtim"
   --commission-rate 700
   --validator-pubkey "<validator_pubkey>" # if you dont have a .env
   --rpc "https://mainnet.storyrpc.io"
-	--chain-id 1514
+  --chain-id 1514
 ```
 
 ### Verifying your validator
@@ -199,7 +199,7 @@ To unstake from a validator, run the following command:
 ./story validator unstake \
   --validator-pubkey ${VALIDATOR_PUB_KEY_IN_HEX} \
   --unstake ${AMOUNT_TO_UNSTAKE_IN_WEI} \
-	--delegation-id ${ID_STAKING_PERIOD}
+  --delegation-id ${ID_STAKING_PERIOD}
 ```
 
 This will unstake `${AMOUNT_TO_UNSTAKE_IN_WEI}` IP from the selected validator. You must unstake at least 1024 IP worth (`*1024000000000000000000 wei`) for the transaction to be valid.
@@ -264,7 +264,7 @@ Like in the other staking operations, please use the `Explorer URL` to confirm t
    --validator-pubkey 03e42b4d778cda2f3612c85161ba7c0aad1550a872f3279d99e028a1dfa7854930 \
    --stake 1024000000000000000000 \
    --staking-period "short" \
-	 --rpc \
+   --rpc \
    --chain-id
 ```
 
@@ -588,14 +588,14 @@ To change the commission rate for your validator, you can run the following:
 
 ```
 ./story validator update-validator-commission \
-		--commission-rate ${NEW_COMMISSION}
+    --commission-rate ${NEW_COMMISSION}
 ```
 
 ### Example Update Validator Commission
 
 ```
 ./story validator update-validator-commission \
-		--commission-rate 5000
+    --commission-rate 5000
 ```
 
 ## Enabling Story API
