@@ -87,7 +87,6 @@
                     "group": "Connect",
                     "icon": "network-wired",
                     "pages": [
-                      "network/connect/overview",
                       "network/connect/mainnet",
                       "network/connect/aeneid"
                     ]
