@@ -24386,10 +24386,10 @@ This section will guide you through how to setup a Story node for mainnet. Story
 
 The `story` and `geth` binaries, which make up the clients required for running Story nodes, are available from our latest `release` pages:
 
-| Network | story-geth      | story             |
-| ------- | --------------- | ----------------- |
-| Mainnet | v1.1.1 (Cosmas) | v1.2.1 (Ovid)     |
-| Aeneid  | v1.1.1 (Cosmas) | v1.3.0 (Polybius) |
+| Network | story-geth      | story             | 
+| ------- | --------------- | ----------------- | 
+| Mainnet | v1.1.1 (Cosmas) | v1.3.1 (Polybius) | 
+| Aeneid  | v1.1.1 (Cosmas) | v1.3.0 (Polybius) | 
 
 - **`story-geth`execution client:**
   - Release Link: [**Click here**](https://github.com/piplabs/story-geth/releases)
@@ -24403,6 +24403,9 @@ The `story` and `geth` binaries, which make up the clients required for running 
 - **`story`consensus client:** (For Aeneid testnet)
   - Releases link: [**Click here**](https://github.com/piplabs/story/releases)
   - Latest Stable Binary (v1.3.0): [**Click here**](https://github.com/piplabs/story/releases/tag/v1.3.0)
+
+> Note if you are syncing from Genesis you need to use Story v1.3.1.
+> https://github.com/piplabs/story/releases/tag/v1.3.1
 
 # Story Node Installation Guide
 
@@ -26190,10 +26193,22 @@ Each release comes with a release note describing a list of new features or fixe
 
 Refer to the following release matrix to run nodes for Mainnet and Aeneid Testnet.
 
-| Network | story-geth      | story             |
-| ------- | --------------- | ----------------- |
-| Mainnet | v1.1.1 (Cosmos) | v1.2.1 (Ovid)     |
-| Aeneid  | v1.1.0 (Cosmos) | v1.3.0 (Polybius) |
+
+| Network | story-geth      | story             | 
+| ------- | --------------- | ----------------- | 
+| Mainnet | v1.1.1 (Cosmas) | v1.3.1 (Polybius) | 
+| Aeneid  | v1.1.1 (Cosmas) | v1.3.0 (Polybius) | 
+
+<Update label="2025-07-23" description="Polybius (Geth v1.3.1)">
+    ### Polybius
+    [Full release note](https://github.com/piplabs/story/releases/tag/v1.3.1)
+
+        <Accordion title="Fix">
+           handling residual rewards by version
+        </Accordion>
+
+</Update>
+
 
 <Update label="2025-06-19" description="Cosmas (Geth v1.1.1)">
     ### Cosmas
