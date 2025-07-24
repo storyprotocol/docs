@@ -16830,7 +16830,7 @@ As the steward of the Story ecosystem, the Story Foundation works in close align
 # MICA Whitepaper
 
 <iframe
-  src="https://story.mypinata.cloud/ipfs/bafybeicnbnlywzmtyj6yayjhohipvtcjb23mqtsaacdy3detqkgwgbyuxa"
+  src="https://ipfs.io/ipfs/bafybeicvnkzkpg77yz3txq43wmrha3sxdukaoxsfmgqq657hpwm5z33epi"
   title="MICA Whitepaper"
   className="w-full h-screen rounded-xl"
 ></iframe>
