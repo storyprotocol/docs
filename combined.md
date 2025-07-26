@@ -11265,11 +11265,11 @@ For easy setup, you can actually clone the [Story Protocol Boilerplate](https://
 
 The first step is to construct a deBridge API call. The purpose of this API call is to receive back a response that will contain transaction data so we can then execute it on the source chain.
 
-Normally, this deBridge order would swap tokens from one chain to another. We can optionally attach a `dlnHook` that will execute an arbitrary action upon order completion (ex. after $ETH has been swapped for $WIP).
+Normally, this deBridge order would swap tokens from one chain to another. We can optionally attach a `dlnHook` that will execute an arbitrary action upon order completion (ex. after \$ETH has been swapped for \$WIP).
 
 In this case, the `dlnHook` will be a call to `payRoyaltyOnBehalf` on Story's `RoyaltyModule` contract, which will pay royalties to an IP Asset.
 
-To summarize, we will construct a deBridge API call that says "we want to swap $ETH for $WIP, and then pay royalties using that $WIP to an IP Asset on Story".
+To summarize, we will construct a deBridge API call that says "we want to swap \$ETH for \$WIP, and then pay royalties using that \$WIP to an IP Asset on Story".
 
 ### Step 1a. Constructing the `dlnHook`
 
