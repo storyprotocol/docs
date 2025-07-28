@@ -16723,7 +16723,7 @@ The Council can:
     - Anton Astafiev [Onboarding] : [https://www.linkedin.com/in/astafiev](https://www.linkedin.com/in/astafiev/)
       - Public Key:
     - Raúl Martínez: https://x.com/ethicraul
-      - Public Key:
+      - Public Key: `0x576fa14594D1Ab7dc3fa7E08466E873321f5C95B`
 - Members are empowered to carry out Emergency and Non-Emergency Actions, and ensure SIPs comply with the Constitution.
 
 ### Phased Membership Model
