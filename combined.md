@@ -26174,6 +26174,77 @@ rm ~/.story/story/config/priv_validator_key.json
 
 4. After transferring the private key file, restart the validator node on your new setup. This will reintegrate your validator with the network, enabling it to resume its validation role.
 
+## Private Key Encryption for Validators
+
+This feature allows operators to securely generate, store, and manage private keys in encrypted form through CLI commands—including encrypting keys during setup, migrating unencrypted keys, and safely accessing them for validator operations.
+
+### Overview of Private Key Encryption
+
+Private key encryption is a critical security measure that encrypts sensitive cryptographic keys with a user-defined password. In the context of validator operations, this means that even if a private key file is exposed or accessed by unauthorized parties, it remains unusable without the correct password. Story CLI helps operators enforce stronger security controls while maintaining ease of use by integrating encryption directly into the validator workflow. This feature is designed to mitigate common attack vectors, such as accidental key leaks or unauthorized server access, by preventing private keys from being stored or used in plaintext.
+
+### Initializing a Validator with Private Key Encryption
+
+When setting up a new validator using the Story CLI, operators can generate and encrypt the validator’s private key in one step. By adding the `--encrypt-priv-key` flag during initialization, the CLI will prompt the operator to create a password, which is used to encrypt the generated private key. This encrypted key is then securely stored at `story/config/priv_validator_key.enc`.
+
+Through this enhancement, private keys are never written to disk in plaintext during initialization, significantly reducing the risk of accidental exposure. Once encrypted, the key remains protected, and password decryption is required before any validator-related actions can be performed.
+
+**Example usage:**
+
+```bash
+./story init --encrypt-priv-key --network local
+```
+
+In this example, the validator is initialized on the local network, automatically triggering the private key encryption process. During this step, the operator is prompted to input and confirm a password. The resulting encrypted key file becomes the foundation for all validator operations.
+
+### Using the Encrypted Private Key
+
+Once a private key is encrypted, decryption is required for any key-dependent validator operation. The Story CLI will automatically detect the encrypted key file and prompt for a password when running a validator node. For validator-related CLI commands, however, the path of the encrypted key file should be specified. If no key file path is provided, the CLI will fall back to the private key in the .env file.
+
+The password prompt appears interactively via the CLI, blocking execution if the wrong password is provided. As a result, only authorized operators with the correct password can unlock and use the private key, adding protection against unauthorized access.
+
+This workflow integrates with typical validator commands, preserving the developer experience while strengthening security. For environments that require automation, additional tooling (e.g., password managers or secure key vaults) can be used to manage passwords securely. Still, caution is advised to avoid undermining the purpose of encryption.
+
+**Example:**
+
+```bash
+./story validator start
+# CLI will prompt: "Enter password to decrypt private key:"
+```
+
+This behavior applies consistently across all validator commands requiring private key access.
+
+### Encrypting an Existing Private Key
+
+For operators already running validators with unencrypted private keys, Story CLI now provides a simple migration path to adopt encrypted key storage. Using the encrypt command, you can securely encrypt the existing private key (typically defined in the .env file).
+
+Once the command is executed, the CLI will prompt you to set a password. The private key will be encrypted and stored at a specified path using the --enc-key-file flag. The encrypted key becomes the default for validator operations, allowing the original key in the .env file to be manually removed for better security. This does not apply to validator-related CLI commands, which still require explicit key input.
+
+**Example usage:**
+
+```bash
+./story encrypt --encrypt-priv-key
+```
+
+This enables existing validators to benefit from the enhanced security of encrypted key management without requiring re-initialization. It’s recommended that the password and encrypted key file be securely backed up before deleting the plaintext key from the `.env` file.
+
+### Viewing the Encrypted Private Key
+
+Story CLI introduces a show command to give operators transparency and control over their encrypted keys. This command decrypts the encrypted private key file—specified via the `--enc-key-file` flag—and displays essential information such as the public key and validator address. It mirrors the functionality of the traditional export command but supports encrypted keys.
+
+Operators will be prompted for the encryption password before revealing key details, protecting sensitive information from unauthorized access. For advanced users, the optional `--show-private` flag will reveal the hex-encoded private key. However, this should be used cautiously as it defeats the purpose of encryption and exposes the key to potential compromise.
+
+**Example usage:**
+
+```bash
+# View public information (e.g., public key, address)
+./story key show-encrypted --encrypt-key-file <encrypted-key-file-path>
+# View public information and the raw private key (use with caution)
+./story key show-encrypted --show-private --enc-key-file <encrypted-key-file-path>
+```
+
+It is recommended that `--show-private` be used only in secure environments and for exceptional operational needs, such as recovery or migration to other systems.
+
+
 # Release Notes
 
 This page provides information on the story execution and consensus client software release information. You may find execution client releases in [story-geth](https://github.com/piplabs/story-geth/releases) repo, and consensus client releases in [story](https://github.com/piplabs/story/releases) repo.
