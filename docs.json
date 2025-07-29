@@ -129,7 +129,7 @@
                     "pages": [
                       "network/participate/overview",
                       {
-                        "group": "Become a validator",
+                        "group": "Become a Validator",
                         "icon": "computer",
                         "pages": [
                           "network/participate/validators/overview",
