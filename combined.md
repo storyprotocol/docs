@@ -24386,10 +24386,10 @@ This section will guide you through how to setup a Story node for mainnet. Story
 
 The `story` and `geth` binaries, which make up the clients required for running Story nodes, are available from our latest `release` pages:
 
-| Network | story-geth      | story             | 
-| ------- | --------------- | ----------------- | 
-| Mainnet | v1.1.1 (Cosmas) | v1.3.1 (Polybius) | 
-| Aeneid  | v1.1.1 (Cosmas) | v1.3.0 (Polybius) | 
+| Network | story-geth      | story             |
+| ------- | --------------- | ----------------- |
+| Mainnet | v1.1.1 (Cosmas) | v1.3.1 (Polybius) |
+| Aeneid  | v1.1.1 (Cosmas) | v1.3.0 (Polybius) |
 
 - **`story-geth`execution client:**
   - Release Link: [**Click here**](https://github.com/piplabs/story-geth/releases)
@@ -24519,7 +24519,7 @@ go version
 
 ```bash
 cd $HOME
-wget https://github.com/piplabs/story-geth/releases/download/v1.0.1/geth-linux-amd64
+wget https://github.com/piplabs/story-geth/releases/download/v1.1.1/geth-linux-amd64
 sudo mv ./geth-linux-amd64 story-geth
 sudo chmod +x story-geth
 sudo mv ./story-geth $HOME/go/bin/
@@ -24533,9 +24533,7 @@ You will see the version of the geth binary.
 
 ```
 Geth
-version: 1.0.1-stable
-...
-
+version: 1.1.1-stable
 ```
 
 (Mac OS X only) The OS X binaries have yet to be signed by our build process, so you may need to unquarantine them manually:
@@ -24644,7 +24642,7 @@ echo "export DAEMON_ALLOW_DOWNLOAD_BINARIES=false" >> $HOME/.bash_profile
 
 ```bash
 cd $HOME
-wget https://github.com/piplabs/story/releases/download/v1.0.0/story-linux-amd64
+wget https://github.com/piplabs/story/releases/download/v1.3.1/story-linux-amd64
 sudo mv story-linux-amd64 story
 sudo chmod +x story
 sudo mv ./story $HOME/go/bin/
@@ -24652,7 +24650,7 @@ source $HOME/.bashrc
 story version
 ```
 
-> You should expect to see version 1.0.0-stable
+> You should expect to see version 1.3.1-stable
 
 (Mac OS X Only) The OS X binaries have yet to be signed by our build process, so you may need to unquarantine them manually:
 
