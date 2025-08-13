@@ -12032,7 +12032,7 @@ npm install @story-protocol/core-sdk permissionless viem @privy-io/react-auth
 <CardGroup cols={1}>
   <Card
     title="Official Privy Tutoral"
-    href="https://docs.privy.io/guide/react/wallets/smart-wallets/usage#setup"
+    href="https://docs.privy.io/wallets/using-wallets/evm-smart-wallets/setup/configuring-dashboard"
     icon="house"
   >
     Follow Privy's official tutorial for setup instead of reading this step.
@@ -12040,10 +12040,11 @@ npm install @story-protocol/core-sdk permissionless viem @privy-io/react-auth
 </CardGroup>
 
 <Note>
-  You can read Privy's tutorial
-  [here](https://docs.privy.io/guide/react/wallets/embedded/creation) that
-  describes setting up Embedded Wallets, which is a fancy way of saying email
-  login for your users. In the below example, we simply create an embedded
+  This part of the Privy documentation
+  [here](https://docs.privy.io/basics/react/advanced/automatic-wallet-creation#automatic-wallet-creation)
+  describes setting up Embedded Wallets automatically, which is a fancy way of
+  saying it supports email login, such that when a user logs in with email it
+  creates a wallet for them. In the below example, we simply create an embedded
   wallet for every user, but you may want more customization by reading their
   tutorial.
 </Note>
@@ -12145,7 +12146,7 @@ export default function Home() {
 
   <Card
     title="Official Privy Tutoral"
-    href="https://docs.privy.io/guide/react/wallets/smart-wallets/usage#signing-messages"
+    href="https://docs.privy.io/wallets/using-wallets/evm-smart-wallets/usage#sign-a-message"
     icon="house"
   >
     Follow Privy's official tutorial for signing messages instead of reading
@@ -12192,7 +12193,7 @@ export default function Home() {
 <CardGroup cols={1}>
   <Card
     title="Official Privy Tutoral"
-    href="https://docs.privy.io/guide/react/wallets/smart-wallets/usage#sending-transactions"
+    href="https://docs.privy.io/wallets/using-wallets/evm-smart-wallets/usage#send-a-transaction"
     icon="house"
   >
     Follow Privy's official tutorial for sending transactions instead of reading
