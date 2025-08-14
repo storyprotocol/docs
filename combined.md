@@ -22957,10 +22957,21 @@ Refer to the following release matrix to run nodes for Mainnet and Aeneid Testne
 
 | Network | story-geth      | story             | 
 | ------- | --------------- | ----------------- | 
-| Mainnet | v1.1.1 (Cosmas) | v1.3.1 (Polybius) | 
+| Mainnet | v1.1.1 (Cosmas) | v1.3.2 (Polybius) | 
 | Aeneid  | v1.1.1 (Cosmas) | v1.3.0 (Polybius) | 
 
-<Update label="2025-07-23" description="Polybius (Geth v1.3.1)">
+
+<Update label="2025-08-08" description="Polybius (Story v1.3.2)">
+    ### Polybius
+    [Full release note](https://github.com/piplabs/story/releases/tag/v1.3.2)
+
+        <Accordion title="Fix">
+            - Increases the max number of validators from 64 to 80
+        </Accordion>
+
+</Update>
+
+<Update label="2025-07-23" description="Polybius (Story v1.3.1)">
     ### Polybius
     [Full release note](https://github.com/piplabs/story/releases/tag/v1.3.1)
 
@@ -23259,7 +23270,7 @@ The `story` and `geth` binaries, which make up the clients required for running 
 
 | Network | story-geth      | story             |
 | ------- | --------------- | ----------------- |
-| Mainnet | v1.1.1 (Cosmas) | v1.3.1 (Polybius) |
+| Mainnet | v1.1.1 (Cosmas) | v1.3.2 (Polybius) |
 | Aeneid  | v1.1.1 (Cosmas) | v1.3.0 (Polybius) |
 
 - **`story-geth`execution client:**
@@ -23267,10 +23278,10 @@ The `story` and `geth` binaries, which make up the clients required for running 
   - Latest Stable Binary (v1.1.1): [**Click here**](https://github.com/piplabs/story-geth/releases/tag/v1.1.1)
 - **`story-geth`execution client:** (For Aeneid testnet)
   - Release Link: [**Click here**](https://github.com/piplabs/story-geth/releases)
-  - Latest Stable Binary (v1.1.0): [**Click here**](https://github.com/piplabs/story-geth/releases/tag/v1.1.0)
+  - Latest Stable Binary (v1.1.1): [**Click here**](https://github.com/piplabs/story-geth/releases/tag/v1.1.1)
 - **`story`consensus client:**
   - Releases link: [**Click here**](https://github.com/piplabs/story/releases)
-  - Latest Stable Binary (v1.2.1): [**Click here**](https://github.com/piplabs/story/releases/tag/v1.2.1)
+  - Latest Stable Binary (v1.3.2): [**Click here**](https://github.com/piplabs/story/releases/tag/v1.3.2)
 - **`story`consensus client:** (For Aeneid testnet)
   - Releases link: [**Click here**](https://github.com/piplabs/story/releases)
   - Latest Stable Binary (v1.3.0): [**Click here**](https://github.com/piplabs/story/releases/tag/v1.3.0)
@@ -23513,7 +23524,7 @@ echo "export DAEMON_ALLOW_DOWNLOAD_BINARIES=false" >> $HOME/.bash_profile
 
 ```bash
 cd $HOME
-wget https://github.com/piplabs/story/releases/download/v1.3.1/story-linux-amd64
+wget https://github.com/piplabs/story/releases/download/v1.3.2/story-linux-amd64
 sudo mv story-linux-amd64 story
 sudo chmod +x story
 sudo mv ./story $HOME/go/bin/
@@ -23521,7 +23532,7 @@ source $HOME/.bashrc
 story version
 ```
 
-> You should expect to see version 1.3.1-stable
+> You should expect to see version 1.3.2-stable
 
 (Mac OS X Only) The OS X binaries have yet to be signed by our build process, so you may need to unquarantine them manually:
 
