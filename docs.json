@@ -351,9 +351,12 @@
                     ]
                   },
                   {
-                    "group": "Wallet-less / Onboarding",
+                    "group": "Wallet-less & Onboarding",
                     "icon": "wallet",
-                    "pages": ["developers/tutorials/privy-tutorial"]
+                    "pages": [
+                      "developers/tutorials/privy-tutorial",
+                      "developers/tutorials/easy-ip-onboarding"
+                    ]
                   },
                   {
                     "group": "Miscellaneous",
