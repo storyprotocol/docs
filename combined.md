@@ -5915,10 +5915,10 @@ As the steward of the Story ecosystem, the Story Foundation works in close align
 </Accordion>
 
 
-# MICA Whitepaper
+# MiCA White Paper
 
 <iframe
-  src="https://ipfs.io/ipfs/bafybeicvnkzkpg77yz3txq43wmrha3sxdukaoxsfmgqq657hpwm5z33epi"
+  src="https://orange-managing-gamefowl-150.mypinata.cloud/ipfs/bafybeihupknzzmxwkqvl4alxtopqx2rmasfcbzrxlkighxjuxrb6j2fv2y"
   title="MICA Whitepaper"
   className="w-full h-screen rounded-xl"
 ></iframe>
