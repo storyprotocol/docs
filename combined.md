@@ -13736,7 +13736,7 @@ Congratulations! Now your image is registered on Story with commercial license t
 
 # Cross-Chain Royalty Payments
 
-In this tutorial, we will explore how to use [deBridge](https://docs.debridge.finance/) to perform cross-chain royalty payments and arbitrary transactions. For example, minting a license on Story using Base $ETH.
+In this tutorial, we will explore how to use [deBridge](https://docs.debridge.finance/) to perform cross-chain royalty payments and arbitrary transactions. For this tutorial specifically, we'll be using Base $ETH to mint a license on Story.
 
 <Card title="Working Code Example" icon="computer" href="https://github.com/jacob-tucker/base-story-quickstart">
 
