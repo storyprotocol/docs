@@ -13738,11 +13738,21 @@ Congratulations! Now your image is registered on Story with commercial license t
 
 In this tutorial, we will explore how to use [deBridge](https://docs.debridge.finance/) to perform cross-chain royalty payments and arbitrary transactions. For this tutorial specifically, we'll be using Base $ETH to mint a license on Story.
 
-<Card title="Working Code Example" icon="computer" href="https://github.com/jacob-tucker/base-story-quickstart">
+<CardGroup>
 
-View a working code example, clone the repo, and follow the README.md.
+<Card title="Base Example" icon="computer" color="#0000fe" href="https://github.com/jacob-tucker/base-story-quickstart">
+
+A working code example of minting a license on Story using Base \$ETH.
 
 </Card>
+
+<Card title="Abstract Chain Example" icon="computer" color="#2cdb84" href="https://github.com/jacob-tucker/abs-story-quickstart">
+
+A working code example of minting a license on Story using Abstract \$ETH.
+
+</Card>
+
+</CardGroup>
 
 From a high level, it involves:
 
@@ -14056,11 +14066,21 @@ executeLicenseMint(params);
 
 Congratulations! You have successfully set up cross-chain royalty payments using deBridge.
 
-<Card title="Working Code Example" icon="computer" href="https://github.com/jacob-tucker/base-story-quickstart">
+<CardGroup>
 
-View a working code example, clone the repo, and follow the README.md.
+<Card title="Base Example" icon="computer" color="#0000fe" href="https://github.com/jacob-tucker/base-story-quickstart">
+
+A working code example of minting a license on Story using Base \$ETH.
 
 </Card>
+
+<Card title="Abstract Chain Example" icon="computer" color="#2cdb84" href="https://github.com/jacob-tucker/abs-story-quickstart">
+
+A working code example of minting a license on Story using Abstract \$ETH.
+
+</Card>
+
+</CardGroup>
 
 
 # Finetune Images on Story
