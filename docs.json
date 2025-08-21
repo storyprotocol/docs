@@ -48,8 +48,13 @@
         },
         {
           "anchor": "Network Status",
-          "icon": "check",
+          "icon": "signal-bars",
           "href": "https://status.story.foundation"
+        },
+        {
+          "anchor": "Explorer",
+          "icon": "magnifying-glass",
+          "href": "https://www.storyscan.io/"
         }
       ]
     },
