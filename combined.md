@@ -13736,26 +13736,48 @@ Congratulations! Now your image is registered on Story with commercial license t
 
 # Cross-Chain Royalty Payments
 
-In this tutorial, we will explore how to use [deBridge](https://docs.debridge.finance/) to perform cross-chain royalty payments. From a high level, it involves:
+In this tutorial, we will explore how to use [deBridge](https://docs.debridge.finance/) to perform cross-chain royalty payments and arbitrary transactions. For example, minting a license on Story using Base $ETH.
 
-1. Constructing a deBridge API call that will return tx data to swap tokens across chains and pay an IP Asset on Story
-2. Executing the API call to receive a response
-3. Verifying the API response to see that it contains tx data to swap and pay royalties
-4. Executing the transaction (using the returned tx data) on the source chain
+<Card title="Working Code Example" icon="computer" href="https://github.com/jacob-tucker/base-story-quickstart">
 
-## Prerequisites
+View a working code example, clone the repo, and follow the README.md.
 
-For easy setup, you can actually clone the [Story Protocol Boilerplate](https://github.com/storyprotocol/story-protocol-boilerplate) and view the test in the `test/6_DebridgeHook.t.sol` file. This already covers steps 1-3 below.
+</Card>
+
+From a high level, it involves:
+
+1. Constructing a deBridge API call that will return tx data to swap tokens across chains and perform some action (e.g. mint a license on Story)
+2. Executing the API call to receive that tx data
+3. Executing the transaction (using the returned tx data) on the source chain
+
+<Frame>
+
+<img
+  src="/images/tutorials/cross-chain-royalty-payments.jpeg"
+  alt="Cross-Chain Royalty Payments"
+/>
+
+</Frame>
 
 ## Step 1: Constructing the deBridge API Call
 
 The first step is to construct a deBridge API call. The purpose of this API call is to receive back a response that will contain transaction data so we can then execute it on the source chain.
 
-Normally, this deBridge order would swap tokens from one chain to another. We can optionally attach a `dlnHook` that will execute an arbitrary action upon order completion (ex. after \$ETH has been swapped for \$WIP).
+This deBridge order swaps tokens from one chain to another. We can also optionally attach a `dlnHook` that will execute an arbitrary action upon order completion (ex. after \$ETH has been swapped for \$WIP). This is where the magic happens.
 
-In this case, the `dlnHook` will be a call to `payRoyaltyOnBehalf` on Story's `RoyaltyModule` contract, which will pay royalties to an IP Asset.
+<Note>
 
-To summarize, we will construct a deBridge API call that says "we want to swap \$ETH for \$WIP, and then pay royalties using that \$WIP to an IP Asset on Story".
+You can learn more about dlnHooks [here](https://docs.debridge.finance/dln-the-debridge-liquidity-network-protocol/integration-guidelines/interacting-with-the-api).
+
+</Note>
+
+In this case, the `dlnHook` will be a call to `mintLicenseTokensCrossChain`, which is a function [in this contract](https://www.storyscan.io/address/0x6429A616F76a8958e918145d64bf7681C3936D6A?tab=contract) that wraps the received \$IP to \$WIP and then mints a license token on Story.
+
+<Tip>
+
+To summarize, we will construct a deBridge API call that says _"we want to swap \$ETH for \$IP, then use a dlnHook to call a smart contract on Story that wraps \$IP to \$WIP and mints a license on Story"._
+
+</Tip>
 
 ### Step 1a. Constructing the `dlnHook`
 
@@ -13763,55 +13785,58 @@ The `dlnHook` is a JSON object that will be attached to the deBridge API call. I
 
 - The type of action to execute (`evm_transaction_call`)
 - The address of the contract to call (`ROYALTY_MODULE`)
-- The calldata to execute (`payRoyaltyOnBehalf`)
+- The calldata to execute (`mintLicenseTokensCrossChain`)
 
-<Info>
+```typescript main.ts
+const STORY_WRAP_THEN_LICENSE_MULTICALL =
+  "0x6429a616f76a8958e918145d64bf7681c3936d6a";
 
-Check out the whole function by going [here](https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/6_DebridgeHook.t.sol).
+// Build the dlnHook for Story royalty payment
+const buildRoyaltyPaymentHook = ({ ipId: `0x${string}`, licenseTermsId: bigint, receiverAddress: `0x${string}` }): string => {
+  // Encode the mintLicenseTokensCrossChain function call
+  const calldata = encodeFunctionData({
+    abi: [
+      {
+        name: "mintLicenseTokensCrossChain",
+        type: "function",
+        inputs: [
+          { name: "licensorIpId", type: "address" },
+          { name: "licenseTermsId", type: "uint256" },
+          { name: "tokenAmount", type: "uint256" },
+          { name: "receiver", type: "address" },
+        ],
+      },
+    ],
+    functionName: "mintLicenseTokensCrossChain",
+    args: [
+      ipId,
+      licenseTermsId,
+      BigInt(1),
+      receiverAddress,
+    ],
+  });
 
-</Info>
+  // Build the dlnHook JSON
+  const dlnHook = {
+    type: "evm_transaction_call",
+    data: {
+      to: STORY_WRAP_THEN_LICENSE_MULTICALL,
+      calldata: calldata,
+      gas: 0,
+    },
+  };
 
-```solidity Solidity
-function _buildRoyaltyPaymentHook() internal pure returns (string memory dlnHookJson) {
-    // an IP Asset on Story mainnet (it is actually Ippy - Story's mascot)
-    address ipAssetId = 0xB1D831271A68Db5c18c8F0B69327446f7C8D0A42;
-
-    bytes memory calldata_ = abi.encodeCall(
-        IRoyaltyModule.payRoyaltyOnBehalf,
-        (
-            ipAssetId, // IP asset receiving royalties
-            address(0), // External payer (0x0)
-            0x1514000000000000000000000000000000000000, // Payment token (WIP)
-            1e18 // 1 WIP
-        )
-    );
-
-    dlnHookJson = string.concat(
-        '{"type":"evm_transaction_call",',
-        '"data":{"to":"',
-        _addressToHex(ROYALTY_MODULE),
-        '",',
-        '"calldata":"',
-        calldata_.toHexString(),
-        '",',
-        '"gas":0}}'
-    );
-}
+  return JSON.stringify(dlnHook);
+};
 ```
 
 ### Step 1b. Constructing the deBridge API Call
 
 Now that we have the `dlnHook`, we can construct the whole deBridge API call, including the `dlnHook`.
 
-<Info>
-
-Check out the whole function by going [here](https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/6_DebridgeHook.t.sol).
-
-</Info>
-
 <Note>
 
-You can view deBridge's documentation on the `create-tx` endpoint [here](https://docs.debridge.finance/dln-the-debridge-liquidity-network-protocol/integration-guidelines/interacting-with-the-api/creating-an-order).
+You can view deBridge's documentation on the `create-tx` endpoint [here](https://docs.debridge.finance/dln-the-debridge-liquidity-network-protocol/integration-guidelines/interacting-with-the-api/creating-an-order). I also highly recommend checking out the [Swagger UI](https://dln.debridge.finance/v1.0#/DLN/DlnOrderControllerV10_createOrder) for the `create-tx` endpoint as well.
 
 </Note>
 
@@ -13831,111 +13856,112 @@ You can view deBridge's documentation on the `create-tx` endpoint [here](https:/
 | `prependOperatingExpenses`      | A flag to include operating expenses in the transaction.                                                                             |
 | `dlnHook`                       | The URL-encoded hook that specifies additional actions to execute post-swap.                                                         |
 
-```solidity Solidity
-function _buildApiRequest(string memory dlnHookJson) internal pure returns (string memory apiUrl) {
-    address senderAddress = 0xcf0a36dEC06E90263288100C11CF69828338E826; // Example sender
+```typescript main.ts
+import { base } from "viem/chains";
 
-    apiUrl = string.concat(
-        "https://dln.debridge.finance/v1.0/dln/order/create-tx",
-        "?srcChainId=1", // Ethereum mainnet
-        "&srcChainTokenIn=",
-        _addressToHex(address(0)), // ETH (native token)
-        "&srcChainTokenInAmount=auto", // 0.01 ETH
-        "&dstChainId=100000013", // Story mainnet
-        "&dstChainTokenOut=",
-        _addressToHex(WIP_TOKEN), // WIP token
-        "&dstChainTokenOutAmount=",
-        StringUtils.toString(PAYMENT_AMOUNT),
-        "&dstChainTokenOutRecipient=",
-        _addressToHex(senderAddress),
-        "&senderAddress=",
-        _addressToHex(senderAddress),
-        "&srcChainOrderAuthorityAddress=",
-        _addressToHex(senderAddress),
-        "&dstChainOrderAuthorityAddress=",
-        _addressToHex(senderAddress),
-        "&enableEstimate=true", // Enable simulation
-        "&prependOperatingExpenses=true",
-        "&dlnHook=",
-        _urlEncode(dlnHookJson) // URL-encoded hook
-    );
-}
+// ... previous code here ...
+
+// Build deBridge API URL for cross-chain royalty payment
+const buildDeBridgeApiUrl = ({
+  ipId: `0x${string}`,
+  licenseTermsId: bigint,
+  receiverAddress: `0x${string}`,
+  senderAddress: `0x${string}`,
+  paymentAmount: string // should be in wei
+}): string => {
+  const dlnHook = buildRoyaltyPaymentHook({ ipId, licenseTermsId, receiverAddress });
+  const encodedHook = encodeURIComponent(dlnHook);
+  const url =
+    `https://dln.debridge.finance/v1.0/dln/order/create-tx?` +
+    `srcChainId=${base.id}` +
+    `&srcChainTokenIn=0x0000000000000000000000000000000000000000` +
+    `&srcChainTokenInAmount=auto` +
+    `&dstChainId=100000013` +
+    `&dstChainTokenOut=0x0000000000000000000000000000000000000000` +
+    `&dstChainTokenOutAmount=${paymentAmount}` +
+    `&dstChainTokenOutRecipient=${STORY_WRAP_THEN_LICENSE_MULTICALL}` +
+    `&senderAddress=${senderAddress}` +
+    `&srcChainOrderAuthorityAddress=${senderAddress}` +
+    `&dstChainOrderAuthorityAddress=${senderAddress}` +
+    `&enableEstimate=true` +
+    `&prependOperatingExpenses=true` +
+    `&dlnHook=${encodedHook}`;
+
+  return url;
+};
 ```
 
 ## Step 2: Executing the API Call
 
 Once the API call is constructed, execute it to receive a response. This response includes transaction data and an estimate for running the transaction on the source swap chain (e.g., Ethereum, Solana).
 
-<Info>
+<CodeGroup>
 
-Check out the whole function by going [here](https://github.com/storyprotocol/story-protocol-boilerplate/blob/main/test/6_DebridgeHook.t.sol).
+```typescript main.ts
+// ... previous code here ...
 
-</Info>
+const getDeBridgeTransactionData = async ({
+  ipId: `0x${string}`,
+  licenseTermsId: bigint,
+  receiverAddress: `0x${string}`,
+  senderAddress: `0x${string}`,
+  paymentAmount: string // should be in wei
+}): Promise<DeBridgeApiResponse> => {
+  try {
+    const apiUrl = buildDeBridgeApiUrl({ ipId, licenseTermsId, receiverAddress, senderAddress, paymentAmount });
 
-```solidity Solidity
-function _executeApiCall(string memory apiUrl) internal returns (string memory response) {
-    console.log("deBridge API Request:");
-    console.log(apiUrl);
-    console.log("");
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
 
-    string[] memory curlCommand = new string[](3);
-    curlCommand[0] = "curl";
-    curlCommand[1] = "-s";
-    curlCommand[2] = apiUrl;
-
-    bytes memory responseBytes = vm.ffi(curlCommand);
-    response = string(responseBytes);
-
-    console.log("deBridge API Response:");
-    console.log(response);
-    console.log("");
-}
-```
-
-## Step 3: Verifying the API Response
-
-Verify that the API call returns transaction data and an estimate. This step ensures that the transaction can be executed on the source chain.
-
-```solidity Solidity
-function _validateApiResponse(string memory response) internal pure {
-    require(bytes(response).length > 0, "Empty API response");
-
-    require(_contains(response, '"estimation"'), "Missing estimation field");
-    require(_contains(response, '"tx"'), "Missing transaction field");
-    require(_contains(response, '"orderId"'), "Missing order ID");
-    require(_contains(response, '"dstChainTokenOut"'), "Missing destination token info");
-
-    require(
-        _contains(response, "d2577f3b"), // payRoyaltyOnBehalf selector
-        "Hook not properly integrated in transaction"
-    );
-
-    require(
-        _contains(_toLower(response), _toLower(_addressToHex(WIP_TOKEN))),
-        "WIP token address not found in response"
-    );
-}
-```
-
-In this response is the following:
-
-<Note>
-  You can view the whole API return type
-  [here](https://docs.debridge.finance/dln-the-debridge-liquidity-network-protocol/integration-guidelines/interacting-with-the-api/creating-an-order/api-response).
-</Note>
-
-```json
-{
-    ..., // other fields
-    "tx": {
-        "value": string,
-        "data": string,
-        "to": string
+    if (!response.ok) {
+      throw new Error(
+        `deBridge API error: ${response.status} ${response.statusText}`
+      );
     }
+
+    const data = (await response.json()) as DeBridgeApiResponse;
+
+    // Validate the response
+    if (!data.tx || !data.estimation || !data.orderId) {
+      throw new Error("Invalid deBridge API response: missing required fields");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error calling deBridge API:", error);
+    throw error;
+  }
+};
+```
+
+```typescript DeBridgeApiResponse
+export interface DeBridgeApiResponse {
+  estimation: {
+    srcChainTokenIn: {
+      amount: string;
+      approximateOperatingExpense: string;
+    };
+    dstChainTokenOut: {
+      amount: string;
+      maxTheoreticalAmount: string;
+    };
+  };
+  tx: {
+    to: string;
+    data: string;
+    value: string;
+  };
+  orderId: string;
 }
 ```
 
-## Step 4: Executing the Transaction on the Source Chain
+</CodeGroup>
+
+## Step 3: Executing the Transaction on the Source Chain
 
 Next, you would take the API response and execute the transaction on the source chain.
 
@@ -13946,8 +13972,8 @@ View [the docs here](https://docs.debridge.finance/dln-the-debridge-liquidity-ne
 </Note>
 
 ```typescript TypeScript
-import { mainnet } from "viem/chains";
-import { createWalletClient, http, WalletClient } from "viem";
+import { base } from "viem/chains";
+import { createWalletClient, http, WalletClient, parseEther } from "viem";
 import { privateKeyToAccount, Address, Account } from "viem/accounts";
 import dotenv from "dotenv";
 
@@ -13965,24 +13991,33 @@ const account: Account = privateKeyToAccount(
 
 // Initialize the wallet client
 const walletClient = createWalletClient({
-  chain: mainnet,
+  chain: base,
   transport: http("https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID"), // Use Infura or another Ethereum provider
   account,
 }) as WalletClient;
 
+// ... previous code here ...
+
 // Function to send a transaction
-async function sendTransaction(apiResponse: ApiResponse) {
-  // Extract transaction details from the API response
-  const transactionRequest = {
-    to: apiResponse.tx.to, // Extracted from API response
-    value: BigInt(apiResponse.tx.value), // Convert value to BigInt
-    data: apiResponse.tx.data, // Extracted from API response
-    account, // Include the account
-    chain: mainnet, // Include the chain
-  };
+const executeLicenseMint = async (params: {
+  ipId: `0x${string}`;
+  licenseTermsId: bigint;
+  receiverAddress: `0x${string}`;
+  senderAddress: `0x${string}`;
+  paymentAmount: string; // should be in wei
+}) => {
+  // Get transaction data from deBridge
+  const deBridgeResponse = await getDeBridgeTransactionData(params);
 
   try {
-    const txHash = await walletClient.sendTransaction(transactionRequest);
+    // Execute the transaction using the user's wallet
+    const txHash = await walletClient.sendTransaction({
+      to: deBridgeResponse.tx.to as Address,
+      data: deBridgeResponse.tx.data as Address,
+      value: BigInt(deBridgeResponse.tx.value),
+      account: account as Account,
+      chain: base,
+    });
     console.log("Transaction sent:", txHash);
 
     // Wait for the transaction to be mined
@@ -13991,26 +14026,30 @@ async function sendTransaction(apiResponse: ApiResponse) {
   } catch (error) {
     console.error("Error sending transaction:", error);
   }
-}
+};
 
 // Example usage with a mock API response
-const mockApiResponse: ApiResponse = {
-  // ... other fields
-  tx: {
-    to: "0xRecipientAddress", // Replace with the actual recipient's address
-    value: "1000000000000000000", // 1 ETH in wei
-    data: "0x", // No data for a simple ETH transfer
-  },
-  // ... other fields
+const params = {
+  ipId: "0xcb6B9CCae4108A103097B30cFc25e1E257D4b5Fe",
+  licenseTermsId: BigInt(27910),
+  receiverAddress: "0x01", // replace with the address that should receive the license on Story
+  senderAddress: account.address,
+  paymentAmount: parseEther("0.00001"), // 0.00001 $WIP since the license on Story costs 0.00001 $WIP
 };
 
 // Execute the function to send the transaction
-sendTransaction(mockApiResponse);
+executeLicenseMint(params);
 ```
 
 ## Conclusion
 
-Congratulations! You have successfully set up cross-chain royalty payments using deBridge. This tutorial demonstrated how to construct and execute a deBridge API call, verify the response, and perform the transaction on the source chain.
+Congratulations! You have successfully set up cross-chain royalty payments using deBridge.
+
+<Card title="Working Code Example" icon="computer" href="https://github.com/jacob-tucker/base-story-quickstart">
+
+View a working code example, clone the repo, and follow the README.md.
+
+</Card>
 
 
 # Finetune Images on Story
