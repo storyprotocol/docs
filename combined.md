@@ -13874,16 +13874,27 @@ const buildDeBridgeApiUrl = ({
   const url =
     `https://dln.debridge.finance/v1.0/dln/order/create-tx?` +
     `srcChainId=${base.id}` +
+    // we make this zero address which represents the native token ($ETH)
     `&srcChainTokenIn=0x0000000000000000000000000000000000000000` +
+    // we set this to auto which will automatically calculate the amount of $ETH to swap
     `&srcChainTokenInAmount=auto` +
+    // Story's mainnet chain ID
     `&dstChainId=100000013` +
+    // we make this zero address which represents the native token ($IP)
     `&dstChainTokenOut=0x0000000000000000000000000000000000000000` +
+    // we set the amount of $IP to pay for the license on Story
     `&dstChainTokenOutAmount=${paymentAmount}` +
+    // the address of the contract that will wrap the $IP and mint the license on Story
     `&dstChainTokenOutRecipient=${STORY_WRAP_THEN_LICENSE_MULTICALL}` +
+    // the address of the user initiating the transaction
     `&senderAddress=${senderAddress}` +
+    // the address authorized to manage the order on the source chain
     `&srcChainOrderAuthorityAddress=${senderAddress}` +
+    // the address authorized to manage the order on the destination chain
     `&dstChainOrderAuthorityAddress=${senderAddress}` +
+    // we set this to true to enable transaction simulation and estimation
     `&enableEstimate=true` +
+    // we set this to true to include operating expenses in the transaction
     `&prependOperatingExpenses=true` +
     `&dlnHook=${encodedHook}`;
 
