@@ -523,7 +523,8 @@
                       "POST /assets/edges",
                       "POST /collections",
                       "api-reference/protocol/search",
-                      "api-reference/protocol/transactions"
+                      "api-reference/protocol/transactions",
+                      "POST /disputes"
                     ]
                   }
                 ]
