@@ -5319,20 +5319,52 @@ As the steward of the Story ecosystem, the Story Foundation works in close align
 </Accordion>
 
 
+# "List IP Transactions"
+
+<Note>
+
+This endpoint allows you to filter based on event type. Here are the possible string values for the `where.eventTypes[]` field:
+
+- "IPRegistered": When an IP asset is registered
+- "LicenseTermsAttached": When license terms are attached to an IP asset
+- "DerivativeRegistered": When a derivative IP asset is registered
+- "DisputeRaised": When a dispute is raised against an IP asset
+- "DisputeResolved": When a dispute is resolved
+- "DisputeCancelled": When a dispute is cancelled
+- "DisputeJudgementSet": When a judgement is set for a dispute
+- "RoyaltyPaid": When royalty payments are made
+
+</Note>
+
+
 # "Introduction"
 
 Welcome to the Story API Reference! Please use the `https://api.storyapis.com` endpoint.
 
+You can use the following public API key:
+
 ```http Headers
-// pick one depending on the network. `story` = mainnet, `story-aeneid` = testnet
-X-CHAIN: story | story-aeneid
-// same for both networks
+// same for staging and production
 X-API-Key: MhBsxkU1z9fG6TofE59KqiiWV-YlYE8Q4awlLQehF3U
 ```
+
+| Environment | Endpoint                                | Live Docs                                                                                                           | OpenAPI JSON                                                                                                                |
+| ----------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Production  | `https://api.storyapis.com`             | <Icon icon="arrow-up-right-from-square" iconType="solid" /> [Go](https://api.storyapis.com/api/v4/docs)             | <Icon icon="arrow-up-right-from-square" iconType="solid" /> [Go](https://api.storyapis.com/api/v4/openapi.json)             |
+| Staging     | `https://staging-api.storyprotocol.net` | <Icon icon="arrow-up-right-from-square" iconType="solid" /> [Go](https://staging-api.storyprotocol.net/api/v4/docs) | <Icon icon="arrow-up-right-from-square" iconType="solid" /> [Go](https://staging-api.storyprotocol.net/api/v4/openapi.json) |
 
 ## Rate Limit
 
 The above public API key has a requests/second of 300. If you'd like an API key with a higher limit, please join our Builder Discord and describe your project needs in the discussion channel.
+
+
+# Search IP Assets
+
+<Note>
+
+Search is done by vectorizing the title and description of the IP metadata using the [IPA metadata standard](https://docs.story.foundation/concepts/ip-asset/ipa-metadata-standard).
+
+</Note>
 
 
 # "Introduction"
