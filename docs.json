@@ -12,11 +12,6 @@
     "dark": "/logo/dark.png"
   },
   "favicon": "/favicon.png",
-  "api": {
-    "mdx": {
-      "server": "https://api.storyapis.com"
-    }
-  },
   "appearance": {
     "default": "light"
   },
@@ -521,98 +516,14 @@
                     ]
                   },
                   {
-                    "group": "IPAssets",
+                    "group": "Endpoints",
+                    "openapi": "https://api.storyapis.com/api/v4/openapi.json",
                     "pages": [
-                      "api-reference/protocol/ipassets/list-ipassets",
-                      "api-reference/protocol/ipassets/list-ip-edges",
-                      "api-reference/protocol/ipassets/get-an-ipasset",
-                      "api-reference/protocol/ipassets/get-metadata-for-an-ipasset"
-                    ]
-                  },
-                  {
-                    "group": "Collections",
-                    "pages": [
-                      "api-reference/protocol/collections/list-collections",
-                      "api-reference/protocol/collections/get-an-collection"
-                    ]
-                  },
-                  {
-                    "group": "IPLicenseTerms",
-                    "pages": [
-                      "api-reference/protocol/iplicenseterms/list-detailed-ip-license-term",
-                      "api-reference/protocol/iplicenseterms/list-iplicenseterms",
-                      "api-reference/protocol/iplicenseterms/get-ip-license-terms-for-an-ip"
-                    ]
-                  },
-                  {
-                    "group": "Disputes",
-                    "pages": [
-                      "api-reference/protocol/disputes/list-disputes",
-                      "api-reference/protocol/disputes/get-a-dispute"
-                    ]
-                  },
-                  {
-                    "group": "IPGroup",
-                    "pages": [
-                      "api-reference/protocol/ipgroup/list-a-ipgroups-edges",
-                      "api-reference/protocol/ipgroup/list-ip-groups"
-                    ]
-                  },
-                  {
-                    "group": "Licenses",
-                    "pages": [
-                      "api-reference/protocol/licenses/list-licensemintingfeepays",
-                      "api-reference/protocol/licenses/get-a-licensemintingfeepay"
-                    ]
-                  },
-                  {
-                    "group": "LicenseTemplates",
-                    "pages": [
-                      "api-reference/protocol/licensetemplates/list-licensetemplates",
-                      "api-reference/protocol/licensetemplates/get-a-licensetemplate"
-                    ]
-                  },
-                  {
-                    "group": "LicenseTerms",
-                    "pages": [
-                      "api-reference/protocol/licenseterms/list-licenseterms",
-                      "api-reference/protocol/licenseterms/get-a-licenseterm"
-                    ]
-                  },
-                  {
-                    "group": "LicenseTokens",
-                    "pages": [
-                      "api-reference/protocol/licensetokens/list-licensetokens",
-                      "api-reference/protocol/licensetokens/get-an-licensetoken"
-                    ]
-                  },
-                  {
-                    "group": "Modules",
-                    "pages": [
-                      "api-reference/protocol/modules/list-modules",
-                      "api-reference/protocol/modules/get-a-module"
-                    ]
-                  },
-                  {
-                    "group": "Permissions",
-                    "pages": [
-                      "api-reference/protocol/permissions/list-permissions",
-                      "api-reference/protocol/permissions/get-a-permission"
-                    ]
-                  },
-                  {
-                    "group": "Royalties",
-                    "pages": [
-                      "api-reference/protocol/royalties/list-royaltypays",
-                      "api-reference/protocol/royalties/get-a-royaltypay"
-                    ]
-                  },
-                  {
-                    "group": "Transactions",
-                    "pages": [
-                      "api-reference/protocol/transactions/list-transactions",
-                      "api-reference/protocol/transactions/list-latest-transactions",
-                      "api-reference/protocol/transactions/get-a-transaction"
+                      "POST /assets",
+                      "POST /assets/edges",
+                      "POST /collections",
+                      "api-reference/protocol/search",
+                      "api-reference/protocol/transactions"
                     ]
                   }
                 ]
