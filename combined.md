@@ -13647,6 +13647,8 @@ Refer to [RIP-7212](https://github.com/ethereum/RIPs/blob/master/RIPS/rip-7212.m
 
 The `ipgraph` precompile enables efficient querying and modification of IP relationships and royalty structures while minimizing gas costs.
 
+This contract is deployed at `0x0000000000000000000000000000000000000101` and access is controlled through this contract `0x1640A22a8A086747cD377b73954545e2Dfcc9Cad`.
+
 This precompile provides multiple functions based on the function selector—the first 4 bytes of the input.
 
 | Function Selector        | Description                                                     | Gas computation formula                               | Gas Cost                           |
