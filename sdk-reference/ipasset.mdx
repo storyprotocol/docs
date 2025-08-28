@@ -260,32 +260,20 @@ Parameters:
 <CodeGroup>
 
 ```typescript TypeScript
-import { LicenseTerms } from "@story-protocol/core-sdk";
-import { zeroAddress } from "viem";
-
-const commercialRemixTerms: LicenseTerms = {
-  transferable: true,
-  royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
-  defaultMintingFee: 0n,
-  expiration: 0n,
-  commercialUse: true,
-  commercialAttribution: true,
-  commercializerChecker: zeroAddress,
-  commercializerCheckerData: zeroAddress,
-  commercialRevShare: 50, // can claim 50% of derivative revenue
-  commercialRevCeiling: 0n,
-  derivativesAllowed: true,
-  derivativesAttribution: true,
-  derivativesApproval: false,
-  derivativesReciprocal: true,
-  derivativeRevCeiling: 0n,
-  currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
-  uri: "",
-};
+import { PILFlavor, WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+import { parseEther } from "viem";
 
 const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
   spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
-  licenseTermsData: [{ terms: commercialRemixTerms }],
+  licenseTermsData: [
+    {
+      terms: PILFlavor.commercialRemix({
+        commercialRevShare: 5,
+        defaultMintingFee: parseEther("1"), // 1 $IP
+        currency: WIP_TOKEN_ADDRESS,
+      }),
+    },
+  ],
   // https://docs.story.foundation/docs/ip-asset#adding-nft--ip-metadata-to-ip-asset
   ipMetadata: {
     ipMetadataURI: "test-uri",
@@ -378,33 +366,21 @@ Parameters:
 <CodeGroup>
 
 ```typescript TypeScript
-import { LicenseTerms } from "@story-protocol/core-sdk";
-import { toHex, zeroAddress } from "viem";
-
-const commercialRemixTerms: LicenseTerms = {
-  transferable: true,
-  royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
-  defaultMintingFee: 0n,
-  expiration: 0n,
-  commercialUse: true,
-  commercialAttribution: true,
-  commercializerChecker: zeroAddress,
-  commercializerCheckerData: zeroAddress,
-  commercialRevShare: 50, // can claim 50% of derivative revenue
-  commercialRevCeiling: 0n,
-  derivativesAllowed: true,
-  derivativesAttribution: true,
-  derivativesApproval: false,
-  derivativesReciprocal: true,
-  derivativeRevCeiling: 0n,
-  currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
-  uri: "",
-};
+import { PILFlavor, WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+import { toHex, parseEther } from "viem";
 
 const response = await client.ipAsset.registerIpAndAttachPilTerms({
   nftContract: "0x041B4F29183317Fd352AE57e331154b73F8a1D73",
   tokenId: "12",
-  licenseTermsData: [{ terms: commercialRemixTerms }],
+  licenseTermsData: [
+    {
+      terms: PILFlavor.commercialRemix({
+        commercialRevShare: 5,
+        defaultMintingFee: parseEther("1"), // 1 $IP
+        currency: WIP_TOKEN_ADDRESS,
+      }),
+    },
+  ],
   ipMetadata: {
     ipMetadataURI: "test-uri",
     ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),
@@ -760,32 +736,20 @@ Parameters:
 <CodeGroup>
 
 ```typescript TypeScript
-import { LicenseTerms } from "@story-protocol/core-sdk";
-import { zeroAddress } from "viem";
-
-const commercialRemixTerms: LicenseTerms = {
-  transferable: true,
-  royaltyPolicy: "0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E", // RoyaltyPolicyLAP address from https://docs.story.foundation/docs/deployed-smart-contracts
-  defaultMintingFee: 0n,
-  expiration: 0n,
-  commercialUse: true,
-  commercialAttribution: true,
-  commercializerChecker: zeroAddress,
-  commercializerCheckerData: zeroAddress,
-  commercialRevShare: 50, // can claim 50% of derivative revenue
-  commercialRevCeiling: 0n,
-  derivativesAllowed: true,
-  derivativesAttribution: true,
-  derivativesApproval: false,
-  derivativesReciprocal: true,
-  derivativeRevCeiling: 0n,
-  currency: "0x1514000000000000000000000000000000000000", // $WIP address from https://docs.story.foundation/docs/deployed-smart-contracts
-  uri: "",
-};
+import { PILFlavor, WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+import { parseEther } from "viem";
 
 const response = await client.ipAsset.registerPilTermsAndAttach({
   ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
-  licenseTermsData: [{ terms: commercialRemixTerms }],
+  licenseTermsData: [
+    {
+      terms: PILFlavor.commercialRemix({
+        commercialRevShare: 5,
+        defaultMintingFee: parseEther("1"), // 1 $IP
+        currency: WIP_TOKEN_ADDRESS,
+      }),
+    },
+  ],
 });
 console.log(`License Terms ${response.licenseTermsId} attached to IP Asset.`);
 ```

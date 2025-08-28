@@ -157,8 +157,14 @@ Parameters:
 <CodeGroup>
 
 ```typescript TypeScript
-import { LicenseTerms } from "@story-protocol/core-sdk";
-import { zeroAddress } from "viem";
+import {
+  LicenseTerms,
+  PILFlavor,
+  WIP_TOKEN_ADDRESS,
+} from "@story-protocol/core-sdk";
+import { zeroAddress, parseEther } from "viem";
+
+// OPTION 1. If you want to specify all the terms
 
 const licenseTerms: LicenseTerms = {
   transferable: false,
@@ -183,6 +189,20 @@ const licenseTerms: LicenseTerms = {
 const response = await client.license.registerPILTerms({
   ...licenseTerms,
 });
+
+console.log(
+  `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
+);
+
+// OPTION 2. If you want to use a PIL flavor for convenience
+
+const response = await client.license.registerPILTerms(
+  PILFlavor.commercialRemix({
+    commercialRevShare: 5,
+    defaultMintingFee: parseEther("1"), // 1 $IP
+    currency: WIP_TOKEN_ADDRESS,
+  })
+);
 
 console.log(
   `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`

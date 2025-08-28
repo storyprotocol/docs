@@ -127,6 +127,31 @@ We have convenience functions to help you register new terms. We have created [P
   </Card>
 </CardGroup>
 
+You can easily register a flavor of terms like so:
+
+```typescript main.ts
+import { PILFlavor, WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+import { parseEther } from "viem";
+// you should already have a client set up (prerequisite)
+import { client } from "./utils";
+
+async function main() {
+  const response = await client.license.registerPILTerms(
+    PILFlavor.commercialRemix({
+      commercialRevShare: 5,
+      defaultMintingFee: parseEther("1"), // 1 $IP
+      currency: WIP_TOKEN_ADDRESS,
+    })
+  );
+
+  console.log(
+    `PIL Terms registered at transaction hash ${response.txHash}, License Terms ID: ${response.licenseTermsId}`
+  );
+}
+
+main();
+```
+
 ## 3. Attach License Terms
 
 Now that we have created terms and have the associated `licenseTermsId`, we can attach them to an existing IP Asset like so:
