@@ -338,7 +338,8 @@
                     "icon": "money-bill-transfer",
                     "pages": [
                       "developers/tutorials/how-to-tip-an-ip",
-                      "developers/tutorials/cross-chain-royalty-payments"
+                      "developers/tutorials/cross-chain-royalty-payments",
+                      "developers/tutorials/cross-chain-license-mint"
                     ]
                   },
                   {

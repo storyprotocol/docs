@@ -1,21 +1,37 @@
 ---
-title: Cross-Chain Royalty Payments
-description: A guide on how to set up cross-chain royalty payments using deBridge.
+title: Cross-Chain License Minting
+description: A guide on how to set up cross-chain license minting using deBridge.
 ---
 
-In this tutorial, we will explore how to use [deBridge](https://docs.debridge.finance/) to perform cross-chain royalty payments. For this tutorial specifically, we'll pay an IP Asset on Story using Base $ETH.
+In this tutorial, we will explore how to use [deBridge](https://docs.debridge.finance/) to perform cross-chain license minting. For this tutorial specifically, we'll be using Base $ETH to mint a license on Story.
+
+<CardGroup>
+
+<Card title="Base Example" icon="computer" color="#0000fe" href="https://github.com/jacob-tucker/base-story-quickstart">
+
+A working code example of minting a license on Story using Base \$ETH.
+
+</Card>
+
+<Card title="Abstract Chain Example" icon="computer" color="#2cdb84" href="https://github.com/jacob-tucker/abs-story-quickstart">
+
+A working code example of minting a license on Story using Abstract \$ETH.
+
+</Card>
+
+</CardGroup>
 
 From a high level, it involves:
 
-1. Constructing a deBridge API call that will return tx data to swap tokens across chains and perform some action (e.g. pay royalty to an IP Asset on Story)
+1. Constructing a deBridge API call that will return tx data to swap tokens across chains and perform some action (e.g. mint a license on Story)
 2. Executing the API call to receive that tx data
 3. Executing the transaction (using the returned tx data) on the source chain
 
 <Frame>
 
 <img
-  src="/images/tutorials/cross-chain-royalty-payments.png"
-  alt="Cross-Chain Royalty Payments"
+  src="/images/tutorials/cross-chain-license-minting.jpeg"
+  alt="Cross-Chain License Minting"
 />
 
 </Frame>
@@ -32,19 +48,62 @@ You can learn more about dlnHooks [here](https://docs.debridge.finance/dln-the-d
 
 </Note>
 
-In this case, the `dlnHook` will be a call to `payRoyaltyOnBehalf`, which is a function [in this contract](https://www.storyscan.io/address/0xD2f60c40fEbccf6311f8B47c4f2Ec6b040400086?tab=contract) that pays royalties to an IP Asset on Story.
+In this case, the `dlnHook` will be a call to `mintLicenseTokensCrossChain`, which is a function [in this contract](https://www.storyscan.io/address/0x6429A616F76a8958e918145d64bf7681C3936D6A?tab=contract) that wraps the received \$IP to \$WIP and then mints a license token on Story.
 
-You may be wondering, _"where does the Royalty Module (the contract spending the tokens on Story) get approved to spend the \$WIP?"_ The answer is that deBridge automatically handles token approvals for you using their `IExternalCallExecutor`, where it approves the target address to spend the tokens on the destination chain. In this case because the target address is the Royalty Module itself, token approval is handled for us without having to create a custom multicall contract like we do in the [cross-chain license minting](/developers/tutorials/cross-chain-license-mint) tutorial.
+You can see that `mintLicenseTokensCrossChain` looks like this:
 
-<Note>
+```solidity DebridgeLicenseTokenMinter.sol expandable
+function mintLicenseTokensCrossChain(
+    address licensorIpId,
+    uint256 licenseTermsId,
+    uint256 tokenAmount,
+    address receiver
+) external payable {
+  uint256 amount = msg.value;
+  require(amount > 0, "DebridgeLicenseTokenMinter: zero amount");
 
-You can learn more about the `IExternalCallExecutor` [here](https://docs.debridge.finance/dln-the-debridge-liquidity-network-protocol/protocol-specs/hook-data/anatomy-of-a-hook-for-the-evm-based-chains#universal-hook).
+  // Create multicall data - using memory array directly to avoid stack issues
+  IMulticall.Call3Value[] memory calls = new IMulticall.Call3Value[](2);
 
-</Note>
+  // First call: deposit IP to get WIP tokens
+  calls[0] = IMulticall.Call3Value({
+      target: WIP,
+      allowFailure: false,
+      value: amount,
+      callData: abi.encodeWithSelector(IWrappedIP.deposit.selector)
+  });
+
+  // Second call: mint license tokens
+  calls[1] = IMulticall.Call3Value({
+      target: LICENSING_MODULE,
+      allowFailure: false,
+      value: 0,
+      callData: abi.encodeWithSelector(
+          ILicensingModule.mintLicenseTokens.selector,
+          licensorIpId,
+          PIL_TEMPLATE,
+          licenseTermsId,
+          tokenAmount,
+          receiver,
+          "",
+          0,
+          100_000_000
+      )
+  });
+
+  // Execute multicall and emit event
+  IMulticall.Result[] memory returnData = IMulticall(MULTICALL).aggregate3Value{ value: amount }(calls);
+  bytes memory raw = returnData[1].returnData;
+  uint256 startLicenseTokenId = abi.decode(raw, (uint256)); // if mintLicenseTokens returns uint256
+  emit LicenseTokensMinted(licensorIpId, receiver, startLicenseTokenId, tokenAmount);
+}
+```
+
+You may be wondering, _"where does it `approve` the Royalty Module (what pays for the license minting fee) to spend the \$WIP?"_ This is already done for you, since the Royalty Module is already approved to spend on behalf of Multicall.
 
 <Tip>
 
-To summarize, we will construct a deBridge API call that says _"we want to swap \$ETH for \$IP, then use a dlnHook to call a smart contract on Story that pays royalties to an IP Asset on Story"._
+To summarize, we will construct a deBridge API call that says _"we want to swap \$ETH for \$IP, then use a dlnHook to call a smart contract on Story that wraps \$IP to \$WIP and mints a license on Story"._
 
 </Tip>
 
@@ -53,35 +112,35 @@ To summarize, we will construct a deBridge API call that says _"we want to swap 
 The `dlnHook` is a JSON object that will be attached to the deBridge API call. It will contain the following information:
 
 - The type of action to execute (`evm_transaction_call`)
-- The address of the contract to call (`RoyaltyModule.sol`)
-- The calldata to execute (`payRoyaltyOnBehalf`)
+- The address of the contract to call (`DebridgeLicenseTokenMinter.sol`)
+- The calldata to execute (`mintLicenseTokensCrossChain`)
 
 ```typescript main.ts
-const ROYALTY_MODULE =
-  "0xD2f60c40fEbccf6311f8B47c4f2Ec6b040400086";
+const STORY_WRAP_THEN_LICENSE_MULTICALL =
+  "0x6429a616f76a8958e918145d64bf7681c3936d6a";
 
 // Build the dlnHook for Story royalty payment
-const buildRoyaltyPaymentHook = ({ ipId: `0x${string}`, amount: bigint }): string => {
-  // Encode the payRoyaltyOnBehalf function call
+const buildRoyaltyPaymentHook = ({ ipId: `0x${string}`, licenseTermsId: bigint, receiverAddress: `0x${string}` }): string => {
+  // Encode the mintLicenseTokensCrossChain function call
   const calldata = encodeFunctionData({
     abi: [
       {
-        name: "payRoyaltyOnBehalf",
+        name: "mintLicenseTokensCrossChain",
         type: "function",
         inputs: [
-          { name: "receiverIpId", type: "address" },
-          { name: "payerIpId", type: "address" },
-          { name: "token", type: "address" },
-          { name: "amount", type: "uint256" },
+          { name: "licensorIpId", type: "address" },
+          { name: "licenseTermsId", type: "uint256" },
+          { name: "tokenAmount", type: "uint256" },
+          { name: "receiver", type: "address" },
         ],
       },
     ],
-    functionName: "payRoyaltyOnBehalf",
+    functionName: "mintLicenseTokensCrossChain",
     args: [
       ipId,
-      zeroAddress, // because it's not coming from another IP Asset. It's coming from an external address.
-      WIP_TOKEN_ADDRESS,
-      amount,
+      licenseTermsId,
+      BigInt(1),
+      receiverAddress,
     ],
   });
 
@@ -89,7 +148,7 @@ const buildRoyaltyPaymentHook = ({ ipId: `0x${string}`, amount: bigint }): strin
   const dlnHook = {
     type: "evm_transaction_call",
     data: {
-      to: ROYALTY_MODULE,
+      to: STORY_WRAP_THEN_LICENSE_MULTICALL,
       calldata: calldata,
       gas: 0,
     },
@@ -127,17 +186,18 @@ You can view deBridge's documentation on the `create-tx` endpoint [here](https:/
 
 ```typescript main.ts
 import { base } from "viem/chains";
-import { WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
 
 // ... previous code here ...
 
 // Build deBridge API URL for cross-chain royalty payment
 const buildDeBridgeApiUrl = ({
   ipId: `0x${string}`,
+  licenseTermsId: bigint,
+  receiverAddress: `0x${string}`,
   senderAddress: `0x${string}`,
   paymentAmount: string // should be in wei
 }): string => {
-  const dlnHook = buildRoyaltyPaymentHook({ ipId, paymentAmount });
+  const dlnHook = buildRoyaltyPaymentHook({ ipId, licenseTermsId, receiverAddress });
   const encodedHook = encodeURIComponent(dlnHook);
   const url =
     `https://dln.debridge.finance/v1.0/dln/order/create-tx?` +
@@ -149,10 +209,10 @@ const buildDeBridgeApiUrl = ({
     // Story's mainnet chain ID
     `&dstChainId=100000013` +
     // we make this zero address which represents the native token ($IP)
-    `&dstChainTokenOut=${WIP_TOKEN_ADDRESS}` +
-    // we set the amount of $IP to pay for the payment on Story
+    `&dstChainTokenOut=0x0000000000000000000000000000000000000000` +
+    // we set the amount of $IP to pay for the license on Story
     `&dstChainTokenOutAmount=${paymentAmount}` +
-    // the address of the contract that will pay the royalty on Story
+    // the address of the contract that will wrap the $IP and mint the license on Story
     `&dstChainTokenOutRecipient=${senderAddress}` +
     // the address of the user initiating the transaction
     `&senderAddress=${senderAddress}` +
@@ -181,11 +241,13 @@ Once the API call is constructed, execute it to receive a response. This respons
 
 const getDeBridgeTransactionData = async ({
   ipId: `0x${string}`,
+  licenseTermsId: bigint,
+  receiverAddress: `0x${string}`,
   senderAddress: `0x${string}`,
   paymentAmount: string // should be in wei
 }): Promise<DeBridgeApiResponse> => {
   try {
-    const apiUrl = buildDeBridgeApiUrl({ ipId, senderAddress, paymentAmount });
+    const apiUrl = buildDeBridgeApiUrl({ ipId, licenseTermsId, receiverAddress, senderAddress, paymentAmount });
 
     const response = await fetch(apiUrl, {
       method: "GET",
@@ -278,6 +340,8 @@ const walletClient = createWalletClient({
 // Function to send a transaction
 const executeLicenseMint = async (params: {
   ipId: `0x${string}`;
+  licenseTermsId: bigint;
+  receiverAddress: `0x${string}`;
   senderAddress: `0x${string}`;
   paymentAmount: string; // should be in wei
 }) => {
@@ -306,8 +370,10 @@ const executeLicenseMint = async (params: {
 // Example usage with a mock API response
 const params = {
   ipId: "0xcb6B9CCae4108A103097B30cFc25e1E257D4b5Fe",
+  licenseTermsId: BigInt(27910),
+  receiverAddress: "0x01", // replace with the address that should receive the license on Story
   senderAddress: account.address,
-  paymentAmount: parseEther("5"), // 5 $WIP
+  paymentAmount: parseEther("0.00001"), // 0.00001 $WIP since the license on Story costs 0.00001 $WIP
 };
 
 // Execute the function to send the transaction
@@ -316,4 +382,20 @@ executeLicenseMint(params);
 
 ## Conclusion
 
-Congratulations! You have successfully set up cross-chain royalty payments using deBridge.
+Congratulations! You have successfully set up cross-chain license minting using deBridge.
+
+<CardGroup>
+
+<Card title="Base Example" icon="computer" color="#0000fe" href="https://github.com/jacob-tucker/base-story-quickstart">
+
+A working code example of minting a license on Story using Base \$ETH.
+
+</Card>
+
+<Card title="Abstract Chain Example" icon="computer" color="#2cdb84" href="https://github.com/jacob-tucker/abs-story-quickstart">
+
+A working code example of minting a license on Story using Abstract \$ETH.
+
+</Card>
+
+</CardGroup>
