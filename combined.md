@@ -8515,7 +8515,7 @@ From a high level, it involves:
 
 The first step is to construct a deBridge API call. The purpose of this API call is to receive back a response that will contain transaction data so we can then execute it on the source chain.
 
-This deBridge order swaps tokens from one chain to another. We can also optionally attach a `dlnHook` that will execute an arbitrary action upon order completion (ex. after \$ETH has been swapped for \$WIP). This is where the magic happens.
+This deBridge order swaps tokens from one chain to another. We can also optionally attach a `dlnHook` that will execute an arbitrary action upon order completion (ex. after \$ETH has been swapped for \$IP). This is where the magic happens.
 
 <Note>
 
@@ -8575,6 +8575,8 @@ function mintLicenseTokensCrossChain(
 ```
 
 You may be wondering, _"where does it `approve` the Royalty Module (what pays for the license minting fee) to spend the \$WIP?"_ This is already done for you, since the Royalty Module is already approved to spend on behalf of Multicall.
+
+The reason we had to make a Multicall contract in the first place, instead of simply bridging directly to \$WIP and calling `mintLicenseTokens` in the Licensing Module, is because the Royalty Module wouldn't be approved to spend the \$WIP. So we utilize the Multicall contract to take care of that for us instead.
 
 <Tip>
 
