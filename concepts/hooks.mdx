@@ -159,45 +159,98 @@ This uses the `mintAndRegisterIpAssetWithPilTerms` method found [here](/sdk-refe
             nftMetadataURI: 'test-nft-uri',
         }
     })
+
+    console.log(`Token ID: ${response.tokenId}, IPA ID: ${response.ipId}, License Terms ID: ${response.licenseTermsIds}`);
     ```
 
   </Step>
   <Step title="Set the Limit to 1">
     Now that we have set the Licensing Config on our terms, we can call the `setTotalLicenseTokenLimit` function on the hook and set the max # of licenses that can be minted to 1.
 
-    <Note>
-    There is no Story SDK method for this, so you'll have to use viem's `writeContract` method.
-    </Note>
-
     ```typescript
-    import { totalLicenseTokenLimitHook } from './abi/totalLicenseTokenLimitHook'
+    const hookResponse = await client.license.setMaxLicenseTokens({
+      ipId: response.ipId,
+      licenseTermsId: response.licenseTermsIds![0],
+      maxLicenseTokens: 1000,
+    });
 
-    const { request } = await publicClient.simulateContract({
-        // address of TotalLicenseTokenLimitHook
-        // from https://docs.story.foundation/developers/deployed-smart-contracts
-        address: '0xaBAD364Bfa41230272b08f171E0Ca939bD600478',
-        abi: totalLicenseTokenLimitHook,
-        functionName: 'setTotalLicenseTokenLimit',
-        args: [
-            response.ipId, // ipId from the step above
-            '0x2E896b0b2Fdb7457499B56AAaA4AE55BCB4Cd316', // the address of PILicenseTemplate from https://docs.story.foundation/developers/deployed-smart-contracts
-            response.licenseTermsIds![0], // licenseTermsId
-            1n, // limit (as BigInt)
-        ],
-        account: account, // Specify the account to use for permission checking
-    })
+    console.log(`Max license tokens set at transaction hash ${hookResponse.txHash}`);
 
-    // Prepare transaction
-    const hash = await walletClient.writeContract({ ...request, account: account })
-
-    // Wait for transaction to be mined
-    const receipt = await publicClient.waitForTransactionReceipt({
-        hash,
-    })
     ```
 
   </Step>
 </Steps>
+
+### Creating a New Licensing Hook
+
+Please follow the below process for creating a new licensing hook and getting it whitelisted into Story's protocol.
+
+1. **Develop your Hook**: You may fork [this template repository](https://github.com/storyprotocol/hook-dev-template) to bootstrap your development. It includes an example hook with tests against our Aeneid protocol, but using it is optional.
+
+   <Tip>
+
+   See
+   [license-caller-whitelist-hook](https://github.com/jacob-tucker/license-caller-whitelist-hook)
+   as an example that was used to develop the `LicenseCallerWhitelistHook.sol`
+   hook.
+
+   </Tip>
+
+2. **Fork Registered Modules Repository**: Fork the [registered-modules repository](https://github.com/storyprotocol/registered-modules) to your own GitHub account.
+
+3. **Update the Module List**: In your `registered-modules` repository, add your hook's details to the `hook-modules.json` file. Make sure to **deploy & verify on block explorer** your hook on both aeneid and mainnet. Ensure that you adhere to the following JSON structure:
+
+   ```json
+   {
+     "name": "YourModuleName",
+     "aeneid": {
+       "address": "YourModuleAddress",
+       "blockExplorerLink": "YourModuleBlockExplorerLink"
+     },
+     "mainnet": {
+       "address": "YourModuleAddress",
+       "blockExplorerLink": "YourModuleBlockExplorerLink"
+     }
+   }
+   ```
+
+   Replace `YourModuleName`, `YourModuleAddress`, and `YourModuleBlockExplorerLink` with your hook's name, its address, and the link to its block explorer page, respectively.
+
+   Example:
+
+   ```json
+   {
+     "name": "LicenseCallerWhitelistHook",
+     "aeneid": {
+       "address": "0x37be56d9fb06d885cda3cb010096c94c28b4d658",
+       "blockExplorerLink": "https://aeneid.storyscan.io/address/0x37be56d9fb06d885cda3cb010096c94c28b4d658?tab=contract"
+     },
+     "mainnet": {
+       "address": "0x6d9d51a444c8318e8840e75dab7ed81b5a714610",
+       "blockExplorerLink": "https://www.storyscan.io/address/0x6d9d51a444c8318e8840e75dab7ed81b5a714610?tab=contract"
+     }
+   }
+   ```
+
+4. **Create a Pull Request (PR)**: Once you have added your hook, create a pull request against this repository. In your PR's description, add the following information (replace the values with your own):
+
+   ```md
+   ## Register my module
+
+   - Module type: `hook`
+   - Module name: `LicenseCallerWhitelistHook`
+   - Aeneid Module address: `0x37be56d9fb06d885cda3cb010096c94c28b4d658`
+   - Mainnet Module address: `0x6d9d51a444c8318e8840e75dab7ed81b5a714610`
+   - My module is immutable: yes
+   - My module is using an upgradeable proxy: no
+   - My module has been verified on the block explorer (required): yes
+   - Summary of my module: Hook for allowing a licensor to gate which addresses can mint a license. The licensor can add/remove an address at any time.
+   - GitHub repository with source code and tests: https://github.com/jacob-tucker/license-caller-whitelist-hook
+   ```
+
+5. **Await Verification**: After your PR is submitted, it will be reviewed. Once a security audit has been performed and completed, and the module whitelisted into the protocol, the PR will be merged. At this point your module will be officially registered and recognized as safe for use within the Story community.
+
+We look forward to seeing your contributions and expanding the Story module ecosystem!
 
 ## Commercializer Checker Hooks
 
