@@ -1015,6 +1015,10 @@
     {
       "source": "/reference/blockscout-api",
       "destination": "/api-reference/blockscout-api"
+    },
+    {
+      "source": "/what-is-story-protocol",
+      "destination": "/"
     }
   ],
   "contextual": {
