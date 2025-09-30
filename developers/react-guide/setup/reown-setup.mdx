@@ -175,9 +175,12 @@ export default function TestComponent() {
 
   async function registerIp() {
     const client = await setupStoryClient();
-    const response = await client.ipAsset.register({
-      nftContract: '0x01...',
-      tokenId: '1',
+    const response = await client.ipAsset.registerIpAsset({
+      nft: {
+        type: 'minted',
+        nftContract: '0x01...',
+        tokenId: '1',
+      }
       ipMetadata: {
         ipMetadataURI: "test-metadata-uri",
         ipMetadataHash: toHex("test-metadata-hash", { size: 32 }),

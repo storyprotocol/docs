@@ -138,13 +138,16 @@ In order to actually use a Licensing Hook, you must set it in the Licensing Conf
 
 <Note>
 
-This uses the `mintAndRegisterIpAssetWithPilTerms` method found [here](/sdk-reference/ipasset#mintandregisteripassetwithpilterms).
+This uses the `registerIpAsset` method found [here](/sdk-reference/ipasset#registeripasset).
 
 </Note>
 
     ```typescript {6-7}
-    const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
-        spgNftContract: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc', // public spg contract for ease-of-use
+    const response = await client.ipAsset.registerIpAsset({
+        nft: {
+            type: 'mint',
+            spgNftContract: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc', // public spg contract for ease-of-use
+        },
         licenseTermsData: [
             {
                 terms: { defaultMintingFee: 0, commercialUse: true, ... }, // dummy license terms

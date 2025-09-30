@@ -10,6 +10,7 @@ description: LicenseClient allows you to manage license terms and tokens within 
 - attachLicenseTerms
 - mintLicenseTokens
 - registerPILTerms
+- registerPilTermsAndAttach
 - registerNonComSocialRemixingPIL
 - registerCommercialUsePIL
 - registerCommercialRemixPIL
@@ -266,6 +267,64 @@ export type RegisterPILResponse = {
   licenseTermsId?: bigint;
   txHash?: Hex;
   encodedTxData?: EncodedTxData;
+};
+```
+
+</CodeGroup>
+
+## registerPilTermsAndAttach
+
+Register Programmable IP License Terms (if unregistered) and attach it to IP.
+
+| Method                      | Type                                                                                        |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| `registerPilTermsAndAttach` | `(request: RegisterPilTermsAndAttachRequest) => Promise<RegisterPilTermsAndAttachResponse>` |
+
+Parameters:
+
+- `request.ipId`: The ID of the IP.
+- `request.licenseTermsData[]`: The array of license terms to be attached.
+  - `request.licenseTermsData.terms`: See the [LicenseTerms type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/resources/license.ts#L26).
+  - `request.licenseTermsData.licensingConfig`: \[Optional] See the [LicensingConfig type](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/types/common.ts#L15). If none provided, it will default to the one shown [here](https://github.com/storyprotocol/sdk/blob/main/packages/core-sdk/src/utils/validateLicenseConfig.ts).
+- `request.deadline`: \[Optional] The deadline for the signature in milliseconds. **Defaults to 1000**.
+
+<CodeGroup>
+
+```typescript TypeScript
+import { PILFlavor, WIP_TOKEN_ADDRESS } from "@story-protocol/core-sdk";
+import { parseEther } from "viem";
+
+const response = await client.license.registerPilTermsAndAttach({
+  ipId: "0x4c1f8c1035a8cE379dd4ed666758Fb29696CF721",
+  licenseTermsData: [
+    {
+      terms: PILFlavor.commercialRemix({
+        commercialRevShare: 5,
+        defaultMintingFee: parseEther("1"), // 1 $IP
+        currency: WIP_TOKEN_ADDRESS,
+      }),
+    },
+  ],
+});
+console.log(`License Terms ${response.licenseTermsId} attached to IP Asset.`);
+```
+
+```typescript Request Type
+export type RegisterPilTermsAndAttachRequest = {
+  ipId: Address;
+  licenseTermsData: LicenseTermsData<
+    RegisterPILTermsRequest,
+    LicensingConfig
+  >[];
+  deadline?: string | number | bigint;
+};
+```
+
+```typescript Response Type
+export type RegisterPilTermsAndAttachResponse = {
+  txHash?: Hex;
+  encodedTxData?: EncodedTxData;
+  licenseTermsIds?: bigint[];
 };
 ```
 

@@ -23,31 +23,7 @@ There are a few steps you have to complete before you can start the tutorial.
 
 ## 1. Before We Start
 
-There are a lot of ways to register an IP Asset as a derivative of another. Below, we will help you figure out what function you should use.
-
-<Note>
-
-**Have no idea?** It is best to figure out which SDK function to use based on what is easiest for you. But if you have no idea, simply continue to the next section.
-
-</Note>
-
-<Tip>
-By the way we recognize this is confusing and are releasing an update to our SDK soon to combine all of these into 1 simple function. :\)
-
-</Tip>
-
-Do you already have a [License Token](/concepts/licensing-module/license-token) you can use?
-
-- ✅ Yes: Is the derivative IP Asset already registered?
-  - ✅ Yes: Use [registerDerivativeWithLicenseTokens](/sdk-reference/ipasset#registerderivativewithlicensetokens)
-  - ❌ No: Do you have your own NFT contract, or an already minted NFT?
-    - ✅ Yes: Use [registerIpAndMakeDerivativeWithLicenseTokens](/sdk-reference/ipasset#registeripandmakederivativewithlicensetokens)
-    - ❌ No: Use [mintAndRegisterIpAndMakeDerivativeWithLicenseTokens](/sdk-reference/ipasset#mintandregisteripandmakederivativewithlicensetokens)
-- ❌ No: Is the derivative IP Asset already registered?
-  - ✅ Yes: Use [registerDerivative](/sdk-reference/ipasset#registerderivative)
-  - ❌ No: Do you have your own NFT contract, or an already minted NFT?
-    - ✅ Yes: Use [registerDerivativeIp](/sdk-reference/ipasset#registerderivativeip)
-    - ❌ No: Use [mintAndRegisterIpAndMakeDerivative](/sdk-reference/ipasset#mintandregisteripandmakederivative)
+Registering a derivative IP Asset requires you have a License Token from the parent IP Assets you plan to be a derivative of. If you don't, the SDK will handle it for you.
 
 ### 1a. Why would I ever use a License Token if it's not needed?
 
@@ -58,27 +34,11 @@ There are a few times when **you would need** a License Token to register a deri
 
 ## 2. Register Derivative
 
-<Note>
-**This is just an example**. You are encouraged to figure out the best derivative function to use based on the survey above. However, if you don't know and want to be walked through one solution, this next part is for you.
-
-</Note>
-
-We're going to assume you have ❌ no license tokens, ❌ the derivative IP is not yet registered, and ❌ you don't have your own NFT contract or an already minted NFT.
-
-**Follow steps 1-4 of** [Register an IP Asset](/developers/typescript-sdk/register-ip-asset). Note you can skip step 4 if you already have an SPG NFT Collection. Then, come back here.
-
-Modify your code such that...
-
-1. Instead of using `mintAndRegisterIp`, use `mintAndRegisterIpAndMakeDerivative`
-2. Add a `derivData` field, where:
-   - `parentIpIds` is the `ipIds` of the parents you want to become a derivative of. **NOTE: Once you become a derivative, you cannot add more parents**
-   - `licenseTermIds` is an array of license terms you want to register under. These are the terms your derivative must abide by
-
-Now we can call the function like so:
+In this example we're going to assume you have no license tokens, the child IP is not yet registered, and you don't have your own NFT contract or an already minted NFT.
 
 <Info>
   Associated Docs:
-  [ipAsset.mintAndRegisterIpAndMakeDerivative](/sdk-reference/ipasset#mintandregisteripandmakederivative)
+  [ipAsset.registerDerivativeIpAsset](/sdk-reference/ipasset#registerderivativeipasset)
 </Info>
 
 ```typescript main.ts
@@ -91,16 +51,18 @@ import { Address } from "viem";
 async function main() {
   // previous code here ...
 
-  const derivData: DerivativeData = {
+  const derivData = {
     // TODO: insert the parent's ipId
     parentIpIds: [PARENT_IP_ID],
     // TODO: insert the licenseTermsId attached to parent IpId
     licenseTermsIds: [LICENSE_TERMS_ID],
   };
 
-  const response = await client.ipAsset.mintAndRegisterIpAndMakeDerivative({
-    // TODO: insert your NFT contract address created by the SPG
-    spgNftContract: SPG_NFT_CONTRACT_ADDRESS as Address,
+  const response = await client.ipAsset.registerDerivativeIpAsset({
+    nft: {
+      type: "mint",
+      spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+    },
     derivData,
     ipMetadata: {
       ipMetadataURI: `https://ipfs.io/ipfs/${ipIpfsHash}`,

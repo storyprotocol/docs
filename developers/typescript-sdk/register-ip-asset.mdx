@@ -32,7 +32,7 @@ PINATA_JWT=<YOUR_PINATA_JWT>
 npm install pinata-web3
 ```
 
-## 1. \[OPTIONAL] Set up your IP Metadata
+## 1. Set up your IP Metadata
 
 We can set metadata on our NFT & IP, _but you don't have to_. To do this, view the [IPA Metadata Standard](/concepts/ip-asset/ipa-metadata-standard) and construct your metadata for both your NFT & IP.
 
@@ -77,7 +77,7 @@ async function main() {
 main();
 ```
 
-## 2. \[OPTIONAL] Set up your NFT Metadata
+## 2. Set up your NFT Metadata
 
 The NFT Metadata follows the [ERC-721 Metadata Standard](https://eips.ethereum.org/EIPS/eip-721).
 
@@ -98,7 +98,7 @@ async function main() {
 main();
 ```
 
-## 3. \[OPTIONAL] Upload your IP and NFT Metadata to IPFS
+## 3. Upload your IP and NFT Metadata to IPFS
 
 In a separate `uploadToIpfs` file, create a function to upload your IP & NFT Metadata objects to IPFS:
 
@@ -143,7 +143,7 @@ main();
 
 Remember that in order to register a new IP, we first have to mint an NFT, which will represent the underlying ownership of the IP. This NFT then gets "registered" and becomes an [IP Asset](/concepts/ip-asset).
 
-Luckily, we can use the `mintAndRegisterIp` function to mint an NFT and register it as an IP Asset in the same transaction.
+Luckily, we can use the `registerIpAsset` function to mint an NFT and register it as an IP Asset in the same transaction.
 
 This function needs an SPG NFT Contract to mint from.
 
@@ -179,7 +179,7 @@ async function createSpgNftCollection() {
 createSpgNftCollection();
 ```
 
-2. Create a custom ERC-721 NFT collection on your own and use the [register](/sdk-reference/ipasset#register) function - providing an `nftContract` and `tokenId` - _instead of_ using the `mintAndRegisterIp` function. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/registerCustom.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
+2. Create a custom ERC-721 NFT collection on your own. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/registerCustom.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
 
 </Accordion>
 
@@ -187,7 +187,7 @@ Here is the code to register an IP:
 
 <Info>
   Associated Docs:
-  [ipAsset.mintAndRegisterIp](/sdk-reference/ipasset#mintandregisterip)
+  [ipAsset.registerIpAsset](/sdk-reference/ipasset#registeripasset)
 </Info>
 
 ```typescript main.ts
@@ -200,8 +200,11 @@ import { Address } from "viem";
 async function main() {
   // previous code here ...
 
-  const response = await client.ipAsset.mintAndRegisterIp({
-    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+  const response = await client.ipAsset.registerIpAsset({
+    nft: {
+      type: "mint",
+      spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+    },
     ipMetadata: {
       ipMetadataURI: `https://ipfs.io/ipfs/${ipIpfsHash}`,
       ipMetadataHash: `0x${ipHash}`,
@@ -221,9 +224,61 @@ async function main() {
 main();
 ```
 
-## 5. View Completed Code
+## 5. Add License Terms to IP
 
-Congratulations, you registered an IP!
+During the registration process, you can attach [License Terms](/concepts/licensing-module/license-terms) to the IP. This will allow others to mint a license and use your IP, restricted by the terms.
+
+```typescript main.ts
+import {
+  IpMetadata,
+  PILFlavor,
+  WIP_TOKEN_ADDRESS,
+} from "@story-protocol/core-sdk";
+import { client } from "./utils";
+import { uploadJSONToIPFS } from "./uploadToIpfs";
+import { createHash } from "crypto";
+import { Address, parseEther } from "viem";
+
+async function main() {
+  // previous code here ...
+
+  const response = await client.ipAsset.registerIpAsset({
+    nft: {
+      type: "mint",
+      spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+    },
+    // [!code ++:9]
+    licenseTermsData: [
+      {
+        terms: PILFlavor.commercialRemix({
+          commercialRevShare: 5,
+          defaultMintingFee: parseEther("1"), // 1 $IP
+          currency: WIP_TOKEN_ADDRESS,
+        }),
+      },
+    ],
+    ipMetadata: {
+      ipMetadataURI: `https://ipfs.io/ipfs/${ipIpfsHash}`,
+      ipMetadataHash: `0x${ipHash}`,
+      nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsHash}`,
+      nftMetadataHash: `0x${nftHash}`,
+    },
+  });
+
+  console.log(
+    `Root IPA created at transaction hash ${response.txHash}, IPA ID: ${response.ipId}`
+  );
+  console.log(
+    `View on the explorer: https://aeneid.explorer.story.foundation/ipa/${response.ipId}`
+  );
+}
+
+main();
+```
+
+## 6. View Completed Code
+
+Congratulations, you registered an IP and attached license terms to it!
 
 <CardGroup cols={1}>
   <Card
@@ -234,12 +289,3 @@ Congratulations, you registered an IP!
     Follow the completed code all the way through.
   </Card>
 </CardGroup>
-
-## 6. Add License Terms to IP
-
-Now that your IP is registered, you can create and attach [License Terms](/concepts/licensing-module/license-terms) to it. This will allow others to mint a license and use your IP, restricted by the terms.
-
-We will go over this in the next section, but it's worth mentioning that instead of using the `mintAndRegisterIp` function, you can **register IP + create terms + attach terms** all in the same step with the following functions:
-
-- [mintAndRegisterIpAssetWithPilTerms](/sdk-reference/ipasset#mintandregisteripassetwithpilterms)
-- [registerIpAndAttachPilTerms](/sdk-reference/ipasset#registeripandattachpilterms)

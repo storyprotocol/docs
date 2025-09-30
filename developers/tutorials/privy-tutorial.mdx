@@ -432,8 +432,11 @@ export default function Home() {
   async function registerIp() {
     const storyClient = await setupStoryClient();
 
-    const response = await storyClient.ipAsset.mintAndRegisterIp({
-      spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc" // public spg contract for testing
+    const response = await storyClient.ipAsset.registerIpAsset({
+      nft: {
+        type: "mint",
+        spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+      },
     });
 
     const uiOptions = {

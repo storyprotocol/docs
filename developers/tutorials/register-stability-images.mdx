@@ -349,7 +349,7 @@ main();
 
 Next we will mint an NFT, register it as an [IP Asset](/concepts/ip-asset), set [License Terms](/concepts/licensing-module/license-terms) on the IP, and then set both NFT & IP metadata.
 
-Luckily, we can use the `mintAndRegisterIp` function to mint an NFT and register it as an IP Asset in the same transaction.
+Luckily, we can use the `registerIpAsset` function to mint an NFT and register it as an IP Asset in the same transaction.
 
 This function needs an SPG NFT Contract to mint from. For simplicity, you can use a public collection we have created for you on Aeneid testnet: `0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc`.
 
@@ -381,13 +381,13 @@ async function createSpgNftCollection() {
 createSpgNftCollection();
 ```
 
-2. Create a custom ERC-721 NFT collection on your own and use the [register](/sdk-reference/ipasset#register) function - providing an `nftContract` and `tokenId` - _instead of_ using the `mintAndRegisterIp` function. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/registerCustom.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
+2. Create a custom ERC-721 NFT collection on your own. See a working code example [here](https://github.com/storyprotocol/typescript-tutorial/blob/main/scripts/registration/registerCustom.ts). This is helpful if you **already have a custom NFT contract that has your own custom logic, or if your IPs themselves are NFTs.**
 
 </Accordion>
 
 <Info>
   Associated Docs:
-  [ipAsset.mintAndRegisterIp](/sdk-reference/ipasset#mintandregisterip)
+  [ipAsset.registerIpAsset](/sdk-reference/ipasset#registeripasset)
 </Info>
 
 ```typescript main.ts
@@ -404,8 +404,11 @@ import { zeroAddress, parseEther, Address } from "viem";
 async function main() {
   // previous code here ...
 
-  const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
-    spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+  const response = await client.ipAsset.registerIpAsset({
+    nft: {
+      type: "mint",
+      spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
+    },
     // the terms we created in the previous step
     licenseTermsData: [{ terms: commercialRemixTerms }],
     ipMetadata: {
