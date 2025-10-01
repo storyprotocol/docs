@@ -22245,13 +22245,11 @@ Once you have the SDK set up in React, you can use it just as we describe in the
 
 <CardGroup cols={2}>
   <Card
-    title="Working Code Example"
-    href="https://github.com/jacob-tucker/story-developer-sandbox"
+    title="React Quickstart"
+    href="https://github.com/storyprotocol/react-quickstart"
     icon="thumbs-up"
-    
-    
   >
-    A working code example that shows setting up & calling TypeScript SDK functions in Next.js
+    A working code example that shows setting up & calling TypeScript SDK functions in Next.js/React.
   </Card>
 
   <Card
@@ -22323,15 +22321,15 @@ export default function TestComponent() {
 
 The best way to get started is to get your hands dirty and start building.
 
-<CardGroup cols={3}>
+<CardGroup cols={2}>
 
 <Card
-  title="Working Code Example"
-  href="https://github.com/jacob-tucker/story-developer-sandbox"
+  title="React Quickstart"
+  href="https://github.com/storyprotocol/react-quickstart"
   icon="thumbs-up"
 >
-  Clone our "developer sandbox" locally to see a working code example that shows
-  setting up & calling TypeScript SDK functions in Next.js
+  A working code example that shows setting up & calling TypeScript SDK
+  functions in Next.js/React.
 </Card>
 
 <Card
@@ -26039,9 +26037,9 @@ Enable Story's mainnet or testnet for your wallet.
     directly and follow the associated README.
   </Card>
   <Card
-    title="React Code Example"
+    title="React Quickstart"
     icon="react"
-    href="https://github.com/jacob-tucker/story-developer-sandbox"
+    href="https://github.com/storyprotocol/react-quickstart"
   >
     This is a clone-able quickstart for you to check out. You can clone it
     directly and follow the associated README.
