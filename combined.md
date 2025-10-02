@@ -12685,7 +12685,7 @@ export type SetPermissionsResponse = {
 - registerDerivativeIpAsset
 - linkDerivative
 
-## registerIpAsset
+### registerIpAsset
 
 Register your IP as an [🧩 IP Asset](/concepts/ip-asset). It supports the following workflows:
 
@@ -12856,7 +12856,7 @@ export type RegisterIpResponse = {
 
 </CodeGroup>
 
-## registerDerivativeIpAsset
+### registerDerivativeIpAsset
 
 Register an IP as a derivative of another IP Asset. This function allows you to use an existing license token to register as derivative, or it will mint one for you. To register an IP as a derivative, it must be an IP Asset itself. So this function allows you to register an existing NFT as an IP Asset (which will be the derivative), or mint a new NFT for you (and register it as a derivative).
 
@@ -13042,7 +13042,7 @@ export type RegisterDerivativeIpResponse = {
 
 </CodeGroup>
 
-## linkDerivative
+### linkDerivative
 
 Link an existing derivative IP to a parent IP.
 
@@ -13425,7 +13425,7 @@ export type RegisterPILResponse = {
 
 </CodeGroup>
 
-## registerPilTermsAndAttach
+### registerPilTermsAndAttach
 
 Register Programmable IP License Terms (if unregistered) and attach it to IP.
 
