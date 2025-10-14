@@ -18028,8 +18028,12 @@ The Council can:
       - Public Key: `0xc1583ef962954b123b5d043788f30ef2450956b5`
     - Vera the Ape: https://x.com/veratheape
       - Public Key: `0xea18ff3a559746468bb3f65ab5984e591ec9cb5b`
-    - Anton Astafiev [Onboarding] : [https://www.linkedin.com/in/astafiev](https://www.linkedin.com/in/astafiev/)
-      - Public Key:
+    - Anton Astafiev: [https://www.linkedin.com/in/astafiev](https://www.linkedin.com/in/astafiev/)
+      - Public Key: `0xBD4AD66012C443F87465E12CA91eDc42957aDD3A`
+    - Patrick Collins: https://x.com/PatrickAlphaC
+      - Public Key: `0xAF43958ad62389BE3E0B553dFd259Ec335814c1C`
+    - Jason Li: https://x.com/lxjhk
+      - Public Key: `0xAdCDF85a75200015B25685c453f5738333dC63A5`
     - Raúl Martínez: https://x.com/ethicraul
       - Public Key: `0x576fa14594D1Ab7dc3fa7E08466E873321f5C95B`
 - Members are empowered to carry out Emergency and Non-Emergency Actions, and ensure SIPs comply with the Constitution.
