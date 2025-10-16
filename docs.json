@@ -1019,6 +1019,10 @@
     {
       "source": "/what-is-story-protocol",
       "destination": "/"
+    },
+    {
+      "source": "/network-info",
+      "destination": "/network/overview"
     }
   ],
   "contextual": {
