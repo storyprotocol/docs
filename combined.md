@@ -1244,8 +1244,8 @@ The `story` and `geth` binaries, which make up the clients required for running 
 
 | Network | story-geth      | story             |
 | ------- | --------------- | ----------------- |
-| Mainnet | v1.1.1 (Cosmas) | v1.3.2 (Polybius) |
-| Aeneid  | v1.1.1 (Cosmas) | v1.3.0 (Polybius) |
+| Mainnet | v1.1.1 (Cosmas) | v1.3.3 (Polybius) |
+| Aeneid  | v1.1.1 (Cosmas) | v1.3.3 (Polybius) |
 
 - **`story-geth`execution client:**
   - Release Link: [**Click here**](https://github.com/piplabs/story-geth/releases)
@@ -1255,10 +1255,10 @@ The `story` and `geth` binaries, which make up the clients required for running 
   - Latest Stable Binary (v1.1.1): [**Click here**](https://github.com/piplabs/story-geth/releases/tag/v1.1.1)
 - **`story`consensus client:**
   - Releases link: [**Click here**](https://github.com/piplabs/story/releases)
-  - Latest Stable Binary (v1.3.2): [**Click here**](https://github.com/piplabs/story/releases/tag/v1.3.2)
+  - Latest Stable Binary (v1.3.3): [**Click here**](https://github.com/piplabs/story/releases/tag/v1.3.3)
 - **`story`consensus client:** (For Aeneid testnet)
   - Releases link: [**Click here**](https://github.com/piplabs/story/releases)
-  - Latest Stable Binary (v1.3.0): [**Click here**](https://github.com/piplabs/story/releases/tag/v1.3.0)
+  - Latest Stable Binary (v1.3.3): [**Click here**](https://github.com/piplabs/story/releases/tag/v1.3.3)
 
 > Note if you are syncing from Genesis you need to use Story v1.3.1.
 > https://github.com/piplabs/story/releases/tag/v1.3.1
@@ -1498,7 +1498,7 @@ echo "export DAEMON_ALLOW_DOWNLOAD_BINARIES=false" >> $HOME/.bash_profile
 
 ```bash
 cd $HOME
-wget https://github.com/piplabs/story/releases/download/v1.3.2/story-linux-amd64
+wget https://github.com/piplabs/story/releases/download/v1.3.3/story-linux-amd64
 sudo mv story-linux-amd64 story
 sudo chmod +x story
 sudo mv ./story $HOME/go/bin/
@@ -2397,12 +2397,20 @@ Each release comes with a release note describing a list of new features or fixe
 
 Refer to the following release matrix to run nodes for Mainnet and Aeneid Testnet.
 
+| Network | story-geth      | story             |
+| ------- | --------------- | ----------------- |
+| Mainnet | v1.1.1 (Cosmas) | v1.3.3 (Polybius) |
+| Aeneid  | v1.1.1 (Cosmas) | v1.3.3 (Polybius) |
 
-| Network | story-geth      | story             | 
-| ------- | --------------- | ----------------- | 
-| Mainnet | v1.1.1 (Cosmas) | v1.3.2 (Polybius) | 
-| Aeneid  | v1.1.1 (Cosmas) | v1.3.0 (Polybius) | 
+<Update label="2025-08-08" description="Polybius (Story v1.3.3)">
+    ### Polybius
+    [Full release note](https://github.com/piplabs/story/releases/tag/v1.3.3)
 
+        <Accordion title="Fix">
+            - Backport the fixes for release v1.3.3 (#598)
+        </Accordion>
+
+</Update>
 
 <Update label="2025-08-08" description="Polybius (Story v1.3.2)">
     ### Polybius
@@ -2423,7 +2431,6 @@ Refer to the following release matrix to run nodes for Mainnet and Aeneid Testne
         </Accordion>
 
 </Update>
-
 
 <Update label="2025-06-19" description="Cosmas (Geth v1.1.1)">
     ### Cosmas
