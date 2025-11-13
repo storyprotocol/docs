@@ -8,10 +8,6 @@ This repository contains the official documentation for **Story**, a purpose-bui
 
 If you see any issues with the docs or would like to add/modify them, please open a Pull Request and tag @jacob-tucker :)
 
-## Train AI on our Docs
-
-If you want to train an AI on our docs, you can use the `combined.md` file. It contains all of our docs in a single `.md` file, and is updated automatically every time a change is made to the repo.
-
 ## Development
 
 Install the [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the documentation changes locally. To install, use the following command
@@ -32,7 +28,7 @@ Once you created a new page, you can use this script to add it to the navigation
 
 ### Usage
 
-Run it from the root folder. 
+Run it from the root folder.
 
 ```bash
 python add_it.py <path/to/file.mdx>
@@ -46,7 +42,6 @@ python add_it.py network/more/multisig.mdx
 ```
 
 Supports .md and .mdx files. Run from directory containing docs.json.
-
 
 ### Troubleshooting
 
